@@ -1,0 +1,32 @@
+{
+ "tier": "penthouse",
+ "name": "gallery",
+ "story": "White-cube penthouse: the long white sofa on a persian under the glass with an arc lamp, white shelves beside it, the long white bar on the side wall with two stools, three plinths standing out on a second persian like a show (one holds a single cactus), one white vase, the bone side wall kept for the big pieces, the bed quiet in the corner.",
+ "room": {"w":26,"d":23,"h":2.8,"walls":{"N":"glass","E":"paint:#e6e1d6"},"floor":"oak"},
+ "items": [
+  {"id":"rug-persian","x":15,"z":3,"rot":0,"variant":1,"on":"floor"},
+  {"id":"door-front","x":18,"z":0,"rot":0,"variant":3,"on":{"wall":"E"}},
+  {"id":"bed-platform","x":1,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"table-end","x":9,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"lamp-table","x":9,"z":0,"rot":0,"variant":1,"on":{"top":3}},
+  {"id":"bookshelf","x":11,"z":0,"rot":0,"variant":2,"on":"floor"},
+  {"id":"sofa-low","x":15,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"lamp-arc","x":12,"z":3,"rot":0,"variant":0,"on":"floor"},
+  {"id":"table-coffee","x":18,"z":6,"rot":0,"variant":1,"on":"floor"},
+  {"id":"plinth","x":6,"z":13,"rot":0,"variant":0,"on":"floor"},
+  {"id":"plinth","x":11,"z":13,"rot":0,"variant":2,"on":"floor"},
+  {"id":"plinth","x":16,"z":13,"rot":0,"variant":1,"on":"floor"},
+  {"id":"plant-cactus","x":17,"z":14,"rot":0,"variant":2,"on":{"top":11}},
+  {"id":"bar-home","x":0,"z":11,"rot":90,"variant":0,"on":"floor"},
+  {"id":"stool-bar","x":3,"z":12,"rot":270,"variant":0,"on":"floor"},
+  {"id":"stool-bar","x":3,"z":15,"rot":270,"variant":0,"on":"floor"},
+  {"id":"rug-persian","x":8,"z":12,"rot":0,"variant":1,"on":"floor"},
+  {"id":"vase-floor","x":9,"z":2,"rot":0,"variant":0,"on":"floor"}
+ ],
+ "slots": [
+  {"id":"wall-one","label":"wall one","place":"wall","x":7,"z":0,"foot":[10,4],"rot":0,"demo":"art-triptych","variant":0,"fits":["collectible"],"wall":"E","y":1.1},
+  {"id":"wall-two","label":"wall two","place":"wall","x":0,"z":0,"foot":[6,6],"rot":0,"demo":"deck-wall","variant":0,"fits":["collectible","stash"],"wall":"E","y":0.85},
+  {"id":"figure","label":"the figure","place":"surface","x":6,"z":13,"foot":[3,3],"rot":0,"demo":"vinyl-dicehead","variant":1,"fits":["collectible","trophy"],"on":9},
+  {"id":"plinth","label":"the plinth","place":"surface","x":11,"z":13,"foot":[3,3],"rot":0,"demo":"trophy-gold-grill","variant":0,"fits":["collectible","trophy"],"on":10}
+ ]
+}

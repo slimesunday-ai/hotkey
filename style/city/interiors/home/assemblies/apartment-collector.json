@@ -1,0 +1,44 @@
+{
+ "tier": "apartment",
+ "name": "collector",
+ "story": "The collector's walk-up: the sneaker wall over the futon is the whole point, a white shelf with a figure on top at one end, the grail on its plinth at the other, the desk for checking prices. The kitchenette is storage (a lava lamp, no pans); the mattress lives on the floor so the money goes on the wall; the boxes say KIX.",
+ "room": {"w":20,"d":17,"h":2.7,"walls":{"N":"paint:#f4f1ea","E":"paint:#17171b"},"floor":"planks"},
+ "items": [
+  {"id":"rug-shag","x":4,"z":3,"rot":0,"variant":2,"on":"floor"},
+  {"id":"door-front","x":16,"z":0,"rot":0,"variant":1,"on":{"wall":"N"}},
+  {"id":"window","x":11,"z":0,"rot":0,"variant":3,"on":{"wall":"E"},"y":0.9},
+  {"id":"bookshelf","x":0,"z":0,"rot":0,"variant":2,"on":"floor"},
+  {"id":"futon","x":4,"z":0,"rot":0,"variant":2,"on":"floor"},
+  {"id":"plinth","x":12,"z":1,"rot":0,"variant":0,"on":"floor"},
+  {"id":"table-coffee","x":6,"z":5,"rot":0,"variant":1,"on":"floor"},
+  {"id":"desk","x":17,"z":5,"rot":270,"variant":1,"on":"floor"},
+  {"id":"computer-beige","x":17,"z":5,"rot":270,"variant":0,"on":{"top":7}},
+  {"id":"stool-bar","x":15,"z":8,"rot":90,"variant":1,"on":"floor"},
+  {"id":"radiator","x":19,"z":12,"rot":270,"variant":0,"on":"floor"},
+  {"id":"sneakers-kicked","x":14,"z":11,"rot":0,"variant":1,"on":"floor"},
+  {"id":"mattress-floor","x":0,"z":12,"rot":90,"variant":0,"on":"floor"},
+  {"id":"kitchenette","x":0,"z":2,"rot":90,"variant":2,"on":"floor"},
+  {"id":"poster","x":12,"z":0,"rot":0,"variant":2,"on":{"wall":"N"},"y":1.45},
+  {"id":"poster","x":5,"z":0,"rot":0,"variant":0,"on":{"wall":"E"},"y":1.3},
+  {"id":"boxes-moving","x":9,"z":14,"rot":0,"variant":0,"on":"floor"},
+  {"id":"speaker","x":16,"z":13,"rot":0,"variant":1,"on":"floor"},
+  {"id":"lava-lamp","x":1,"z":3,"rot":0,"variant":2,"on":{"top":13}}
+ ],
+ "slots": [
+  {"id":"wall","label":"the wall · over the futon","place":"wall","x":4,"z":0,"foot":[8,6],"rot":0,"demo":"sneaker-wall","variant":0,"fits":["collectible"],"wall":"N","y":0.9},
+  {"id":"on-the-shelf","label":"on the shelf","place":"surface","x":1,"z":0,"foot":[2,2],"rot":0,"demo":"vinyl-dicehead","variant":0,"fits":["collectible","trophy","stash"],"on":3},
+  {"id":"grail","label":"the grail","place":"surface","x":12,"z":1,"foot":[3,3],"rot":0,"demo":"chain-bust","variant":0,"fits":["collectible","trophy"],"on":5},
+  {"id":"on-the-table","label":"on the table","place":"surface","x":7,"z":6,"foot":[3,2],"rot":0,"demo":"watch-box","variant":0,"fits":["collectible","trophy"],"on":6}
+ ],
+ "vacant": [
+  {"id":"door-front","x":16,"z":0,"rot":0,"variant":1,"on":{"wall":"N"}},
+  {"id":"window","x":11,"z":0,"rot":0,"variant":3,"on":{"wall":"E"},"y":0.9},
+  {"id":"radiator","x":19,"z":12,"rot":270,"variant":0,"on":"floor"},
+  {"id":"kitchenette","x":0,"z":2,"rot":90,"variant":2,"on":"floor"},
+  {"id":"mattress-floor","x":4,"z":0,"rot":270,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":12,"z":1,"rot":0,"variant":1,"on":"floor"},
+  {"id":"boxes-moving","x":6,"z":10,"rot":0,"variant":2,"on":"floor"},
+  {"id":"sign-rent","x":9,"z":12,"rot":0,"variant":1,"on":"floor"},
+  {"id":"paint-kit","x":14,"z":8,"rot":0,"variant":0,"on":"floor"}
+ ]
+}

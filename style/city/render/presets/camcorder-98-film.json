@@ -1,0 +1,94 @@
+{
+  "_about": "Camcorder '98 · film: slime's tape look kept whole (bloom, sharpen, chroma, the green-magenta grade) but shot on 16 mm: dye-cloud grain instead of video noise, a little weave, flicker, the odd speck, scratch and leak, soft rounded gate corners.",
+  "_tweak": "grain.amount, dust.density, scratches.density, weave.amount, film.fps (18 = home-movie cadence).",
+  "_base": "camcorder-98 (slime's look): its bloom, lens, dof and stack, with the film sections on top; post-only, so it keeps the page's time of day (night build included).",
+  "dof": {
+    "strength": 10.8,
+    "falloff": 0.25
+  },
+  "bloom": {
+    "on": true,
+    "threshold": 0.72,
+    "strength": 0.45,
+    "radius": 0.8
+  },
+  "halation": {
+    "strength": 0.45,
+    "radius": 0.31,
+    "spread": 1.35,
+    "on": true
+  },
+  "grade": {
+    "on": true,
+    "temperature": -0.04,
+    "tint": 0.1,
+    "contrast": 0.95,
+    "saturation": 1.2,
+    "fade": 0.07
+  },
+  "sharpen": {
+    "on": true,
+    "amount": 0.9,
+    "radius": 1.6
+  },
+  "chroma": {
+    "on": true,
+    "amount": 1
+  },
+  "lens": {
+    "on": true,
+    "amount": 0.03
+  },
+  "vignette": {
+    "amount": 0.3,
+    "radius": 0.7
+  },
+  "grain": {
+    "type": "film",
+    "amount": 0.11,
+    "response": 0.85,
+    "color": "colour",
+    "format": "16 mm"
+  },
+  "dither": {
+    "levels": 12,
+    "strength": 1.35
+  },
+  "letterbox": {
+    "aspect": "1.33",
+    "color": "#0b0b0e"
+  },
+  "film": {
+    "on": true
+  },
+  "weave": {
+    "on": true,
+    "amount": 0.9
+  },
+  "flicker": {
+    "on": true,
+    "amount": 0.02
+  },
+  "dust": {
+    "on": true,
+    "density": 0.4
+  },
+  "scratches": {
+    "on": true,
+    "density": 0.18,
+    "base": 0.1
+  },
+  "leaks": {
+    "on": true,
+    "amount": 0.45,
+    "rate": 1.2
+  },
+  "gate": {
+    "on": true,
+    "corners": 0.025,
+    "softness": 2.5
+  },
+  "stack": {
+    "order": "blur,grade,bloom,halation,sharpen,chroma,lens,vignette,grain,dither,letterbox"
+  }
+}

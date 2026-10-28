@@ -1,0 +1,8 @@
+{
+  "_about": "Dazed Zine · a risograph spread: graded hard, then dithered to the city's own first 8 colours in 2 px cells. Bold, flat, printed.",
+  "_tweak": "dither.colors (6-12), dither.pixel, grade.contrast before it.",
+  "light": { "fill": 0.7, "env": 0.3, "shadowRadius": 1 },
+  "grade": { "on": true, "contrast": 1.25, "saturation": 1.3, "vibrance": 0.2 },
+  "dither": { "on": true, "pattern": "bayer4", "pixel": 2, "palette": "city", "colors": 8, "strength": 0.9 },
+  "grain": { "on": false }
+}

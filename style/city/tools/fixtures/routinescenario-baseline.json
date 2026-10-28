@@ -1,0 +1,14 @@
+{
+  "about": "routinescenario's 'before' step, measured on the page of commit 94d4b34 (C1-3, before C1-4's loops), for a checkout without that commit (a fresh clone). Used only when git can't show 94d4b34; with it, the step measures the old page itself. slime, 10-27: 'go with your recommendations' (option 1: package the baseline's measured numbers).\n2026-10-27: feed hash re-pinned for slime's call, \"the first 2 we should do\" (rent is now compute); only bot reason prose changed (19 fields on seed 404, 66 across seeds 404–406); the page measurement is unaffected.",
+  "head": "94d4b34",
+  "seed": 404,
+  "rule": "A",
+  "cast": "layer4",
+  "feedSha256": "a5317f11bbe8ca152b699b73edd2194feacab704f6ce4fe44dd87c65c98e045e",
+  "windows": [[3450, 3510], [3675, 3735]],
+  "pageSeconds": 120,
+  "measured": [3332.2, 3357.7, 3384.8, 3398.8, 3411.3],
+  "noLoopPerAgentHour": 3332.2,
+  "noLoopShareOfStanding": 1,
+  "measuredOn": "2026-10-27, headless Chrome on the build machine, across the C1 worktrees' runs"
+}

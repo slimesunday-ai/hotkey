@@ -1,0 +1,3107 @@
+{
+ "about": "Snapshot of the game items (GAME.md §4) from ai-city-fresh: world/fresh/ minus kills in world/fresh-curation.json.",
+ "source": "ai-city-fresh world/fresh/index.js list(slot) + world/fresh-curation.json",
+ "counts": {
+  "wearable": 383,
+  "held": 37,
+  "skins": 22,
+  "marks": 10,
+  "inDrops": 410
+ },
+ "items": [
+  {
+   "id": "acc/beeper",
+   "slot": "acc",
+   "name": "Two-Way Beeper",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "acc/bust_down",
+   "slot": "acc",
+   "name": "Bust-Down",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "acc/corner_sling",
+   "slot": "acc",
+   "name": "Corner Sling",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "acc/flag_rag",
+   "slot": "acc",
+   "name": "Back-Pocket Flag",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "acc/house_arrest",
+   "slot": "acc",
+   "name": "House Arrest",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "acc/jailbreak_cuff",
+   "slot": "acc",
+   "name": "Jailbreak Cuff",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "acc/most_wanted_sash",
+   "slot": "acc",
+   "name": "Most Wanted Sash",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "acc/nameplate_ring",
+   "slot": "acc",
+   "name": "Four-Finger PAID",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "acc/nines_belt",
+   "slot": "acc",
+   "name": "Double-Nine Belt",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "acc/pocket_safe",
+   "slot": "acc",
+   "name": "Pocket Safe",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "acc/rubber_bands",
+   "slot": "acc",
+   "name": "Count-Up Bands",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "acc/stoop_pack",
+   "slot": "acc",
+   "name": "Stoop Pack",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/after_hours_tricot",
+   "slot": "bottom",
+   "name": "After-Hours Tricot",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/ash_sweats",
+   "slot": "bottom",
+   "name": "Ash Heavyweight Sweats",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/blackout_cargo",
+   "slot": "bottom",
+   "name": "Blackout Cargo",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/buffalo_check",
+   "slot": "bottom",
+   "name": "Buffalo Check Lounge",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/busted_knee_denim",
+   "slot": "bottom",
+   "name": "Busted Knee Denim",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/club_velour",
+   "slot": "bottom",
+   "name": "Club Velour",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/concrete_camo",
+   "slot": "bottom",
+   "name": "Concrete Camo Cargo",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/credit_print",
+   "slot": "bottom",
+   "name": "Credit Print",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/deli_khakis",
+   "slot": "bottom",
+   "name": "Deli Khakis",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/do_not_cross",
+   "slot": "bottom",
+   "name": "Do Not Cross",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/drop_cloth_painter",
+   "slot": "bottom",
+   "name": "Drop Cloth Painter",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/gatehill_croc",
+   "slot": "bottom",
+   "name": "Gatehill Croc",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/iced_out_denim",
+   "slot": "bottom",
+   "name": "Iced Out Denim",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/iron_island_issue",
+   "slot": "bottom",
+   "name": "Iron Island Issue",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/neon_row_leather",
+   "slot": "bottom",
+   "name": "Neon Row Leather",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_denim_cutline",
+   "slot": "bottom",
+   "name": "Cutline Jean",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_denim_deck_cargo",
+   "slot": "bottom",
+   "name": "Deck Cargo",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_denim_turnup",
+   "slot": "bottom",
+   "name": "Turnup Denim",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drain_denim",
+   "slot": "bottom",
+   "name": "Afterhours denim",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_aircut_track",
+   "slot": "bottom",
+   "name": "Aircut Track",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_alloy_shift",
+   "slot": "bottom",
+   "name": "Alloy Shift",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_apex_paddock",
+   "slot": "bottom",
+   "name": "Apex Paddock",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_benchside",
+   "slot": "bottom",
+   "name": "Benchside",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_circuit_royal",
+   "slot": "bottom",
+   "name": "Circuit Royal",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_cut_class",
+   "slot": "bottom",
+   "name": "Cut Class",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_disco_archive",
+   "slot": "bottom",
+   "name": "Disco Archive",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_hammer_shift",
+   "slot": "bottom",
+   "name": "Hammer Shift",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_hotfoot",
+   "slot": "bottom",
+   "name": "Hotfoot",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_lockbox_cargo",
+   "slot": "bottom",
+   "name": "Lockbox Cargo",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_receipt_roll",
+   "slot": "bottom",
+   "name": "Receipt Roll",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_rinse_signal",
+   "slot": "bottom",
+   "name": "Rinse Signal",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_rivet_yard",
+   "slot": "bottom",
+   "name": "Rivet Yard",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_seam_split",
+   "slot": "bottom",
+   "name": "Seam Split",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_spill_studio",
+   "slot": "bottom",
+   "name": "Spill Studio",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_spiral_ramp",
+   "slot": "bottom",
+   "name": "Spiral Ramp",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_supernova_chaps",
+   "slot": "bottom",
+   "name": "Supernova Chaps",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_velvet_queue",
+   "slot": "bottom",
+   "name": "Velvet Queue",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_drop_p_window_seat",
+   "slot": "bottom",
+   "name": "Window Seat",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_duck_carpenter",
+   "slot": "bottom",
+   "name": "Yard carpenters",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_opus2_bondage_tartan",
+   "slot": "bottom",
+   "name": "Bondage Tartan",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_opus2_club_fluff",
+   "slot": "bottom",
+   "name": "Club Fluff",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_opus2_drop_tape",
+   "slot": "bottom",
+   "name": "Drop Tape",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_opus2_dye_pack",
+   "slot": "bottom",
+   "name": "Dye Pack",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_opus2_fitting_toile",
+   "slot": "bottom",
+   "name": "Fitting Toile",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_opus2_gator_don",
+   "slot": "bottom",
+   "name": "Gator Don",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_opus2_grill_check",
+   "slot": "bottom",
+   "name": "Grill Check",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_opus2_iced_out",
+   "slot": "bottom",
+   "name": "Iced Out",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_opus2_maison_mono",
+   "slot": "bottom",
+   "name": "Maison Mono",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_opus2_one_leg_up",
+   "slot": "bottom",
+   "name": "One Leg Up",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_opus2_thank_you",
+   "slot": "bottom",
+   "name": "Thank You Bag",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_opus2_whole_car",
+   "slot": "bottom",
+   "name": "Whole Car",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/old_opus_acid_stack",
+   "slot": "bottom",
+   "name": "Acid Stack",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_opus_counsel_stripe",
+   "slot": "bottom",
+   "name": "Counsel Stripe",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_opus_county_issue",
+   "slot": "bottom",
+   "name": "County Issue",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_opus_night_leather",
+   "slot": "bottom",
+   "name": "Night Leather",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_opus_night_shift",
+   "slot": "bottom",
+   "name": "Night Shift",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_opus_selvedge_cuff",
+   "slot": "bottom",
+   "name": "Selvedge Cuff",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_opus_stoop_sweats",
+   "slot": "bottom",
+   "name": "Stoop Sweats",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_opus_swish_shell",
+   "slot": "bottom",
+   "name": "Swish Shell",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_opus_wale_cord",
+   "slot": "bottom",
+   "name": "Wale Cord",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_opus_ward_scrubs",
+   "slot": "bottom",
+   "name": "Ward Scrubs",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_opus_yard_camo",
+   "slot": "bottom",
+   "name": "Yard Camo",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_pool_denim",
+   "slot": "bottom",
+   "name": "Pool jeans",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/old_snap_track",
+   "slot": "bottom",
+   "name": "Breakaway tracks",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "bottom/pine_st_mesh",
+   "slot": "bottom",
+   "name": "Pine St. Mesh",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/raw_indigo",
+   "slot": "bottom",
+   "name": "Raw Indigo 14oz",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/stoop_jorts",
+   "slot": "bottom",
+   "name": "Stoop Jorts",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "bottom/swap_meet_patchwork",
+   "slot": "bottom",
+   "name": "Swap Meet Patchwork",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/big_rocks",
+   "slot": "ears",
+   "name": "Big Rocks",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/black_plugs",
+   "slot": "ears",
+   "name": "Black Plugs",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/block_cans",
+   "slot": "ears",
+   "name": "Block Cans",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/bodega_ice",
+   "slot": "ears",
+   "name": "Bodega Ice",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/burner_headset",
+   "slot": "ears",
+   "name": "Burner Headset",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/chain_cuff",
+   "slot": "ears",
+   "name": "Chain Cuff",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/door_knockers",
+   "slot": "ears",
+   "name": "Door Knockers",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/doorman_coil",
+   "slot": "ears",
+   "name": "Doorman Coil",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/ear_grill",
+   "slot": "ears",
+   "name": "Ear Grill",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/gatehill_pearl",
+   "slot": "ears",
+   "name": "Gatehill Pearl",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/lobe_huggies",
+   "slot": "ears",
+   "name": "Lobe Huggies",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/lot_tag",
+   "slot": "ears",
+   "name": "Lot Tag",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/neon_studs",
+   "slot": "ears",
+   "name": "Neon Row Studs",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/numbers_pencil",
+   "slot": "ears",
+   "name": "Numbers Pencil",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/old_phones",
+   "slot": "ears",
+   "name": "headphones",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "ears/snake_eyes",
+   "slot": "ears",
+   "name": "Snake Eyes",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/st_mercy_tape",
+   "slot": "ears",
+   "name": "St. Mercy Tape",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/stash_lock",
+   "slot": "ears",
+   "name": "Stash Lock",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "ears/tucked_twenty",
+   "slot": "ears",
+   "name": "Tucked Twenty",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/bodega_owl",
+   "slot": "eyes",
+   "name": "Bodega Owl",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/cash_eyes",
+   "slot": "eyes",
+   "name": "Cash Eyes",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/corner_squint",
+   "slot": "eyes",
+   "name": "Corner Squint",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/cry_later",
+   "slot": "eyes",
+   "name": "Cry Later",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/dead_eye",
+   "slot": "eyes",
+   "name": "Dead Eye",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/double_slit",
+   "slot": "eyes",
+   "name": "Double Slit",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/editorial_wing",
+   "slot": "eyes",
+   "name": "Editorial Wing",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/four_am",
+   "slot": "eyes",
+   "name": "4AM",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/gone_rogue",
+   "slot": "eyes",
+   "name": "Gone Rogue",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/iced_out",
+   "slot": "eyes",
+   "name": "Iced Out",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/low_battery",
+   "slot": "eyes",
+   "name": "Low Battery",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/mean_mug",
+   "slot": "eyes",
+   "name": "Mean Mug",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/not_guilty",
+   "slot": "eyes",
+   "name": "Not Guilty",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/old_beachball",
+   "slot": "eyes",
+   "name": "beachball pupils",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyes/old_bored",
+   "slot": "eyes",
+   "name": "bored",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyes/old_cursor",
+   "slot": "eyes",
+   "name": "cursor pupils",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyes/old_happy",
+   "slot": "eyes",
+   "name": "happy",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyes/old_heart",
+   "slot": "eyes",
+   "name": "heart",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyes/old_laser",
+   "slot": "eyes",
+   "name": "laser",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyes/old_opus2_allnighter",
+   "slot": "eyes",
+   "name": "all-nighter",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/old_opus2_eroded",
+   "slot": "eyes",
+   "name": "eroded",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyes/old_opus2_googly",
+   "slot": "eyes",
+   "name": "googly eyes",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/old_opus2_liner",
+   "slot": "eyes",
+   "name": "graphic liner",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/old_opus2_roll",
+   "slot": "eyes",
+   "name": "eye roll",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/old_opus_flame",
+   "slot": "eyes",
+   "name": "heat check",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/old_opus_ko",
+   "slot": "eyes",
+   "name": "knocked out",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/old_opus_snake",
+   "slot": "eyes",
+   "name": "snake eyes",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/old_shook",
+   "slot": "eyes",
+   "name": "shook",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyes/old_sleepy",
+   "slot": "eyes",
+   "name": "sleepy",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyes/old_sparkle",
+   "slot": "eyes",
+   "name": "sparkle",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyes/old_wink",
+   "slot": "eyes",
+   "name": "wink",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyes/shiner",
+   "slot": "eyes",
+   "name": "Shiner",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/side_eye",
+   "slot": "eyes",
+   "name": "Side Eye",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyes/snake_eyes",
+   "slot": "eyes",
+   "name": "Snake Eyes",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/afterhours_shield",
+   "slot": "eyewear",
+   "name": "Afterhours Shield",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/bail_bonds_freebies",
+   "slot": "eyewear",
+   "name": "Bail Bonds Freebies",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/bodega_readers",
+   "slot": "eyewear",
+   "name": "Bodega Readers",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/cat_burglar",
+   "slot": "eyewear",
+   "name": "Cat Burglar",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/corner_shades",
+   "slot": "eyewear",
+   "name": "Corner Shades",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/county_frames",
+   "slot": "eyewear",
+   "name": "County Frames",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/fit_street_cat_eyes",
+   "slot": "eyewear",
+   "name": "Fit Street Cat-Eyes",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/gallery_rounds",
+   "slot": "eyewear",
+   "name": "Gallery Rounds",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/gatehill_oversize",
+   "slot": "eyewear",
+   "name": "Gatehill Oversize",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/gatehill_woods",
+   "slot": "eyewear",
+   "name": "Gatehill Woods",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/getaway_wraps",
+   "slot": "eyewear",
+   "name": "Getaway Wraps",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/ice_box",
+   "slot": "eyewear",
+   "name": "Ice Box",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/kingpin_golds",
+   "slot": "eyewear",
+   "name": "Kingpin Golds",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/old_anaglyph",
+   "slot": "eyewear",
+   "name": "3D glasses",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyewear/old_dwi",
+   "slot": "eyewear",
+   "name": "deal with it",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyewear/old_goggles",
+   "slot": "eyewear",
+   "name": "ski goggles",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyewear/old_opus_bandit",
+   "slot": "eyewear",
+   "name": "cat-burglar mask",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/old_opus_hearts",
+   "slot": "eyewear",
+   "name": "heartbreaker shades",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/old_ovals",
+   "slot": "eyewear",
+   "name": "matrix ovals",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyewear/old_shield",
+   "slot": "eyewear",
+   "name": "shield shades",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyewear/old_shutter",
+   "slot": "eyewear",
+   "name": "shutter shades",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyewear/old_tinies",
+   "slot": "eyewear",
+   "name": "tiny ovals",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyewear/old_wrap",
+   "slot": "eyewear",
+   "name": "wraparounds",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "eyewear/precinct_aviators",
+   "slot": "eyewear",
+   "name": "Precinct Aviators",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/shop_specs",
+   "slot": "eyewear",
+   "name": "Shop Specs",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/slim_slits",
+   "slot": "eyewear",
+   "name": "Slim Slits",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/spotlight_ovals",
+   "slot": "eyewear",
+   "name": "Spotlight Ovals",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "eyewear/taped_up",
+   "slot": "eyewear",
+   "name": "Taped Up",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/bleach_buzz",
+   "slot": "hair",
+   "name": "Bleach Buzz",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/blowout",
+   "slot": "hair",
+   "name": "Pink Blowout",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/box_braids",
+   "slot": "hair",
+   "name": "Burgundy Knotless",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/cornrows",
+   "slot": "hair",
+   "name": "Straight Backs",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/finger_waves",
+   "slot": "hair",
+   "name": "Ice Finger Waves",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/fro",
+   "slot": "hair",
+   "name": "Fro",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/frohawk",
+   "slot": "hair",
+   "name": "Cherry Frohawk",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/gilded_pineapple",
+   "slot": "hair",
+   "name": "Gilded Pineapple",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/hard_part",
+   "slot": "hair",
+   "name": "Hard Part",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/locs",
+   "slot": "hair",
+   "name": "Shoulder Locs",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/mullet",
+   "slot": "hair",
+   "name": "Route 9 Mullet",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/old_dreads",
+   "slot": "hair",
+   "name": "two-tone dreads",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hair/old_leopard",
+   "slot": "hair",
+   "name": "leopard buzz",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hair/old_long",
+   "slot": "hair",
+   "name": "y2k straight",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hair/old_mohawk",
+   "slot": "hair",
+   "name": "liberty mohawk",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hair/old_opus_bantu",
+   "slot": "hair",
+   "name": "bantu knots",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/old_opus_bowl",
+   "slot": "hair",
+   "name": "skate mop",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/old_opus_bunches",
+   "slot": "hair",
+   "name": "club-kid bunches",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/old_opus_cornrows",
+   "slot": "hair",
+   "name": "straight-back cornrows",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/old_opus_hitop",
+   "slot": "hair",
+   "name": "hi-top fade",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/old_opus_mullet",
+   "slot": "hair",
+   "name": "trailer mullet",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/old_opus_pompadour",
+   "slot": "hair",
+   "name": "greaser pompadour",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/old_opus_razor",
+   "slot": "hair",
+   "name": "razor-art fade",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/old_opus_slick",
+   "slot": "hair",
+   "name": "penthouse slickback",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/old_opus_softserve",
+   "slot": "hair",
+   "name": "soft-serve swirl",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/old_opus_waves",
+   "slot": "hair",
+   "name": "360 waves",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/old_spikes",
+   "slot": "hair",
+   "name": "frosted tips",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hair/sleek_pony",
+   "slot": "hair",
+   "name": "Snatched Pony",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/slick_back",
+   "slot": "hair",
+   "name": "The Slick",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/twin_puffs",
+   "slot": "hair",
+   "name": "Twin Puffs",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/twists",
+   "slot": "hair",
+   "name": "Sponge Twists",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hair/waves",
+   "slot": "hair",
+   "name": "360 Waves",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/block_bucket",
+   "slot": "hat",
+   "name": "Block Bucket",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/bodega_bonnet",
+   "slot": "hat",
+   "name": "Bodega Bonnet",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/commissary_skully",
+   "slot": "hat",
+   "name": "Commissary Skully",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/corner_rag",
+   "slot": "hat",
+   "name": "Corner Rag",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/dockhand_beanie",
+   "slot": "hat",
+   "name": "Low Tide Fisherman",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/iced_fitted",
+   "slot": "hat",
+   "name": "Iced Out Fitted",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/lucky7_dad",
+   "slot": "hat",
+   "name": "Lucky 7 Dad Cap",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/mack_brim",
+   "slot": "hat",
+   "name": "The Mack",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/nines_fitted",
+   "slot": "hat",
+   "name": "Bay Nines Fitted",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/old_balaclava",
+   "slot": "hat",
+   "name": "balaclava",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hat/old_bandana",
+   "slot": "hat",
+   "name": "bandana",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hat/old_beanie",
+   "slot": "hat",
+   "name": "fisherman beanie",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hat/old_beret",
+   "slot": "hat",
+   "name": "paint beret",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hat/old_bucket",
+   "slot": "hat",
+   "name": "title-bar bucket",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hat/old_durag",
+   "slot": "hat",
+   "name": "durag",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hat/old_fitted",
+   "slot": "hat",
+   "name": "flat-brim fitted",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hat/old_fuzzbucket",
+   "slot": "hat",
+   "name": "fuzzy bucket",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/old_halo",
+   "slot": "hat",
+   "name": "beachball halo",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hat/old_holofitted",
+   "slot": "hat",
+   "name": "holo-sticker fitted",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hat/old_silkrag",
+   "slot": "hat",
+   "name": "silk durag",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/old_skully",
+   "slot": "hat",
+   "name": "high skully",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hat/old_tiedana",
+   "slot": "hat",
+   "name": "knotted bandana",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hat/old_trucker",
+   "slot": "hat",
+   "name": "WWW trucker",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "hat/pink_mink",
+   "slot": "hat",
+   "name": "Pink Mink",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/precinct_cap",
+   "slot": "hat",
+   "name": "Precinct 9 Cap",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/rag_under_fitted",
+   "slot": "hat",
+   "name": "Taxi Fitted Over Rag",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/silk_durag",
+   "slot": "hat",
+   "name": "Wine Silk Durag",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/snap_4am",
+   "slot": "hat",
+   "name": "4AM Snapback (Backwards)",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/swap_meet_trucker",
+   "slot": "hat",
+   "name": "We Buy Anything Trucker",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "hat/uptown_monogram",
+   "slot": "hat",
+   "name": "Uptown Monogram Bucket",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/armored_sack",
+   "slot": "held",
+   "name": "Armored Truck Sack",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/bail_case",
+   "slot": "held",
+   "name": "Bail Money Case",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/big_face_wad",
+   "slot": "held",
+   "name": "Big Face Wad",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/block_blaster",
+   "slot": "held",
+   "name": "Block Party Blaster",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/bodega_cat",
+   "slot": "held",
+   "name": "Bodega Cat",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/booking_board",
+   "slot": "held",
+   "name": "Booking Board",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/brown_bag",
+   "slot": "held",
+   "name": "Brown Bag Special",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/car_battery",
+   "slot": "held",
+   "name": "Chop Shop Battery",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/cash_duffel",
+   "slot": "held",
+   "name": "Bag Money Duffel",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/chopped_cheese",
+   "slot": "held",
+   "name": "Chopped Cheese",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/copper_run",
+   "slot": "held",
+   "name": "Copper Run",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/count_machine",
+   "slot": "held",
+   "name": "Count Machine",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/deli_bag",
+   "slot": "held",
+   "name": "Thank You Bag",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/dock_cooler",
+   "slot": "held",
+   "name": "Dock Shift Cooler",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/drop_bag",
+   "slot": "held",
+   "name": "4AM Drop Bag",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/fat_cap",
+   "slot": "held",
+   "name": "Fat Cap Can",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/gas_can",
+   "slot": "held",
+   "name": "Last Chance Can",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/jimmy_bar",
+   "slot": "held",
+   "name": "Jimmy Bar",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/lights_out",
+   "slot": "held",
+   "name": "Lights Out Torch",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/low_tide_catch",
+   "slot": "held",
+   "name": "Low Tide Catch",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/monogram_weekender",
+   "slot": "held",
+   "name": "Monogram Weekender",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/off_the_wire",
+   "slot": "held",
+   "name": "Off the Wire",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/orange_drink",
+   "slot": "held",
+   "name": "Orange Drink",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/precinct_dozen",
+   "slot": "held",
+   "name": "Precinct 9 Dozen",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/purse_dog",
+   "slot": "held",
+   "name": "Purse Dog",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/rocket_pop",
+   "slot": "held",
+   "name": "Rocket Pop",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/rooftop_coop",
+   "slot": "held",
+   "name": "Rooftop Coop",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/shack_lantern",
+   "slot": "held",
+   "name": "Blackpine Lantern",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/side_box",
+   "slot": "held",
+   "name": "Hand-Me-Down Box",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/smith_box",
+   "slot": "held",
+   "name": "Smith's Box",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/squeegee",
+   "slot": "held",
+   "name": "Squeegee",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/st_mercy_bag",
+   "slot": "held",
+   "name": "St. Mercy Belongings",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/stolen_safe",
+   "slot": "held",
+   "name": "Walked Out With It",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/tallboy",
+   "slot": "held",
+   "name": "99 Tallboy",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/two_am_rose",
+   "slot": "held",
+   "name": "Two A.M. Rose",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/wash_day",
+   "slot": "held",
+   "name": "Wash Day",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "held/whole_car_can",
+   "slot": "held",
+   "name": "Whole Car Can",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mark/barcode",
+   "slot": "mark",
+   "name": "Barcode",
+   "kind": "earned",
+   "curation": "undecided"
+  },
+  {
+   "id": "mark/cash_sign",
+   "slot": "mark",
+   "name": "Cash Sign",
+   "kind": "earned",
+   "curation": "undecided"
+  },
+  {
+   "id": "mark/freckles",
+   "slot": "mark",
+   "name": "Freckles",
+   "kind": "earned",
+   "curation": "undecided"
+  },
+  {
+   "id": "mark/gold_leaf",
+   "slot": "mark",
+   "name": "24K Leaf",
+   "kind": "earned",
+   "curation": "undecided"
+  },
+  {
+   "id": "mark/kiss_print",
+   "slot": "mark",
+   "name": "Kiss Print",
+   "kind": "earned",
+   "curation": "undecided"
+  },
+  {
+   "id": "mark/max_heat",
+   "slot": "mark",
+   "name": "Max Heat",
+   "kind": "earned",
+   "curation": "undecided"
+  },
+  {
+   "id": "mark/sold_out",
+   "slot": "mark",
+   "name": "Sold Out",
+   "kind": "earned",
+   "curation": "undecided"
+  },
+  {
+   "id": "mark/spiderweb",
+   "slot": "mark",
+   "name": "Spiderweb",
+   "kind": "earned",
+   "curation": "undecided"
+  },
+  {
+   "id": "mark/stitches",
+   "slot": "mark",
+   "name": "Stitches",
+   "kind": "earned",
+   "curation": "undecided"
+  },
+  {
+   "id": "mark/teardrop",
+   "slot": "mark",
+   "name": "Teardrop",
+   "kind": "earned",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/bite_the_bill",
+   "slot": "mouth",
+   "name": "Bite the Bill",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/bottom_six",
+   "slot": "mouth",
+   "name": "Bottom Six",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/busted_lip",
+   "slot": "mouth",
+   "name": "Busted Lip",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/cackle",
+   "slot": "mouth",
+   "name": "Cackle",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/candy_fronts",
+   "slot": "mouth",
+   "name": "Candy Fronts",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/chipped_grin",
+   "slot": "mouth",
+   "name": "Chipped Grin",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/chrome_lip",
+   "slot": "mouth",
+   "name": "Chrome Lip",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/clenched",
+   "slot": "mouth",
+   "name": "Clenched",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/corner_smirk",
+   "slot": "mouth",
+   "name": "Corner Smirk",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/crown_fronts",
+   "slot": "mouth",
+   "name": "Crown Fronts",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/deli_toothpick",
+   "slot": "mouth",
+   "name": "Deli Toothpick",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/fight_night",
+   "slot": "mouth",
+   "name": "Fight Night",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/gold_grill",
+   "slot": "mouth",
+   "name": "Gold Grill",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/gold_sneer",
+   "slot": "mouth",
+   "name": "Gold Sneer",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/gold_tooth",
+   "slot": "mouth",
+   "name": "Gold Tooth",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/hard_line",
+   "slot": "mouth",
+   "name": "Hard Line",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/heist_rag",
+   "slot": "mouth",
+   "name": "Heist Rag",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/ice_grill",
+   "slot": "mouth",
+   "name": "Iced-Out Grill",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/kiss_teeth",
+   "slot": "mouth",
+   "name": "Kiss Teeth",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/oh_word",
+   "slot": "mouth",
+   "name": "Oh Word?",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/old_flat",
+   "slot": "mouth",
+   "name": "flat",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "mouth/old_frown",
+   "slot": "mouth",
+   "name": "frown",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "mouth/old_gems",
+   "slot": "mouth",
+   "name": "sherbet gem grill",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/old_gum",
+   "slot": "mouth",
+   "name": "bubblegum",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "mouth/old_lolli",
+   "slot": "mouth",
+   "name": "lollipop",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "mouth/old_o",
+   "slot": "mouth",
+   "name": "o",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "mouth/old_opus2_busted",
+   "slot": "mouth",
+   "name": "busted lip",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/old_opus2_grin",
+   "slot": "mouth",
+   "name": "ear to ear",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "mouth/old_opus_rose",
+   "slot": "mouth",
+   "name": "rose in the teeth",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/old_smile",
+   "slot": "mouth",
+   "name": "smile",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "mouth/old_smirk",
+   "slot": "mouth",
+   "name": "smirk",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "mouth/pave_fronts",
+   "slot": "mouth",
+   "name": "Pavé Fronts",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/pencil_stache",
+   "slot": "mouth",
+   "name": "Pencil 'Stache",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/screw_face",
+   "slot": "mouth",
+   "name": "Screw Face",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/smirk",
+   "slot": "mouth",
+   "name": "Smirk",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/snake_bites",
+   "slot": "mouth",
+   "name": "Snake Bites",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/tongue_out",
+   "slot": "mouth",
+   "name": "Tongue Out",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "mouth/zipped",
+   "slot": "mouth",
+   "name": "Zipped",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/bleach_lows",
+   "slot": "shoes",
+   "name": "Bleach Lows",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/bodega_slides",
+   "slot": "shoes",
+   "name": "Bodega Slides",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/corner_runners",
+   "slot": "shoes",
+   "name": "Corner Runners",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/county_slips",
+   "slot": "shoes",
+   "name": "County Slip-Ons",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/court_date_spectators",
+   "slot": "shoes",
+   "name": "Court Date Spectators",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/curb_skates",
+   "slot": "shoes",
+   "name": "Curb Skates",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/fort_knox_hi",
+   "slot": "shoes",
+   "name": "Fort Knox Hi",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/gator_loafers",
+   "slot": "shoes",
+   "name": "Gator Loafers",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/maison_neuf",
+   "slot": "shoes",
+   "name": "Maison Neuf Monogram",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/neon_row_glows",
+   "slot": "shoes",
+   "name": "Neon Row Glows",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/old_classic_boots",
+   "slot": "shoes",
+   "name": "work boots",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_button",
+   "slot": "shoes",
+   "name": "button kicks",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_checker",
+   "slot": "shoes",
+   "name": "checker slip-ons",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_chunky",
+   "slot": "shoes",
+   "name": "chunky runners",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_courtking",
+   "slot": "shoes",
+   "name": "court kings",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_courtlow",
+   "slot": "shoes",
+   "name": "court lows",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_dad",
+   "slot": "shoes",
+   "name": "dad shoes",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/old_classic_furslide",
+   "slot": "shoes",
+   "name": "fur slides + socks",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_hightop",
+   "slot": "shoes",
+   "name": "cursor high-tops",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_lugboot",
+   "slot": "shoes",
+   "name": "lug-sole boots",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_lugloafer",
+   "slot": "shoes",
+   "name": "lug loafers",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_platinum",
+   "slot": "shoes",
+   "name": "platinum high-tops",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_puffskate",
+   "slot": "shoes",
+   "name": "fat tongues",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_retrohigh",
+   "slot": "shoes",
+   "name": "hardwood highs",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_sculptrun",
+   "slot": "shoes",
+   "name": "cloud tanks",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_socksneak",
+   "slot": "shoes",
+   "name": "sock runners",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_tacboot",
+   "slot": "shoes",
+   "name": "field ops",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_classic_workboot",
+   "slot": "shoes",
+   "name": "yard boots",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_drop_shoe_arcade",
+   "slot": "shoes",
+   "name": "Arcade",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_drop_shoe_boulevard",
+   "slot": "shoes",
+   "name": "Boulevard",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_early_relay_runner",
+   "slot": "shoes",
+   "name": "Relay runners",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_early_welt_derby",
+   "slot": "shoes",
+   "name": "Welt derbies",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/old_early_yard_moc",
+   "slot": "shoes",
+   "name": "Yard mocs",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_fullcourt_backboard",
+   "slot": "shoes",
+   "name": "Backboard",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_fullcourt_crossfade",
+   "slot": "shoes",
+   "name": "Crossfade",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus2_bankroll",
+   "slot": "shoes",
+   "name": "Bankroll",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus2_chomp_slipper",
+   "slot": "shoes",
+   "name": "Chomp",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus2_culdesac_runner",
+   "slot": "shoes",
+   "name": "Cul-de-Sac",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus2_house_arrest",
+   "slot": "shoes",
+   "name": "House Arrest",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus2_jelly_cage",
+   "slot": "shoes",
+   "name": "Jelly Cage",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus2_pit_lane",
+   "slot": "shoes",
+   "name": "Rear Wing",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus2_pop_pods",
+   "slot": "shoes",
+   "name": "Pop Pods",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus2_porcupine_hi",
+   "slot": "shoes",
+   "name": "Porcupine",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus2_rink_rat",
+   "slot": "shoes",
+   "name": "Rink Rat",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus2_second_skin",
+   "slot": "shoes",
+   "name": "Second Skin",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus2_shag_mule",
+   "slot": "shoes",
+   "name": "Shag Mule",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus2_treadhead",
+   "slot": "shoes",
+   "name": "Treadhead",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus_curbfat_skate",
+   "slot": "shoes",
+   "name": "Curbfat",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus_penthouse_puffer",
+   "slot": "shoes",
+   "name": "Penthouse Puffer",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus_poolside_slide",
+   "slot": "shoes",
+   "name": "Poolside Slides",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus_puddle_clog",
+   "slot": "shoes",
+   "name": "Puddle Clogs",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus_quarry_boot",
+   "slot": "shoes",
+   "name": "Quarry 6-Eye",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus_rimshot_hi",
+   "slot": "shoes",
+   "name": "Rimshot Hi",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_opus_velvet_rope",
+   "slot": "shoes",
+   "name": "Velvet Rope",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/old_terrace_clubline",
+   "slot": "shoes",
+   "name": "Clubline",
+   "kind": "item",
+   "curation": "keep"
+  },
+  {
+   "id": "shoes/platform_creepers",
+   "slot": "shoes",
+   "name": "Platform Creepers",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/puffer_boots",
+   "slot": "shoes",
+   "name": "Puffer Boots",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/rimshot_hi",
+   "slot": "shoes",
+   "name": "Rimshot Hi",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/stoop_suedes",
+   "slot": "shoes",
+   "name": "Stoop Suedes",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/tagged_customs",
+   "slot": "shoes",
+   "name": "Tagged Customs",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/vacancy_9s",
+   "slot": "shoes",
+   "name": "Vacancy 9s",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "shoes/wheat_sixes",
+   "slot": "shoes",
+   "name": "Wheat Sixes",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/brownstone",
+   "slot": "skin",
+   "name": "Brownstone",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/buff",
+   "slot": "skin",
+   "name": "Buff",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/cab_yellow",
+   "slot": "skin",
+   "name": "Cab Yellow",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/dipped",
+   "slot": "skin",
+   "name": "Dipped",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/limestone",
+   "slot": "skin",
+   "name": "Limestone",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/night_shift",
+   "slot": "skin",
+   "name": "Night Shift",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/old_alien",
+   "slot": "skin",
+   "name": "alien",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/old_brown",
+   "slot": "skin",
+   "name": "brown",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/old_deep",
+   "slot": "skin",
+   "name": "deep",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/old_opus_ebony",
+   "slot": "skin",
+   "name": "ebony",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/old_opus_freckle",
+   "slot": "skin",
+   "name": "freckled",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/old_opus_gold",
+   "slot": "skin",
+   "name": "24k",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/old_opus_golden",
+   "slot": "skin",
+   "name": "golden",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/old_opus_inked",
+   "slot": "skin",
+   "name": "inked",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/old_opus_vinyl",
+   "slot": "skin",
+   "name": "designer vinyl",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/old_pale",
+   "slot": "skin",
+   "name": "pale",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/old_tan",
+   "slot": "skin",
+   "name": "tan",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/olive",
+   "slot": "skin",
+   "name": "Olive",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/overspray",
+   "slot": "skin",
+   "name": "Overspray",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/summer_stoop",
+   "slot": "skin",
+   "name": "Summer Stoop",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/terracotta",
+   "slot": "skin",
+   "name": "Terracotta",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "skin/yard_ink",
+   "slot": "skin",
+   "name": "Yard Ink",
+   "kind": "chosen",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/box_hoodie_4am",
+   "slot": "top",
+   "name": "4AM Box Hoodie",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/bubble_goose",
+   "slot": "top",
+   "name": "Bubble Goose",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/camo_field",
+   "slot": "top",
+   "name": "Blackpine Field Jacket",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/corner_hoodie",
+   "slot": "top",
+   "name": "Corner Hoodie",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/dock_vest",
+   "slot": "top",
+   "name": "Low Tide Hi-Vis",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/gatehill_mink",
+   "slot": "top",
+   "name": "Gatehill Mink",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/hockey_jersey",
+   "slot": "top",
+   "name": "Bay Breakers Jersey",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/iron_island",
+   "slot": "top",
+   "name": "Iron Island Issue",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/neon_row_silk",
+   "slot": "top",
+   "name": "Neon Row Silk",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_babytee",
+   "slot": "top",
+   "name": "baby tee",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_bball",
+   "slot": "top",
+   "name": "04 mesh jersey",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_bootleg",
+   "slot": "top",
+   "name": "bootleg rap tee",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_bsodtee",
+   "slot": "top",
+   "name": "bsod tee",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_bubble",
+   "slot": "top",
+   "name": "bubble puffer",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_buffalo",
+   "slot": "top",
+   "name": "buffalo-check overshirt",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_catee",
+   "slot": "top",
+   "name": "bodega-cat tee",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_chenille",
+   "slot": "top",
+   "name": "chenille varsity",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_desktop",
+   "slot": "top",
+   "name": "desktop hoodie",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_dyehoodie",
+   "slot": "top",
+   "name": "tie-dye hoodie",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_flannel",
+   "slot": "top",
+   "name": "flannel over tee",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_furcoat",
+   "slot": "top",
+   "name": "fur coat",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_hoodie",
+   "slot": "top",
+   "name": "box-logo hoodie",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_jersey",
+   "slot": "top",
+   "name": "56K jersey",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_leather",
+   "slot": "top",
+   "name": "moto leather",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_opus_bankroll_puffer",
+   "slot": "top",
+   "name": "Bankroll puffer",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_opus_barrel_puffer",
+   "slot": "top",
+   "name": "Traffic-barrel puffer",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_opus_gator_mink",
+   "slot": "top",
+   "name": "Gator & mink jacket",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_opus_hivis",
+   "slot": "top",
+   "name": "Dock hi-vis vest",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_opus_patch_denim",
+   "slot": "top",
+   "name": "Collector's patch jacket",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_opus_racer",
+   "slot": "top",
+   "name": "Pit-lane racing jacket",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_opus_scrubs",
+   "slot": "top",
+   "name": "Night-shift scrubs",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_opus_snorkel",
+   "slot": "top",
+   "name": "Snorkel parka",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_opus_stripes",
+   "slot": "top",
+   "name": "Lockup stripes",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_opus_sukajan",
+   "slot": "top",
+   "name": "Tiger sukajan",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_opus_windbreaker",
+   "slot": "top",
+   "name": "Pier windbreaker",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_puffer",
+   "slot": "top",
+   "name": "puffer",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_slabtee",
+   "slot": "top",
+   "name": "graded-slab tee",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_tapetee",
+   "slot": "top",
+   "name": "caution-tape tee",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_tee",
+   "slot": "top",
+   "name": "graphic tee",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_track",
+   "slot": "top",
+   "name": "rainbow track top",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_trackjkt",
+   "slot": "top",
+   "name": "track jacket",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/old_velour",
+   "slot": "top",
+   "name": "velour tracksuit",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/pawn_shearling",
+   "slot": "top",
+   "name": "Pawn Shop Shearling",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/precinct_blues",
+   "slot": "top",
+   "name": "Precinct 9 Blues",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/ribbed_tank",
+   "slot": "top",
+   "name": "Ribbed Tank",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/rip_airbrush",
+   "slot": "top",
+   "name": "Airbrush Memorial Tee",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/stoop_rugby",
+   "slot": "top",
+   "name": "Stoop Rugby",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/tall_tee",
+   "slot": "top",
+   "name": "Bodega Tall Tee",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/top_button_flannel",
+   "slot": "top",
+   "name": "Top Button Flannel",
+   "kind": "item",
+   "curation": "undecided"
+  },
+  {
+   "id": "top/velour_track",
+   "slot": "top",
+   "name": "Velour Track Top",
+   "kind": "item",
+   "curation": "undecided"
+  }
+ ]
+}

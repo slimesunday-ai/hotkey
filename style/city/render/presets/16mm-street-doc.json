@@ -1,0 +1,101 @@
+{
+  "_about": "16 mm street doc: a fast tungsten negative through a print (teal shadows, warm highlights, dense blacks), 16 mm dye-cloud grain, 24 fps, a little weave, light flicker, dust and a couple of long emulsion scratches, the 1.37 gate with soft corners.",
+  "_tweak": "stock.toe, grain.amount, scratches.density, weave.amount.",
+  "_base": "camcorder-98 (slime's look): its bloom, lens, dof and stack, with the film sections on top; post-only, so it keeps the page's time of day (night build included).",
+  "dof": {
+    "strength": 10.8,
+    "falloff": 0.25
+  },
+  "bloom": {
+    "on": true,
+    "threshold": 0.72,
+    "strength": 0.45,
+    "radius": 0.8
+  },
+  "halation": {
+    "strength": 0.5,
+    "radius": 0.45,
+    "spread": 1.35,
+    "on": true
+  },
+  "grade": {
+    "on": true,
+    "temperature": 0,
+    "tint": 0.02,
+    "contrast": 1.0,
+    "saturation": 1.0,
+    "fade": 0.05
+  },
+  "sharpen": {
+    "on": false,
+    "amount": 0.9,
+    "radius": 1.6
+  },
+  "chroma": {
+    "on": true,
+    "amount": 0.6
+  },
+  "lens": {
+    "on": true,
+    "amount": 0.03
+  },
+  "vignette": {
+    "amount": 0.25,
+    "radius": 0.7,
+    "on": true
+  },
+  "grain": {
+    "type": "film",
+    "amount": 0.12,
+    "response": 0.85,
+    "color": "colour",
+    "format": "16 mm"
+  },
+  "dither": {
+    "levels": 12,
+    "strength": 1.35
+  },
+  "letterbox": {
+    "aspect": "1.33",
+    "color": "#0b0b0e"
+  },
+  "film": {
+    "on": true
+  },
+  "stock": {
+    "on": true,
+    "stock": "tungsten 500T",
+    "amount": 0.9
+  },
+  "weave": {
+    "on": true,
+    "amount": 1.3,
+    "vertical": 0.45,
+    "judder": 0.12
+  },
+  "flicker": {
+    "on": true,
+    "amount": 0.025
+  },
+  "dust": {
+    "on": true,
+    "density": 0.5,
+    "white": 0.3,
+    "hairs": 0.12
+  },
+  "scratches": {
+    "on": true,
+    "density": 0.3,
+    "persistence": 4,
+    "base": 0.1
+  },
+  "gate": {
+    "on": true,
+    "aspect": "1.37",
+    "corners": 0.035,
+    "softness": 3.5
+  },
+  "stack": {
+    "order": "blur,grade,bloom,halation,sharpen,chroma,lens,vignette,grain,dither,letterbox"
+  }
+}

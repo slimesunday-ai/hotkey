@@ -1,0 +1,84 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drop 02 Walk</title>
+<style>
+  html, body { margin: 0; background: #9fdcff; font: 800 12px/1.3 "Arial Black", Impact, sans-serif; }
+  canvas#sheet { display: block; width: 100vw; height: auto; }
+  #err { position: fixed; left: 8px; bottom: 8px; color: #c00; font: 12px monospace; white-space: pre-wrap; background: #fff; } #err:empty { display: none; }
+  #stats { position: fixed; right: 8px; bottom: 8px; background: #17171b; color: #ffc21a; padding: 6px 8px; white-space: pre; } #stats:empty { display: none; }
+</style>
+<canvas id="sheet"></canvas><div id="stats"></div><div id="err"></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/" } }</script>
+<script>addEventListener('error', e => { document.getElementById('err').textContent += (e.message || e) + '\n'; }); addEventListener('unhandledrejection', e => { document.getElementById('err').textContent += 'promise: ' + (e.reason?.stack || e.reason) + '\n'; });</script>
+<script type="module">
+// DROP 02 · THE WALK PROOF. Six of the new fits walking in the anim lab's segmented body: anim/bake.js bakeSegLooks (closed rigid
+// segments + joint slabs), anim/walk2.js's shader, anim/gait2.js's gait, gpu.js tierize: the city's walkers' own path, nothing edited.
+// A contact sheet of frames t, t + sdt, … (all six fits in each frame).
+// URL: ?cam=side|tq|front|back · &fits=i,j,… (fits.js indexes) · &strip=6 &sdt=.1 &t=1 · &fw=1800 &fh=420 · &dbg=back (inside faces magenta; the sheet counts them)
+//      &grid=1: one row per fit, one column per frame, each walker alone in a close 3/4 (&fw/&fh = one cell, default 360 × 450)
+import * as THREE from 'three';
+import * as CH from '../../../world/chars.js';
+import { tierize } from '../gpu.js';
+import { bakeSegLooks } from '../anim/bake.js';
+import { WALK } from '../anim/walk.js';
+import { WALK2, createAnimTexture2, animUniforms2, writeGait2, installAnim2 } from '../anim/walk2.js';
+import { gait2State, stepGait2 } from '../anim/gait2.js';
+import { stepIdle } from '../anim/idle.js';
+import { FITS } from './fits.js';
+
+const Q = new URLSearchParams(location.search), CAMN = Q.get('cam') || 'side', DBG = Q.get('dbg') || '', N = +(Q.get('strip') || 6), SDT = +(Q.get('sdt') || .1), T0 = +(Q.get('t') || 1);
+const GRID = Q.has('grid'), FW = +(Q.get('fw') || (GRID ? 360 : 1800)), FH = +(Q.get('fh') || (GRID ? 450 : 420)), V = 1.2, DT = 1 / 60;
+const PICK = (Q.get('fits') || '0,4,6,7,9,11').split(',').map(Number), fits = PICK.map(i => FITS[i]);
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setPixelRatio(1); renderer.setSize(FW, FH);
+renderer.toneMapping = THREE.NeutralToneMapping; renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x9fdcff);
+const sun = new THREE.DirectionalLight(0xfff2dc, 3.0), sunDir = new THREE.Vector3(-0.52, 0.74, 0.42).normalize(); sun.castShadow = true; sun.shadow.bias = -0.0003; sun.shadow.normalBias = .03; sun.shadow.mapSize.set(2048, 2048);
+sun.position.copy(sunDir).multiplyScalar(40); Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, near: 1, far: 100 }); scene.add(sun, sun.target, new THREE.HemisphereLight(0xd6ecff, 0xe0cfb0, 1.05));
+const floor = new THREE.Mesh(new THREE.BoxGeometry(40, .02, 12), new THREE.MeshStandardMaterial({ color: 0xd9d4c7, roughness: .9 })); floor.position.y = -.01; floor.receiveShadow = true; scene.add(floor);
+const wall = new THREE.Mesh(new THREE.BoxGeometry(40, 6, .2), new THREE.MeshStandardMaterial({ color: 0xf0e6d2, roughness: .9 })); wall.position.set(0, 3, -3.2); wall.receiveShadow = true; scene.add(wall);
+
+// the bake: the city's walkers' full tier, exactly (closed segments, slabs, the de-coplanar inset)
+const LK = bakeSegLooks(fits.map(f => f.L), CH, THREE);
+const geoOf = t => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(t.P, 3)); g.setAttribute('normal', new THREE.BufferAttribute(t.N, 3, true));
+  g.setAttribute('color', new THREE.BufferAttribute(t.C, 4, true)); g.setAttribute('aPart', new THREE.BufferAttribute(new Float32Array(t.K), 1)); if (t.SL) g.setAttribute('aSlab', new THREE.BufferAttribute(new Float32Array(t.SL), 1));
+  g.setIndex(new THREE.BufferAttribute(t.I, 1)); return g; };
+const GEOS = LK.map(l => geoOf(l.full)); if (Q.has('probe')) GEOS[0].index.array.reverse();   // (&probe: the first body's winding flipped, so the gate must see it)
+const VN = GEOS.reduce((s, g) => s + g.attributes.position.count, 0), IN = GEOS.reduce((s, g) => s + g.index.count, 0);
+const backDbg = m => { if (DBG !== 'back') return m; m.side = THREE.DoubleSide; const prev = m.onBeforeCompile, key = m.customProgramCacheKey?.bind(m);
+  m.onBeforeCompile = (sh, r) => { prev?.call(m, sh, r); sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\n  if (!gl_FrontFacing) gl_FragColor = vec4(1., 0., 1., 1.);'); };
+  m.customProgramCacheKey = () => (key ? key() : '') + '|dbgback'; return m; };
+const cap = fits.length, tex = createAnimTexture2(cap), [uni, G] = animUniforms2(tex, WALK2, { ...WALK });
+const mat = installAnim2(backDbg(tierize(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .62, metalness: 0 }), { vmat: true })), uni);
+const depth = installAnim2(new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking }), uni);
+const B = new THREE.BatchedMesh(cap, VN, IN, mat); B.customDepthMaterial = depth; B.castShadow = B.receiveShadow = true; B.sortObjects = false; B.frustumCulled = false; B.perObjectFrustumCulled = false;
+const ids = GEOS.map(g => B.addGeometry(g)); scene.add(B);
+// six walkers on a line, walking in place (a treadmill: the gait advances by the speed, they stay put)
+const YAW = { side: Math.PI / 2, tq: Math.PI / 2 - .7, front: 0, back: Math.PI }[CAMN] ?? Math.PI / 2, GAP = GRID ? 4 : 1.7;
+const actors = fits.map((f, k) => ({ x: (k - (cap - 1) / 2) * GAP, z: 0, yaw: YAW, g: gait2State({ u: k * .13, it: k * 1.7 }) }));
+const M4 = new THREE.Matrix4(), QN = new THREE.Quaternion(), V3 = new THREE.Vector3(), ONE = new THREE.Vector3(1, 1, 1), YA = new THREE.Vector3(0, 1, 0);
+actors.forEach((a, k) => { B.addInstance(ids[k]); QN.setFromAxisAngle(YA, a.yaw); V3.set(a.x, 0, a.z); M4.compose(V3, QN, ONE); B.setMatrixAt(k, M4); });
+let t = 0; const step = dt => { t += dt; for (const a of actors) { stepGait2(a.g, V * dt, dt, WALK2, G, 0); stepIdle(a.g, false, dt); } };
+const draw = () => { const d = tex.image.data; actors.forEach((a, k) => writeGait2(d, cap, k, a.g)); tex.needsUpdate = true; renderer.render(scene, camera); };
+const span = (cap - 1) * GAP + 1.4, camera = new THREE.PerspectiveCamera(GRID ? 26 : 30, FW / FH, .05, 200);
+const CAMS = { side: [[0, .95, span * .72], [0, .86, 0]], tq: [[span * .16, 1.3, span * .68], [0, .82, 0]], front: [[0, 1.0, span * .72], [0, .86, 0]], back: [[0, 1.1, -span * .72], [0, .86, 0]] };
+const [cp, ct] = CAMS[CAMN] || CAMS.side; camera.position.set(...cp); camera.lookAt(...ct); sun.target.position.set(0, 0, 0);
+// the contact sheet: N frames stacked, handles under each walker; with &dbg=back the inside-face (magenta) pixels are counted
+const sheet = document.getElementById('sheet'), g2 = sheet.getContext('2d'); sheet.width = GRID ? N * FW : FW; sheet.height = GRID ? cap * FH : N * FH;
+const focus = i => { actors.forEach((a, k) => B.setVisibleAt(k, k === i)); const a = actors[i]; camera.position.set(a.x + 1.9, 1.35, 4.3); camera.lookAt(a.x, .95, 0); };
+while (t + DT / 2 < T0) step(DT);
+const gl = renderer.getContext(), px = new Uint8Array(FW * FH * 4); let magenta = 0; const perFrame = [];
+for (let k = 0; k < N; k++) { if (k) { const tt = T0 + k * SDT; while (t + DT / 2 < tt) step(DT); if (tt - t > 1e-6) step(tt - t); }
+  const count = () => { if (DBG !== 'back') return 0; gl.readPixels(0, 0, FW, FH, gl.RGBA, gl.UNSIGNED_BYTE, px); let m = 0; for (let i = 0; i < px.length; i += 4) if (px[i] > 235 && px[i + 1] < 30 && px[i + 2] > 235) m++; return m; };
+  if (GRID) { let m = 0; for (let i = 0; i < cap; i++) { focus(i); draw(); g2.drawImage(renderer.domElement, k * FW, i * FH, FW, FH); m += count();
+      g2.fillStyle = '#17171b'; g2.fillRect(k * FW, i * FH, FW, 22); g2.fillStyle = '#ffc21a'; g2.font = '800 12px "Arial Black", Impact, sans-serif'; g2.fillText(`${fits[i].L.handle} · ${fits[i].tier} · t ${t.toFixed(2)} s`, k * FW + 7, i * FH + 15);
+      g2.strokeStyle = '#17171b'; g2.lineWidth = 2; g2.strokeRect(k * FW + 1, i * FH + 1, FW - 2, FH - 2); } magenta += m; perFrame.push(m); continue; }
+  draw(); g2.drawImage(renderer.domElement, 0, k * FH, FW, FH); { const m = count(); magenta += m; if (DBG === 'back') perFrame.push(m); }
+  g2.fillStyle = '#17171b'; g2.fillRect(0, k * FH, 190, 24); g2.fillStyle = '#ffc21a'; g2.font = '800 13px "Arial Black", Impact, sans-serif'; g2.fillText(`${k + 1} · t ${t.toFixed(2)} s · ${CAMN}${DBG ? ' · ' + DBG : ''}`, 8, k * FH + 17);
+  if (k === 0) actors.forEach((a, i) => { V3.set(a.x, 1.95, a.z).project(camera); const x = (V3.x + 1) / 2 * FW, y = (1 - V3.y) / 2 * FH; const s = fits[i].L.handle + ' · ' + fits[i].tier; g2.font = '800 13px "Arial Black", Impact, sans-serif';
+    const w = g2.measureText(s).width + 12; g2.fillStyle = '#17171b'; g2.fillRect(x - w / 2, Math.max(26, y - 18), w, 20); g2.fillStyle = '#ffc21a'; g2.fillText(s, x - w / 2 + 6, Math.max(26, y - 18) + 15); });
+  g2.strokeStyle = '#17171b'; g2.lineWidth = 2; g2.strokeRect(1, k * FH + 1, FW - 2, FH - 2); }
+const tris = LK.map(l => l.full.I.length / 3);
+document.getElementById('stats').textContent = `${fits.map(f => f.L.handle).join(' · ')}\n${Math.round(tris.reduce((a, b) => a + b, 0) / tris.length)} tris a body (segmented, slabs: ${LK.map(l => l.full.slabN.reduce((a, b) => a + b, 0)).join('/')})` + (DBG === 'back' ? `\ninside-face (magenta) pixels: ${magenta} (per frame ${perFrame.join(', ')})` : '');
+window.__walk = { magenta, perFrame, fits: fits.map(f => f.L.handle) }; document.title = 'ready';
+</script>

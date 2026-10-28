@@ -1,0 +1,32 @@
+{
+  "404": {
+    "calls": 1664,
+    "pages": 41316,
+    "events": 3221,
+    "brief": "3ce1b5b9602a92eafc736c6dd15f8a4b41871c83f9af7d9a183febcf17a30744",
+    "lookup": "1dcb5e76d393c45c6a5789f1f9949eee64cc0bd3649e756295bfe594f0a22f32",
+    "ownerAI": "a72d0da470ee7bac0831afe8616c04efbe20671fdac221441ca1166291c57e83",
+    "bots": "8fcf51709e248af3bf0f2dd0af402ac1a986daa65e79067439fb8e5108d2d6e5",
+    "end": "3a9db08c9409fdaa4cebf133659ce84ce9857d9986a415395f5fc684dd55e548"
+  },
+  "405": {
+    "calls": 1659,
+    "pages": 41232,
+    "events": 3282,
+    "brief": "8cc5f33bed7343e27d59a26d2e6ad42a0f043bc1fd8ab055130246012e5c1c95",
+    "lookup": "a10eb2f48b6c4c7cbb821d45f1f84e89c72ba582900899e14068ecc63c65f7c2",
+    "ownerAI": "623ccb88534479f91709e927d212c37c9ce2a44a56eb7d42dcf577dadd0c6117",
+    "bots": "d06c6fc41a8349830cc528d5c1d8af3c4bba60b180bbeacc3d76193d06766500",
+    "end": "bb06a268bc85d39f12d00fb25b004f8dd08dc97ea36d2c3bbf36ec7f36fc507a"
+  },
+  "406": {
+    "calls": 1667,
+    "pages": 41487,
+    "events": 3238,
+    "brief": "db35aebc321b9b44aeab99717ecb1c4165ee13be1079499030c7b052d8c9a2f1",
+    "lookup": "ef029b5e4302d8c2dc9a119ac9db9cad54383c67a95c5bfcd33a0932426fb2a2",
+    "ownerAI": "f7e50a09504b04cd14e138472707dd03cbd97668dbb6368c6866deb756c5e948",
+    "bots": "410b83817928d267f25b7b0e8a1f1f6319b860609835f5ac30264c36ff167d69",
+    "end": "140b504e6a39ab7a71d4a98e5c8eea1f90b56f8e3a8369db4c95b999c3d8fc62"
+  }
+}

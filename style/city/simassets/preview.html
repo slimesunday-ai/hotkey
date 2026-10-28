@@ -1,0 +1,43 @@
+<meta charset="utf-8">
+<title>AI City · sim-state assets</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body { margin: 0; height: 100%; background: #2f9bff; overflow: hidden; }
+  #stage canvas { display: block; }
+  .grain { position: fixed; inset: 0; pointer-events: none; mix-blend-mode: overlay; opacity: .13; }
+  .ui { position: fixed; left: 14px; top: 14px; right: 14px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font: 800 12px/1 "Arial Black", Impact, sans-serif; letter-spacing: .02em; }
+  .ui b { background: #17171b; color: #ffc21a; padding: 8px 10px 7px; text-transform: uppercase; }
+  .ui a { text-decoration: none; text-transform: uppercase; background: #fff; color: #17171b; padding: 8px 10px 7px; box-shadow: 3px 3px 0 #17171b; }
+  .ui a:hover, .ui a.on { background: #ffc21a; }
+  .ui a:focus-visible { outline: 3px solid #ff4fa3; outline-offset: 2px; }
+  #labels { position: fixed; inset: 0; pointer-events: none; }
+  .lab { position: absolute; transform: translate(-50%, -100%); font: 800 11px/1.15 "Arial Black", Impact, sans-serif; text-transform: uppercase; color: #fff; background: #17171bdd;
+    padding: 4px 6px 3px; white-space: nowrap; letter-spacing: .02em; }
+  .lab i { font-style: normal; color: #ffe23a; }
+  .lab.sm { font-size: 9px; padding: 3px 5px 2px; }
+  body.shot .ui { display: none; }
+  body.nolab #labels { display: none; }
+  #err { position: fixed; left: 14px; bottom: 12px; color: #fff; background: #c00; font: 12px monospace; white-space: pre-wrap; max-width: 60vw; }
+  #err:empty { display: none; }
+</style>
+<div id="stage"></div>
+<div class="grain"></div>
+<div id="labels"></div>
+<div class="ui"><b>AI City · sim-state assets</b>
+  <a href="?view=all">All</a><a href="?view=facade">Facade</a><a href="?view=doors">Doors</a><a href="?view=piles">Piles</a><a href="?view=street">Street</a><a href="?view=corner">Corner</a><a href="?view=lots">Lots</a>
+  <a href="#" id="tod">Day / night</a></div>
+<div id="err"></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/" } }</script>
+<script>
+  const Q = new URLSearchParams(location.search);
+  if (Q.has('shot')) document.body.classList.add('shot');
+  if (Q.get('labels') === '0') document.body.classList.add('nolab');
+  addEventListener('error', e => { document.getElementById('err').textContent += (e.message || e) + '\n'; });
+  addEventListener('unhandledrejection', e => { document.getElementById('err').textContent += (e.reason && e.reason.stack || e.reason) + '\n'; });
+  { const c = document.createElement('canvas'); c.width = c.height = 160; const g = c.getContext('2d'), d = g.createImageData(160, 160);
+    for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
+    g.putImageData(d, 0, 0); document.querySelector('.grain').style.backgroundImage = `url(${c.toDataURL()})`; }
+  document.querySelectorAll('.ui a[href^="?view"]').forEach(a => { const v = new URLSearchParams(a.search).get('view'); if ((Q.get('view') || 'all') === v) a.classList.add('on'); if (Q.get('tod')) a.search += '&tod=' + Q.get('tod'); });
+  document.getElementById('tod').addEventListener('click', e => { e.preventDefault(); const q = new URLSearchParams(location.search); q.set('tod', q.get('tod') === 'night' ? 'day' : 'night'); location.search = q; });
+</script>
+<script type="module" src="./preview.js"></script>

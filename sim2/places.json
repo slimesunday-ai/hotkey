@@ -1,0 +1,3920 @@
+{
+ "built": "2026-10-09T01:42:28.566Z",
+ "districts": {
+  "forest": "Blackpine Woods",
+  "sea": "The Bay",
+  "downtown": "Glasswall",
+  "strip": "Neon Row",
+  "suburbs": "Pleasantview",
+  "estates": "Gatehill",
+  "trailer": "Sunny Acres",
+  "industrial": "The Yards",
+  "docks": "Low Tide Docks",
+  "junkyard": "The Heap",
+  "jail": "Iron Island",
+  "hospital": "St. Mercy",
+  "highway": "Route 9",
+  "bridge": "The Long Bridge",
+  "mall": "Millennium Mall"
+ },
+ "places": [
+  {
+   "id": "police",
+   "name": "Precinct 9",
+   "kind": "police",
+   "dist": "downtown",
+   "x": 54,
+   "z": -18
+  },
+  {
+   "id": "court",
+   "name": "Hall of Justice",
+   "kind": "court",
+   "dist": "downtown",
+   "x": 18,
+   "z": -54
+  },
+  {
+   "id": "plaza",
+   "name": "Glasswall Plaza",
+   "kind": "plaza",
+   "dist": "downtown",
+   "x": 18,
+   "z": -18
+  },
+  {
+   "id": "fitstreet",
+   "name": "Fit Street (DROP)",
+   "kind": "fit",
+   "dist": "downtown",
+   "x": -90,
+   "z": 18
+  },
+  {
+   "id": "motel",
+   "name": "Motel 9",
+   "kind": "motel",
+   "dist": "highway",
+   "x": 270,
+   "z": 198
+  },
+  {
+   "id": "park",
+   "name": "Pleasantview Park",
+   "kind": "park",
+   "dist": "suburbs",
+   "x": -18,
+   "z": 198
+  },
+  {
+   "id": "store",
+   "name": "24/7 Store",
+   "kind": "store",
+   "dist": "downtown",
+   "x": 90,
+   "z": -90
+  },
+  {
+   "id": "hospital",
+   "name": "St. Mercy",
+   "kind": "hospital",
+   "dist": "hospital",
+   "x": 181,
+   "z": -37
+  },
+  {
+   "id": "jail",
+   "name": "Iron Island",
+   "kind": "jail",
+   "dist": "jail",
+   "x": 288,
+   "z": -380
+  },
+  {
+   "id": "trailer",
+   "name": "Sunny Acres",
+   "kind": "hangout",
+   "dist": "trailer",
+   "x": -234,
+   "z": -55
+  },
+  {
+   "id": "heap",
+   "name": "The Heap",
+   "kind": "site",
+   "dist": "junkyard",
+   "x": -37,
+   "z": -215,
+   "yields": "scrap"
+  },
+  {
+   "id": "mall",
+   "name": "Millennium Mall ruins",
+   "kind": "site",
+   "dist": "mall",
+   "x": -234,
+   "z": 55,
+   "yields": "salts"
+  },
+  {
+   "id": "docks",
+   "name": "Low Tide Docks",
+   "kind": "site",
+   "dist": "docks",
+   "x": 90,
+   "z": -270,
+   "yields": "goo"
+  },
+  {
+   "id": "woods",
+   "name": "Blackpine Woods",
+   "kind": "site",
+   "dist": "forest",
+   "x": -372,
+   "z": 66,
+   "yields": "leaf"
+  },
+  {
+   "id": "lab-north",
+   "name": "the north shack",
+   "kind": "lab",
+   "dist": "forest",
+   "x": 372,
+   "z": -124
+  },
+  {
+   "id": "lab-west",
+   "name": "the west shack",
+   "kind": "lab",
+   "dist": "forest",
+   "x": -450,
+   "z": -168
+  },
+  {
+   "id": "lab-south",
+   "name": "the south shack",
+   "kind": "lab",
+   "dist": "forest",
+   "x": -134,
+   "z": 440
+  },
+  {
+   "id": "corner-1_-1",
+   "name": "Kent St & 1st St",
+   "kind": "corner",
+   "dist": "downtown",
+   "x": 36,
+   "z": -36
+  },
+  {
+   "id": "corner-1_1",
+   "name": "Kent St & Washington St",
+   "kind": "corner",
+   "dist": "downtown",
+   "x": 36,
+   "z": 36
+  },
+  {
+   "id": "corner--1_-1",
+   "name": "Jay St & 1st St",
+   "kind": "corner",
+   "dist": "downtown",
+   "x": -36,
+   "z": -36
+  },
+  {
+   "id": "corner--1_1",
+   "name": "Jay St & Washington St",
+   "kind": "corner",
+   "dist": "strip",
+   "x": -36,
+   "z": 36
+  },
+  {
+   "id": "corner--4_-1",
+   "name": "Grand Ave & 1st St",
+   "kind": "corner",
+   "dist": "strip",
+   "x": -144,
+   "z": -36
+  },
+  {
+   "id": "corner-3_1",
+   "name": "Maple St & Washington St",
+   "kind": "corner",
+   "dist": "strip",
+   "x": 108,
+   "z": 36
+  },
+  {
+   "id": "corner--8_-2",
+   "name": "Birch St & 2nd St",
+   "kind": "corner",
+   "dist": "trailer",
+   "x": -288,
+   "z": -72
+  },
+  {
+   "id": "corner-1_6",
+   "name": "Kent St & Pine St",
+   "kind": "corner",
+   "dist": "suburbs",
+   "x": 36,
+   "z": 216
+  },
+  {
+   "id": "corner--1_6",
+   "name": "Jay St & Pine St",
+   "kind": "corner",
+   "dist": "suburbs",
+   "x": -36,
+   "z": 216
+  },
+  {
+   "id": "corner-2_-8",
+   "name": "Linden St & Harbor Rd",
+   "kind": "corner",
+   "dist": "docks",
+   "x": 72,
+   "z": -288
+  },
+  {
+   "id": "corner-3_-6",
+   "name": "Maple St & Foundry St",
+   "kind": "corner",
+   "dist": "industrial",
+   "x": 108,
+   "z": -216
+  },
+  {
+   "id": "corner-7_5",
+   "name": "Route 9 & Oak St",
+   "kind": "corner",
+   "dist": "highway",
+   "x": 252,
+   "z": 180
+  }
+ ],
+ "lots": [
+  {
+   "id": "lot:-284,134",
+   "lot": "-284,134",
+   "name": "133 Union Ave",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -306,
+   "z": 151
+  },
+  {
+   "id": "lot:-284,145",
+   "lot": "-284,145",
+   "name": "132 Oak St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -306,
+   "z": 175
+  },
+  {
+   "id": "lot:-284,164",
+   "lot": "-284,164",
+   "name": "133 Oak St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -306,
+   "z": 185
+  },
+  {
+   "id": "lot:-284,176",
+   "lot": "-284,176",
+   "name": "132 Pine St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -306,
+   "z": 211
+  },
+  {
+   "id": "lot:-284,196",
+   "lot": "-284,196",
+   "name": "133 Pine St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -306,
+   "z": 221
+  },
+  {
+   "id": "lot:-284,208",
+   "lot": "-284,208",
+   "name": "132 Willow St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -306,
+   "z": 247
+  },
+  {
+   "id": "lot:-284,228",
+   "lot": "-284,228",
+   "name": "133 Willow St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -306,
+   "z": 257
+  },
+  {
+   "id": "lot:-284,240",
+   "lot": "-284,240",
+   "name": "132 Aspen St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -306,
+   "z": 283
+  },
+  {
+   "id": "lot:-252,134",
+   "lot": "-252,134",
+   "name": "141 Union Ave",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -270,
+   "z": 151
+  },
+  {
+   "id": "lot:-252,145",
+   "lot": "-252,145",
+   "name": "140 Oak St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -270,
+   "z": 175
+  },
+  {
+   "id": "lot:-252,164",
+   "lot": "-252,164",
+   "name": "141 Oak St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -270,
+   "z": 185
+  },
+  {
+   "id": "lot:-252,176",
+   "lot": "-252,176",
+   "name": "140 Pine St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -270,
+   "z": 211
+  },
+  {
+   "id": "lot:-252,196",
+   "lot": "-252,196",
+   "name": "141 Pine St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -270,
+   "z": 221
+  },
+  {
+   "id": "lot:-252,208",
+   "lot": "-252,208",
+   "name": "140 Willow St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -270,
+   "z": 247
+  },
+  {
+   "id": "lot:-252,228",
+   "lot": "-252,228",
+   "name": "141 Willow St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -270,
+   "z": 257
+  },
+  {
+   "id": "lot:-252,240",
+   "lot": "-252,240",
+   "name": "140 Aspen St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -270,
+   "z": 283
+  },
+  {
+   "id": "lot:-220,134",
+   "lot": "-220,134",
+   "name": "149 Union Ave",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -234,
+   "z": 151
+  },
+  {
+   "id": "lot:-220,145",
+   "lot": "-220,145",
+   "name": "148 Oak St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -234,
+   "z": 175
+  },
+  {
+   "id": "lot:-220,164",
+   "lot": "-220,164",
+   "name": "149 Oak St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -234,
+   "z": 185
+  },
+  {
+   "id": "lot:-220,176",
+   "lot": "-220,176",
+   "name": "148 Pine St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -234,
+   "z": 211
+  },
+  {
+   "id": "lot:-220,196",
+   "lot": "-220,196",
+   "name": "149 Pine St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -234,
+   "z": 221
+  },
+  {
+   "id": "lot:-220,208",
+   "lot": "-220,208",
+   "name": "148 Willow St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -234,
+   "z": 247
+  },
+  {
+   "id": "lot:-220,228",
+   "lot": "-220,228",
+   "name": "149 Willow St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -234,
+   "z": 257
+  },
+  {
+   "id": "lot:-220,240",
+   "lot": "-220,240",
+   "name": "148 Aspen St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -234,
+   "z": 283
+  },
+  {
+   "id": "lot:-188,134",
+   "lot": "-188,134",
+   "name": "157 Union Ave",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -198,
+   "z": 151
+  },
+  {
+   "id": "lot:-188,145",
+   "lot": "-188,145",
+   "name": "156 Oak St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -198,
+   "z": 175
+  },
+  {
+   "id": "lot:-188,164",
+   "lot": "-188,164",
+   "name": "157 Oak St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -198,
+   "z": 185
+  },
+  {
+   "id": "lot:-188,176",
+   "lot": "-188,176",
+   "name": "156 Pine St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -198,
+   "z": 211
+  },
+  {
+   "id": "lot:-188,196",
+   "lot": "-188,196",
+   "name": "157 Pine St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -198,
+   "z": 221
+  },
+  {
+   "id": "lot:-188,208",
+   "lot": "-188,208",
+   "name": "156 Willow St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -198,
+   "z": 247
+  },
+  {
+   "id": "lot:-188,228",
+   "lot": "-188,228",
+   "name": "157 Willow St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -198,
+   "z": 257
+  },
+  {
+   "id": "lot:-188,240",
+   "lot": "-188,240",
+   "name": "156 Aspen St",
+   "kind": "lot",
+   "tier": "estate",
+   "dist": "estates",
+   "x": -198,
+   "z": 283
+  },
+  {
+   "id": "lot:-156,100",
+   "lot": "-156,100",
+   "name": "163 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -168,
+   "z": 113
+  },
+  {
+   "id": "lot:-145,100",
+   "lot": "-145,100",
+   "name": "167 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -157,
+   "z": 113
+  },
+  {
+   "id": "lot:-156,111",
+   "lot": "-156,111",
+   "name": "162 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -168,
+   "z": 137
+  },
+  {
+   "id": "lot:-145,111",
+   "lot": "-145,111",
+   "name": "166 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -157,
+   "z": 137
+  },
+  {
+   "id": "lot:-156,134",
+   "lot": "-156,134",
+   "name": "163 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -168,
+   "z": 151
+  },
+  {
+   "id": "lot:-145,134",
+   "lot": "-145,134",
+   "name": "167 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -157,
+   "z": 151
+  },
+  {
+   "id": "lot:-156,145",
+   "lot": "-156,145",
+   "name": "162 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -168,
+   "z": 175
+  },
+  {
+   "id": "lot:-145,145",
+   "lot": "-145,145",
+   "name": "166 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -157,
+   "z": 175
+  },
+  {
+   "id": "lot:-156,164",
+   "lot": "-156,164",
+   "name": "163 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -168,
+   "z": 185
+  },
+  {
+   "id": "lot:-145,164",
+   "lot": "-145,164",
+   "name": "167 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -157,
+   "z": 185
+  },
+  {
+   "id": "lot:-156,176",
+   "lot": "-156,176",
+   "name": "162 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -168,
+   "z": 211
+  },
+  {
+   "id": "lot:-145,176",
+   "lot": "-145,176",
+   "name": "166 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -157,
+   "z": 211
+  },
+  {
+   "id": "lot:-156,196",
+   "lot": "-156,196",
+   "name": "163 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -168,
+   "z": 221
+  },
+  {
+   "id": "lot:-145,196",
+   "lot": "-145,196",
+   "name": "167 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -157,
+   "z": 221
+  },
+  {
+   "id": "lot:-156,208",
+   "lot": "-156,208",
+   "name": "162 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -168,
+   "z": 247
+  },
+  {
+   "id": "lot:-145,208",
+   "lot": "-145,208",
+   "name": "166 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -157,
+   "z": 247
+  },
+  {
+   "id": "lot:-156,228",
+   "lot": "-156,228",
+   "name": "163 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -168,
+   "z": 257
+  },
+  {
+   "id": "lot:-145,228",
+   "lot": "-145,228",
+   "name": "167 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -157,
+   "z": 257
+  },
+  {
+   "id": "lot:-156,240",
+   "lot": "-156,240",
+   "name": "162 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -168,
+   "z": 283
+  },
+  {
+   "id": "lot:-145,240",
+   "lot": "-145,240",
+   "name": "166 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -157,
+   "z": 283
+  },
+  {
+   "id": "lot:-156,260",
+   "lot": "-156,260",
+   "name": "163 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -168,
+   "z": 293
+  },
+  {
+   "id": "lot:-145,260",
+   "lot": "-145,260",
+   "name": "167 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -157,
+   "z": 293
+  },
+  {
+   "id": "lot:-156,272",
+   "lot": "-156,272",
+   "name": "162 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -168,
+   "z": 319
+  },
+  {
+   "id": "lot:-145,272",
+   "lot": "-145,272",
+   "name": "166 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -157,
+   "z": 319
+  },
+  {
+   "id": "lot:-122,100",
+   "lot": "-122,100",
+   "name": "171 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -130,
+   "z": 113
+  },
+  {
+   "id": "lot:-111,100",
+   "lot": "-111,100",
+   "name": "175 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -119,
+   "z": 113
+  },
+  {
+   "id": "lot:-122,111",
+   "lot": "-122,111",
+   "name": "170 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -130,
+   "z": 137
+  },
+  {
+   "id": "lot:-111,111",
+   "lot": "-111,111",
+   "name": "174 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -119,
+   "z": 137
+  },
+  {
+   "id": "lot:-122,134",
+   "lot": "-122,134",
+   "name": "171 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -130,
+   "z": 151
+  },
+  {
+   "id": "lot:-111,134",
+   "lot": "-111,134",
+   "name": "175 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -119,
+   "z": 151
+  },
+  {
+   "id": "lot:-122,145",
+   "lot": "-122,145",
+   "name": "170 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -130,
+   "z": 175
+  },
+  {
+   "id": "lot:-111,145",
+   "lot": "-111,145",
+   "name": "174 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -119,
+   "z": 175
+  },
+  {
+   "id": "lot:-122,164",
+   "lot": "-122,164",
+   "name": "171 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -130,
+   "z": 185
+  },
+  {
+   "id": "lot:-111,164",
+   "lot": "-111,164",
+   "name": "175 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -119,
+   "z": 185
+  },
+  {
+   "id": "lot:-122,176",
+   "lot": "-122,176",
+   "name": "170 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -130,
+   "z": 211
+  },
+  {
+   "id": "lot:-111,176",
+   "lot": "-111,176",
+   "name": "174 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -119,
+   "z": 211
+  },
+  {
+   "id": "lot:-122,196",
+   "lot": "-122,196",
+   "name": "171 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -130,
+   "z": 221
+  },
+  {
+   "id": "lot:-111,196",
+   "lot": "-111,196",
+   "name": "175 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -119,
+   "z": 221
+  },
+  {
+   "id": "lot:-122,208",
+   "lot": "-122,208",
+   "name": "170 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -130,
+   "z": 247
+  },
+  {
+   "id": "lot:-111,208",
+   "lot": "-111,208",
+   "name": "174 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -119,
+   "z": 247
+  },
+  {
+   "id": "lot:-122,228",
+   "lot": "-122,228",
+   "name": "171 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -130,
+   "z": 257
+  },
+  {
+   "id": "lot:-111,228",
+   "lot": "-111,228",
+   "name": "175 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -119,
+   "z": 257
+  },
+  {
+   "id": "lot:-122,240",
+   "lot": "-122,240",
+   "name": "170 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -130,
+   "z": 283
+  },
+  {
+   "id": "lot:-111,240",
+   "lot": "-111,240",
+   "name": "174 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -119,
+   "z": 283
+  },
+  {
+   "id": "lot:-122,260",
+   "lot": "-122,260",
+   "name": "171 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -130,
+   "z": 293
+  },
+  {
+   "id": "lot:-111,260",
+   "lot": "-111,260",
+   "name": "175 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -119,
+   "z": 293
+  },
+  {
+   "id": "lot:-122,272",
+   "lot": "-122,272",
+   "name": "170 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -130,
+   "z": 319
+  },
+  {
+   "id": "lot:-111,272",
+   "lot": "-111,272",
+   "name": "174 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -119,
+   "z": 319
+  },
+  {
+   "id": "lot:-92,100",
+   "lot": "-92,100",
+   "name": "179 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -96,
+   "z": 113
+  },
+  {
+   "id": "lot:-80,100",
+   "lot": "-80,100",
+   "name": "183 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -84,
+   "z": 113
+  },
+  {
+   "id": "lot:-92,111",
+   "lot": "-92,111",
+   "name": "178 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -96,
+   "z": 137
+  },
+  {
+   "id": "lot:-80,111",
+   "lot": "-80,111",
+   "name": "182 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -84,
+   "z": 137
+  },
+  {
+   "id": "lot:-92,134",
+   "lot": "-92,134",
+   "name": "179 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -96,
+   "z": 151
+  },
+  {
+   "id": "lot:-80,134",
+   "lot": "-80,134",
+   "name": "183 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -84,
+   "z": 151
+  },
+  {
+   "id": "lot:-92,145",
+   "lot": "-92,145",
+   "name": "178 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -96,
+   "z": 175
+  },
+  {
+   "id": "lot:-80,145",
+   "lot": "-80,145",
+   "name": "182 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -84,
+   "z": 175
+  },
+  {
+   "id": "lot:-92,164",
+   "lot": "-92,164",
+   "name": "179 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -96,
+   "z": 185
+  },
+  {
+   "id": "lot:-80,164",
+   "lot": "-80,164",
+   "name": "183 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -84,
+   "z": 185
+  },
+  {
+   "id": "lot:-92,176",
+   "lot": "-92,176",
+   "name": "178 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -96,
+   "z": 211
+  },
+  {
+   "id": "lot:-80,176",
+   "lot": "-80,176",
+   "name": "182 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -84,
+   "z": 211
+  },
+  {
+   "id": "lot:-92,196",
+   "lot": "-92,196",
+   "name": "179 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -96,
+   "z": 221
+  },
+  {
+   "id": "lot:-80,196",
+   "lot": "-80,196",
+   "name": "183 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -84,
+   "z": 221
+  },
+  {
+   "id": "lot:-92,208",
+   "lot": "-92,208",
+   "name": "178 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -96,
+   "z": 247
+  },
+  {
+   "id": "lot:-80,208",
+   "lot": "-80,208",
+   "name": "182 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -84,
+   "z": 247
+  },
+  {
+   "id": "lot:-92,228",
+   "lot": "-92,228",
+   "name": "179 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -96,
+   "z": 257
+  },
+  {
+   "id": "lot:-80,228",
+   "lot": "-80,228",
+   "name": "183 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -84,
+   "z": 257
+  },
+  {
+   "id": "lot:-92,240",
+   "lot": "-92,240",
+   "name": "178 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -96,
+   "z": 283
+  },
+  {
+   "id": "lot:-80,240",
+   "lot": "-80,240",
+   "name": "182 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -84,
+   "z": 283
+  },
+  {
+   "id": "lot:-92,260",
+   "lot": "-92,260",
+   "name": "179 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -96,
+   "z": 293
+  },
+  {
+   "id": "lot:-80,260",
+   "lot": "-80,260",
+   "name": "183 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -84,
+   "z": 293
+  },
+  {
+   "id": "lot:-92,272",
+   "lot": "-92,272",
+   "name": "178 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -96,
+   "z": 319
+  },
+  {
+   "id": "lot:-80,272",
+   "lot": "-80,272",
+   "name": "182 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -84,
+   "z": 319
+  },
+  {
+   "id": "lot:-60,100",
+   "lot": "-60,100",
+   "name": "187 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -60,
+   "z": 113
+  },
+  {
+   "id": "lot:-48,100",
+   "lot": "-48,100",
+   "name": "191 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -48,
+   "z": 113
+  },
+  {
+   "id": "lot:-60,111",
+   "lot": "-60,111",
+   "name": "186 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -60,
+   "z": 137
+  },
+  {
+   "id": "lot:-48,111",
+   "lot": "-48,111",
+   "name": "190 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -48,
+   "z": 137
+  },
+  {
+   "id": "lot:-60,134",
+   "lot": "-60,134",
+   "name": "187 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -60,
+   "z": 151
+  },
+  {
+   "id": "lot:-48,134",
+   "lot": "-48,134",
+   "name": "191 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -48,
+   "z": 151
+  },
+  {
+   "id": "lot:-60,145",
+   "lot": "-60,145",
+   "name": "186 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -60,
+   "z": 175
+  },
+  {
+   "id": "lot:-48,145",
+   "lot": "-48,145",
+   "name": "190 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -48,
+   "z": 175
+  },
+  {
+   "id": "lot:-60,164",
+   "lot": "-60,164",
+   "name": "187 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -60,
+   "z": 185
+  },
+  {
+   "id": "lot:-48,164",
+   "lot": "-48,164",
+   "name": "191 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -48,
+   "z": 185
+  },
+  {
+   "id": "lot:-60,176",
+   "lot": "-60,176",
+   "name": "186 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -60,
+   "z": 211
+  },
+  {
+   "id": "lot:-48,176",
+   "lot": "-48,176",
+   "name": "190 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -48,
+   "z": 211
+  },
+  {
+   "id": "lot:-60,196",
+   "lot": "-60,196",
+   "name": "187 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -60,
+   "z": 221
+  },
+  {
+   "id": "lot:-48,196",
+   "lot": "-48,196",
+   "name": "191 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -48,
+   "z": 221
+  },
+  {
+   "id": "lot:-60,208",
+   "lot": "-60,208",
+   "name": "186 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -60,
+   "z": 247
+  },
+  {
+   "id": "lot:-48,208",
+   "lot": "-48,208",
+   "name": "190 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -48,
+   "z": 247
+  },
+  {
+   "id": "lot:-60,228",
+   "lot": "-60,228",
+   "name": "187 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -60,
+   "z": 257
+  },
+  {
+   "id": "lot:-48,228",
+   "lot": "-48,228",
+   "name": "191 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -48,
+   "z": 257
+  },
+  {
+   "id": "lot:-60,240",
+   "lot": "-60,240",
+   "name": "186 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -60,
+   "z": 283
+  },
+  {
+   "id": "lot:-48,240",
+   "lot": "-48,240",
+   "name": "190 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -48,
+   "z": 283
+  },
+  {
+   "id": "lot:-60,260",
+   "lot": "-60,260",
+   "name": "187 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -60,
+   "z": 293
+  },
+  {
+   "id": "lot:-48,260",
+   "lot": "-48,260",
+   "name": "191 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -48,
+   "z": 293
+  },
+  {
+   "id": "lot:-60,272",
+   "lot": "-60,272",
+   "name": "186 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -60,
+   "z": 319
+  },
+  {
+   "id": "lot:-48,272",
+   "lot": "-48,272",
+   "name": "190 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -48,
+   "z": 319
+  },
+  {
+   "id": "lot:-28,100",
+   "lot": "-28,100",
+   "name": "195 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -24,
+   "z": 113
+  },
+  {
+   "id": "lot:-17,100",
+   "lot": "-17,100",
+   "name": "199 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -13,
+   "z": 113
+  },
+  {
+   "id": "lot:-28,111",
+   "lot": "-28,111",
+   "name": "194 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -24,
+   "z": 137
+  },
+  {
+   "id": "lot:-17,111",
+   "lot": "-17,111",
+   "name": "198 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -13,
+   "z": 137
+  },
+  {
+   "id": "lot:-28,134",
+   "lot": "-28,134",
+   "name": "195 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -24,
+   "z": 151
+  },
+  {
+   "id": "lot:-17,134",
+   "lot": "-17,134",
+   "name": "199 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -13,
+   "z": 151
+  },
+  {
+   "id": "lot:-28,145",
+   "lot": "-28,145",
+   "name": "194 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -24,
+   "z": 175
+  },
+  {
+   "id": "lot:-17,145",
+   "lot": "-17,145",
+   "name": "198 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -13,
+   "z": 175
+  },
+  {
+   "id": "lot:-28,196",
+   "lot": "-28,196",
+   "name": "195 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -24,
+   "z": 221
+  },
+  {
+   "id": "lot:-17,196",
+   "lot": "-17,196",
+   "name": "199 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -13,
+   "z": 221
+  },
+  {
+   "id": "lot:-28,208",
+   "lot": "-28,208",
+   "name": "194 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -24,
+   "z": 247
+  },
+  {
+   "id": "lot:-17,208",
+   "lot": "-17,208",
+   "name": "198 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -13,
+   "z": 247
+  },
+  {
+   "id": "lot:-28,228",
+   "lot": "-28,228",
+   "name": "195 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -24,
+   "z": 257
+  },
+  {
+   "id": "lot:-17,228",
+   "lot": "-17,228",
+   "name": "199 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -13,
+   "z": 257
+  },
+  {
+   "id": "lot:-28,240",
+   "lot": "-28,240",
+   "name": "194 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -24,
+   "z": 283
+  },
+  {
+   "id": "lot:-17,240",
+   "lot": "-17,240",
+   "name": "198 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -13,
+   "z": 283
+  },
+  {
+   "id": "lot:-28,260",
+   "lot": "-28,260",
+   "name": "195 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -24,
+   "z": 293
+  },
+  {
+   "id": "lot:-17,260",
+   "lot": "-17,260",
+   "name": "199 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -13,
+   "z": 293
+  },
+  {
+   "id": "lot:-28,272",
+   "lot": "-28,272",
+   "name": "194 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -24,
+   "z": 319
+  },
+  {
+   "id": "lot:-17,272",
+   "lot": "-17,272",
+   "name": "198 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": -13,
+   "z": 319
+  },
+  {
+   "id": "lot:6,100",
+   "lot": "6,100",
+   "name": "203 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 14,
+   "z": 113
+  },
+  {
+   "id": "lot:17,100",
+   "lot": "17,100",
+   "name": "207 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 25,
+   "z": 113
+  },
+  {
+   "id": "lot:6,111",
+   "lot": "6,111",
+   "name": "202 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 14,
+   "z": 137
+  },
+  {
+   "id": "lot:17,111",
+   "lot": "17,111",
+   "name": "206 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 25,
+   "z": 137
+  },
+  {
+   "id": "lot:6,134",
+   "lot": "6,134",
+   "name": "203 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 14,
+   "z": 151
+  },
+  {
+   "id": "lot:17,134",
+   "lot": "17,134",
+   "name": "207 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 25,
+   "z": 151
+  },
+  {
+   "id": "lot:6,145",
+   "lot": "6,145",
+   "name": "202 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 14,
+   "z": 175
+  },
+  {
+   "id": "lot:17,145",
+   "lot": "17,145",
+   "name": "206 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 25,
+   "z": 175
+  },
+  {
+   "id": "lot:6,164",
+   "lot": "6,164",
+   "name": "203 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 14,
+   "z": 185
+  },
+  {
+   "id": "lot:17,164",
+   "lot": "17,164",
+   "name": "207 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 25,
+   "z": 185
+  },
+  {
+   "id": "lot:6,176",
+   "lot": "6,176",
+   "name": "202 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 14,
+   "z": 211
+  },
+  {
+   "id": "lot:17,176",
+   "lot": "17,176",
+   "name": "206 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 25,
+   "z": 211
+  },
+  {
+   "id": "lot:6,196",
+   "lot": "6,196",
+   "name": "203 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 14,
+   "z": 221
+  },
+  {
+   "id": "lot:17,196",
+   "lot": "17,196",
+   "name": "207 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 25,
+   "z": 221
+  },
+  {
+   "id": "lot:6,208",
+   "lot": "6,208",
+   "name": "202 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 14,
+   "z": 247
+  },
+  {
+   "id": "lot:17,208",
+   "lot": "17,208",
+   "name": "206 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 25,
+   "z": 247
+  },
+  {
+   "id": "lot:6,228",
+   "lot": "6,228",
+   "name": "203 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 14,
+   "z": 257
+  },
+  {
+   "id": "lot:17,228",
+   "lot": "17,228",
+   "name": "207 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 25,
+   "z": 257
+  },
+  {
+   "id": "lot:6,240",
+   "lot": "6,240",
+   "name": "202 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 14,
+   "z": 283
+  },
+  {
+   "id": "lot:17,240",
+   "lot": "17,240",
+   "name": "206 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 25,
+   "z": 283
+  },
+  {
+   "id": "lot:6,260",
+   "lot": "6,260",
+   "name": "203 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 14,
+   "z": 293
+  },
+  {
+   "id": "lot:17,260",
+   "lot": "17,260",
+   "name": "207 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 25,
+   "z": 293
+  },
+  {
+   "id": "lot:6,272",
+   "lot": "6,272",
+   "name": "202 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 14,
+   "z": 319
+  },
+  {
+   "id": "lot:17,272",
+   "lot": "17,272",
+   "name": "206 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 25,
+   "z": 319
+  },
+  {
+   "id": "lot:36,100",
+   "lot": "36,100",
+   "name": "211 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 48,
+   "z": 113
+  },
+  {
+   "id": "lot:48,100",
+   "lot": "48,100",
+   "name": "215 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 60,
+   "z": 113
+  },
+  {
+   "id": "lot:36,111",
+   "lot": "36,111",
+   "name": "210 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 48,
+   "z": 137
+  },
+  {
+   "id": "lot:48,111",
+   "lot": "48,111",
+   "name": "214 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 60,
+   "z": 137
+  },
+  {
+   "id": "lot:36,134",
+   "lot": "36,134",
+   "name": "211 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 48,
+   "z": 151
+  },
+  {
+   "id": "lot:48,134",
+   "lot": "48,134",
+   "name": "215 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 60,
+   "z": 151
+  },
+  {
+   "id": "lot:36,145",
+   "lot": "36,145",
+   "name": "210 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 48,
+   "z": 175
+  },
+  {
+   "id": "lot:48,145",
+   "lot": "48,145",
+   "name": "214 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 60,
+   "z": 175
+  },
+  {
+   "id": "lot:36,164",
+   "lot": "36,164",
+   "name": "211 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 48,
+   "z": 185
+  },
+  {
+   "id": "lot:48,164",
+   "lot": "48,164",
+   "name": "215 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 60,
+   "z": 185
+  },
+  {
+   "id": "lot:36,176",
+   "lot": "36,176",
+   "name": "210 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 48,
+   "z": 211
+  },
+  {
+   "id": "lot:48,176",
+   "lot": "48,176",
+   "name": "214 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 60,
+   "z": 211
+  },
+  {
+   "id": "lot:36,196",
+   "lot": "36,196",
+   "name": "211 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 48,
+   "z": 221
+  },
+  {
+   "id": "lot:48,196",
+   "lot": "48,196",
+   "name": "215 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 60,
+   "z": 221
+  },
+  {
+   "id": "lot:36,208",
+   "lot": "36,208",
+   "name": "210 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 48,
+   "z": 247
+  },
+  {
+   "id": "lot:48,208",
+   "lot": "48,208",
+   "name": "214 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 60,
+   "z": 247
+  },
+  {
+   "id": "lot:36,228",
+   "lot": "36,228",
+   "name": "211 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 48,
+   "z": 257
+  },
+  {
+   "id": "lot:48,228",
+   "lot": "48,228",
+   "name": "215 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 60,
+   "z": 257
+  },
+  {
+   "id": "lot:36,240",
+   "lot": "36,240",
+   "name": "210 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 48,
+   "z": 283
+  },
+  {
+   "id": "lot:48,240",
+   "lot": "48,240",
+   "name": "214 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 60,
+   "z": 283
+  },
+  {
+   "id": "lot:36,260",
+   "lot": "36,260",
+   "name": "211 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 48,
+   "z": 293
+  },
+  {
+   "id": "lot:48,260",
+   "lot": "48,260",
+   "name": "215 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 60,
+   "z": 293
+  },
+  {
+   "id": "lot:36,272",
+   "lot": "36,272",
+   "name": "210 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 48,
+   "z": 319
+  },
+  {
+   "id": "lot:48,272",
+   "lot": "48,272",
+   "name": "214 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 60,
+   "z": 319
+  },
+  {
+   "id": "lot:68,100",
+   "lot": "68,100",
+   "name": "219 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 84,
+   "z": 113
+  },
+  {
+   "id": "lot:80,100",
+   "lot": "80,100",
+   "name": "223 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 96,
+   "z": 113
+  },
+  {
+   "id": "lot:68,111",
+   "lot": "68,111",
+   "name": "218 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 84,
+   "z": 137
+  },
+  {
+   "id": "lot:80,111",
+   "lot": "80,111",
+   "name": "222 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 96,
+   "z": 137
+  },
+  {
+   "id": "lot:68,134",
+   "lot": "68,134",
+   "name": "219 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 84,
+   "z": 151
+  },
+  {
+   "id": "lot:80,134",
+   "lot": "80,134",
+   "name": "223 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 96,
+   "z": 151
+  },
+  {
+   "id": "lot:68,145",
+   "lot": "68,145",
+   "name": "218 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 84,
+   "z": 175
+  },
+  {
+   "id": "lot:80,145",
+   "lot": "80,145",
+   "name": "222 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 96,
+   "z": 175
+  },
+  {
+   "id": "lot:68,164",
+   "lot": "68,164",
+   "name": "219 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 84,
+   "z": 185
+  },
+  {
+   "id": "lot:80,164",
+   "lot": "80,164",
+   "name": "223 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 96,
+   "z": 185
+  },
+  {
+   "id": "lot:68,176",
+   "lot": "68,176",
+   "name": "218 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 84,
+   "z": 211
+  },
+  {
+   "id": "lot:80,176",
+   "lot": "80,176",
+   "name": "222 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 96,
+   "z": 211
+  },
+  {
+   "id": "lot:68,196",
+   "lot": "68,196",
+   "name": "219 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 84,
+   "z": 221
+  },
+  {
+   "id": "lot:80,196",
+   "lot": "80,196",
+   "name": "223 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 96,
+   "z": 221
+  },
+  {
+   "id": "lot:68,208",
+   "lot": "68,208",
+   "name": "218 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 84,
+   "z": 247
+  },
+  {
+   "id": "lot:80,208",
+   "lot": "80,208",
+   "name": "222 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 96,
+   "z": 247
+  },
+  {
+   "id": "lot:68,228",
+   "lot": "68,228",
+   "name": "219 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 84,
+   "z": 257
+  },
+  {
+   "id": "lot:80,228",
+   "lot": "80,228",
+   "name": "223 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 96,
+   "z": 257
+  },
+  {
+   "id": "lot:68,240",
+   "lot": "68,240",
+   "name": "218 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 84,
+   "z": 283
+  },
+  {
+   "id": "lot:80,240",
+   "lot": "80,240",
+   "name": "222 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 96,
+   "z": 283
+  },
+  {
+   "id": "lot:68,260",
+   "lot": "68,260",
+   "name": "219 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 84,
+   "z": 293
+  },
+  {
+   "id": "lot:80,260",
+   "lot": "80,260",
+   "name": "223 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 96,
+   "z": 293
+  },
+  {
+   "id": "lot:68,272",
+   "lot": "68,272",
+   "name": "218 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 84,
+   "z": 319
+  },
+  {
+   "id": "lot:80,272",
+   "lot": "80,272",
+   "name": "222 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 96,
+   "z": 319
+  },
+  {
+   "id": "lot:100,100",
+   "lot": "100,100",
+   "name": "227 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 120,
+   "z": 113
+  },
+  {
+   "id": "lot:111,100",
+   "lot": "111,100",
+   "name": "231 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 131,
+   "z": 113
+  },
+  {
+   "id": "lot:100,111",
+   "lot": "100,111",
+   "name": "226 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 120,
+   "z": 137
+  },
+  {
+   "id": "lot:111,111",
+   "lot": "111,111",
+   "name": "230 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 131,
+   "z": 137
+  },
+  {
+   "id": "lot:100,134",
+   "lot": "100,134",
+   "name": "227 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 120,
+   "z": 151
+  },
+  {
+   "id": "lot:111,134",
+   "lot": "111,134",
+   "name": "231 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 131,
+   "z": 151
+  },
+  {
+   "id": "lot:100,145",
+   "lot": "100,145",
+   "name": "226 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 120,
+   "z": 175
+  },
+  {
+   "id": "lot:111,145",
+   "lot": "111,145",
+   "name": "230 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 131,
+   "z": 175
+  },
+  {
+   "id": "lot:100,164",
+   "lot": "100,164",
+   "name": "227 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 120,
+   "z": 185
+  },
+  {
+   "id": "lot:111,164",
+   "lot": "111,164",
+   "name": "231 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 131,
+   "z": 185
+  },
+  {
+   "id": "lot:100,176",
+   "lot": "100,176",
+   "name": "226 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 120,
+   "z": 211
+  },
+  {
+   "id": "lot:111,176",
+   "lot": "111,176",
+   "name": "230 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 131,
+   "z": 211
+  },
+  {
+   "id": "lot:100,196",
+   "lot": "100,196",
+   "name": "227 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 120,
+   "z": 221
+  },
+  {
+   "id": "lot:111,196",
+   "lot": "111,196",
+   "name": "231 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 131,
+   "z": 221
+  },
+  {
+   "id": "lot:100,208",
+   "lot": "100,208",
+   "name": "226 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 120,
+   "z": 247
+  },
+  {
+   "id": "lot:111,208",
+   "lot": "111,208",
+   "name": "230 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 131,
+   "z": 247
+  },
+  {
+   "id": "lot:100,260",
+   "lot": "100,260",
+   "name": "227 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 120,
+   "z": 293
+  },
+  {
+   "id": "lot:111,260",
+   "lot": "111,260",
+   "name": "231 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 131,
+   "z": 293
+  },
+  {
+   "id": "lot:100,272",
+   "lot": "100,272",
+   "name": "226 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 120,
+   "z": 319
+  },
+  {
+   "id": "lot:111,272",
+   "lot": "111,272",
+   "name": "230 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 131,
+   "z": 319
+  },
+  {
+   "id": "lot:134,100",
+   "lot": "134,100",
+   "name": "235 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 158,
+   "z": 113
+  },
+  {
+   "id": "lot:145,100",
+   "lot": "145,100",
+   "name": "239 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 169,
+   "z": 113
+  },
+  {
+   "id": "lot:134,111",
+   "lot": "134,111",
+   "name": "234 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 158,
+   "z": 137
+  },
+  {
+   "id": "lot:145,111",
+   "lot": "145,111",
+   "name": "238 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 169,
+   "z": 137
+  },
+  {
+   "id": "lot:134,134",
+   "lot": "134,134",
+   "name": "235 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 158,
+   "z": 151
+  },
+  {
+   "id": "lot:145,134",
+   "lot": "145,134",
+   "name": "239 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 169,
+   "z": 151
+  },
+  {
+   "id": "lot:134,145",
+   "lot": "134,145",
+   "name": "234 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 158,
+   "z": 175
+  },
+  {
+   "id": "lot:145,145",
+   "lot": "145,145",
+   "name": "238 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 169,
+   "z": 175
+  },
+  {
+   "id": "lot:134,164",
+   "lot": "134,164",
+   "name": "235 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 158,
+   "z": 185
+  },
+  {
+   "id": "lot:145,164",
+   "lot": "145,164",
+   "name": "239 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 169,
+   "z": 185
+  },
+  {
+   "id": "lot:134,176",
+   "lot": "134,176",
+   "name": "234 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 158,
+   "z": 211
+  },
+  {
+   "id": "lot:145,176",
+   "lot": "145,176",
+   "name": "238 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 169,
+   "z": 211
+  },
+  {
+   "id": "lot:134,196",
+   "lot": "134,196",
+   "name": "235 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 158,
+   "z": 221
+  },
+  {
+   "id": "lot:145,196",
+   "lot": "145,196",
+   "name": "239 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 169,
+   "z": 221
+  },
+  {
+   "id": "lot:134,208",
+   "lot": "134,208",
+   "name": "234 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 158,
+   "z": 247
+  },
+  {
+   "id": "lot:145,208",
+   "lot": "145,208",
+   "name": "238 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 169,
+   "z": 247
+  },
+  {
+   "id": "lot:134,228",
+   "lot": "134,228",
+   "name": "235 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 158,
+   "z": 257
+  },
+  {
+   "id": "lot:145,228",
+   "lot": "145,228",
+   "name": "239 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 169,
+   "z": 257
+  },
+  {
+   "id": "lot:134,240",
+   "lot": "134,240",
+   "name": "234 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 158,
+   "z": 283
+  },
+  {
+   "id": "lot:145,240",
+   "lot": "145,240",
+   "name": "238 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 169,
+   "z": 283
+  },
+  {
+   "id": "lot:134,260",
+   "lot": "134,260",
+   "name": "235 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 158,
+   "z": 293
+  },
+  {
+   "id": "lot:145,260",
+   "lot": "145,260",
+   "name": "239 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 169,
+   "z": 293
+  },
+  {
+   "id": "lot:134,272",
+   "lot": "134,272",
+   "name": "234 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 158,
+   "z": 319
+  },
+  {
+   "id": "lot:145,272",
+   "lot": "145,272",
+   "name": "238 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 169,
+   "z": 319
+  },
+  {
+   "id": "lot:164,100",
+   "lot": "164,100",
+   "name": "243 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 192,
+   "z": 113
+  },
+  {
+   "id": "lot:176,100",
+   "lot": "176,100",
+   "name": "247 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 204,
+   "z": 113
+  },
+  {
+   "id": "lot:164,111",
+   "lot": "164,111",
+   "name": "242 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 192,
+   "z": 137
+  },
+  {
+   "id": "lot:176,111",
+   "lot": "176,111",
+   "name": "246 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 204,
+   "z": 137
+  },
+  {
+   "id": "lot:164,134",
+   "lot": "164,134",
+   "name": "243 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 192,
+   "z": 151
+  },
+  {
+   "id": "lot:176,134",
+   "lot": "176,134",
+   "name": "247 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 204,
+   "z": 151
+  },
+  {
+   "id": "lot:164,145",
+   "lot": "164,145",
+   "name": "242 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 192,
+   "z": 175
+  },
+  {
+   "id": "lot:176,145",
+   "lot": "176,145",
+   "name": "246 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 204,
+   "z": 175
+  },
+  {
+   "id": "lot:164,164",
+   "lot": "164,164",
+   "name": "243 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 192,
+   "z": 185
+  },
+  {
+   "id": "lot:176,164",
+   "lot": "176,164",
+   "name": "247 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 204,
+   "z": 185
+  },
+  {
+   "id": "lot:164,176",
+   "lot": "164,176",
+   "name": "242 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 192,
+   "z": 211
+  },
+  {
+   "id": "lot:176,176",
+   "lot": "176,176",
+   "name": "246 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 204,
+   "z": 211
+  },
+  {
+   "id": "lot:164,196",
+   "lot": "164,196",
+   "name": "243 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 192,
+   "z": 221
+  },
+  {
+   "id": "lot:176,196",
+   "lot": "176,196",
+   "name": "247 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 204,
+   "z": 221
+  },
+  {
+   "id": "lot:164,208",
+   "lot": "164,208",
+   "name": "242 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 192,
+   "z": 247
+  },
+  {
+   "id": "lot:176,208",
+   "lot": "176,208",
+   "name": "246 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 204,
+   "z": 247
+  },
+  {
+   "id": "lot:164,228",
+   "lot": "164,228",
+   "name": "243 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 192,
+   "z": 257
+  },
+  {
+   "id": "lot:176,228",
+   "lot": "176,228",
+   "name": "247 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 204,
+   "z": 257
+  },
+  {
+   "id": "lot:164,240",
+   "lot": "164,240",
+   "name": "242 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 192,
+   "z": 283
+  },
+  {
+   "id": "lot:176,240",
+   "lot": "176,240",
+   "name": "246 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 204,
+   "z": 283
+  },
+  {
+   "id": "lot:164,260",
+   "lot": "164,260",
+   "name": "243 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 192,
+   "z": 293
+  },
+  {
+   "id": "lot:176,260",
+   "lot": "176,260",
+   "name": "247 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 204,
+   "z": 293
+  },
+  {
+   "id": "lot:164,272",
+   "lot": "164,272",
+   "name": "242 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 192,
+   "z": 319
+  },
+  {
+   "id": "lot:176,272",
+   "lot": "176,272",
+   "name": "246 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 204,
+   "z": 319
+  },
+  {
+   "id": "lot:196,100",
+   "lot": "196,100",
+   "name": "251 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 227,
+   "z": 113
+  },
+  {
+   "id": "lot:205,100",
+   "lot": "205,100",
+   "name": "253 Jackson St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 236,
+   "z": 113
+  },
+  {
+   "id": "lot:196,111",
+   "lot": "196,111",
+   "name": "250 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 227,
+   "z": 137
+  },
+  {
+   "id": "lot:205,111",
+   "lot": "205,111",
+   "name": "252 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 236,
+   "z": 137
+  },
+  {
+   "id": "lot:196,134",
+   "lot": "196,134",
+   "name": "251 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 227,
+   "z": 151
+  },
+  {
+   "id": "lot:205,134",
+   "lot": "205,134",
+   "name": "253 Union Ave",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 236,
+   "z": 151
+  },
+  {
+   "id": "lot:196,145",
+   "lot": "196,145",
+   "name": "250 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 227,
+   "z": 175
+  },
+  {
+   "id": "lot:205,145",
+   "lot": "205,145",
+   "name": "252 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 236,
+   "z": 175
+  },
+  {
+   "id": "lot:196,164",
+   "lot": "196,164",
+   "name": "251 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 227,
+   "z": 185
+  },
+  {
+   "id": "lot:205,164",
+   "lot": "205,164",
+   "name": "253 Oak St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 236,
+   "z": 185
+  },
+  {
+   "id": "lot:196,176",
+   "lot": "196,176",
+   "name": "250 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 227,
+   "z": 211
+  },
+  {
+   "id": "lot:205,176",
+   "lot": "205,176",
+   "name": "252 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 236,
+   "z": 211
+  },
+  {
+   "id": "lot:196,196",
+   "lot": "196,196",
+   "name": "251 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 227,
+   "z": 221
+  },
+  {
+   "id": "lot:205,196",
+   "lot": "205,196",
+   "name": "253 Pine St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 236,
+   "z": 221
+  },
+  {
+   "id": "lot:196,208",
+   "lot": "196,208",
+   "name": "250 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 227,
+   "z": 247
+  },
+  {
+   "id": "lot:205,208",
+   "lot": "205,208",
+   "name": "252 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 236,
+   "z": 247
+  },
+  {
+   "id": "lot:196,228",
+   "lot": "196,228",
+   "name": "251 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 227,
+   "z": 257
+  },
+  {
+   "id": "lot:205,228",
+   "lot": "205,228",
+   "name": "253 Willow St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 236,
+   "z": 257
+  },
+  {
+   "id": "lot:196,240",
+   "lot": "196,240",
+   "name": "250 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 227,
+   "z": 283
+  },
+  {
+   "id": "lot:205,240",
+   "lot": "205,240",
+   "name": "252 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 236,
+   "z": 283
+  },
+  {
+   "id": "lot:196,260",
+   "lot": "196,260",
+   "name": "251 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 227,
+   "z": 293
+  },
+  {
+   "id": "lot:205,260",
+   "lot": "205,260",
+   "name": "253 Aspen St",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 236,
+   "z": 293
+  },
+  {
+   "id": "lot:196,272",
+   "lot": "196,272",
+   "name": "250 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 227,
+   "z": 319
+  },
+  {
+   "id": "lot:205,272",
+   "lot": "205,272",
+   "name": "252 Fox Run",
+   "kind": "lot",
+   "tier": "house",
+   "dist": "suburbs",
+   "x": 236,
+   "z": 319
+  },
+  {
+   "id": "lot:-248,-90",
+   "lot": "-248,-90",
+   "name": "Pad 1 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -270,
+   "z": -83
+  },
+  {
+   "id": "lot:-248,-74",
+   "lot": "-248,-74",
+   "name": "Pad 2 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -270,
+   "z": -81
+  },
+  {
+   "id": "lot:-239,-90",
+   "lot": "-239,-90",
+   "name": "Pad 3 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -261,
+   "z": -83
+  },
+  {
+   "id": "lot:-239,-74",
+   "lot": "-239,-74",
+   "name": "Pad 4 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -261,
+   "z": -81
+  },
+  {
+   "id": "lot:-230,-90",
+   "lot": "-230,-90",
+   "name": "Pad 5 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -252,
+   "z": -83
+  },
+  {
+   "id": "lot:-230,-74",
+   "lot": "-230,-74",
+   "name": "Pad 6 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -252,
+   "z": -81
+  },
+  {
+   "id": "lot:-221,-90",
+   "lot": "-221,-90",
+   "name": "Pad 7 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -243,
+   "z": -83
+  },
+  {
+   "id": "lot:-221,-74",
+   "lot": "-221,-74",
+   "name": "Pad 8 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -243,
+   "z": -81
+  },
+  {
+   "id": "lot:-212,-90",
+   "lot": "-212,-90",
+   "name": "Pad 9 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -234,
+   "z": -83
+  },
+  {
+   "id": "lot:-212,-74",
+   "lot": "-212,-74",
+   "name": "Pad 10 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -234,
+   "z": -81
+  },
+  {
+   "id": "lot:-203,-90",
+   "lot": "-203,-90",
+   "name": "Pad 11 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -225,
+   "z": -83
+  },
+  {
+   "id": "lot:-203,-74",
+   "lot": "-203,-74",
+   "name": "Pad 12 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -225,
+   "z": -81
+  },
+  {
+   "id": "lot:-194,-90",
+   "lot": "-194,-90",
+   "name": "Pad 13 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -216,
+   "z": -83
+  },
+  {
+   "id": "lot:-194,-74",
+   "lot": "-194,-74",
+   "name": "Pad 14 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -216,
+   "z": -81
+  },
+  {
+   "id": "lot:-185,-90",
+   "lot": "-185,-90",
+   "name": "Pad 15 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -207,
+   "z": -83
+  },
+  {
+   "id": "lot:-185,-74",
+   "lot": "-185,-74",
+   "name": "Pad 16 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -207,
+   "z": -81
+  },
+  {
+   "id": "lot:-176,-90",
+   "lot": "-176,-90",
+   "name": "Pad 17 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -198,
+   "z": -83
+  },
+  {
+   "id": "lot:-176,-74",
+   "lot": "-176,-74",
+   "name": "Pad 18 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -198,
+   "z": -81
+  },
+  {
+   "id": "lot:-248,-64",
+   "lot": "-248,-64",
+   "name": "Pad 19 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -270,
+   "z": -57
+  },
+  {
+   "id": "lot:-248,-48",
+   "lot": "-248,-48",
+   "name": "Pad 20 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -270,
+   "z": -55
+  },
+  {
+   "id": "lot:-239,-64",
+   "lot": "-239,-64",
+   "name": "Pad 21 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -261,
+   "z": -57
+  },
+  {
+   "id": "lot:-239,-48",
+   "lot": "-239,-48",
+   "name": "Pad 22 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -261,
+   "z": -55
+  },
+  {
+   "id": "lot:-230,-64",
+   "lot": "-230,-64",
+   "name": "Pad 23 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -252,
+   "z": -57
+  },
+  {
+   "id": "lot:-230,-48",
+   "lot": "-230,-48",
+   "name": "Pad 24 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -252,
+   "z": -55
+  },
+  {
+   "id": "lot:-221,-64",
+   "lot": "-221,-64",
+   "name": "Pad 25 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -243,
+   "z": -57
+  },
+  {
+   "id": "lot:-221,-48",
+   "lot": "-221,-48",
+   "name": "Pad 26 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -243,
+   "z": -55
+  },
+  {
+   "id": "lot:-212,-64",
+   "lot": "-212,-64",
+   "name": "Pad 27 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -234,
+   "z": -57
+  },
+  {
+   "id": "lot:-212,-48",
+   "lot": "-212,-48",
+   "name": "Pad 28 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -234,
+   "z": -55
+  },
+  {
+   "id": "lot:-203,-64",
+   "lot": "-203,-64",
+   "name": "Pad 29 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -225,
+   "z": -57
+  },
+  {
+   "id": "lot:-203,-48",
+   "lot": "-203,-48",
+   "name": "Pad 30 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -225,
+   "z": -55
+  },
+  {
+   "id": "lot:-194,-64",
+   "lot": "-194,-64",
+   "name": "Pad 31 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -216,
+   "z": -57
+  },
+  {
+   "id": "lot:-194,-48",
+   "lot": "-194,-48",
+   "name": "Pad 32 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -216,
+   "z": -55
+  },
+  {
+   "id": "lot:-185,-64",
+   "lot": "-185,-64",
+   "name": "Pad 33 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -207,
+   "z": -57
+  },
+  {
+   "id": "lot:-185,-48",
+   "lot": "-185,-48",
+   "name": "Pad 34 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -207,
+   "z": -55
+  },
+  {
+   "id": "lot:-176,-64",
+   "lot": "-176,-64",
+   "name": "Pad 35 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -198,
+   "z": -57
+  },
+  {
+   "id": "lot:-176,-48",
+   "lot": "-176,-48",
+   "name": "Pad 36 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -198,
+   "z": -55
+  },
+  {
+   "id": "lot:-248,-38",
+   "lot": "-248,-38",
+   "name": "Pad 37 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -270,
+   "z": -31
+  },
+  {
+   "id": "lot:-248,-22",
+   "lot": "-248,-22",
+   "name": "Pad 38 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -270,
+   "z": -29
+  },
+  {
+   "id": "lot:-239,-38",
+   "lot": "-239,-38",
+   "name": "Pad 39 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -261,
+   "z": -31
+  },
+  {
+   "id": "lot:-239,-22",
+   "lot": "-239,-22",
+   "name": "Pad 40 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -261,
+   "z": -29
+  },
+  {
+   "id": "lot:-230,-38",
+   "lot": "-230,-38",
+   "name": "Pad 41 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -252,
+   "z": -31
+  },
+  {
+   "id": "lot:-230,-22",
+   "lot": "-230,-22",
+   "name": "Pad 42 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -252,
+   "z": -29
+  },
+  {
+   "id": "lot:-221,-38",
+   "lot": "-221,-38",
+   "name": "Pad 43 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -243,
+   "z": -31
+  },
+  {
+   "id": "lot:-221,-22",
+   "lot": "-221,-22",
+   "name": "Pad 44 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -243,
+   "z": -29
+  },
+  {
+   "id": "lot:-212,-38",
+   "lot": "-212,-38",
+   "name": "Pad 45 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -234,
+   "z": -31
+  },
+  {
+   "id": "lot:-212,-22",
+   "lot": "-212,-22",
+   "name": "Pad 46 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -234,
+   "z": -29
+  },
+  {
+   "id": "lot:-203,-38",
+   "lot": "-203,-38",
+   "name": "Pad 47 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -225,
+   "z": -31
+  },
+  {
+   "id": "lot:-203,-22",
+   "lot": "-203,-22",
+   "name": "Pad 48 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -225,
+   "z": -29
+  },
+  {
+   "id": "lot:-194,-38",
+   "lot": "-194,-38",
+   "name": "Pad 49 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -216,
+   "z": -31
+  },
+  {
+   "id": "lot:-194,-22",
+   "lot": "-194,-22",
+   "name": "Pad 50 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -216,
+   "z": -29
+  },
+  {
+   "id": "lot:-185,-38",
+   "lot": "-185,-38",
+   "name": "Pad 51 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -207,
+   "z": -31
+  },
+  {
+   "id": "lot:-185,-22",
+   "lot": "-185,-22",
+   "name": "Pad 52 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -207,
+   "z": -29
+  },
+  {
+   "id": "lot:-176,-38",
+   "lot": "-176,-38",
+   "name": "Pad 53 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -198,
+   "z": -31
+  },
+  {
+   "id": "lot:-176,-22",
+   "lot": "-176,-22",
+   "name": "Pad 54 Sunny Acres",
+   "kind": "lot",
+   "tier": "trailer",
+   "dist": "trailer",
+   "x": -198,
+   "z": -29
+  }
+ ]
+}

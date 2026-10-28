@@ -1,0 +1,32 @@
+{
+ "tier": "penthouse",
+ "name": "kingpin",
+ "story": "The kingpin floor: black leather on a persian squared up to the wall of pieces with a speaker at each end, the bar on the glass between two black vases, the platform bed and the safe at its foot on its own rug, a black mirror, a camera on the lift door, the crown in the middle of it all.",
+ "room": {"w":26,"d":23,"h":2.8,"walls":{"N":"glass","E":"paint:#17171b"},"floor":"stone"},
+ "items": [
+  {"id":"rug-persian","x":13,"z":7,"rot":90,"variant":2,"on":"floor"},
+  {"id":"door-front","x":18,"z":0,"rot":0,"variant":3,"on":{"wall":"E"}},
+  {"id":"bed-platform","x":1,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"table-end","x":9,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"lamp-table","x":9,"z":0,"rot":0,"variant":1,"on":{"top":3}},
+  {"id":"bar-home","x":13,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"stool-bar","x":14,"z":3,"rot":180,"variant":0,"on":"floor"},
+  {"id":"stool-bar","x":17,"z":3,"rot":180,"variant":0,"on":"floor"},
+  {"id":"plant-monstera","x":23,"z":0,"rot":0,"variant":2,"on":"floor"},
+  {"id":"sofa-low","x":10,"z":7,"rot":90,"variant":1,"on":"floor"},
+  {"id":"table-coffee","x":16,"z":10,"rot":90,"variant":1,"on":"floor"},
+  {"id":"rug-persian","x":1,"z":9,"rot":0,"variant":0,"on":"floor"},
+  {"id":"art-print","x":0,"z":0,"rot":0,"variant":2,"on":{"wall":"E"},"y":1.45},
+  {"id":"vase-floor","x":11,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"vase-floor","x":21,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"speaker","x":10,"z":5,"rot":0,"variant":2,"on":"floor"},
+  {"id":"speaker","x":10,"z":17,"rot":0,"variant":2,"on":"floor"},
+  {"id":"mirror-lean","x":0,"z":10,"rot":90,"variant":0,"on":"floor"}
+ ],
+ "slots": [
+  {"id":"wall","label":"the wall","place":"wall","x":4,"z":0,"foot":[10,8],"rot":0,"demo":"piece-wall","variant":0,"fits":["collectible"],"wall":"E","y":0.6},
+  {"id":"crown","label":"the crown","place":"floor","x":21,"z":11,"foot":[2,2],"rot":0,"demo":"trophy-kingpin-crown","variant":0,"fits":["trophy"]},
+  {"id":"safe","label":"the safe","place":"floor","x":2,"z":11,"foot":[4,5],"rot":0,"demo":"safe-big","variant":0,"fits":["gear","security","stash"]},
+  {"id":"camera","label":"the camera · on the lift","place":"wall","x":16,"z":0,"foot":[2,2],"rot":0,"demo":"cctv-camera","variant":1,"fits":["gear","security"],"wall":"E","y":2.1}
+ ]
+}

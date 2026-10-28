@@ -1,0 +1,34 @@
+{
+ "tier": "penthouse",
+ "name": "flex",
+ "story": "The flex floor: the platform bed and the low sofa backed onto the glass with a speaker at the end, the persian and the arc lamp over the lounge, the bar on the side wall under a print, dinner for six on its own persian under the chandelier, the grails and a gold mirror by the bed, vases in the corners.",
+ "room": {"w":26,"d":23,"h":2.8,"walls":{"N":"glass","E":"paint:#f4f1ea"},"floor":"stone"},
+ "items": [
+  {"id":"rug-persian","x":11,"z":3,"rot":0,"variant":0,"on":"floor"},
+  {"id":"door-front","x":18,"z":0,"rot":0,"variant":3,"on":{"wall":"E"}},
+  {"id":"bed-platform","x":1,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"table-end","x":9,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"lamp-table","x":9,"z":0,"rot":0,"variant":1,"on":{"top":3}},
+  {"id":"sofa-low","x":11,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"lamp-arc","x":9,"z":4,"rot":0,"variant":1,"on":"floor"},
+  {"id":"table-coffee","x":13,"z":6,"rot":0,"variant":1,"on":"floor"},
+  {"id":"plant-monstera","x":23,"z":0,"rot":0,"variant":2,"on":"floor"},
+  {"id":"bar-home","x":23,"z":3,"rot":270,"variant":0,"on":"floor"},
+  {"id":"stool-bar","x":21,"z":4,"rot":90,"variant":0,"on":"floor"},
+  {"id":"stool-bar","x":21,"z":8,"rot":90,"variant":1,"on":"floor"},
+  {"id":"dining-set","x":10,"z":14,"rot":0,"variant":2,"on":"floor"},
+  {"id":"rug-persian","x":9,"z":13,"rot":0,"variant":2,"on":"floor"},
+  {"id":"art-print","x":4,"z":0,"rot":0,"variant":3,"on":{"wall":"E"},"y":1.6},
+  {"id":"speaker","x":21,"z":0,"rot":0,"variant":2,"on":"floor"},
+  {"id":"vase-floor","x":0,"z":9,"rot":0,"variant":0,"on":"floor"},
+  {"id":"vase-floor","x":20,"z":14,"rot":0,"variant":1,"on":"floor"},
+  {"id":"mirror-lean","x":0,"z":12,"rot":90,"variant":1,"on":"floor"},
+  {"id":"sneakers-kicked","x":6,"z":10,"rot":0,"variant":2,"on":"floor"}
+ ],
+ "slots": [
+  {"id":"grails","label":"the grails","place":"floor","x":2,"z":11,"foot":[3,3],"rot":0,"demo":"grails-case","variant":0,"fits":["collectible"]},
+  {"id":"chandelier","label":"the chandelier · over dinner","place":"ceiling","x":11,"z":14,"foot":[6,6],"rot":0,"demo":"chandelier-gold","variant":0,"fits":["lights","collectible"]},
+  {"id":"frame","label":"the frame","place":"wall","x":11,"z":0,"foot":[7,9],"rot":0,"demo":"frame-gilded","variant":2,"fits":["collectible"],"wall":"E","y":0.5},
+  {"id":"on-the-table","label":"on the table","place":"surface","x":14,"z":7,"foot":[3,2],"rot":0,"demo":"knife-case","variant":0,"fits":["collectible","trophy","stash"],"on":7}
+ ]
+}

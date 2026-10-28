@@ -1,0 +1,248 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trait Studio</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;800&family=VT323&display=swap">
+<style>
+  :root { --ink: #0b0b0c; --paper: #ffffff; --panel: #f4f4f1; --line: #dcdcd5; --mute: #6b6b66; --soft: #ebebe6;
+    --common: #8e8e94; --rare: #2f5bff; --epic: #8a3cff; --grail: #d4a52a; --oneof: #ff4fa3; --base: #b9b9b2;
+    --keep: #13a150; --kill: #e0182d; --focus: #ffc21a; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; background: var(--panel); color: var(--ink); }
+  body { font: 13px/1.35 Archivo, "Helvetica Neue", Arial, sans-serif; display: grid; grid-template-rows: auto 1fr; overflow: hidden; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; }
+  .px { font-family: VT323, "Courier New", monospace; font-size: 17px; letter-spacing: .02em; text-transform: uppercase; line-height: 1; }
+  .tier { font-family: VT323, monospace; font-size: 14px; line-height: 1; text-transform: uppercase; padding: 2px 5px 1px; color: #fff; white-space: nowrap; background: var(--base); }
+  .tier.common { background: var(--common); } .tier.rare { background: var(--rare); } .tier.epic { background: var(--epic); } .tier.grail { background: var(--grail); color: var(--ink); } .tier.oneof { background: var(--oneof); } .tier.base { background: var(--base); color: var(--ink); }
+  .org { font-family: VT323, monospace; font-size: 14px; line-height: 1; text-transform: uppercase; padding: 2px 5px 1px; border: 1px solid var(--ink); white-space: nowrap; }
+  .org.drop02 { background: #fff1a8; } .org.shoes { background: #c9f5d6; } .org.jewelry { background: #ffe0f0; } .org.v2 { background: var(--ink); color: var(--focus); } .org.original { background: #fff; }
+
+  /* ── header */
+  header { display: flex; align-items: center; gap: 18px; padding: 8px 16px; background: var(--ink); color: #fff; min-width: 0; }
+  header h1 { font: 400 30px/1 Anton, Impact, sans-serif; letter-spacing: .01em; margin: 0; white-space: nowrap; }
+  header h1 i { font-style: normal; color: var(--focus); }
+  .prog { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+  .prog b { font: 400 22px/1 Anton, Impact, sans-serif; white-space: nowrap; }
+  .bar { flex: 1; max-width: 360px; height: 10px; background: #2b2b2e; display: flex; overflow: hidden; }
+  .bar i { display: block; height: 100%; } .bar .k { background: var(--keep); } .bar .x { background: var(--kill); }
+  .prog span { color: #bdbdb6; white-space: nowrap; }
+  #save { color: #bdbdb6; white-space: nowrap; } #save.ok { color: #7ee2a0; } #save.bad { color: #ff7a7a; } #save.demo { color: var(--focus); }
+  header button { background: transparent; border: 1px solid #55555a; color: #fff; padding: 5px 10px; }
+  header button:hover { border-color: var(--focus); color: var(--focus); }
+
+  main { display: grid; grid-template-columns: 296px minmax(380px, 1fr) minmax(460px, 600px); min-height: 0; }
+
+  /* ── fit panel */
+  #fit { background: var(--paper); border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
+  .fithead { display: flex; align-items: center; gap: 8px; padding: 10px 12px 8px; border-bottom: 2px solid var(--ink); }
+  .fithead h2 { font: 400 22px/1 Anton, Impact, sans-serif; margin: 0; text-transform: uppercase; }
+  .ab { display: flex; margin-left: auto; border: 1.5px solid var(--ink); }
+  .ab button { border: 0; background: #fff; padding: 3px 9px; font-weight: 800; }
+  .ab button.on { background: var(--ink); color: var(--focus); }
+  .ab button:disabled { color: #bbb; cursor: default; }
+  #slots { overflow: auto; flex: 1; padding: 4px 0; }
+  .slot { display: grid; grid-template-columns: 22px 62px 1fr 20px; align-items: center; gap: 4px; padding: 4px 10px 4px 8px; border-bottom: 1px solid var(--soft); }
+  .slot:hover { background: #fafaf7; }
+  .slot .lock { width: 22px; height: 22px; border: 0; background: none; padding: 0; opacity: .35; font-size: 13px; }
+  .slot .lock.on { opacity: 1; }
+  .slot .sl { font-family: VT323, monospace; font-size: 15px; text-transform: uppercase; color: var(--mute); line-height: 1; }
+  .slot .nm { border: 0; background: none; text-align: left; padding: 2px 0; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .slot .nm:hover { text-decoration: underline; }
+  .slot .nm.none { color: #aaa; font-weight: 400; }
+  .slot .nm .st { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; background: #d0d0ca; }
+  .slot .nm .st.keep { background: var(--keep); } .slot .nm .st.kill { background: var(--kill); }
+  .slot .clr { border: 0; background: none; color: #999; padding: 0; font-size: 15px; }
+  .slot .clr:hover { color: var(--kill); }
+  .slot.locked { background: #fff8dc; }
+  .cws { grid-column: 3 / 5; display: flex; flex-wrap: wrap; gap: 3px; padding-bottom: 2px; }
+  .sw { width: 18px; height: 14px; border: 1px solid rgba(0,0,0,.35); padding: 0; display: flex; overflow: hidden; background: #fff; }
+  .sw i { flex: 1; } .sw.on { outline: 2px solid var(--ink); outline-offset: 1px; } .sw.kill { opacity: .35; } .sw.def { font-size: 9px; line-height: 12px; justify-content: center; color: #666; }
+  .fitact { border-top: 2px solid var(--ink); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+  .btn { border: 1.5px solid var(--ink); background: #fff; padding: 6px 10px; font-weight: 800; text-transform: uppercase; font-size: 12px; letter-spacing: .02em; box-shadow: 2px 2px 0 var(--ink); }
+  .btn:hover { background: var(--focus); } .btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ink); }
+  .btn.on { background: var(--ink); color: var(--focus); }
+  .btn.small { padding: 4px 7px; font-size: 11px; }
+  .rowx { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .chk { display: flex; align-items: center; gap: 5px; font-size: 12px; }
+  .fitact input[type=text], .fitact select { border: 1.5px solid var(--ink); padding: 5px 7px; min-width: 0; flex: 1; background: #fff; }
+  #fitlist { display: flex; flex-direction: column; gap: 2px; max-height: 110px; overflow: auto; }
+  #fitlist div { display: flex; gap: 6px; align-items: center; }
+  #fitlist button.ld { flex: 1; text-align: left; border: 0; background: var(--soft); padding: 3px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #fitlist button.ld:hover { background: var(--focus); }
+  #fitlist button.rm { border: 0; background: none; color: #999; }
+  #fitlist .empty { color: var(--mute); font-size: 12px; }
+
+  /* ── stage */
+  #stage { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: #d4d4cf; }
+  #stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  .ov { position: absolute; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; pointer-events: none; }
+  .ov > * { pointer-events: auto; }
+  #modes { left: 12px; top: 12px; right: 12px; }
+  .seg { display: flex; border: 1.5px solid var(--ink); background: #fff; box-shadow: 3px 3px 0 var(--ink); }
+  .seg button { border: 0; background: none; padding: 7px 11px 6px; font-weight: 800; text-transform: uppercase; font-size: 12px; letter-spacing: .02em; }
+  .seg button + button { border-left: 1.5px solid var(--ink); }
+  .seg button.on { background: var(--ink); color: var(--focus); }
+  .seg button:hover:not(.on) { background: var(--focus); }
+  .seg kbd { font: 11px VT323, monospace; opacity: .55; margin-left: 4px; }
+  #idles { left: 12px; top: 58px; right: 12px; }
+  .ichip { border: 1.5px solid var(--ink); background: rgba(255,255,255,.92); padding: 4px 8px 3px; font-size: 12px; font-weight: 600; }
+  .ichip.on { background: var(--ink); color: var(--focus); }
+  .ichip:hover:not(.on) { background: var(--focus); }
+  .ichip b { font-family: VT323, monospace; font-size: 14px; font-weight: 400; margin-right: 4px; opacity: .6; }
+  #controls { left: 12px; bottom: 12px; right: 12px; }
+  .panel { background: #fff; border: 1.5px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); display: flex; align-items: center; gap: 8px; padding: 5px 9px; }
+  .panel input[type=range] { width: 120px; accent-color: var(--ink); }
+  .panel output { font-family: VT323, monospace; font-size: 16px; width: 64px; }
+  #stats { right: 12px; top: 12px; left: auto; font: 11px/1.35 ui-monospace, Menlo, monospace; color: #3d3d39; text-align: right; white-space: pre; background: rgba(255,255,255,.7); padding: 4px 7px; pointer-events: none; }
+  #labels span { position: absolute; transform: translate(-50%, -100%); background: var(--ink); color: var(--focus); font: 400 18px/1 Anton, Impact, sans-serif; padding: 4px 8px 3px; white-space: nowrap; box-shadow: 2px 2px 0 #fff; pointer-events: none; }
+  #pfpCard { position: absolute; right: 12px; top: 58px; background: #fff; border: 1.5px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); padding: 10px; display: none; flex-direction: column; gap: 8px; align-items: center; }
+  #pfpCard.on { display: flex; }
+  #pfpCard .pics { display: flex; gap: 10px; align-items: flex-end; }
+  #pfpCard canvas { display: block; }
+  #pfpCard .c192 { width: 192px; height: 192px; border-radius: 50%; }
+  #pfpCard .c48 { width: 48px; height: 48px; border-radius: 50%; }
+  #pfpCard .sq { width: 64px; height: 64px; }
+  #pfpCard .cap { font-size: 11px; color: var(--mute); }
+  #pfpCard .bgs { display: flex; gap: 3px; }
+  #pfpCard .bgs button { width: 16px; height: 16px; border: 1px solid rgba(0,0,0,.4); padding: 0; }
+  #toast { position: absolute; left: 50%; bottom: 64px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 7px 12px; font-weight: 600; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: 80%; text-align: center; }
+  #toast.on { opacity: 1; }
+
+  /* ── catalogue */
+  #cat { background: var(--paper); border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+  .filters { padding: 10px 12px 8px; border-bottom: 2px solid var(--ink); display: flex; flex-direction: column; gap: 6px; }
+  .frow { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+  .frow > .lab { width: 44px; font-family: VT323, monospace; font-size: 15px; text-transform: uppercase; color: var(--mute); }
+  .fc { border: 1px solid #c9c9c2; background: #fff; padding: 2px 6px 1px; font-size: 12px; white-space: nowrap; }
+  .fc em { font-style: normal; color: #999; font-size: 11px; margin-left: 3px; }
+  .fc.on { background: var(--ink); color: #fff; border-color: var(--ink); } .fc.on em { color: #aaa; }
+  .fc:hover:not(.on) { border-color: var(--ink); }
+  #q { flex: 1; border: 1.5px solid var(--ink); padding: 6px 8px; min-width: 120px; }
+  #grid { flex: 1; overflow: auto; padding: 8px 10px 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; align-content: start; }
+  .gh { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 8px; padding: 10px 2px 2px; border-bottom: 1.5px solid var(--ink); }
+  .gh h3 { font: 400 20px/1 Anton, Impact, sans-serif; text-transform: uppercase; margin: 0; }
+  .gh span { color: var(--mute); font-size: 12px; }
+  .card { position: relative; border: 1.5px solid transparent; background: #fff; padding: 0 0 5px; cursor: pointer; display: flex; flex-direction: column; gap: 3px; text-align: left; outline: none; min-width: 0; }
+  .card .th { position: relative; aspect-ratio: 1; background: #e4e4e4; overflow: hidden; }
+  .card .th img { width: 100%; height: 100%; display: block; opacity: 0; transition: opacity .15s; }
+  .card .th img.ok { opacity: 1; }
+  .card .nm { font-weight: 800; font-size: 12px; line-height: 1.15; padding: 0 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .card .mt { display: flex; gap: 3px; align-items: center; padding: 0 4px; flex-wrap: wrap; }
+  .card .mt .tier, .card .mt .org { font-size: 12px; padding: 1px 4px 0; }
+  .card .dots { display: flex; gap: 2px; margin-left: auto; }
+  .card .dots i { width: 8px; height: 8px; border: 1px solid rgba(0,0,0,.3); display: block; }
+  .card .stamp { position: absolute; left: 4px; top: 4px; font: 400 13px/1 Anton, Impact, sans-serif; padding: 3px 5px 2px; color: #fff; display: none; letter-spacing: .03em; }
+  .card.keep .stamp { display: block; background: var(--keep); } .card.kill .stamp { display: block; background: var(--kill); }
+  .card.keep { border-color: var(--keep); } .card.kill { border-color: var(--kill); }
+  .card.kill .th img { filter: grayscale(.85) contrast(.8); opacity: .55; }
+  .card.inh .stamp { opacity: .55; }
+  .card .noted { position: absolute; right: 4px; top: 4px; background: var(--ink); color: #fff; font: 11px VT323, monospace; padding: 1px 4px; display: none; }
+  .card.hasnote .noted { display: block; }
+  .card .on { position: absolute; right: 4px; bottom: 4px; background: var(--focus); color: var(--ink); font: 400 12px/1 Anton, Impact, sans-serif; padding: 3px 4px 2px; display: none; }
+  .card.worn .on { display: block; }
+  .card:hover { border-color: #9a9a92; }
+  .card.focus { border-color: var(--ink); box-shadow: 0 0 0 3px var(--focus); z-index: 1; }
+  .card .cwn { font-size: 11px; color: var(--mute); padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .empty { grid-column: 1 / -1; padding: 30px 10px; color: var(--mute); text-align: center; }
+  /* the decision bar */
+  #dec { border-top: 2px solid var(--ink); background: var(--panel); padding: 10px 12px; display: grid; grid-template-columns: 84px 1fr; gap: 6px 12px; }
+  #dec .big { grid-row: 1 / 4; width: 84px; height: 84px; background: #e4e4e4; }
+  #dec .big img { width: 100%; height: 100%; display: block; }
+  #dec .t1 { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+  #dec .t1 b { font: 400 22px/1 Anton, Impact, sans-serif; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #dec .t1 span { color: var(--mute); font-size: 12px; white-space: nowrap; }
+  #dec .t2 { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; font-size: 12px; color: var(--mute); }
+  #dec .why { color: #6b5310; font-size: 12px; }
+  #dec .cwrow { grid-column: 2; display: flex; gap: 4px; flex-wrap: wrap; }
+  .cwc { display: flex; align-items: center; gap: 4px; border: 1px solid #c9c9c2; background: #fff; padding: 2px 6px 2px 3px; font-size: 11.5px; }
+  .cwc .sw { width: 16px; height: 12px; }
+  .cwc.on { border-color: var(--ink); box-shadow: inset 0 -3px 0 var(--focus); }
+  .cwc.keep { box-shadow: inset 0 -3px 0 var(--keep); } .cwc.kill { box-shadow: inset 0 -3px 0 var(--kill); text-decoration: line-through; color: #999; }
+  .cwc.on.keep, .cwc.on.kill { border-color: var(--ink); }
+  .decide { grid-column: 1 / 3; display: flex; gap: 6px; align-items: center; }
+  .decide button { border: 1.5px solid var(--ink); background: #fff; padding: 7px 10px 6px; font: 400 16px/1 Anton, Impact, sans-serif; letter-spacing: .03em; text-transform: uppercase; box-shadow: 2px 2px 0 var(--ink); white-space: nowrap; }
+  .decide button kbd { font: 13px VT323, monospace; opacity: .6; margin-left: 3px; }
+  .decide button.k.on { background: var(--keep); color: #fff; } .decide button.x.on { background: var(--kill); color: #fff; } .decide button.u.on { background: var(--ink); color: #fff; }
+  .decide button:hover:not(.on) { background: var(--focus); }
+  #note { flex: 1; min-width: 60px; border: 1.5px solid var(--ink); padding: 7px 8px; background: #fff; }
+  #dec .scope { font-size: 11px; color: var(--mute); grid-column: 1 / 3; margin-top: -2px; }
+
+  /* help */
+  #help { position: fixed; inset: 0; background: rgba(11,11,12,.55); display: none; align-items: center; justify-content: center; z-index: 20; }
+  #help.on { display: flex; }
+  #help .box { background: #fff; border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--focus); padding: 18px 22px; max-width: 560px; }
+  #help h2 { font: 400 28px/1 Anton, Impact, sans-serif; margin: 0 0 10px; text-transform: uppercase; }
+  #help table { border-collapse: collapse; } #help td { padding: 3px 12px 3px 0; vertical-align: top; } #help kbd { font: 16px VT323, monospace; background: var(--soft); border: 1px solid #ccc; padding: 0 5px; }
+  #err { position: fixed; left: 10px; bottom: 10px; max-width: 50vw; background: #c00; color: #fff; font: 12px monospace; white-space: pre-wrap; z-index: 30; }
+  #err:empty { display: none; }
+  @media (max-width: 1250px) { main { grid-template-columns: 250px minmax(340px, 1fr) minmax(400px, 480px); } }
+</style>
+<header>
+  <h1>TRAIT <i>STUDIO</i></h1>
+  <div class="prog"><b id="progN">…</b><div class="bar"><i class="k" id="barK"></i><i class="x" id="barX"></i></div><span id="progSub"></span></div>
+  <span id="save" class="px">loading…</span>
+  <button id="helpBtn" title="Shortcuts (?)">? shortcuts</button>
+</header>
+<main>
+  <aside id="fit">
+    <div class="fithead"><h2>Fit</h2><div class="ab" id="ab"><button data-s="0" class="on">A</button><button data-s="1">B</button></div></div>
+    <div id="slots"></div>
+    <div class="fitact">
+      <div class="rowx"><button class="btn" id="rand" title="Randomise every unlocked slot (R)">Randomise unlocked</button><label class="chk"><input type="checkbox" id="keepOnly"> only keeps</label></div>
+      <div class="rowx"><input type="text" id="fitName" placeholder="name this fit" maxlength="40"><button class="btn small" id="saveFit">Save</button></div>
+      <div id="fitlist"></div>
+      <div class="rowx"><select id="presets"><option value="">load a preset fit…</option></select></div>
+    </div>
+  </aside>
+  <section id="stage">
+    <div id="labels"></div>
+    <div class="ov" id="modes"><div class="seg" id="modeSeg"></div></div>
+    <div class="ov" id="idles"></div>
+    <div class="ov" id="stats"></div>
+    <div id="pfpCard"><div class="pics"><canvas class="c192" width="256" height="256"></canvas><div style="display:flex;flex-direction:column;gap:8px;align-items:center"><canvas class="sq" width="256" height="256"></canvas><canvas class="c48" width="96" height="96"></canvas></div></div>
+      <div class="bgs" id="pfpBgs"></div><div class="rowx"><button class="btn small" id="pfpSave">Save PNG</button><span class="cap">fit check framing</span></div></div>
+    <div class="ov" id="controls">
+      <div class="panel"><button class="btn small" id="pause" title="Pause (space)">❚❚ Pause</button><span class="px" style="font-size:15px">speed</span><input type="range" id="speed" min=".2" max="2" step=".05" value="1.2"><output id="speedOut">1.20 m/s</output></div>
+      <div class="panel"><button class="btn small" id="turn" title="Turntable (T)">Turntable</button><button class="btn small" id="resetV" title="Reset the view">Reset view</button><button class="btn small" id="pfpBtn" title="PFP snapshot (P)">PFP</button><button class="btn small" id="cmpBtn" title="Compare A | B (V)">Compare A | B</button></div>
+    </div>
+    <div id="toast"></div>
+  </section>
+  <section id="cat">
+    <div class="filters">
+      <div class="frow"><input id="q" type="search" placeholder="search traits  ( / )" autocomplete="off"><button class="fc" id="cwx" title="One card per colourway">colourways</button></div>
+      <div class="frow" id="fSlot"><span class="lab">slot</span></div>
+      <div class="frow" id="fOrigin"><span class="lab">origin</span></div>
+      <div class="frow" id="fTier"><span class="lab">tier</span></div>
+      <div class="frow" id="fStatus"><span class="lab">status</span></div>
+    </div>
+    <div id="grid" tabindex="0"></div>
+    <div id="dec"></div>
+  </section>
+</main>
+<div id="help"><div class="box"><h2>Shortcuts</h2><table>
+  <tr><td><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd></td><td>move through the catalogue (the trait goes on the character)</td></tr>
+  <tr><td><kbd>K</kbd> <kbd>X</kbd> <kbd>U</kbd></td><td>keep · kill · undecided, then on to the next</td></tr>
+  <tr><td><kbd>⇧K</kbd> <kbd>⇧X</kbd> <kbd>⇧U</kbd></td><td>the same for just the colourway on the character</td></tr>
+  <tr><td><kbd>C</kbd></td><td>next colourway</td></tr>
+  <tr><td><kbd>N</kbd></td><td>write a note (Enter to finish)</td></tr>
+  <tr><td><kbd>/</kbd></td><td>search</td></tr>
+  <tr><td><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></td><td>idle · walk in place · circle</td></tr>
+  <tr><td><kbd>[</kbd> <kbd>]</kbd></td><td>previous / next idle</td></tr>
+  <tr><td><kbd>Space</kbd> <kbd>T</kbd></td><td>pause · turntable</td></tr>
+  <tr><td><kbd>R</kbd> <kbd>L</kbd></td><td>randomise the unlocked slots · lock the focused trait's slot</td></tr>
+  <tr><td><kbd>P</kbd> <kbd>V</kbd> <kbd>B</kbd></td><td>PFP · compare A | B · edit the other fit</td></tr>
+  <tr><td><kbd>Esc</kbd></td><td>leave a field · close this</td></tr>
+</table><p style="color:#6b6b66;margin:12px 0 0">Decisions save to <b>world/traits-curation.json</b> as you make them.</p></div></div>
+<div id="err"></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/" } }</script>
+<script>
+  window.__errors = [];
+  addEventListener('error', e => { window.__errors.push(String(e.message || e)); document.getElementById('err').textContent += (e.message || e) + '\n'; });
+  addEventListener('unhandledrejection', e => { window.__errors.push('promise: ' + (e.reason?.stack || e.reason)); document.getElementById('err').textContent += 'promise: ' + (e.reason?.stack || e.reason) + '\n'; });
+</script>
+<script type="module" src="./studio.js"></script>

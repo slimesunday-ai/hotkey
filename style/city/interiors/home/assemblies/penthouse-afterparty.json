@@ -1,0 +1,34 @@
+{
+ "tier": "penthouse",
+ "name": "afterparty",
+ "story": "The morning after: the DJ bar on the glass with a speaker beside it, the sofa under the neon, the dance-floor rug under the disco ball, sneakers kicked off, cans and pizza on the stone and on the rug by the bed, someone asleep on the platform bed.",
+ "room": {"w":26,"d":23,"h":2.8,"walls":{"N":"glass","E":"paint:#ff4fa3"},"floor":"stone"},
+ "items": [
+  {"id":"rug-persian","x":9,"z":7,"rot":0,"variant":1,"on":"floor"},
+  {"id":"door-front","x":18,"z":0,"rot":0,"variant":3,"on":{"wall":"E"}},
+  {"id":"bed-platform","x":1,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"table-end","x":9,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"lamp-table","x":9,"z":0,"rot":0,"variant":1,"on":{"top":3}},
+  {"id":"bar-home","x":11,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"stool-bar","x":12,"z":3,"rot":180,"variant":1,"on":"floor"},
+  {"id":"stool-bar","x":19,"z":9,"rot":0,"variant":1,"on":"floor"},
+  {"id":"plant-monstera","x":23,"z":0,"rot":0,"variant":2,"on":"floor"},
+  {"id":"sofa-low","x":22,"z":5,"rot":270,"variant":2,"on":"floor"},
+  {"id":"table-coffee","x":18,"z":12,"rot":90,"variant":2,"on":"floor"},
+  {"id":"pizza-boxes","x":15,"z":15,"rot":0,"variant":2,"on":"floor"},
+  {"id":"pizza-boxes","x":3,"z":12,"rot":0,"variant":0,"on":"floor"},
+  {"id":"sneakers-kicked","x":10,"z":15,"rot":0,"variant":0,"on":"floor"},
+  {"id":"sneakers-kicked","x":19,"z":18,"rot":0,"variant":2,"on":"floor"},
+  {"id":"rug-persian","x":1,"z":10,"rot":0,"variant":2,"on":"floor"},
+  {"id":"speaker","x":19,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"beer-cans","x":6,"z":15,"rot":0,"variant":0,"on":"floor"},
+  {"id":"beer-cans","x":14,"z":19,"rot":0,"variant":1,"on":"floor"},
+  {"id":"art-print","x":0,"z":0,"rot":0,"variant":1,"on":{"wall":"E"},"y":1.4}
+ ],
+ "slots": [
+  {"id":"ball","label":"the ball · over the floor","place":"ceiling","x":13,"z":13,"foot":[2,2],"rot":0,"demo":"disco-ball","variant":0,"fits":["lights","collectible"]},
+  {"id":"neon","label":"the neon · over the sofa","place":"wall","x":7,"z":0,"foot":[6,4],"rot":0,"demo":"neon-shape","variant":0,"fits":["collectible"],"wall":"E","y":1.2},
+  {"id":"decks","label":"the decks","place":"surface","x":12,"z":1,"foot":[6,2],"rot":0,"demo":"turntables","variant":0,"fits":["collectible"],"on":5},
+  {"id":"on-the-table","label":"on the table","place":"surface","x":18,"z":13,"foot":[3,2],"rot":0,"demo":"watch-box","variant":0,"fits":["collectible","trophy","stash"],"on":10}
+ ]
+}

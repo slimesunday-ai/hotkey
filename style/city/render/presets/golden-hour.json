@@ -1,0 +1,12 @@
+{
+  "_about": "Golden Hour · the golden bundle pushed: low orange sun raking the avenues, coral horizon, towering clouds lit from the side, long soft shadows, a warm halation kiss.",
+  "_tweak": "light.elevation (shadow length), light.azimuth (which streets catch it), sky.band, halation.strength.",
+  "time": { "tod": "golden" },
+  "light": { "sunColor": "#ffac5e", "sun": 3.3, "elevation": 17, "azimuth": 286, "skyFill": "#a4b4f4", "groundFill": "#e8a878", "fill": 0.72, "env": 0.28, "shadowRadius": 2.2 },
+  "sky": { "top": "#2d56e0", "horizon": "#ff9c8a", "ground": "#ff9c8a", "curve": 0.45, "band": 0.72, "bandColor": "#ffa044", "bandWidth": 0.13, "sunDisc": 1.6, "sunSize": 2.2, "sunGlow": 0.9, "glowSize": 18 },
+  "fog": { "haze": 0.1, "hazeTop": 22, "nearHigh": 200, "farHigh": 520 },
+  "clouds": { "on": true, "coverage": 0.38, "style": "towering", "shading": 0.7 },
+  "contact": { "on": true, "strength": 0.4 },
+  "halation": { "on": true, "strength": 0.3, "threshold": 0.78 },
+  "grade": { "on": true, "temperature": 0.08, "vibrance": 0.15, "contrast": 1.04 }
+}

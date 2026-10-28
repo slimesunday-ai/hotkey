@@ -1,0 +1,43 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>AI City · Mainland interiors (test)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<!-- MAINLAND INTERIORS · the test page for openMainlandInterior() (interiors/city/mainland.js). One house's interior, by style:
+     ?style=springfield|trophy|cape|porch|ranch|gambrel|slab|butterfly · &owner=1 (yours: EDIT HOME) or &owner=0 (a visit) · &plot=<id>
+     (the save key is mainland:<plot>) · &edit=1 (straight into edit mode) · &tod=night · &fresh=1 (forget this plot's saved layout) -->
+<style>
+  html, body { margin: 0; height: 100%; background: #9fdcff; font: 800 12px/1 "Arial Black", Impact, sans-serif; }
+  .ui { position: fixed; left: 14px; top: 14px; display: flex; gap: 6px; flex-wrap: wrap; max-width: calc(100vw - 28px); }
+  .ui b { background: #17171b; color: #ffc21a; padding: 8px 10px 7px; text-transform: uppercase; }
+  .ui a, .ui button { font: inherit; border: 0; cursor: pointer; text-decoration: none; text-transform: uppercase; background: #fff; color: #17171b; padding: 8px 10px 7px; box-shadow: 3px 3px 0 #17171b; }
+  .ui a.on { background: #ffc21a; } .ui a:hover, .ui button:hover { background: #ffc21a; }
+  .mli ~ .ui, body:has(.mli) .ui { z-index: 5; }
+  #err { position: fixed; left: 14px; bottom: 14px; z-index: 9; color: #fff; background: #c00; font: 12px monospace; white-space: pre-wrap; max-width: 70vw; }
+  #err:empty { display: none; }
+</style>
+<div class="ui" id="ui"></div>
+<div id="err"></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/" } }</script>
+<script>
+  addEventListener('error', e => { document.getElementById('err').textContent += (e.message || e) + '\n'; });
+  addEventListener('unhandledrejection', e => { document.getElementById('err').textContent += (e.reason && e.reason.stack || e.reason) + '\n'; });
+</script>
+<script type="module">
+  import { openMainlandInterior } from './city/mainland.js';
+  import { MAINLAND } from './city/assign.js';
+  const Q = new URLSearchParams(location.search), style = MAINLAND.includes(Q.get('style')) ? Q.get('style') : 'springfield', mine = Q.get('owner') !== '0', plot = Q.get('plot') || 'test-' + style;
+  // a lot spec as mainland/main.js builds one (the house kit's sherbet walls, the show cars)
+  const WALL = { springfield: 0xff8a5c, trophy: 0xf4f1ea, cape: 0xffd23f, porch: 0x58b7f7, ranch: 0x3fd0a0, gambrel: 0xa57cff, slab: 0xf4f1ea, butterfly: 0x12b3a0 };
+  const CAR = { springfield: { id: 'lowrider', v: 3 }, trophy: { id: 'supercar', v: 2 }, gambrel: { id: 'supercar', v: 4 }, slab: { id: 'supercar', v: 0 }, butterfly: { id: 'lowrider', v: 1 }, ranch: { id: 'pickup', v: 1 } };
+  const houseSpec = { style, seed: 17, wall: WALL[style], car: CAR[style] ?? null, address: { number: 12, street: 'Sunny Ct' } };
+  if (Q.has('fresh')) try { localStorage.removeItem('aicity.home.v1.mainland:' + plot); } catch {}
+  const link = q => { const u = new URLSearchParams(Q); for (const [k, v] of Object.entries(q)) u.set(k, v); u.delete('edit'); u.delete('fresh'); return '?' + u; };
+  document.getElementById('ui').innerHTML = `<b>Mainland interiors</b>${MAINLAND.map(s => `<a class="${s === style ? 'on' : ''}" href="${link({ style: s })}">${s}</a>`).join('')}
+    <a href="${link({ owner: mine ? 0 : 1 })}">${mine ? 'visit instead' : 'as the owner'}</a><button id="go" hidden>go inside</button>`;
+  async function go() { document.getElementById('go').hidden = true;
+    window.__mli = await openMainlandInterior({ plotId: plot, houseSpec, owner: mine ? { handle: 'slime', you: true } : { handle: 'ownerhandle' }, night: Q.get('tod') === 'night',
+      onClose: () => { document.getElementById('go').hidden = false; window.__mli = null; } });
+    if (Q.has('edit') && mine) window.__mli.edit(); window.__ready = true; }
+  document.getElementById('go').onclick = go; go();
+</script>

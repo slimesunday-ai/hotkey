@@ -1,0 +1,15 @@
+{
+  "_about": "Blue Hour Neon · the money shot: indigo sky with a magenta band, a 60/40 mix of warm and neon/fluorescent windows, sodium lamp pools on every corner, emissive-only bloom. Needs the night build (reloads with ?tod=night).",
+  "_tweak": "bloom.strength, night.pools, night.dark (share of windows off), sky.nightGlow.",
+  "_stack": "grade runs before bloom on purpose: on the night build bloom otherwise smears a non-finite scene pixel into a black blob (grade's clamp scrubs it). Keep grade on and first while bloom is on.",
+  "time": { "tod": "blue" },
+  "light": { "sunColor": "#7c86ff", "sun": 0.7, "elevation": 9, "azimuth": 286, "skyFill": "#5b6be0", "groundFill": "#3b2447", "fill": 0.8, "env": 0.3, "shadowRadius": 2.5, "shadowStrength": 0.6 },
+  "sky": { "top": "#16268c", "horizon": "#7458d6", "ground": "#7458d6", "curve": 0.55, "band": 0.5, "bandColor": "#ff6c98", "bandWidth": 0.1, "nightGlow": 0.55, "nightGlowColor": "#ff5a8c", "nightGlowWidth": 70 },
+  "fog": { "haze": 0.12 },
+  "clouds": { "on": true, "coverage": 0.3, "style": "flat", "shading": 0.8, "brightness": 0.7 },
+  "contact": { "on": true, "strength": 0.4 },
+  "night": { "pools": 0.7, "poolColor": "#ffb468", "windows": 0.85, "cool": 0.25, "tv": 0.15, "neon": 0.16, "dark": 0.35, "lampLight": 22, "poolSize": 10 },
+  "bloom": { "on": true, "emissive": true, "threshold": 0.5, "strength": 1.1, "radius": 0.75 },
+  "grade": { "on": true, "saturation": 1.1, "split": 0.2, "shadows": "#3526b0", "highlights": "#ff8a5c" },
+  "stack": { "order": "blur,grade,bloom,halation,sharpen,chroma,lens,vignette,grain,dither,letterbox" }
+}

@@ -1,0 +1,441 @@
+{
+ "tier": "mainland",
+ "name": "mainland-springfield",
+ "style": "springfield",
+ "room": {
+  "h": 2.8,
+  "w": 70,
+  "d": 28,
+  "walls": {
+   "N": "paint:#fff3e0",
+   "E": "paint:#ff8a5c"
+  },
+  "floor": "oak",
+  "zones": [
+   {
+    "x": 0,
+    "z": 0,
+    "w": 9,
+    "d": 16,
+    "floor": "tile"
+   },
+   {
+    "x": 49,
+    "z": 0,
+    "w": 21,
+    "d": 28,
+    "floor": "concrete"
+   }
+  ],
+  "built": [
+   {
+    "kind": "wall",
+    "x": 9,
+    "z": 0,
+    "w": 1,
+    "d": 16
+   },
+   {
+    "kind": "wall",
+    "x": 23,
+    "z": 0,
+    "w": 1,
+    "d": 18
+   },
+   {
+    "kind": "wall",
+    "x": 48,
+    "z": 0,
+    "w": 1,
+    "d": 19
+   },
+   {
+    "kind": "car",
+    "x": 55,
+    "z": 6,
+    "w": 10,
+    "d": 16
+   }
+  ]
+ },
+ "items": [
+  {
+   "id": "toilet",
+   "x": 4,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "sink-bath",
+   "x": 6,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "medicine-cabinet",
+   "x": 6,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "wall": "N"
+   }
+  },
+  {
+   "id": "bathtub",
+   "x": 0,
+   "z": 5,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "bed-double",
+   "x": 13,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "table-end",
+   "x": 11,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "lamp-table",
+   "x": 11,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": {
+    "top": 5
+   }
+  },
+  {
+   "id": "table-end",
+   "x": 19,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "lamp-table",
+   "x": 19,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "top": 7
+   }
+  },
+  {
+   "id": "photos-family",
+   "x": 14,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "wall": "N"
+   },
+   "y": 1.25
+  },
+  {
+   "id": "rug-shag",
+   "x": 12,
+   "z": 9,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "dresser",
+   "x": 19,
+   "z": 17,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "plant-cactus",
+   "x": 22,
+   "z": 17,
+   "rot": 0,
+   "variant": 1,
+   "on": {
+    "top": 11
+   }
+  },
+  {
+   "id": "ceiling-fan",
+   "x": 14,
+   "z": 9,
+   "rot": 0,
+   "variant": 0,
+   "on": "ceiling"
+  },
+  {
+   "id": "counter-sink",
+   "x": 24,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "stove",
+   "x": 30,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "fridge",
+   "x": 33,
+   "z": 0,
+   "rot": 0,
+   "variant": 2,
+   "on": "floor"
+  },
+  {
+   "id": "rug-rag",
+   "x": 25,
+   "z": 6,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "dining-set",
+   "x": 25,
+   "z": 6,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "plant-cactus",
+   "x": 28,
+   "z": 8,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "top": 18
+   }
+  },
+  {
+   "id": "door-front",
+   "x": 36,
+   "z": 0,
+   "rot": 0,
+   "variant": 2,
+   "on": {
+    "wall": "N"
+   }
+  },
+  {
+   "id": "rug-persian",
+   "x": 39,
+   "z": 9,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "table-coffee",
+   "x": 41,
+   "z": 11,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "couch-house",
+   "x": 39,
+   "z": 16,
+   "rot": 180,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "lamp-arc",
+   "x": 37,
+   "z": 13,
+   "rot": 90,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "plant-monstera",
+   "x": 45,
+   "z": 22,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "bookshelf",
+   "x": 49,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "paint-kit",
+   "x": 66,
+   "z": 23,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "beer-cans",
+   "x": 50,
+   "z": 24,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "recliner",
+   "x": 15,
+   "z": 20,
+   "rot": 180,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "plant-monstera",
+   "x": 1,
+   "z": 22,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  }
+ ],
+ "slots": [
+  {
+   "id": "stash",
+   "label": "the vent",
+   "place": "wall",
+   "x": 1,
+   "z": 0,
+   "foot": [
+    2,
+    1
+   ],
+   "rot": 0,
+   "demo": "stash-vent",
+   "variant": 0,
+   "fits": [
+    "stash"
+   ],
+   "wall": "N",
+   "y": 0.25
+  },
+  {
+   "id": "tv",
+   "label": "the TV wall",
+   "place": "wall",
+   "x": 40,
+   "z": 0,
+   "foot": [
+    7,
+    4
+   ],
+   "rot": 0,
+   "demo": "tv-flat",
+   "variant": 0,
+   "fits": [
+    "electronics",
+    "gear"
+   ],
+   "wall": "N",
+   "y": 1
+  },
+  {
+   "id": "trophies",
+   "label": "the trophy shelf",
+   "place": "surface",
+   "x": 49,
+   "z": 0,
+   "foot": [
+    4,
+    2
+   ],
+   "rot": 0,
+   "demo": "trophy-crew-crown",
+   "variant": 0,
+   "fits": [
+    "trophy"
+   ],
+   "on": 26
+  },
+  {
+   "id": "display",
+   "label": "the display wall",
+   "place": "wall",
+   "x": 55,
+   "z": 0,
+   "foot": [
+    8,
+    6
+   ],
+   "rot": 0,
+   "demo": "sneaker-wall",
+   "variant": 0,
+   "fits": [
+    "collectible"
+   ],
+   "wall": "N",
+   "y": 0.6
+  },
+  {
+   "id": "garage",
+   "label": "the garage corner",
+   "place": "floor",
+   "x": 67,
+   "z": 1,
+   "foot": [
+    3,
+    3
+   ],
+   "rot": 0,
+   "demo": "arcade-cab",
+   "variant": 0,
+   "fits": [
+    "gaming",
+    "collectible"
+   ]
+  },
+  {
+   "id": "caps",
+   "label": "the cap wall",
+   "place": "wall",
+   "x": 10,
+   "z": 0,
+   "foot": [
+    8,
+    4
+   ],
+   "rot": 0,
+   "demo": "cap-wall",
+   "variant": 0,
+   "fits": [
+    "collectible"
+   ],
+   "wall": "E",
+   "y": 1.5
+  }
+ ]
+}

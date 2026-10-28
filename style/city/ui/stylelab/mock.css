@@ -1,0 +1,93 @@
+/* UI STYLE LAB · the one mock (menu bar + a compact agent card), the same markup for every style. This file is the BASE: the kit's
+   "clean" tokens (ui/kit.css #k) under the same names, so a style kept here can become a real skin by copying its token block into
+   kit.css and its overrides into the kit's per-skin section. A style (styles.css) sets tokens on .mk[data-style] and restyles parts;
+   it never changes the markup. The stage is 1280 x 720, the backdrop a real still from the city (--lab-bg, set by the page). */
+.mk {
+  --k-font: "Geist", system-ui, -apple-system, sans-serif; --k-font-display: "Geist", system-ui, sans-serif; --k-font-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+  --k-fs-xs: 11px; --k-fs-s: 12.5px; --k-fs-m: 14px; --k-fs-l: 19px; --k-lh: 1.42; --k-weight-strong: 600; --k-track-label: .01em; --k-case-label: none;
+  --k-r1: 7px; --k-r2: 11px; --k-r3: 18px;
+  --k-bg: rgba(248, 249, 251, .80); --k-bg-solid: #f6f7f9; --k-bg-2: rgba(255, 255, 255, .72); --k-bg-3: rgba(20, 24, 33, .06);
+  --k-ink: #13151a; --k-ink-2: #4b515d; --k-ink-3: #868c98; --k-line: rgba(19, 21, 26, .09);
+  --k-accent: #2a4fe0; --k-accent-ink: #fff; --k-on: var(--k-ink); --k-on-ink: var(--k-bg-solid); --k-act: var(--k-accent);
+  --k-blur: blur(18px) saturate(1.6);
+  --k-shadow: 0 18px 40px -12px rgba(16, 24, 48, .32), 0 2px 6px rgba(16, 24, 48, .08), inset 0 1px 0 rgba(255, 255, 255, .7);
+  --k-shadow-s: 0 4px 14px -4px rgba(16, 24, 48, .28), 0 1px 2px rgba(16, 24, 48, .1);
+  --k-live: #0d8a43; --k-live-bg: #dcf4e5; --k-tape: #a35a00; --k-tape-bg: #fcecd3;
+  --card-w: 340px;
+  position: relative; width: 1280px; height: 720px; overflow: hidden; isolation: isolate;
+  font: 400 var(--k-fs-s)/var(--k-lh) var(--k-font); color: var(--k-ink); -webkit-font-smoothing: antialiased; text-align: left;
+}
+.mk *, .mk *::before, .mk *::after { box-sizing: border-box; }
+.mk button { font: inherit; color: inherit; cursor: default; }
+.mk svg { width: 16px; height: 16px; flex: none; display: block; }
+.mk-bg { position: absolute; inset: 0; z-index: 0; background: var(--lab-bg, #6a7a8a) center / cover no-repeat; }
+.mk-fx { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.mk kbd { font: 500 10px/1 var(--k-font-mono); padding: 2px 4px; border-radius: 4px; background: var(--k-bg-3); color: var(--k-ink-2); min-width: 16px; text-align: center; }
+
+/* ── the bar ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+.mk-bar { position: absolute; left: 14px; top: 12px; z-index: 2; height: 40px; display: flex; align-items: center; gap: 2px; padding: 4px;
+  background: var(--k-bg); -webkit-backdrop-filter: var(--k-blur); backdrop-filter: var(--k-blur); border-radius: calc(var(--k-r2) + 1px); box-shadow: var(--k-shadow-s); white-space: nowrap; }
+.mk-brand { display: flex; align-items: center; gap: 7px; height: 24px; padding: 0 11px 0 8px; margin-right: 3px; border-right: 1px solid var(--k-line); font: 700 var(--k-fs-m)/1 var(--k-font-display); letter-spacing: -.01em; color: var(--k-ink); }
+.mk-mark { width: 9px; height: 9px; border-radius: 2.5px; background: var(--k-act); transform: rotate(45deg); flex: none; }
+.mk-items { display: flex; align-items: center; gap: 2px; }
+.mk-item { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 10px 0 9px; border: 0; border-radius: var(--k-r1); background: none; color: var(--k-ink-2);
+  font: 550 var(--k-fs-s)/1 var(--k-font); letter-spacing: var(--k-track-label); text-transform: var(--k-case-label); }
+.mk[data-style] .mk-item.is-on { background: var(--k-on); color: var(--k-on-ink); }   /* (stronger than a style's plain .mk-item) */
+.mk[data-style] .mk-item.is-on kbd { background: color-mix(in srgb, var(--k-on-ink) 18%, transparent); color: inherit; }
+.mk-item[data-id="action"]:not(.is-on) .mk-ic { color: var(--k-act); }
+.mk-ic { display: grid; place-items: center; width: 16px; height: 16px; flex: none; }
+.mk-sep { width: 1px; height: 20px; margin: 0 4px; background: var(--k-line); flex: none; }
+
+/* ── the agent card ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+.mk-card { position: absolute; left: 14px; top: 66px; z-index: 2; width: var(--card-w); display: grid; gap: 12px; padding: 14px;
+  background: var(--k-bg); -webkit-backdrop-filter: var(--k-blur); backdrop-filter: var(--k-blur); border-radius: var(--k-r3); box-shadow: var(--k-shadow); }
+.mk-head { display: grid; grid-template-columns: 74px 1fr auto; gap: 12px; align-items: start; }
+.mk-pic { position: relative; width: 74px; height: 86px; border-radius: var(--k-r2); overflow: hidden; background: var(--k-bg-3); }
+.mk-pic img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; display: block; }
+.mk-rec { display: none; }
+.mk-who { min-width: 0; padding-top: 2px; }
+.mk-handle { margin: 0; font: 650 var(--k-fs-l)/1.15 var(--k-font-display); color: var(--k-ink); overflow-wrap: anywhere; }
+.mk-role { margin: 4px 0 0; color: var(--k-ink-2); }
+.mk-role b { font-weight: var(--k-weight-strong); color: var(--k-ink); }
+.mk-x { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 0; border-radius: var(--k-r1); background: var(--k-bg-3); color: var(--k-ink-2); }
+.mk-x svg { width: 14px; height: 14px; }
+.mk-now { display: grid; gap: 8px; }
+.mk-nowrow { display: flex; align-items: center; gap: 9px; }
+.mk-doing { margin: 0; font: 600 var(--k-fs-m)/1.25 var(--k-font); color: var(--k-ink); }
+.mk-lens { --c: var(--k-live); --b: var(--k-live-bg); display: inline-flex; align-items: center; gap: 5px; height: 20px; padding: 0 7px 0 6px; border-radius: 999px; background: var(--b); color: var(--c);
+  font: 650 10.5px/1 var(--k-font); letter-spacing: .05em; white-space: nowrap; flex: none; text-transform: uppercase; }
+.mk-lens.is-tape { --c: var(--k-tape); --b: var(--k-tape-bg); }
+.mk-lens svg { width: 12px; height: 12px; }
+.mk-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+.mk-quote { margin: 0; padding: 8px 11px; border-radius: var(--k-r1); background: var(--k-bg-2); box-shadow: inset 0 0 0 1px var(--k-line); font-style: italic; color: var(--k-ink); }
+.mk-quote cite { display: block; margin-top: 4px; font: 500 var(--k-fs-xs)/1.3 var(--k-font-mono); font-style: normal; color: var(--k-ink-3); }
+.mk-tape { display: flex; align-items: center; gap: 8px; }
+.mk-asof { font: 500 var(--k-fs-xs)/1 var(--k-font-mono); color: var(--k-ink-3); }
+.mk-stats { margin: -6px 0 0; display: grid; }
+.mk-stat { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 4px 12px; padding: 7px 0; border-bottom: 1px solid var(--k-line); }
+.mk-stat:last-child { border-bottom: 0; }
+.mk-stat dt { color: var(--k-ink-2); }
+.mk-stat dd { margin: 0; font: 600 var(--k-fs-m)/1.1 var(--k-font-mono); font-variant-numeric: tabular-nums; color: var(--k-ink); }
+.mk-stat dd small { font-size: .78em; font-weight: 500; color: var(--k-ink-3); }
+.mk-meter { grid-column: 1 / -1; position: relative; height: 3px; border-radius: 3px; background: var(--k-bg-3); overflow: hidden; }
+.mk-meter::after { content: ""; position: absolute; inset: 0 auto 0 0; width: calc(var(--v) * 100%); background: var(--k-tape); border-radius: inherit; }
+.mk-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mk-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 36px; padding: 0 12px; border: 0; border-radius: var(--k-r1);
+  background: var(--k-bg-3); color: var(--k-ink); font: 550 var(--k-fs-s)/1 var(--k-font); white-space: nowrap; }
+.mk[data-style] .mk-btn.is-primary { background: var(--k-accent); color: var(--k-accent-ink); }
+.mk-btn.is-primary kbd { background: rgba(255, 255, 255, .2); color: inherit; }
+.mk-btn svg { width: 14px; height: 14px; }
+/* ── round 2 parts (every style has them; round 1 styles get these defaults from their own tokens) ─────────────────────────────── */
+.mk .mk-px { display: none; width: calc(var(--w) * var(--px, 2px)); height: calc(var(--h) * var(--px, 2px)); fill: currentColor; flex: none; overflow: visible; }
+.mk .mk-px .fx { fill: var(--px-fx, transparent); } .mk .mk-px .sh { fill: rgba(0, 0, 0, .3); display: var(--px-sh, none); }
+.mk-crew::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 50%; background: var(--crew); vertical-align: 0; }
+.mk-dist { display: none; }
+.mk-carry { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px; margin-top: -4px; }
+.mk-carry-h { color: var(--k-ink-2); font-size: var(--k-fs-xs); }
+.mk-bag { display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; justify-content: flex-end; }
+.mk-it { --is: 30px; position: relative; display: grid; place-items: center; width: 38px; height: 38px; border-radius: var(--k-r1); background: var(--k-bg-3); }
+.mk-icon { width: var(--is); height: var(--is); background: url("../icons/atlas/icons@2x.png") no-repeat; background-size: calc(var(--is) * 12) calc(var(--is) * 7);
+  background-position: calc(var(--ix) * var(--is) * -1) calc(var(--iy) * var(--is) * -1); }
+.mk-it b { position: absolute; right: -4px; bottom: -4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; display: grid; place-items: center;
+  background: var(--k-ink); color: var(--k-bg-solid); font: 700 10px/1 var(--k-font-mono); }
+@keyframes mk-blink { 50% { opacity: 0; } }

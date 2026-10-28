@@ -1,0 +1,649 @@
+/* UI STYLE LAB · ROUND 2 (2026-10-07): styles that belong on top of the city. Every colour is a STYLE.md §2 hex (walls, neutrals, ink,
+   trim, sign colours, glass); depth is voxel corner shading (--ao: the cast's AO curve read as a darker bottom/right edge and a lit top),
+   never an outline (§8); the words are the city's own sign lettering (signage/type via pixtype.js: the .mk-px twins, on by default here);
+   the formats are the street's (§12: wheat-paste, window cards, blade/fascia boards, awnings, price stickers, bus-shelter lightboxes).
+   REC and timecodes belong to the camera (the portrait feed), not to every panel. */
+.mk[data-round="2"] {
+  --yel: #FFC21A; --red: #EF4A2A; --pink: #FF4FA3; --vio: #7A3CFF; --org: #FF7A1A; --grn: #25B84C; --sky: #3FA9F5; --blu: #2F5BFF; --teal: #12B3A0; --pur: #8C52FF; --rose: #E83B5B; --tan: #FF8A1F;
+  --white: #F4F1EA; --bone: #E6E1D6; --pale: #D3D4D7; --grey: #A7A9B1; --slate: #6D707A; --brick: #9B4F3A; --buff: #C49A6C;
+  --ink: #17171B; --trim: #FFF0D0; --s-grn: #14A83B; --s-red: #E8232A; --s-yel: #FFE23A; --lime: #6CFF4A; --cyan: #2DE2E6; --glass: #1B2A55; --glass-2: #3F6BC4; --glint: #EAF6FF; --lit: #FFC766;
+  --ao: inset 0 -4px 0 rgba(23, 23, 27, .16), inset -4px 0 0 rgba(23, 23, 27, .07), inset 0 3px 0 rgba(255, 255, 255, .14);
+  --ao-s: inset 0 -3px 0 rgba(23, 23, 27, .18), inset -2px 0 0 rgba(23, 23, 27, .08), inset 0 2px 0 rgba(255, 255, 255, .16);
+  --k-r1: 0; --k-r2: 0; --k-r3: 0; --k-blur: none; --k-shadow: none; --k-shadow-s: none; --k-weight-strong: 700;
+  --k-font: "Courier Prime", monospace; --k-font-display: "Anton", sans-serif; --k-font-mono: "VT323", monospace;
+  --px: 2px; --k-act: var(--ink);
+  & .mk-px { --px: inherit; }
+  & :is(.mk-brand, .mk-item, .mk-lens, .mk-stat dt, .mk-carry-h, .mk-btn, .mk-dist, .mk-handle) > .mk-px { display: block; }
+  & :is(.mk-brand, .mk-lens, .mk-stat dt, .mk-carry-h, .mk-btn, .mk-dist, .mk-handle) > .mk-t, & .mk-item > .mk-lbl { display: none; }
+  & .mk-handle { --px: 2px; }
+  & .mk-crew::before { border-radius: 0; }
+  & .mk-dist { display: inline-flex; align-items: center; height: 20px; padding: 0 6px; margin-left: auto; background: var(--dist); color: var(--white); --px: 1px; flex: none; }
+  & .mk-dist .mk-px { --px: 2px; }
+  & .mk-nowrow { flex-wrap: nowrap; } & .mk-nowrow .mk-doing { flex: 1; min-width: 0; }
+  & kbd { font: 400 14px/1 "VT323", monospace; padding: 1px 3px 0; border-radius: 0; background: rgba(23, 23, 27, .12); color: inherit; min-width: 0; }
+  & .mk-lens { border-radius: 0; height: 20px; padding: 0 6px; gap: 5px; }
+  & .mk-lens svg:not(.mk-px) { display: none; }
+  & .mk-dot { border-radius: 0; }
+  & .mk-it { border-radius: 0; }
+  & .mk-it b { border-radius: 0; font: 400 16px/1 "VT323", monospace; height: 16px; min-width: 16px; }
+  & .mk-pic img { object-position: 50% 0; }
+  & .mk-stats { margin-top: -4px; }
+}
+
+/* ═══ 1 · ZINE · WALL STOCK — bone and white paper, one warm cluster (crew yellow + orange), lime highlighter, 5×7 lettering ═══ */
+.mk[data-style="z-stock"] {
+  --k-bg: var(--white); --k-bg-2: #fff; --k-bg-3: var(--bone); --k-ink: var(--ink); --k-ink-2: #3b3a40; --k-ink-3: var(--slate); --k-line: rgba(23, 23, 27, .16);
+  --k-on: var(--lime); --k-on-ink: var(--ink); --k-accent: var(--pink); --k-accent-ink: var(--ink);
+  --k-live: var(--ink); --k-live-bg: var(--lime); --k-tape: var(--ink); --k-tape-bg: var(--org);
+  --tape: rgba(255, 240, 208, .78); --k-fs-s: 13px;
+  & .mk-bar { background: var(--bone); box-shadow: 5px 5px 0 var(--ink); padding: 5px 6px; gap: 3px; height: 42px; }
+  & .mk-brand { height: 30px; padding: 0 10px; margin-right: 6px; border: 0; background: var(--yel); color: var(--ink); transform: rotate(-2.5deg); box-shadow: 3px 3px 0 var(--ink); --px: 2px; }
+  & .mk-mark { display: none; }
+  & .mk-item { height: 30px; padding: 0 8px; gap: 6px; color: var(--ink); }
+  & .mk-item .mk-ic { display: none; }
+  & .mk-item.is-on { transform: rotate(-1.5deg); }
+  & .mk-item[data-id="action"]:not(.is-on) { background: var(--org); }
+  & .mk-sep { width: 4px; height: 26px; background: var(--ink); }
+  & .mk-card { background: var(--white); box-shadow: 6px 7px 0 var(--ink); padding: 0 0 14px; gap: 12px; }
+  & .mk-card::before, & .mk-card::after { content: ""; position: absolute; top: -10px; width: 74px; height: 22px; background: var(--tape); z-index: 3; }
+  & .mk-card::before { left: 18px; transform: rotate(-6deg); } & .mk-card::after { right: 22px; transform: rotate(5deg); }
+  & .mk-head { background: var(--yel); padding: 14px 14px 12px; grid-template-columns: 82px 1fr auto; }
+  & .mk-pic { width: 82px; height: 92px; background: var(--pink); transform: rotate(-3deg); box-shadow: 4px 4px 0 var(--ink); }
+  & .mk-handle { --px: 2px; margin-top: 2px; }
+  & .mk-role { font-weight: 700; color: var(--ink); } & .mk-role b { background: var(--white); padding: 0 4px; }
+  & .mk-x { background: var(--ink); color: var(--yel); width: 26px; height: 26px; }
+  & .mk-now, & .mk-tape, & .mk-stats, & .mk-carry, & .mk-acts { margin: 0 14px; }
+  & .mk-doing { font: 700 14px/1.2 var(--k-font); }
+  & .mk-quote { background: none; box-shadow: none; padding: 0 0 0 12px; border-left: 4px solid var(--lime); font-style: normal; }
+  & .mk-quote cite { font: 400 15px/1 var(--k-font-mono); }
+  & .mk-asof { font: 400 15px/1 var(--k-font-mono); color: var(--slate); }
+  & .mk-stat { border-bottom: 2px dashed rgba(23, 23, 27, .18); }
+  & .mk-stat dd { font: 400 22px/1 var(--k-font-display); }
+  & .mk-stat dd small { color: var(--slate); }
+  & .mk-stat[data-k="cash"] dd .mk-t { background: var(--lime); padding: 0 4px; }
+  & .mk-meter { height: 6px; background: var(--bone); } & .mk-meter::after { background: var(--org); }
+  & .mk-carry-h { color: var(--ink); }
+  & .mk-it { background: var(--bone); width: 40px; height: 40px; } & .mk-it:nth-child(odd) { transform: rotate(-3deg); } & .mk-it:nth-child(even) { transform: rotate(2deg); }
+  & .mk-it b { background: var(--pink); color: var(--ink); border-radius: 50%; min-width: 17px; height: 17px; }
+  & .mk-btn { background: var(--bone); color: var(--ink); box-shadow: 3px 3px 0 var(--ink); min-height: 36px; }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--pink); color: var(--ink); }
+  & .mk-btn kbd { background: rgba(23, 23, 27, .14); }
+}
+
+/* ═══ 2 · ZINE · PINK FLYER — fluorescent pink stock, ink, yellow highlighter, varsity handle with its ink drop ═══════════════ */
+.mk[data-style="z-flyer"] {
+  --k-bg: var(--pink); --k-bg-2: #ff7ab6; --k-bg-3: rgba(23, 23, 27, .12); --k-ink: var(--ink); --k-ink-2: #2a1020; --k-ink-3: #5a2040; --k-line: rgba(23, 23, 27, .3);
+  --k-on: var(--s-yel); --k-on-ink: var(--ink); --k-accent: var(--ink); --k-accent-ink: var(--s-yel);
+  --k-live: var(--ink); --k-live-bg: var(--s-yel); --k-tape: var(--s-yel); --k-tape-bg: var(--ink);
+  --dots: radial-gradient(rgba(23, 23, 27, .16) 1.1px, transparent 1.5px) 0 0 / 6px 6px;
+  & .mk-bar { background: var(--s-yel); box-shadow: 5px 5px 0 var(--ink); padding: 5px 6px; height: 42px; gap: 2px; }
+  & .mk-brand { border: 0; height: 30px; padding: 0 10px; margin-right: 6px; background: var(--ink); color: var(--s-yel); }
+  & .mk-mark { display: none; }
+  & .mk-item { height: 30px; padding: 0 8px; color: var(--ink); gap: 6px; }
+  & .mk-item.is-on { background: var(--pink); color: var(--ink); }
+  & .mk-item[data-id="action"]:not(.is-on) .mk-ic { color: var(--rose); }
+  & .mk-sep { width: 4px; background: var(--ink); height: 26px; }
+  & .mk-card { background: var(--dots), var(--pink); box-shadow: 6px 7px 0 var(--ink); padding: 16px; transform: rotate(-.8deg); }
+  & .mk-pic { width: 82px; height: 96px; background: var(--s-yel); box-shadow: 4px 4px 0 var(--ink); }
+  & .mk-head { grid-template-columns: 82px 1fr auto; }
+  & .mk-handle { --px: 2px; --px-fx: var(--ink); color: var(--white); }
+  & .mk-role { font-weight: 700; color: var(--ink); margin-top: 8px; }
+  & .mk-x { background: var(--ink); color: var(--pink); }
+  & .mk-doing { font: 400 21px/1 var(--k-font-display); text-transform: uppercase; }
+  & .mk-quote { background: var(--s-yel); box-shadow: 4px 4px 0 var(--ink); font-style: normal; transform: rotate(.8deg); }
+  & .mk-quote cite { font: 400 15px/1 var(--k-font-mono); color: #5a4a10; }
+  & .mk-asof { font: 400 15px/1 var(--k-font-mono); color: var(--ink); }
+  & .mk-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  & .mk-stat { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 8px; border: 0; background: var(--white); box-shadow: 3px 3px 0 var(--ink); }
+  & .mk-stat dd { font: 400 26px/1 var(--k-font-display); }
+  & .mk-meter { display: none; }
+  & .mk-it { background: var(--white); box-shadow: 3px 3px 0 var(--ink); }
+  & .mk-it b { background: var(--ink); color: var(--s-yel); }
+  & .mk-carry-h { color: var(--ink); }
+  & .mk-btn { background: var(--white); color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--ink); color: var(--s-yel); }
+  & .mk-btn.is-primary kbd { background: rgba(255, 226, 58, .2); }
+}
+
+/* ═══ 3 · ZINE · COLOUR BLOCKS — the card cut from flat wall-colour blocks (a cool cluster: blue, teal, sky) on white, lime on top ═══ */
+.mk[data-style="z-blocks"] {
+  --k-bg: var(--white); --k-bg-2: #fff; --k-bg-3: rgba(255, 255, 255, .2); --k-ink: var(--ink); --k-ink-2: #33323a; --k-ink-3: var(--slate); --k-line: rgba(23, 23, 27, .14);
+  --k-on: var(--lime); --k-on-ink: var(--ink); --k-accent: var(--lime); --k-accent-ink: var(--ink);
+  --k-live: var(--ink); --k-live-bg: var(--lime); --k-tape: var(--white); --k-tape-bg: var(--ink);
+  & .mk-bar { background: var(--blu); color: var(--white); padding: 5px; gap: 2px; height: 42px; box-shadow: var(--ao); }
+  & .mk-brand { color: var(--white); border-right: 0; background: var(--ink); height: 32px; margin: 0 6px 0 0; padding: 0 10px; }
+  & .mk-mark { display: none; }
+  & .mk-item { height: 32px; padding: 0 8px; color: var(--white); gap: 6px; }
+  & .mk-item .mk-ic { display: none; }
+  & .mk-item[data-id="action"]:not(.is-on) { color: var(--lime); }
+  & .mk-sep { width: 6px; height: 32px; background: var(--sky); margin: 0 3px; }
+  & kbd { background: rgba(23, 23, 27, .3); }
+  & .mk-item.is-on kbd { background: rgba(23, 23, 27, .14); }
+  & .mk-card { background: none; padding: 0; gap: 0; }
+  & .mk-card > * { position: relative; padding: 12px 14px; }
+  & .mk-head { background: var(--blu); color: var(--white); --k-ink: var(--white); --k-ink-2: #dfe6ff; transform: rotate(-1deg); z-index: 2; box-shadow: var(--ao); }
+  & .mk-pic { background: var(--yel); width: 78px; height: 90px; }
+  & .mk-head { grid-template-columns: 78px 1fr auto; }
+  & .mk-handle { --px: 2px; }
+  & .mk-x { background: var(--ink); color: var(--white); }
+  & .mk-now { background: var(--white); margin: -4px 10px 0 6px; z-index: 1; }
+  & .mk-doing { font: 700 14px/1.2 var(--k-font); }
+  & .mk-quote { background: var(--bone); box-shadow: none; font-style: normal; }
+  & .mk-quote cite, & .mk-asof { font: 400 15px/1 var(--k-font-mono); }
+  & .mk-tape { background: var(--teal); color: var(--white); margin: 0 0 0 16px; transform: rotate(.8deg); padding: 7px 12px; }
+  & .mk-asof { color: var(--white); }
+  & .mk-stats { background: var(--white); margin: 0 4px 0 10px; padding: 4px 14px; }
+  & .mk-stat dd { font: 400 21px/1 var(--k-font-display); }
+  & .mk-stat[data-k="cash"] dd .mk-t { background: var(--lime); padding: 0 4px; }
+  & .mk-meter { height: 6px; background: var(--bone); } & .mk-meter::after { background: var(--blu); }
+  & .mk-carry { background: var(--sky); margin: 0 12px 0 2px; transform: rotate(-.6deg); color: var(--ink); }
+  & .mk-carry-h { color: var(--ink); }
+  & .mk-it { background: var(--white); box-shadow: var(--ao-s); }
+  & .mk-it b { background: var(--ink); color: var(--lime); }
+  & .mk-acts { background: var(--ink); margin: 0 6px 0 10px; transform: rotate(.5deg); }
+  & .mk-btn { background: var(--white); color: var(--ink); box-shadow: var(--ao-s); }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--lime); color: var(--ink); }
+  & .mk-btn kbd { background: rgba(23, 23, 27, .14); }
+}
+
+/* ═══ 4 · BODEGA RECEIPT, COLOUR — thermal paper under a green awning, coloured price stickers, a red stamp, the real items ═══════ */
+.mk[data-style="receipt-c"] {
+  --k-font: "Space Mono", monospace; --k-fs-s: 12px; --k-fs-xs: 11px;
+  --k-bg: #FBFAF4; --k-bg-2: transparent; --k-bg-3: var(--bone); --k-ink: var(--ink); --k-ink-2: #3a3a3a; --k-ink-3: var(--slate); --k-line: var(--ink);
+  --k-on: var(--s-yel); --k-on-ink: var(--ink); --k-accent: var(--s-grn); --k-accent-ink: var(--white);
+  --k-live: var(--white); --k-live-bg: var(--s-red); --k-tape: var(--white); --k-tape-bg: var(--ink);
+  --awn: repeating-linear-gradient(90deg, var(--s-grn) 0 18px, var(--white) 18px 36px);
+  & .mk-bar { background: var(--ink); color: var(--s-yel); height: 44px; padding: 14px 6px 4px; gap: 2px; }
+  & .mk-bar::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 10px; background: var(--awn); }
+  & .mk-bar::after { content: ""; position: absolute; left: 0; right: 0; top: 10px; height: 6px; background: radial-gradient(circle at 9px 0, var(--s-grn) 6px, transparent 6.5px) 0 0 / 36px 6px repeat-x, radial-gradient(circle at 9px 0, var(--white) 6px, transparent 6.5px) 18px 0 / 36px 6px repeat-x; }
+  & .mk-brand { color: var(--s-yel); border-right: 0; padding: 0 12px 0 6px; }
+  & .mk-mark { display: none; }
+  & .mk-item { height: 26px; padding: 0 7px; color: var(--s-yel); gap: 5px; }
+  & .mk-item .mk-ic { display: none; }
+  & .mk-item.is-on { color: var(--ink); }
+  & .mk-sep { background: var(--s-yel); opacity: .4; }
+  & kbd { background: rgba(255, 226, 58, .18); }
+  & .mk-item.is-on kbd { background: rgba(23, 23, 27, .14); }
+  & .mk-card { top: 68px; width: 330px; padding: 30px 18px 26px; gap: 10px;
+    --zz: conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / 14px 51% repeat-x, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 51% repeat-x;
+    -webkit-mask: var(--zz); mask: var(--zz); }
+  & .mk-card::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 16px; background: var(--awn); }
+  & .mk-head { grid-template-columns: 64px 1fr auto; gap: 12px; }
+  & .mk-pic { width: 64px; height: 72px; background: var(--yel); }
+  & .mk-handle { --px: 2px; }
+  & .mk-role { margin-top: 6px; }
+  & .mk-x { background: none; color: var(--ink); }
+  & .mk-now, & .mk-tape, & .mk-carry, & .mk-acts { border-top: 2px dashed var(--ink); padding-top: 10px; }
+  & .mk-lens.is-live { transform: rotate(-4deg); mix-blend-mode: multiply; height: 22px; }
+  & .mk-doing { font: 700 12.5px/1.2 var(--k-font); text-transform: uppercase; }
+  & .mk-dist .mk-px { --px: 1px; }
+  & .mk-quote { background: none; box-shadow: none; padding: 0; font-style: normal; }
+  & .mk-quote cite { font: 400 11px/1 var(--k-font); }
+  & .mk-asof { font: 400 11px/1 var(--k-font); color: var(--ink); }
+  & .mk-stats { margin-top: -2px; }
+  & .mk-stat { display: flex; align-items: center; gap: 0; border: 0; padding: 3px 0; }
+  & .mk-stat::before { content: ""; order: 1; flex: 1; margin: 0 6px; border-bottom: 2px dotted var(--ink); }
+  & .mk-stat dd { order: 2; font: 400 21px/1 var(--k-font-display); padding: 3px 8px 2px 12px; clip-path: polygon(8px 0, 100% 0, 100% 100%, 8px 100%, 0 50%); background: var(--s-yel); }
+  & .mk-stat[data-k="heat"] dd { background: var(--s-red); color: var(--white); } & .mk-stat[data-k="heat"] dd small { color: #ffd0cc; }
+  & .mk-stat[data-k="drip"] dd { background: var(--lime); }
+  & .mk-meter { display: none; }
+  & .mk-carry { grid-template-columns: 1fr; gap: 8px; }
+  & .mk-bag { justify-content: space-between; }
+  & .mk-it { background: none; width: 46px; height: 42px; }
+  & .mk-it b { right: -2px; bottom: -2px; background: var(--s-red); color: var(--white); border-radius: 50%; min-width: 17px; height: 17px; }
+  & .mk-btn { background: var(--bone); color: var(--ink); box-shadow: var(--ao-s); }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--s-grn); color: var(--white); }
+  & .mk-acts::after { content: ""; grid-column: 1 / -1; height: 26px; margin: 4px 30px 0;
+    background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 3px, var(--ink) 3px 4px, transparent 4px 7px, var(--ink) 7px 10px, transparent 10px 11px); }
+}
+
+/* ═══ 5 · CCTV, CITY COLOUR — the camera owns REC and the timecode (the feed); panels are flat blocks; labels are colour chips ═══ */
+.mk[data-style="cctv-c"] {
+  --k-font: "VT323", monospace; --k-fs-s: 16px; --k-fs-xs: 15px; --k-font-display: "VT323", monospace; --k-lh: 1.15;
+  --k-bg: var(--ink); --k-bg-2: #26262c; --k-bg-3: #2c2c33; --k-ink: var(--white); --k-ink-2: var(--pale); --k-ink-3: var(--grey); --k-line: rgba(244, 241, 234, .12);
+  --k-on: var(--yel); --k-on-ink: var(--ink); --k-accent: var(--lime); --k-accent-ink: var(--ink);
+  --k-live: var(--ink); --k-live-bg: var(--lime); --k-tape: var(--ink); --k-tape-bg: var(--org);
+  & .mk-bar { background: var(--ink); padding: 5px; gap: 4px; height: 42px; box-shadow: var(--ao); }
+  & .mk-brand { border-right: 0; color: var(--white); padding: 0 10px 0 4px; gap: 8px; }
+  & .mk-mark { width: 10px; height: 10px; border-radius: 0; transform: none; background: var(--s-red); }
+  & .mk-item { height: 32px; padding: 0 8px; color: var(--pale); background: #2c2c33; gap: 6px; box-shadow: var(--ao-s); }
+  & .mk-item .mk-ic { display: none; }
+  & .mk-item::before { content: attr(data-id); display: none; }
+  & .mk-item[data-id="action"]:not(.is-on) { color: var(--org); }
+  & .mk-sep { background: var(--slate); }
+  & kbd { background: rgba(244, 241, 234, .1); }
+  & .mk-item.is-on kbd { background: rgba(23, 23, 27, .16); }
+  & .mk-card { background: var(--ink); padding: 10px; gap: 10px; box-shadow: var(--ao); }
+  & .mk-head { grid-template-columns: 1fr auto; grid-template-rows: auto auto; gap: 8px 10px; }
+  & .mk-pic { grid-column: 1 / -1; width: auto; height: 132px; background: var(--slate); }
+  & .mk-pic img { object-fit: contain; object-position: 50% 0; filter: saturate(1.05); }
+  & .mk-pic::after { content: "DAY 3  06:00:41"; position: absolute; left: 8px; bottom: 6px; font: 400 18px/1 var(--k-font-mono); color: var(--white); text-shadow: 0 1px 0 var(--ink); }
+  & .mk-rec { display: flex; position: absolute; right: 8px; top: 6px; gap: 5px; align-items: center; font: 400 18px/1 var(--k-font-mono); color: var(--white); text-shadow: 0 1px 0 var(--ink); }
+  & .mk-rec::before { content: ""; width: 9px; height: 9px; background: var(--s-red); animation: mk-blink 1.2s steps(1) infinite; }
+  & .mk-pic::before { content: "CAM 03"; position: absolute; left: 8px; top: 7px; padding: 2px 6px 1px; background: var(--yel); color: var(--ink); font: 400 17px/1 var(--k-font-mono); z-index: 1; }
+  & .mk-who { grid-row: 2; grid-column: 1; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  & .mk-handle { --px: 2px; }
+  & .mk-role { margin: 0; color: var(--pale); }
+  & .mk-role b { color: var(--white); font-weight: 400; }
+  & .mk-crew { background: var(--crew); color: var(--ink); padding: 0 5px; } & .mk-crew::before { display: none; }
+  & .mk-x { grid-row: 2; grid-column: 2; background: #2c2c33; color: var(--white); box-shadow: var(--ao-s); }
+  & .mk-doing { font: 400 18px/1 var(--k-font); color: var(--white); }
+  & .mk-quote { background: #26262c; box-shadow: none; font-style: normal; font-size: 17px; }
+  & .mk-quote cite { font: 400 15px/1 var(--k-font-mono); color: var(--grey); }
+  & .mk-asof { font: 400 16px/1 var(--k-font-mono); color: var(--grey); }
+  & .mk-stats { grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0; }
+  & .mk-stat { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 7px 8px; border: 0; background: var(--grn); color: var(--white); box-shadow: var(--ao-s); }
+  & .mk-stat[data-k="heat"] { background: var(--red); } & .mk-stat[data-k="drip"] { background: var(--vio); }
+  & .mk-stat dt { color: var(--white); }
+  & .mk-stat dd { font: 400 30px/.8 var(--k-font-mono); color: var(--white); } & .mk-stat dd small { color: rgba(255, 255, 255, .7); }
+  & .mk-meter { display: none; }
+  & .mk-carry-h { color: var(--pale); }
+  & .mk-it { background: #2c2c33; box-shadow: var(--ao-s); }
+  & .mk-it b { background: var(--yel); color: var(--ink); }
+  & .mk-btn { background: #2c2c33; color: var(--white); box-shadow: var(--ao-s); }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--lime); color: var(--ink); }
+}
+
+/* ═══ 6 · TE × CITY — OP-1 tidiness on bone and white bodies; keycaps with corner shading; toy-coloured encoders and pads ════════ */
+.mk[data-style="te-c"] {
+  --k-font: "Space Mono", monospace; --k-fs-s: 11px; --k-fs-xs: 10px; --k-fs-m: 12px;
+  --k-bg: var(--white); --k-bg-2: #fff; --k-bg-3: var(--bone); --k-ink: var(--ink); --k-ink-2: #44434a; --k-ink-3: var(--slate); --k-line: var(--pale);
+  --k-on: var(--org); --k-on-ink: var(--ink); --k-accent: var(--org); --k-accent-ink: var(--ink);
+  --k-live: var(--ink); --k-live-bg: var(--lime); --k-tape: var(--ink); --k-tape-bg: var(--yel);
+  --key: var(--white); --k-r1: 6px; --k-r2: 8px; --k-r3: 14px;
+  & .mk-bar { background: var(--bone); height: 52px; padding: 6px; gap: 5px; border-radius: 12px; box-shadow: var(--ao); }
+  & .mk-brand { height: 38px; border: 0; padding: 0 10px; flex-direction: column; justify-content: center; align-items: flex-start; gap: 5px; }
+  & .mk-brand::after { content: ""; display: block; width: 46px; height: 6px; background: linear-gradient(90deg, var(--blu) 0 25%, var(--yel) 25% 50%, var(--pink) 50% 75%, var(--grn) 75%); }
+  & .mk-mark { display: none; }
+  & .mk-item { height: 38px; padding: 0 9px; gap: 6px; background: var(--key); color: var(--ink); border-radius: 6px; box-shadow: var(--ao-s); }
+  & .mk-item.is-on { box-shadow: var(--ao-s); }
+  & .mk-item .mk-ic { display: none; }
+  & kbd { width: 16px; height: 16px; padding: 0; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: var(--white); font-size: 13px; }
+  & .mk-item[data-id="map"] kbd { background: var(--blu); } & .mk-item[data-id="city"] kbd { background: var(--yel); color: var(--ink); } & .mk-item[data-id="tv"] kbd { background: var(--pink); }
+  & .mk-item.is-on kbd { background: var(--ink); color: var(--white); }
+  & .mk-sep { width: 8px; height: 8px; border-radius: 50%; background: var(--org); }
+  & .mk-card { top: 76px; background: var(--white); border-radius: 14px; padding: 14px; gap: 12px; box-shadow: var(--ao); }
+  & .mk-head { grid-template-columns: 78px 1fr auto; }
+  & .mk-pic { width: 78px; height: 88px; border-radius: 8px; background: var(--yel); }
+  & .mk-handle { --px: 2px; }
+  & .mk-role { font-size: 11px; }
+  & .mk-who::after { content: "01 · DEALER · DOWNTOWN"; display: block; margin-top: 8px; padding-top: 5px; font-size: 9px; letter-spacing: .08em; color: var(--slate); background: linear-gradient(var(--ink), var(--ink)) top / 100% 1px no-repeat; }
+  & .mk-x { border-radius: 50%; background: var(--bone); box-shadow: var(--ao-s); }
+  & .mk-dist { display: none; }
+  & .mk-doing { font: 700 12px/1.2 var(--k-font); }
+  & .mk-quote { border-radius: 8px; background: var(--ink); color: var(--white); box-shadow: none; font-style: normal; font-size: 11.5px; }
+  & .mk-quote cite { color: var(--grey); }
+  & .mk-asof { font-size: 10px; }
+  & .mk-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
+  & .mk-stat { display: grid; grid-template-columns: 34px 1fr; grid-template-rows: auto auto; align-items: center; gap: 2px 8px; padding: 8px; border: 0; border-radius: 10px; background: var(--bone); box-shadow: var(--ao-s); }
+  & .mk-stat::before { content: ""; grid-row: 1 / span 2; width: 34px; height: 34px; border-radius: 50%; background: conic-gradient(from 210deg, var(--white) 0 6deg, transparent 6deg), var(--c, var(--blu)); box-shadow: inset 0 -3px 0 rgba(23, 23, 27, .25); }
+  & .mk-stat[data-k="cash"] { --c: var(--grn); } & .mk-stat[data-k="heat"] { --c: var(--red); } & .mk-stat[data-k="drip"] { --c: var(--blu); }
+  & .mk-stat[data-k="heat"]::before { background: conic-gradient(from 240deg, var(--white) 0 6deg, transparent 6deg), var(--c); }
+  & .mk-stat dt { grid-column: 2; --px: 1px; } & .mk-stat dt .mk-px { --px: 1px; }
+  & .mk-stat dd { grid-column: 2; font: 700 15px/1 var(--k-font); }
+  & .mk-stat dd small { font-size: 9px; }
+  & .mk-meter { display: none; }
+  & .mk-carry { grid-template-columns: 1fr; gap: 6px; }
+  & .mk-bag { justify-content: space-between; }
+  & .mk-it { width: 52px; height: 46px; border-radius: 8px; background: var(--yel); box-shadow: var(--ao-s); }
+  & .mk-it:nth-child(2) { background: var(--org); } & .mk-it:nth-child(3) { background: var(--pink); } & .mk-it:nth-child(4) { background: var(--bone); } & .mk-it:nth-child(5) { background: var(--bone); }
+  & .mk-it b { border-radius: 8px; background: var(--ink); color: var(--white); }
+  & .mk-btn { border-radius: 8px; background: var(--bone); color: var(--ink); box-shadow: var(--ao-s); min-height: 40px; }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--org); color: var(--ink); }
+  & .mk-btn.is-primary kbd { background: var(--ink); color: var(--white); width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; padding: 0; }
+}
+
+/* ═══ 7 · VOXEL SIGN BOARD — every panel is a sign board: a frame of blocks, stepped corners, bevelled 5×7 letters, voxel keys ════ */
+.mk[data-style="voxel-sign"] {
+  --k-font: "VT323", monospace; --k-fs-s: 16px; --k-fs-xs: 15px; --k-lh: 1.15;
+  --k-bg: var(--trim); --k-bg-2: var(--white); --k-bg-3: var(--bone); --k-ink: var(--ink); --k-ink-2: #3a3530; --k-ink-3: var(--slate); --k-line: rgba(23, 23, 27, .14);
+  --k-on: var(--ink); --k-on-ink: var(--lime); --k-accent: var(--s-red); --k-accent-ink: var(--trim);
+  --k-live: var(--ink); --k-live-bg: var(--lime); --k-tape: var(--ink); --k-tape-bg: var(--s-yel);
+  --px-sh: block; --step: polygon(0 6px, 6px 6px, 6px 0, calc(100% - 6px) 0, calc(100% - 6px) 6px, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 6px calc(100% - 6px), 0 calc(100% - 6px));
+  --frame: inset 0 0 0 6px var(--red), inset 0 -10px 0 rgba(23, 23, 27, .22), inset -10px 0 0 rgba(23, 23, 27, .1), inset 0 10px 0 rgba(255, 255, 255, .1);
+  & .mk-bar { background: var(--ink); clip-path: var(--step); height: 46px; padding: 6px 10px; gap: 4px; box-shadow: inset 0 0 0 6px var(--slate), inset 0 -10px 0 rgba(0, 0, 0, .3); color: var(--s-yel); }
+  & .mk-brand { border-right: 0; color: var(--lime); padding: 0 12px 0 4px; --px: 2px; }
+  & .mk-mark { display: none; }
+  & .mk-item { height: 28px; padding: 0 7px; gap: 6px; color: var(--s-yel); }
+  & .mk-item .mk-ic { display: none; }
+  & .mk-item.is-on { background: var(--s-yel); color: var(--ink); }
+  & .mk-item.is-on .mk-px { --px-sh: none; }
+  & .mk-sep { width: 6px; height: 6px; background: var(--slate); }
+  & kbd { background: rgba(255, 226, 58, .18); }
+  & .mk-item.is-on kbd { background: rgba(23, 23, 27, .16); }
+  & .mk-card { top: 70px; background: var(--trim); clip-path: var(--step); padding: 0 6px 16px; gap: 10px; box-shadow: var(--frame); }
+  & .mk-head { background: var(--red); margin: 0 -6px; padding: 16px 16px 12px; grid-template-columns: 78px 1fr auto; box-shadow: inset 0 -6px 0 rgba(23, 23, 27, .2); }
+  & .mk-pic { width: 78px; height: 88px; background: var(--yel); box-shadow: inset 0 -5px 0 rgba(23, 23, 27, .2), inset -5px 0 0 rgba(23, 23, 27, .1); }
+  & .mk-handle { --px: 2px; color: var(--trim); }
+  & .mk-role { color: var(--trim); font-size: 17px; } & .mk-role b { color: var(--s-yel); font-weight: 400; }
+  & .mk-x { background: var(--ink); color: var(--trim); box-shadow: inset 0 -3px 0 rgba(255, 255, 255, .1); }
+  & .mk-now, & .mk-tape, & .mk-stats, & .mk-carry, & .mk-acts { margin: 0 10px; }
+  & .mk-doing { font-size: 19px; }
+  & .mk-quote { background: var(--white); box-shadow: var(--ao-s); font-style: normal; font-size: 17px; }
+  & .mk-quote cite { font: 400 15px/1 var(--k-font); }
+  & .mk-asof { font: 400 16px/1 var(--k-font); }
+  & .mk-stat dd { font: 400 26px/1 var(--k-font); }
+  & .mk-stat dd .mk-t { display: none; } & .mk-stat dd .mk-px { display: block; --px: 2px; }
+  & .mk-meter { height: 8px; background: var(--bone); } & .mk-meter::after { background: repeating-linear-gradient(90deg, var(--red) 0 6px, #c43a20 6px 8px); }
+  & .mk-it { background: var(--white); box-shadow: var(--ao-s); }
+  & .mk-it b { background: var(--ink); color: var(--lime); }
+  & .mk-btn { background: var(--bone); color: var(--ink); min-height: 38px; box-shadow: inset 0 -5px 0 rgba(23, 23, 27, .22), inset -4px 0 0 rgba(23, 23, 27, .08), inset 0 3px 0 rgba(255, 255, 255, .5), 0 4px 0 #8f8a80; transform: translateY(-2px); }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--s-red); color: var(--trim); box-shadow: inset 0 -5px 0 rgba(23, 23, 27, .25), inset 0 3px 0 rgba(255, 255, 255, .2), 0 4px 0 #8a1418; }
+}
+
+/* ═══ 8 · STOREFRONT — the bar is an awning over a lettered fascia; the card is shop glass with window vinyl and a taped window card ═══ */
+.mk[data-style="storefront"] {
+  --k-font: "Geist", sans-serif; --k-fs-s: 12.5px;
+  --k-bg: var(--glass); --k-bg-2: rgba(255, 255, 255, .08); --k-bg-3: rgba(255, 255, 255, .1); --k-ink: var(--glint); --k-ink-2: #b7c6ea; --k-ink-3: #8193c0; --k-line: rgba(234, 246, 255, .14);
+  --k-on: var(--s-yel); --k-on-ink: var(--ink); --k-accent: var(--s-yel); --k-accent-ink: var(--ink);
+  --k-live: var(--ink); --k-live-bg: var(--lime); --k-tape: var(--ink); --k-tape-bg: var(--lit);
+  --awn: repeating-linear-gradient(90deg, var(--s-red) 0 20px, var(--white) 20px 40px);
+  & .mk-bar { background: var(--ink); color: var(--white); height: 58px; padding: 22px 8px 4px; gap: 2px; }
+  & .mk-bar::before { content: ""; position: absolute; left: -6px; right: -6px; top: -4px; height: 18px; background: var(--awn); box-shadow: inset 0 -5px 0 rgba(23, 23, 27, .18); }
+  & .mk-bar::after { content: ""; position: absolute; left: -6px; right: -6px; top: 14px; height: 8px;
+    background: radial-gradient(circle at 10px 0, var(--s-red) 8px, transparent 8.5px) 0 0 / 40px 8px repeat-x, radial-gradient(circle at 10px 0, var(--white) 8px, transparent 8.5px) 20px 0 / 40px 8px repeat-x; }
+  & .mk-brand { border-right: 0; color: var(--s-yel); padding: 0 12px 0 4px; }
+  & .mk-mark { display: none; }
+  & .mk-item { height: 28px; padding: 0 7px; color: var(--white); gap: 6px; }
+  & .mk-item .mk-ic { display: none; }
+  & .mk-sep { background: rgba(255, 255, 255, .25); }
+  & kbd { background: rgba(255, 255, 255, .12); }
+  & .mk-item.is-on kbd { background: rgba(23, 23, 27, .16); }
+  & .mk-card { top: 82px; background: linear-gradient(115deg, transparent 0 58%, rgba(234, 246, 255, .14) 58% 63%, transparent 63% 68%, rgba(234, 246, 255, .08) 68% 70%, transparent 70%), var(--glass);
+    padding: 16px; gap: 12px; box-shadow: 0 0 0 8px var(--ink), 0 0 0 9px var(--slate); }
+  & .mk-pic { background: var(--glass-2); }
+  & .mk-handle { --px: 2px; color: var(--s-yel); }
+  & .mk-role { color: var(--white); }
+  & .mk-x { background: rgba(255, 255, 255, .1); color: var(--white); }
+  & .mk-lens.is-live { background: none; color: var(--lime); height: 22px; padding: 0 6px; box-shadow: none; filter: drop-shadow(0 0 4px rgba(108, 255, 74, .8)); }
+  & .mk-dot { box-shadow: 0 0 6px currentColor; }
+  & .mk-doing { color: var(--white); font-weight: 600; }
+  & .mk-quote { background: none; box-shadow: none; padding: 0; color: var(--white); font-style: normal; font: 400 19px/1.1 "Permanent Marker", cursive; }
+  & .mk-quote cite { font: 400 11px/1 "Geist Mono", monospace; color: #8193c0; }
+  & .mk-tape, & .mk-stats, & .mk-carry { background: var(--white); color: var(--ink); --k-ink: var(--ink); --k-ink-2: #3a3a3a; --k-ink-3: var(--slate); --k-line: rgba(23, 23, 27, .14); }
+  & .mk-tape { margin: 0 10px; padding: 8px 10px 4px; transform: rotate(-1deg); position: relative; }
+  & .mk-tape::before { content: ""; position: absolute; left: 40%; top: -9px; width: 60px; height: 16px; background: rgba(255, 240, 208, .75); }
+  & .mk-asof { font: 400 11px/1 "Geist Mono", monospace; }
+  & .mk-stats { margin: -10px 10px 0; padding: 4px 10px; transform: rotate(-1deg); }
+  & .mk-stat dd { font: 400 20px/1 var(--k-font-display); }
+  & .mk-meter { background: var(--bone); } & .mk-meter::after { background: var(--s-red); }
+  & .mk-carry { margin: -12px 10px 0; padding: 4px 10px 10px; transform: rotate(-1deg); }
+  & .mk-it { background: var(--bone); }
+  & .mk-it b { background: var(--s-red); color: var(--white); }
+  & .mk-btn { background: rgba(255, 255, 255, .1); color: var(--white); }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--s-yel); color: var(--ink); }
+}
+
+/* ═══ 9 · WHEAT-PASTE RUN — the card is a poster pasted on brick over older posters; the bar is a pasted strip ═══════════════════ */
+.mk[data-style="wheatpaste"] {
+  --k-font: "Courier Prime", monospace; --k-fs-s: 13px;
+  --k-bg: var(--white); --k-bg-2: var(--bone); --k-bg-3: var(--bone); --k-ink: var(--ink); --k-ink-2: #3b3a40; --k-ink-3: var(--slate); --k-line: rgba(23, 23, 27, .18);
+  --k-on: var(--ink); --k-on-ink: var(--yel); --k-accent: var(--ink); --k-accent-ink: var(--white);
+  --k-live: var(--white); --k-live-bg: var(--s-red); --k-tape: var(--ink); --k-tape-bg: var(--yel);
+  --torn: polygon(0 3px, 6% 0, 13% 4px, 22% 1px, 31% 5px, 40% 0, 52% 3px, 61% 0, 70% 4px, 81% 1px, 90% 5px, 100% 1px, 100% calc(100% - 3px), 92% 100%, 84% calc(100% - 5px), 73% 100%, 62% calc(100% - 3px), 50% 100%, 41% calc(100% - 4px), 30% 100%, 19% calc(100% - 3px), 9% 100%, 0 calc(100% - 4px));
+  & .mk-bar { background: none; padding: 0; gap: 3px; height: 44px; }
+  & .mk-brand { height: 44px; border: 0; margin: 0 4px 0 0; padding: 0 12px; background: var(--s-red); color: var(--white); clip-path: var(--torn); --px: 3px; }
+  & .mk-mark { display: none; }
+  & .mk-items { gap: 3px; }
+  & .mk-item { height: 40px; padding: 0 9px; gap: 6px; background: var(--white); color: var(--ink); clip-path: var(--torn); }
+  & .mk-item:nth-child(even) { background: var(--bone); }
+  & .mk-item .mk-ic { display: none; }
+  & .mk-item[data-id="action"]:not(.is-on) { background: var(--pink); }
+  & .mk-sep { display: none; }
+  & .mk-card { left: 22px; top: 76px; background: var(--white); padding: 16px; gap: 11px; clip-path: var(--torn); }
+  & .mk-fx::before { content: ""; position: absolute; left: 6px; top: 64px; width: 376px; height: 470px; background: var(--brick);
+    box-shadow: inset 0 -8px 0 rgba(23, 23, 27, .2); }
+  & .mk-fx { z-index: 1; }
+  & .mk-fx::after { content: ""; position: absolute; left: 196px; top: 68px; width: 180px; height: 250px; background: var(--yel); transform: rotate(4deg); clip-path: var(--torn); }
+  & .mk-head { grid-template-columns: 1fr 86px; }
+  & .mk-pic { grid-column: 2; grid-row: 1; width: 86px; height: 100px; background: var(--blu); }
+  & .mk-who { grid-column: 1; grid-row: 1; padding-top: 6px; }
+  & .mk-handle { --px: 4px; }
+  & .mk-role { margin-top: 8px; font-weight: 700; }
+  & .mk-x { position: absolute; right: 8px; top: 8px; width: 22px; height: 22px; background: var(--ink); color: var(--white); z-index: 2; }
+  & .mk-who::before { content: ""; display: block; width: 100%; height: 0; }
+  & .mk-doing { font: 400 26px/.95 var(--k-font-display); text-transform: uppercase; }
+  & .mk-nowrow { flex-wrap: wrap; }
+  & .mk-dist { margin-left: 0; }
+  & .mk-quote { background: var(--yel); box-shadow: none; font-style: normal; font-weight: 700; }
+  & .mk-quote cite { font: 400 15px/1 "VT323", monospace; color: #5a4a10; }
+  & .mk-asof { font: 400 15px/1 "VT323", monospace; }
+  & .mk-stats { grid-template-columns: repeat(3, 1fr); gap: 0; background: var(--ink); color: var(--white); --k-ink-2: var(--white); --k-ink: var(--white); padding: 8px 4px; }
+  & .mk-stat { display: flex; flex-direction: column; align-items: center; border: 0; padding: 0; gap: 6px; }
+  & .mk-stat dd { font: 400 30px/1 var(--k-font-display); color: var(--yel); } & .mk-stat dd small { color: var(--grey); }
+  & .mk-meter { display: none; }
+  & .mk-it { background: var(--bone); }
+  & .mk-it b { background: var(--s-red); color: var(--white); }
+  & .mk-btn { background: var(--bone); color: var(--ink); }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--s-red); color: var(--white); }
+}
+
+/* ═══ 10 · BUS-SHELTER LIGHTBOX — a backlit poster in a steel frame; the bar is the shelter's route strip ════════════════════════ */
+.mk[data-style="lightbox"] {
+  --k-font: "Inter Tight", sans-serif; --k-fs-s: 12.5px;
+  --k-bg: #fffdf6; --k-bg-2: #fff; --k-bg-3: var(--bone); --k-ink: var(--ink); --k-ink-2: #3b3a40; --k-ink-3: var(--slate); --k-line: rgba(23, 23, 27, .12);
+  --k-on: var(--s-yel); --k-on-ink: var(--ink); --k-accent: var(--blu); --k-accent-ink: var(--white);
+  --k-live: var(--ink); --k-live-bg: var(--lime); --k-tape: var(--ink); --k-tape-bg: var(--yel);
+  --steel: var(--grey); --glow: 0 0 34px rgba(255, 246, 214, .55);
+  & .mk-bar { background: var(--slate); height: 46px; padding: 6px 8px; gap: 4px; box-shadow: var(--ao), inset 0 0 0 4px #5d6069; color: var(--white); }
+  & .mk-brand { border-right: 0; color: var(--white); padding: 0 12px 0 4px; }
+  & .mk-mark { display: none; }
+  & .mk-item { height: 32px; padding: 0 9px 0 4px; gap: 6px; color: var(--white); }
+  & .mk-ic { width: 24px; height: 24px; border-radius: 50%; background: var(--yel); color: var(--ink); }
+  & .mk-ic svg { width: 14px; height: 14px; }
+  & .mk-item.is-on .mk-ic { background: var(--ink); color: var(--s-yel); }
+  & .mk-item[data-id="action"]:not(.is-on) .mk-ic { color: var(--ink); background: var(--org); }
+  & .mk-sep { background: rgba(255, 255, 255, .3); }
+  & kbd { background: rgba(23, 23, 27, .3); }
+  & .mk-item.is-on kbd { background: rgba(23, 23, 27, .14); }
+  & .mk-card { top: 76px; padding: 0 0 14px; gap: 11px; box-shadow: 0 0 0 10px var(--steel), 0 0 0 12px #8a8d96, inset 0 0 26px rgba(255, 250, 230, .9), var(--glow); }
+  & .mk-card::before, & .mk-card::after { content: ""; position: absolute; width: 6px; height: 6px; background: #6b6e77; top: -8px; left: -8px; box-shadow: 344px 0 #6b6e77; z-index: 3; }
+  & .mk-card::after { top: auto; bottom: -8px; }
+  & .mk-head { background: var(--sky); padding: 14px; grid-template-columns: 88px 1fr auto; }
+  & .mk-pic { width: 88px; height: 100px; background: var(--yel); }
+  & .mk-handle { --px: 2px; color: var(--white); }
+  & .mk-role { color: var(--white); font-weight: 600; } & .mk-role b { color: var(--white); }
+  & .mk-x { background: rgba(23, 23, 27, .2); color: var(--white); }
+  & .mk-now, & .mk-tape, & .mk-stats, & .mk-carry, & .mk-acts { margin: 0 14px; }
+  & .mk-doing { font: 800 15px/1.2 var(--k-font); letter-spacing: -.01em; }
+  & .mk-quote { background: none; box-shadow: none; padding: 0; font: 600 italic 15px/1.25 var(--k-font); }
+  & .mk-quote cite { font-style: normal; }
+  & .mk-stat dd { font: 900 19px/1 var(--k-font); }
+  & .mk-meter { background: var(--bone); } & .mk-meter::after { background: var(--red); }
+  & .mk-it { background: var(--bone); }
+  & .mk-it b { background: var(--blu); color: var(--white); }
+  & .mk-btn { background: var(--bone); color: var(--ink); font-weight: 700; }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--blu); color: var(--white); }
+}
+
+/* ═══ 11 · COLLECTOR BLISTER CARD — the agent as a toy on a backer card, the items as accessories in their own bubbles ═══════════ */
+.mk[data-style="blister"] {
+  --k-font: "Nunito", sans-serif; --k-fs-s: 12.5px; --k-weight-strong: 900;
+  --k-bg: var(--pink); --k-bg-2: rgba(255, 255, 255, .35); --k-bg-3: rgba(255, 255, 255, .25); --k-ink: var(--ink); --k-ink-2: #3a1028; --k-ink-3: #6a2048; --k-line: rgba(23, 23, 27, .16);
+  --k-on: var(--s-yel); --k-on-ink: var(--ink); --k-accent: var(--s-yel); --k-accent-ink: var(--ink);
+  --k-live: var(--ink); --k-live-bg: var(--lime); --k-tape: var(--ink); --k-tape-bg: var(--white);
+  --bubble: linear-gradient(135deg, rgba(255, 255, 255, .55) 0 12%, rgba(255, 255, 255, .12) 12% 30%, rgba(255, 255, 255, .22) 30% 34%, rgba(255, 255, 255, .1) 34%);
+  & .mk-bar { background: var(--white); height: 44px; padding: 5px 8px; gap: 3px; box-shadow: var(--ao); }
+  & .mk-brand { border-right: 0; height: 34px; padding: 0 12px; margin-right: 6px; background: var(--s-yel); color: var(--ink); border-radius: 17px; }
+  & .mk-mark { display: none; }
+  & .mk-item { height: 32px; padding: 0 9px; gap: 6px; color: var(--ink); border-radius: 16px; }
+  & .mk-item[data-id="action"]:not(.is-on) .mk-ic { color: var(--pink); }
+  & kbd { border-radius: 8px; }
+  & .mk-card { top: 66px; padding: 26px 14px 14px; gap: 8px; border-radius: 18px 18px 6px 6px; box-shadow: var(--ao); }
+  & .mk-card::before { content: ""; position: absolute; left: 50%; top: 9px; width: 54px; height: 12px; margin-left: -27px; border-radius: 6px; background: var(--ink); }
+  & .mk-card::after { content: "SERIES 1"; position: absolute; right: 0; top: 0; padding: 5px 10px; background: var(--s-yel); color: var(--ink); font: 900 11px/1 var(--k-font); letter-spacing: .08em; border-radius: 0 18px 0 10px; }
+  & .mk-head { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 6px; }
+  & .mk-pic { width: 124px; height: 124px; background: radial-gradient(circle, var(--s-yel) 0 45%, transparent 45.5%), var(--org);
+    clip-path: polygon(50% 0, 61% 18%, 82% 8%, 80% 30%, 100% 36%, 85% 52%, 98% 70%, 76% 74%, 76% 96%, 58% 84%, 46% 100%, 37% 82%, 16% 92%, 20% 70%, 0 62%, 16% 48%, 4% 28%, 26% 26%, 24% 4%, 42% 16%); }
+  & .mk-pic img { position: absolute; inset: 12px; width: calc(100% - 24px); height: calc(100% - 24px); border-radius: 20px; background: var(--bubble); box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .5); }
+  & .mk-who { padding: 0; }
+  & .mk-handle { --px: 2px; color: var(--white); --px-fx: var(--ink); }
+  & .mk-role { font-weight: 800; margin-top: 6px; }
+  & .mk-x { position: absolute; left: 10px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: rgba(23, 23, 27, .15); }
+  & .mk-nowrow { justify-content: center; }
+  & .mk-dist { margin-left: 0; }
+  & .mk-doing { font-weight: 900; }
+  & .mk-quote { border-radius: 14px; background: var(--white); box-shadow: none; text-align: center; }
+  & .mk-tape { justify-content: center; }
+  & .mk-asof { font: 700 11px/1 var(--k-font); }
+  & .mk-stats { grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0; }
+  & .mk-stat { display: flex; flex-direction: column; align-items: center; gap: 3px; border: 0; padding: 5px 4px; background: var(--white); border-radius: 12px; }
+  & .mk-stat dd { font: 900 18px/1 var(--k-font); }
+  & .mk-meter { display: none; }
+  & .mk-carry { grid-template-columns: 1fr; justify-items: center; gap: 6px; }
+  & .mk-bag { gap: 8px; }
+  & .mk-it { width: 42px; height: 42px; border-radius: 12px; background: var(--bubble), rgba(255, 255, 255, .3); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .6); }
+  & .mk-it b { background: var(--s-yel); color: var(--ink); border-radius: 8px; }
+  & .mk-btn { border-radius: 999px; background: var(--white); color: var(--ink); font-weight: 900; }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--s-yel); color: var(--ink); }
+}
+
+/* ═══ 12 · ZINE × RECEIPT — receipt slips taped onto crew-yellow stock, a pink highlighter over the money ═══════════════════════ */
+.mk[data-style="z-receipt"] {
+  --k-font: "Space Mono", monospace; --k-fs-s: 12px; --k-fs-xs: 11px;
+  --k-bg: var(--yel); --k-bg-2: #FBFAF4; --k-bg-3: var(--bone); --k-ink: var(--ink); --k-ink-2: #333; --k-ink-3: #5a5040; --k-line: rgba(23, 23, 27, .3);
+  --k-on: var(--pink); --k-on-ink: var(--ink); --k-accent: var(--ink); --k-accent-ink: var(--yel);
+  --k-live: var(--ink); --k-live-bg: var(--lime); --k-tape: var(--white); --k-tape-bg: var(--ink);
+  --slip: #FBFAF4; --tape: rgba(255, 240, 208, .8);
+  & .mk-bar { background: var(--slip); height: 40px; padding: 4px 6px; gap: 2px; box-shadow: 5px 5px 0 var(--ink); }
+  & .mk-brand { border: 0; padding: 0 10px; margin-right: 4px; height: 30px; background: var(--yel); }
+  & .mk-mark { display: none; }
+  & .mk-item { height: 28px; padding: 0 7px; gap: 5px; color: var(--ink); }
+  & .mk-item .mk-ic { display: none; }
+  & .mk-sep { width: 2px; background: var(--ink); }
+  & .mk-card { background: var(--yel); padding: 14px; gap: 12px; box-shadow: 6px 7px 0 var(--ink); }
+  & .mk-head { grid-template-columns: 80px 1fr auto; }
+  & .mk-pic { width: 80px; height: 92px; background: var(--white); transform: rotate(-3deg); }
+  & .mk-handle { --px: 2px; }
+  & .mk-role { font-weight: 700; }
+  & .mk-x { background: var(--ink); color: var(--yel); }
+  & :is(.mk-now, .mk-tape, .mk-stats, .mk-carry) { position: relative; background: var(--slip); padding: 10px 12px; }
+  & .mk-now { transform: rotate(-1deg); }
+  & .mk-now::before, & .mk-carry::before { content: ""; position: absolute; left: 44%; top: -9px; width: 56px; height: 16px; background: var(--tape); transform: rotate(-4deg); }
+  & .mk-tape { margin: 0 0 -12px; padding-bottom: 4px; transform: rotate(.6deg); }
+  & .mk-stats { margin: 0; padding-top: 4px; transform: rotate(.6deg); }
+  & .mk-stat { display: flex; align-items: center; border: 0; padding: 3px 0; }
+  & .mk-stat::before { content: ""; order: 1; flex: 1; margin: 0 6px; border-bottom: 2px dotted var(--ink); }
+  & .mk-stat dd { order: 2; font: 700 14px/1 var(--k-font); }
+  & .mk-stat[data-k="cash"] dd { background: linear-gradient(100deg, transparent 2%, var(--pink) 5% 92%, transparent 96%); padding: 2px 6px; }
+  & .mk-meter { display: none; }
+  & .mk-carry { transform: rotate(-.8deg); }
+  & .mk-doing { font: 700 12.5px/1.2 var(--k-font); text-transform: uppercase; }
+  & .mk-quote { background: none; box-shadow: none; padding: 0; font-style: normal; }
+  & .mk-asof { color: var(--ink); }
+  & .mk-it { background: none; }
+  & .mk-it b { background: var(--ink); color: var(--white); }
+  & .mk-btn { background: var(--slip); color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--pink); color: var(--ink); }
+}
+
+/* ═══ 13 · ZINE × CCTV — surveillance stills printed and pasted on blue stock; chips cut from coloured paper; lime highlighter ═══ */
+.mk[data-style="z-cctv"] {
+  --k-font: "Courier Prime", monospace; --k-fs-s: 13px;
+  --k-bg: var(--blu); --k-bg-2: var(--white); --k-bg-3: rgba(255, 255, 255, .15); --k-ink: var(--white); --k-ink-2: #dfe6ff; --k-ink-3: #b9c6ff; --k-line: rgba(255, 255, 255, .25);
+  --k-on: var(--lime); --k-on-ink: var(--ink); --k-accent: var(--lime); --k-accent-ink: var(--ink);
+  --k-live: var(--ink); --k-live-bg: var(--lime); --k-tape: var(--ink); --k-tape-bg: var(--yel);
+  & .mk-bar { background: var(--white); color: var(--ink); padding: 5px 6px; gap: 2px; height: 42px; box-shadow: 5px 5px 0 var(--ink); }
+  & .mk-brand { border: 0; height: 30px; padding: 0 10px; margin-right: 6px; background: var(--ink); color: var(--white); gap: 7px; }
+  & .mk-mark { width: 8px; height: 8px; border-radius: 0; transform: none; background: var(--s-red); }
+  & .mk-item { height: 30px; padding: 0 8px; gap: 6px; color: var(--ink); }
+  & .mk-item .mk-ic { display: none; }
+  & .mk-sep { width: 4px; background: var(--blu); height: 26px; }
+  & .mk-card { background: var(--blu); padding: 14px; gap: 11px; box-shadow: 6px 7px 0 var(--ink); }
+  & .mk-head { grid-template-columns: 1fr auto; }
+  & .mk-pic { grid-column: 1 / -1; width: auto; height: 128px; background: var(--slate); padding: 6px; transform: rotate(-1.2deg); box-shadow: 0 0 0 6px var(--white), 5px 6px 0 6px var(--ink); margin: 4px 4px 6px; }
+  & .mk-pic img { object-fit: contain; filter: grayscale(.25) contrast(1.1); }
+  & .mk-pic::after { content: "CAM 03 · 06:00:41"; position: absolute; left: 8px; bottom: 6px; font: 400 18px/1 "VT323", monospace; color: var(--white); }
+  & .mk-rec { display: flex; position: absolute; right: 8px; top: 6px; gap: 5px; align-items: center; font: 400 18px/1 "VT323", monospace; color: var(--white); }
+  & .mk-rec::before { content: ""; width: 8px; height: 8px; background: var(--s-red); }
+  & .mk-who { grid-row: 2; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
+  & .mk-handle { --px: 2px; background: var(--lime); color: var(--ink); padding: 4px 6px; transform: rotate(-1deg); }
+  & .mk-role { margin: 0; font-weight: 700; }
+  & .mk-crew { background: var(--crew); color: var(--ink); padding: 0 5px; } & .mk-crew::before { display: none; }
+  & .mk-x { grid-row: 2; background: var(--ink); color: var(--white); }
+  & .mk-doing { font: 700 14px/1.2 var(--k-font); }
+  & .mk-dist { background: var(--ink); }
+  & .mk-quote { background: var(--white); color: var(--ink); box-shadow: 3px 3px 0 var(--ink); font-style: normal; }
+  & .mk-quote cite { font: 400 15px/1 "VT323", monospace; color: var(--slate); }
+  & .mk-asof { font: 400 15px/1 "VT323", monospace; }
+  & .mk-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
+  & .mk-stat { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; padding: 7px 8px; border: 0; background: var(--white); color: var(--ink); --k-ink: var(--ink); --k-ink-2: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+  & .mk-stat:nth-child(2) { transform: rotate(1.5deg); }
+  & .mk-stat dd { font: 400 26px/1 var(--k-font-display); }
+  & .mk-stat[data-k="cash"] dd .mk-t { background: var(--lime); padding: 0 3px; }
+  & .mk-meter { display: none; }
+  & .mk-it { background: var(--white); box-shadow: 3px 3px 0 var(--ink); }
+  & .mk-it b { background: var(--yel); color: var(--ink); }
+  & .mk-btn { background: var(--white); color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--lime); color: var(--ink); }
+}
+
+/* ═══ 14 · ZINE × TE — a TE grid printed on bone stock; keys cut from paper in one cluster; encoder stickers; ink-block shadows ═══ */
+.mk[data-style="z-te"], .mk[data-style="z-te-pink"] {
+  --k-font: "Space Mono", monospace; --k-fs-s: 11.5px; --k-fs-xs: 10px;
+  --k-bg: var(--bone); --k-bg-2: var(--white); --k-bg-3: var(--white); --k-ink: var(--ink); --k-ink-2: #3a3a40; --k-ink-3: var(--slate); --k-line: rgba(23, 23, 27, .2);
+  --k-on: var(--ink); --k-on-ink: var(--lime); --k-accent: var(--lime); --k-accent-ink: var(--ink);
+  --k-live: var(--ink); --k-live-bg: var(--lime); --k-tape: var(--ink); --k-tape-bg: var(--org);
+  --grid: linear-gradient(rgba(23, 23, 27, .07) 1px, transparent 1px) 0 0 / 12px 12px, linear-gradient(90deg, rgba(23, 23, 27, .07) 1px, transparent 1px) 0 0 / 12px 12px;
+  & .mk-bar { background: var(--grid), var(--bone); height: 48px; padding: 5px; gap: 5px; box-shadow: 5px 5px 0 var(--ink); }
+  & .mk-brand { border: 0; height: 36px; padding: 0 10px; background: var(--ink); color: var(--bone); }
+  & .mk-mark { display: none; }
+  & .mk-item { height: 36px; padding: 0 8px; gap: 6px; background: var(--white); color: var(--ink); box-shadow: 2px 2px 0 var(--ink); }
+  & .mk-item[data-id="action"]:not(.is-on) { background: var(--org); }
+  & .mk-item[data-id="action"]:not(.is-on) .mk-ic { color: var(--ink); }
+  & .mk-sep { width: 10px; height: 10px; border-radius: 50%; background: var(--pink); }
+  & kbd { border-radius: 50%; width: 16px; height: 16px; display: grid; place-items: center; padding: 0; background: var(--ink); color: var(--white); }
+  & .mk-item.is-on kbd { background: var(--lime); color: var(--ink); }
+  & .mk-card { top: 74px; background: var(--grid), var(--bone); padding: 14px; gap: 11px; box-shadow: 6px 7px 0 var(--ink); }
+  & .mk-head { grid-template-columns: 78px 1fr auto; }
+  & .mk-pic { width: 78px; height: 88px; background: var(--org); box-shadow: 3px 3px 0 var(--ink); }
+  & .mk-handle { --px: 2px; }
+  & .mk-who::after { content: "A1 · AGENT · DOWNTOWN"; display: block; margin-top: 8px; font-size: 9px; letter-spacing: .1em; color: var(--slate); }
+  & .mk-x { border-radius: 50%; background: var(--ink); color: var(--bone); }
+  & .mk-dist { display: none; }
+  & .mk-doing { font: 700 12.5px/1.2 var(--k-font); }
+  & .mk-quote { background: var(--white); box-shadow: 2px 2px 0 var(--ink); font-style: normal; }
+  & .mk-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
+  & .mk-stat { display: grid; grid-template-columns: 30px 1fr; gap: 2px 8px; align-items: center; padding: 7px; border: 0; background: var(--white); box-shadow: 2px 2px 0 var(--ink); }
+  & .mk-stat::before { content: ""; grid-row: 1 / span 2; width: 30px; height: 30px; border-radius: 50%; background: conic-gradient(from 200deg, var(--ink) 0 8deg, transparent 8deg), var(--c, var(--yel)); }
+  & .mk-stat[data-k="cash"] { --c: var(--lime); } & .mk-stat[data-k="heat"] { --c: var(--pink); } & .mk-stat[data-k="drip"] { --c: var(--yel); }
+  & .mk-stat dt .mk-px { --px: 1px; }
+  & .mk-stat dd { grid-column: 2; font: 700 15px/1 var(--k-font); } & .mk-stat dd small { font-size: 9px; }
+  & .mk-meter { display: none; }
+  & .mk-carry { grid-template-columns: 1fr; gap: 6px; }
+  & .mk-bag { justify-content: space-between; }
+  & .mk-it { width: 52px; height: 44px; background: var(--white); box-shadow: 2px 2px 0 var(--ink); }
+  & .mk-it:first-child { background: var(--lime); }
+  & .mk-it b { background: var(--ink); color: var(--white); border-radius: 50%; }
+  & .mk-btn { background: var(--white); color: var(--ink); box-shadow: 2px 2px 0 var(--ink); min-height: 38px; }
+  & .mk-btn svg { display: none; }
+  & .mk-btn.is-primary { background: var(--lime); color: var(--ink); }
+  & .mk-btn.is-primary kbd { border-radius: 50%; width: 16px; height: 16px; display: grid; place-items: center; padding: 0; background: var(--ink); color: var(--white); }
+}
+
+/* ═══ 15 · ZINE × TE · PINK — slime (10-07): "would slap if the highlight color was pink instead of orange and was a bit longer
+   vertical length". Same as 14; every orange highlight is pink, and the card breathes taller (more padding, taller keys, a bigger portrait). ═══ */
+.mk[data-style="z-te-pink"] {
+  --k-tape-bg: var(--pink);
+  & .mk-item[data-id="action"]:not(.is-on) { background: var(--pink); }
+  & .mk-card { padding: 18px; gap: 16px; }
+  & .mk-head { grid-template-columns: 88px 1fr auto; }
+  & .mk-pic { width: 88px; height: 106px; background: var(--pink); }
+  & .mk-quote { padding: 10px 12px; }
+  & .mk-stat { padding: 11px 9px; }
+  & .mk-it { height: 56px; }
+  & .mk-btn { min-height: 48px; }
+}

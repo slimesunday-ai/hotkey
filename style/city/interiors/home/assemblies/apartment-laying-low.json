@@ -1,0 +1,41 @@
+{
+ "tier": "apartment",
+ "name": "laying-low",
+ "story": "Laying low: blinds down over the mattress, a lava lamp, the futon turned to the TV on the crates, the setup and the cabinet glowing on the side wall, a kitchenette that only boils water, a week of pizza boxes.",
+ "room": {"w":20,"d":17,"h":2.7,"walls":{"N":"paint:#7a3cff","E":"paint:#17171b"},"floor":"carpet:#6d707a"},
+ "items": [
+  {"id":"rug-shag","x":6,"z":4,"rot":0,"variant":0,"on":"floor"},
+  {"id":"window","x":0,"z":0,"rot":0,"variant":0,"on":{"wall":"N"},"y":0.9},
+  {"id":"door-front","x":15,"z":0,"rot":0,"variant":1,"on":{"wall":"N"}},
+  {"id":"mattress-floor","x":0,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"table-end","x":5,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"lava-lamp","x":6,"z":1,"rot":0,"variant":1,"on":{"top":4}},
+  {"id":"crate-shelf","x":8,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"tv-crt","x":8,"z":0,"rot":0,"variant":0,"on":{"top":6}},
+  {"id":"table-coffee","x":8,"z":5,"rot":0,"variant":2,"on":"floor"},
+  {"id":"futon","x":7,"z":9,"rot":180,"variant":1,"on":"floor"},
+  {"id":"laundry-pile","x":4,"z":13,"rot":0,"variant":2,"on":"floor"},
+  {"id":"pizza-boxes","x":12,"z":13,"rot":0,"variant":2,"on":"floor"},
+  {"id":"pizza-boxes","x":12,"z":15,"rot":0,"variant":0,"on":"floor"},
+  {"id":"pizza-boxes","x":10,"z":14,"rot":0,"variant":1,"on":"floor"},
+  {"id":"kitchenette","x":0,"z":9,"rot":90,"variant":0,"on":"floor"},
+  {"id":"art-print","x":5,"z":0,"rot":0,"variant":3,"on":{"wall":"N"},"y":1.3},
+  {"id":"poster","x":6,"z":0,"rot":0,"variant":1,"on":{"wall":"E"},"y":1.25}
+ ],
+ "slots": [
+  {"id":"setup","label":"the setup","place":"floor","x":17,"z":5,"foot":[6,3],"rot":270,"demo":"gaming-setup","variant":0,"fits":["gear"]},
+  {"id":"cabinet","label":"the cabinet","place":"floor","x":17,"z":12,"foot":[3,3],"rot":270,"demo":"arcade-cab","variant":1,"fits":["gear"]},
+  {"id":"console","label":"the console · by the TV","place":"surface","x":11,"z":0,"foot":[2,2],"rot":0,"demo":"console-toastr","variant":0,"fits":["gear"],"on":6},
+  {"id":"on-the-table","label":"on the table","place":"surface","x":9,"z":5,"foot":[3,2],"rot":0,"demo":"rolling-tray","variant":0,"fits":["gear","collectible","stash"],"on":8}
+ ],
+ "vacant": [
+  {"id":"window","x":0,"z":0,"rot":0,"variant":0,"on":{"wall":"N"},"y":0.9},
+  {"id":"door-front","x":15,"z":0,"rot":0,"variant":1,"on":{"wall":"N"}},
+  {"id":"kitchenette","x":0,"z":9,"rot":90,"variant":0,"on":"floor"},
+  {"id":"mattress-floor","x":0,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":8,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"boxes-moving","x":8,"z":7,"rot":0,"variant":2,"on":"floor"},
+  {"id":"sign-rent","x":9,"z":12,"rot":0,"variant":1,"on":"floor"},
+  {"id":"paint-kit","x":13,"z":6,"rot":0,"variant":0,"on":"floor"}
+ ]
+}

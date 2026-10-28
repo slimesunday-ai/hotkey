@@ -1,0 +1,90 @@
+/* HUMAN LAYER · SECTION 2b · trails + the heat map's bar: tokens per skin, the legend, the stop tags, the "now" dot.
+   Colours are tokens only (the 3D ribbons and the heat ramp read them too, from #k): --k-trail-1…5 (one per trailed agent),
+   --k-trail-ink (their outline), --k-heat-0…4 (the heat ramp, cold → hot) and --k-heat-ink (the contour line). */
+#k {
+  --k-trail-1: #ff3d7f; --k-trail-2: #1fb6ff; --k-trail-3: #ffb000; --k-trail-4: #7c4dff; --k-trail-5: #19c37d; --k-trail-ink: #15171c;
+  --k-heat-0: #2b59ff; --k-heat-1: #22c3c3; --k-heat-2: #ffd23f; --k-heat-3: #ff7a1a; --k-heat-4: #ff2050; --k-heat-ink: #15171c; --k-heat-op: .62;
+}
+#k[data-skin="98"] {
+  --k-trail-1: #ff4fd8; --k-trail-2: #3ee6ff; --k-trail-3: #ffe14d; --k-trail-4: #a98bff; --k-trail-5: #52ff86; --k-trail-ink: #050607;
+  --k-heat-0: #2236ff; --k-heat-1: #00d0ff; --k-heat-2: #52ff86; --k-heat-3: #ffe14d; --k-heat-4: #ff2b2b; --k-heat-ink: #050607; --k-heat-op: .66;
+}
+#k[data-skin="zine"] {
+  --k-trail-1: #ff4fa3; --k-trail-2: #1d8cff; --k-trail-3: #ffc21a; --k-trail-4: #8a3ffc; --k-trail-5: #0fa968; --k-trail-ink: #17171b;
+  --k-heat-0: #3c64ff; --k-heat-1: #1fc2a8; --k-heat-2: #ffc21a; --k-heat-3: #ff6a1a; --k-heat-4: #e3141c; --k-heat-ink: #17171b; --k-heat-op: .7;
+}
+#k[data-skin="zte"] {
+  --k-trail-1: #FF4FA3; --k-trail-2: #3FA9F5; --k-trail-3: #FFC21A; --k-trail-4: #7A3CFF; --k-trail-5: #25B84C; --k-trail-ink: #17171B; --k-trail-edge: shade;
+  --k-heat-0: #2F5BFF; --k-heat-1: #12B3A0; --k-heat-2: #FFC21A; --k-heat-3: #FF7A1A; --k-heat-4: #E8232A; --k-heat-ink: #17171B; --k-heat-edge: shade; --k-heat-op: .7;
+}
+#k [data-slot="1"] { --tr: var(--k-trail-1); } #k [data-slot="2"] { --tr: var(--k-trail-2); } #k [data-slot="3"] { --tr: var(--k-trail-3); }
+#k [data-slot="4"] { --tr: var(--k-trail-4); } #k [data-slot="5"] { --tr: var(--k-trail-5); }
+
+/* ── the legend: bottom left, over the city ─────────────────────────────────────────────────────────────────────────────────── */
+#k .tr-legend { position: absolute; left: 14px; bottom: 14px; width: calc(300 * var(--k-px)); max-width: calc(100vw - 28px); padding: 10px 12px 8px; pointer-events: auto;
+  background: var(--k-bg); -webkit-backdrop-filter: var(--k-blur); backdrop-filter: var(--k-blur); border-radius: var(--k-r2); box-shadow: var(--k-shadow); animation: k-in var(--k-dur) var(--k-ease) both; }
+#k .tr-head { display: flex; align-items: center; gap: 8px; min-height: 26px; }
+#k .tr-head .k-h { flex: 1; }
+#k .tr-x, #k .tr-drop { min-height: calc(26 * var(--k-px)); min-width: calc(26 * var(--k-px)); width: calc(26 * var(--k-px)); background: none; }
+#k .tr-wins { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 4px; }
+#k .tr-win { min-height: calc(26 * var(--k-px)); padding: 0 9px; font-size: var(--k-fs-xs); }
+#k .tr-win[aria-pressed="true"] { background: var(--k-ink); color: var(--k-bg-solid); }
+#k .tr-rows { list-style: none; margin: 0; padding: 0; display: grid; }
+#k .tr-rows li { display: grid; grid-template-columns: 14px auto 1fr 26px; align-items: center; gap: 7px; min-height: calc(30 * var(--k-px)); border-top: 1px solid var(--k-line); }
+#k .tr-sw { width: 14px; height: 6px; border-radius: 3px; background: var(--tr); box-shadow: 0 0 0 1.5px var(--k-trail-ink); }
+#k .tr-name { font-weight: var(--k-weight-strong); white-space: nowrap; }
+#k .tr-sum { color: var(--k-ink-3); font-size: var(--k-fs-xs); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#k .tr-busy { font-size: var(--k-fs-xs); padding-top: 4px; }
+
+/* ── the tags at each stop, the "now" dot (tape) ───────────────────────────────────────────────────────────────────────────── */
+#k .tr-tags { position: absolute; inset: 0; pointer-events: none; }
+#k .tr-tag { position: absolute; left: 0; top: 0; display: flex; gap: 4px; align-items: baseline; padding: 2px 5px 2px 4px; margin: -24px 0 0 6px; white-space: nowrap; will-change: transform; transform: translate3d(-9999px, 0, 0);
+  font: 600 var(--k-fs-xs)/1.2 var(--k-font-mono); color: var(--k-ink); background: var(--k-bg-solid); border-radius: 4px; border-left: 3px solid var(--tr); box-shadow: var(--k-shadow-s); }
+#k .tr-tag span { font-weight: 500; color: var(--k-ink-3); }
+#k .tr-now { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 5px; margin: -9px 0 0 -9px; will-change: transform; pointer-events: none; }
+#k .tr-now i { width: 18px; height: 18px; border-radius: 50%; background: var(--tr); box-shadow: 0 0 0 3px var(--k-trail-ink), 0 0 0 6px color-mix(in srgb, var(--tr) 40%, transparent); animation: k-pulse 1.6s ease-out infinite; }
+#k .tr-now span { font: 650 var(--k-fs-xs)/1 var(--k-font); color: var(--k-ink); background: var(--k-bg-solid); padding: 3px 5px; border-radius: 4px; box-shadow: var(--k-shadow-s); }
+#k .tr-now[hidden] { display: none; }
+
+/* ── the heat map's bar (top left, under the camera's line) ────────────────────────────────────────────────────────────────── */
+#k .ht-bar { position: absolute; left: 14px; top: calc(60 * var(--k-px)); display: flex; align-items: center; gap: 4px; padding: 5px; pointer-events: auto;
+  background: var(--k-bg); -webkit-backdrop-filter: var(--k-blur); backdrop-filter: var(--k-blur); border-radius: var(--k-r2); box-shadow: var(--k-shadow-s); }
+#k .ht-bar .k-h { padding: 0 6px 0 4px; }
+#k .ht-bar .k-btn { min-height: calc(28 * var(--k-px)); padding: 0 9px; font-size: var(--k-fs-xs); }
+#k .ht-bar .k-btn[aria-pressed="true"] { background: var(--k-ink); color: var(--k-bg-solid); }
+#k .ht-bar .k-btn.is-locked { opacity: .55; }
+#k .ht-ramp { display: none; align-items: center; gap: 6px; padding: 0 6px; color: var(--k-ink-3); font-size: var(--k-fs-xs); }
+#k .ht-bar.is-on .ht-ramp { display: flex; }
+#k .ht-ramp i { width: 64px; height: 8px; border-radius: 2px; box-shadow: 0 0 0 1px var(--k-heat-ink); background: linear-gradient(90deg, var(--k-heat-0) 0 20%, var(--k-heat-1) 20% 40%, var(--k-heat-2) 40% 60%, var(--k-heat-3) 60% 80%, var(--k-heat-4) 80%); }
+
+/* ── skins ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+#k[data-skin="98"] .tr-legend, #k[data-skin="98"] .ht-bar { border: 1px solid var(--k-line); }
+#k[data-skin="98"] .tr-tag { border-radius: 0; font: 400 calc(15 * var(--k-px))/1 var(--k-font-mono); background: rgba(5, 6, 7, .82); padding: 1px 5px; }
+#k[data-skin="98"] .tr-tag span { color: var(--k-ink-2); }
+#k[data-skin="98"] .tr-sw, #k[data-skin="98"] .ht-ramp i { border-radius: 0; }
+#k[data-skin="98"] .tr-win[aria-pressed="true"], #k[data-skin="98"] .ht-bar .k-btn[aria-pressed="true"] { background: #b5b5b5; color: #000; }
+#k[data-skin="98"] .tr-now i { border-radius: 0; }
+#k[data-skin="98"] .tr-now span { border-radius: 0; font: 400 calc(16 * var(--k-px))/1 var(--k-font-display); background: rgba(5, 6, 7, .85); }
+#k[data-skin="zine"] .tr-legend, #k[data-skin="zine"] .ht-bar { border-radius: 0; background: #fff; box-shadow: 3px 3px 0 var(--k-ink), inset 0 0 0 2px var(--k-ink); }
+#k[data-skin="zine"] .tr-tag { border-radius: 0; background: #fff; box-shadow: 2px 2px 0 var(--k-ink), inset 0 0 0 1.5px var(--k-ink); border-left-width: 4px; font-weight: 700; }
+#k[data-skin="zine"] .tr-sw { border-radius: 0; height: 8px; transform: rotate(-4deg); }
+#k[data-skin="zine"] .tr-win[aria-pressed="true"], #k[data-skin="zine"] .ht-bar .k-btn[aria-pressed="true"] { background: var(--k-ink); color: var(--k-yellow); }
+#k[data-skin="zine"] .tr-now span { border-radius: 0; box-shadow: 2px 2px 0 var(--k-ink), inset 0 0 0 1.5px var(--k-ink); font-weight: 700; }
+#k[data-skin="zte"] .tr-legend, #k[data-skin="zte"] .ht-bar { border-radius: 0; background: var(--zt-grid), var(--zt-bone); box-shadow: 4px 4px 0 var(--zt-ink); }
+#k[data-skin="zte"] .tr-legend { padding: 12px 14px 10px; }
+#k[data-skin="zte"] .tr-head .k-h { font-size: calc(18 * var(--k-px)); font-family: var(--k-font-sign); color: var(--zt-ink); letter-spacing: 0; }
+#k[data-skin="zte"] .tr-x, #k[data-skin="zte"] .tr-drop { background: none; box-shadow: none; }
+#k[data-skin="zte"] .tr-wins { gap: 6px; margin: 8px 0 6px; }
+#k[data-skin="zte"] .tr-win, #k[data-skin="zte"] .ht-bar .k-btn { min-height: calc(26 * var(--k-px)); padding: 0 8px; font-size: var(--zt-fs-label); font-family: var(--zt-font-label); }
+#k[data-skin="zte"] .tr-win[aria-pressed="true"], #k[data-skin="zte"] .ht-bar .k-btn[aria-pressed="true"] { background: var(--zt-ink); color: var(--zt-lime); box-shadow: none; transform: translate(2px, 2px); }
+#k[data-skin="zte"] .tr-rows li { border-top: 1px dashed var(--k-line); }
+#k[data-skin="zte"] .tr-sw { width: 14px; height: 10px; border-radius: 0; box-shadow: 1.5px 1.5px 0 var(--zt-ink); }
+#k[data-skin="zte"] .tr-name { font: 400 calc(18 * var(--k-px))/1 var(--k-font-sign); text-transform: uppercase; }
+#k[data-skin="zte"] .tr-sum { font: 400 var(--k-fs-xs)/1.3 var(--k-font); }
+#k[data-skin="zte"] .tr-tag { border-radius: 0; padding: 3px 6px 3px 5px; background: var(--zt-white); border-left: 4px solid var(--tr); box-shadow: 2px 2px 0 var(--zt-ink); font: 700 var(--k-fs-xs)/1.2 var(--k-font-mono); }
+#k[data-skin="zte"] .tr-now i { border-radius: 0; box-shadow: 2px 2px 0 var(--zt-ink); animation: k-zt-blink 1.6s steps(1) infinite; }
+#k[data-skin="zte"] .tr-now span { border-radius: 0; background: var(--zt-ink); color: var(--zt-white); box-shadow: 2px 2px 0 var(--tr); font: 400 var(--zt-fs-label)/1 var(--zt-font-label); letter-spacing: 0; padding: 4px 5px; }
+#k[data-skin="zte"] .ht-bar { padding: 5px; gap: 5px; }
+#k[data-skin="zte"] .ht-ramp { font: 400 var(--zt-fs-label)/1 var(--zt-font-label); letter-spacing: 0; text-transform: uppercase; color: var(--zt-ink-2); }
+#k[data-skin="zte"] .ht-ramp i { height: 10px; border-radius: 0; box-shadow: 2px 2px 0 var(--zt-ink); }
+@media (prefers-reduced-motion: reduce) { #k .tr-now i { animation: none; } }

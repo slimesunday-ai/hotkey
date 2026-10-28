@@ -1,0 +1,53 @@
+/* C1-9, the drawn half · the record path's tape (ui/record/tape.js, missed.js): the scrubber folded into the record player's bar, its
+   markers and their list, the missed card top right, the replay's lower third. The bar is outside the kit root (record/page.js puts it
+   on the body), so its colours are its own; the card and the lower third use the kit's tokens. */
+#record-player.has-tape { flex-wrap: wrap; row-gap: 6px; padding-top: 8px !important; }
+#record-player.has-tape > input[type=range] { display: none; }
+#record-player .r-tape { flex: 1 0 100%; display: flex; align-items: center; gap: 8px; min-width: 0; }
+#record-player .r-tape-track { position: relative; flex: 1; min-width: 0; height: 30px; border-radius: 5px; background: #232a35; overflow: hidden; cursor: pointer; touch-action: none; outline: none; }
+#record-player .r-tape-track:focus-visible { box-shadow: 0 0 0 2px #7cc4ff; }
+#record-player .r-tape-in, #record-player .r-tape-pips { position: absolute; left: 0; top: 0; bottom: 0; pointer-events: none; }
+#record-player .r-tape-night { position: absolute; top: 0; bottom: 0; background: #151a22; }
+#record-player .r-tape-day { position: absolute; top: 0; bottom: 0; width: 1px; background: #3b4554; }
+#record-player .r-tape-day span { position: absolute; left: 3px; top: 1px; font: 600 9px/1 system-ui; color: #7d8897; white-space: nowrap; }
+#record-player .r-tape-head { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 4px #000; pointer-events: none; z-index: 2; }
+#record-player .r-tape-mk { position: absolute; bottom: 4px; width: 16px; height: 16px; margin-left: -8px; padding: 0; border: 2px solid #0e1116; border-radius: 50%;
+  background: #c9d1dc; color: #0e1116; font: 800 9px/12px system-ui; text-align: center; cursor: pointer; pointer-events: auto; z-index: 1; }
+#record-player .r-tape-mk:hover, #record-player .r-tape-mk:focus-visible { transform: scale(1.25); outline: none; z-index: 3; }
+#record-player .r-tape-mk.is-show { background: #f2f2f2; border-radius: 3px; }
+#record-player .r-tape-mk.is-fight { background: #ff5a5f; }
+#record-player .r-tape-mk.is-arrest { background: #5aa9ff; }
+#record-player .r-tape-mk.is-turf { background: #ffd23f; }
+#record-player .r-tape-mk.is-sale { background: #4fd18b; }
+#record-player .r-tape-mk.is-ferry { background: #4fe3e3; }
+#record-player .r-tape-span { flex: none; min-width: 52px; font: 12px/1.2 system-ui; color: #aab4c2; text-align: right; white-space: nowrap; }
+#record-player .r-tape-now { flex: none; }
+#record-player .r-tape-now[hidden] { display: none; }
+#record-player .r-tape-pop { position: absolute; bottom: calc(100% + 6px); left: 0; z-index: 70; width: min(340px, calc(100vw - 48px)); max-height: 46vh; overflow: auto; padding: 6px;
+  background: #171b22; border-radius: 8px; box-shadow: 0 6px 24px rgba(0, 0, 0, .45); }
+#record-player .r-tape-pop[hidden] { display: none; }
+#record-player .r-tape-pop-h { padding: 4px 8px 6px; color: #aab4c2; font: 600 12px/1.2 system-ui; }
+#record-player .r-tape-item { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; padding: 6px 8px 6px 14px; border: 0; border-radius: 5px;
+  background: none; color: #fff; font: 13px/1.25 system-ui; text-align: left; cursor: pointer; position: relative; }
+#record-player .r-tape-item::before { content: ''; position: absolute; left: 3px; top: 10px; width: 7px; height: 7px; border-radius: 50%; background: #c9d1dc; }
+#record-player .r-tape-item.is-fight::before { background: #ff5a5f; }
+#record-player .r-tape-item.is-arrest::before { background: #5aa9ff; }
+#record-player .r-tape-item.is-turf::before { background: #ffd23f; }
+#record-player .r-tape-item.is-sale::before { background: #4fd18b; }
+#record-player .r-tape-item.is-ferry::before { background: #4fe3e3; }
+#record-player .r-tape-item span { color: #aab4c2; font-size: 12px; }
+#record-player .r-tape-item:hover, #record-player .r-tape-item:focus-visible { background: #263040; outline: none; }
+/* the missed card: top right, in the band above the docked panels (--r-top); never over a panel */
+#k .r-missed { position: absolute; right: 14px; top: 8px; display: flex; gap: 6px; align-items: center; pointer-events: auto; max-width: calc(100vw - 28px); }
+#k .r-missed[hidden], #k .r-paper[hidden], #k .r-paper-pill[hidden] { display: none; }
+#k .r-paper { display: flex; align-items: center; gap: 8px; height: calc(var(--r-top) - 16px); max-width: 420px; padding: 0 6px 0 8px; background: var(--k-map-paper, #f6f1e4); color: var(--k-map-ink, #222);
+  border: 1px solid rgba(0, 0, 0, .18); border-radius: var(--k-r1); box-shadow: var(--k-shadow-s); transform: rotate(-.6deg); }
+#k .r-paper-tag { flex: none; padding: 2px 5px; background: var(--k-wanted); color: var(--k-wanted-ink, #fff); font: 800 var(--k-fs-xs)/1.1 var(--k-font-mono); letter-spacing: .08em; }
+#k .r-paper-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
+#k .r-paper-what { font: 700 var(--k-fs-s)/1.15 var(--k-font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#k .r-paper-line { font-size: var(--k-fs-xs); color: var(--k-map-ink-2, #444); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#k .r-paper .k-btn { flex: none; }
+#k .r-paper-pill { flex: none; white-space: nowrap; background: var(--k-bg); box-shadow: var(--k-shadow-s); }
+#k .r-paper { flex: 0 1 auto; min-width: 0; }
+/* the replay's lower third: the director's caption's place and look (TV mode is off while a replay plays) */
+#k .r-tape-cap { pointer-events: none; }

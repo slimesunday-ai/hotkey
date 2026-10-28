@@ -1,0 +1,1719 @@
+{
+ "about": "AI City · Fit Street drop 02 (traits pass 2026-09-29). Proposed tiers and sim slots for 60 new chars.js traits, in sim2/rules.mjs TRAITS shape (id: [slot, tier]). Proposal only: sim2 is untouched. All brands and marks are invented.",
+ "source": "world/chars.js (NEWT registry; draw functions beside the approved traits); board: style/city/traits/; notes: world/TRAITS-NEW.md",
+ "counts": {
+  "common": 23,
+  "rare": 20,
+  "epic": 10,
+  "grail": 7
+ },
+ "newSimSlots": {
+  "hair": "look.hair",
+  "ears": "look.ears",
+  "legs": "look.bottom"
+ },
+ "adapterWear": {
+  "hair": "hair",
+  "ears": "ears",
+  "legs": "bottom",
+  "bag": "held (or acc for acc ids: crossbody, sling)",
+  "wrist": "acc"
+ },
+ "colourway": "a worn trait may carry cw (index into colourways): { id, cw }; without it, colourway 0",
+ "traits": {
+  "mohawk": ["hair", "common"],
+  "twists": ["hair", "common"],
+  "silkrag": ["hat", "common"],
+  "skully": ["hat", "common"],
+  "tiedana": ["hat", "common"],
+  "tinies": ["eyes", "common"],
+  "earstack": ["ears", "common"],
+  "cross": ["ears", "common"],
+  "catee": ["top", "common"],
+  "tapetee": ["top", "common"],
+  "dyehoodie": ["top", "common"],
+  "trackjkt": ["top", "common"],
+  "bball": ["top", "common"],
+  "buffalo": ["top", "common"],
+  "bigjeans": ["legs", "common"],
+  "parachute": ["legs", "common"],
+  "snaps": ["legs", "common"],
+  "meshshorts": ["legs", "common"],
+  "courtlow": ["feet", "common"],
+  "lugboot": ["feet", "common"],
+  "digital": ["wrist", "common"],
+  "phonecase": ["bag", "common"],
+  "bodegabag": ["bag", "common"],
+  "braids": ["hair", "rare"],
+  "leopard": ["hair", "rare"],
+  "fuzzbucket": ["hat", "rare"],
+  "holofitted": ["hat", "rare"],
+  "shield": ["eyes", "rare"],
+  "diamond": ["mouth", "rare"],
+  "openface": ["mouth", "rare"],
+  "icestud": ["ears", "rare"],
+  "pearls": ["neck", "rare"],
+  "choker": ["neck", "rare"],
+  "bootleg": ["top", "rare"],
+  "slabtee": ["top", "rare"],
+  "chenille": ["top", "rare"],
+  "digicamo": ["legs", "rare"],
+  "doubleknee": ["legs", "rare"],
+  "chunky": ["feet", "rare"],
+  "furslide": ["feet", "rare"],
+  "rings": ["wrist", "rare"],
+  "sling": ["bag", "rare"],
+  "kicksbox": ["bag", "rare"],
+  "goggles": ["eyes", "epic"],
+  "fangs": ["mouth", "epic"],
+  "perms": ["mouth", "epic"],
+  "catpiece": ["neck", "epic"],
+  "bubble": ["top", "epic"],
+  "leather": ["top", "epic"],
+  "courtking": ["feet", "epic"],
+  "clogs": ["feet", "epic"],
+  "pinky": ["wrist", "epic"],
+  "bricks": ["bag", "epic"],
+  "gems": ["mouth", "grail"],
+  "icecuban": ["neck", "grail"],
+  "cuffs": ["neck", "grail"],
+  "furcoat": ["top", "grail"],
+  "chromes": ["feet", "grail"],
+  "bustdown": ["wrist", "grail"],
+  "vinyl": ["bag", "grail"]
+ },
+ "byTier": {
+  "common": ["mohawk", "twists", "silkrag", "skully", "tiedana", "tinies", "earstack", "cross", "catee", "tapetee", "dyehoodie", "trackjkt", "bball", "buffalo", "bigjeans", "parachute", "snaps", "meshshorts", "courtlow", "lugboot", "digital", "phonecase", "bodegabag"],
+  "rare": ["braids", "leopard", "fuzzbucket", "holofitted", "shield", "diamond", "openface", "icestud", "pearls", "choker", "bootleg", "slabtee", "chenille", "digicamo", "doubleknee", "chunky", "furslide", "rings", "sling", "kicksbox"],
+  "epic": ["goggles", "fangs", "perms", "catpiece", "bubble", "leather", "courtking", "clogs", "pinky", "bricks"],
+  "grail": ["gems", "icecuban", "cuffs", "furcoat", "chromes", "bustdown", "vinyl"]
+ },
+ "grails": {
+  "gems": "Every tooth a different stone: the one grill you can read from across the street.",
+  "icecuban": "Thick enough that the whole block clocks it: the chain robbers look for first.",
+  "cuffs": "Crime-world humour you have to be rich to wear: iced cuffs hanging off a Cuban.",
+  "furcoat": "The boss coat: you only wear fur on this street if nobody can take it off you.",
+  "chromes": "Liquid-chrome high-tops: the sneaker the drop only ever sells one of.",
+  "bustdown": "Fully iced watch and tennis bracelet: the wrist that says you already won.",
+  "vinyl": "The 1/1 chase figure of a big-head: collector culture's grail, carried like a trophy."
+ },
+ "meta": {
+  "mohawk": {
+   "name": "liberty mohawk",
+   "look": "hair",
+   "sim": "hair",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "cyan",
+     "colours": ["#2de2e6"]
+    },
+    {
+     "name": "blood",
+     "colours": ["#d7141a"]
+    },
+    {
+     "name": "bleach",
+     "colours": ["#f3e3a0"]
+    },
+    {
+     "name": "toxic",
+     "colours": ["#6cf542"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "twists": {
+   "name": "two-strand twists",
+   "look": "hair",
+   "sim": "hair",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "honey tips",
+     "colours": ["#1f1714", "#e0a340"]
+    },
+    {
+     "name": "natural",
+     "colours": ["#1f1714", "#3a2616"]
+    },
+    {
+     "name": "bleached tips",
+     "colours": ["#1f1714", "#f3e3a0"]
+    },
+    {
+     "name": "blue tips",
+     "colours": ["#1f1714", "#2b6cff"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "silkrag": {
+   "name": "silk durag",
+   "look": "hat",
+   "sim": "hat",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "champagne",
+     "colours": ["#e8d3a8"]
+    },
+    {
+     "name": "royal",
+     "colours": ["#2a3fd6"]
+    },
+    {
+     "name": "blood",
+     "colours": ["#9e1020"]
+    },
+    {
+     "name": "money",
+     "colours": ["#1f7a3a"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "skully": {
+   "name": "high skully",
+   "look": "hat",
+   "sim": "hat",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "duck brown",
+     "colours": ["#8a5a2b", "#f4f4f4"]
+    },
+    {
+     "name": "safety orange",
+     "colours": ["#ff6a00", "#151515"]
+    },
+    {
+     "name": "heather",
+     "colours": ["#8e8e94", "#d7141a"]
+    },
+    {
+     "name": "black",
+     "colours": ["#18181b", "#e7bd4a"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "tiedana": {
+   "name": "knotted bandana",
+   "look": "hat",
+   "sim": "hat",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "red",
+     "colours": ["#c0272d"]
+    },
+    {
+     "name": "navy",
+     "colours": ["#1d3a8a"]
+    },
+    {
+     "name": "black",
+     "colours": ["#151517"]
+    },
+    {
+     "name": "olive",
+     "colours": ["#4a5a3a"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "tinies": {
+   "name": "tiny ovals",
+   "look": "eyewear",
+   "sim": "eyes",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "green / gold",
+     "colours": ["#1f5c3a", "#e7bd4a"]
+    },
+    {
+     "name": "rose / gold",
+     "colours": ["#ff7ab6", "#e7bd4a"]
+    },
+    {
+     "name": "black / silver",
+     "colours": ["#0c0c0e", "#dfe6ee"]
+    },
+    {
+     "name": "yellow / silver",
+     "colours": ["#ffd21f", "#dfe6ee"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "earstack": {
+   "name": "ear stack",
+   "look": "ears",
+   "sim": "ears",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "gold / ice",
+     "colours": ["#e7bd4a", "#a8e4ff"]
+    },
+    {
+     "name": "silver / ice",
+     "colours": ["#dfe6ee", "#a8e4ff"]
+    },
+    {
+     "name": "gold / ruby",
+     "colours": ["#e7bd4a", "#e0182d"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "cross": {
+   "name": "cross drop",
+   "look": "ears",
+   "sim": "ears",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "gold",
+     "colours": ["#e7bd4a"]
+    },
+    {
+     "name": "silver",
+     "colours": ["#dfe6ee"]
+    },
+    {
+     "name": "iced",
+     "colours": ["#a8e4ff"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "catee": {
+   "name": "bodega-cat tee",
+   "look": "top",
+   "sim": "top",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "white",
+     "colours": ["#f2f2f2"]
+    },
+    {
+     "name": "heather",
+     "colours": ["#b8b8bc"]
+    },
+    {
+     "name": "deli yellow",
+     "colours": ["#ffe23a"]
+    }
+   ],
+   "rides": {
+    "chest": 630,
+    "uparmL": 74,
+    "foreL": 17,
+    "foreR": 17,
+    "uparmR": 74
+   }
+  },
+  "tapetee": {
+   "name": "caution-tape tee",
+   "look": "top",
+   "sim": "top",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "black",
+     "colours": ["#151517"]
+    },
+    {
+     "name": "white",
+     "colours": ["#f2f2f2"]
+    },
+    {
+     "name": "grey",
+     "colours": ["#6f6f74"]
+    }
+   ],
+   "rides": {
+    "chest": 630,
+    "uparmL": 74,
+    "foreL": 17,
+    "foreR": 17,
+    "uparmR": 74
+   }
+  },
+  "dyehoodie": {
+   "name": "tie-dye hoodie",
+   "look": "top",
+   "sim": "top",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "cotton candy",
+     "colours": ["#ff7ab6", "#7cc3ff", "#fff1a8"]
+    },
+    {
+     "name": "toxic",
+     "colours": ["#6cf542", "#151517", "#2de2e6"]
+    },
+    {
+     "name": "sunset",
+     "colours": ["#ff7a1a", "#d7141a", "#ffd21f"]
+    },
+    {
+     "name": "ice dye",
+     "colours": ["#dfe6ee", "#8e8e94", "#ffffff"]
+    }
+   ],
+   "rides": {
+    "chest": 744,
+    "foreL": 33,
+    "uparmL": 91,
+    "foreR": 33,
+    "uparmR": 91
+   }
+  },
+  "trackjkt": {
+   "name": "track jacket",
+   "look": "top",
+   "sim": "top",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "navy / white",
+     "colours": ["#1b2a4a", "#f2f2f2", "#d7141a"]
+    },
+    {
+     "name": "green / gold",
+     "colours": ["#0a5a3a", "#e7bd4a", "#f2f2f2"]
+    },
+    {
+     "name": "black / pink",
+     "colours": ["#151517", "#ff7ab6", "#f2f2f2"]
+    },
+    {
+     "name": "burgundy / sky",
+     "colours": ["#6e1f3a", "#7cc3ff", "#f2f2f2"]
+    }
+   ],
+   "rides": {
+    "chest": 687,
+    "foreL": 33,
+    "uparmL": 90,
+    "foreR": 33,
+    "uparmR": 90
+   }
+  },
+  "bball": {
+   "name": "04 mesh jersey",
+   "look": "top",
+   "sim": "top",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "home white",
+     "colours": ["#f2f2f2", "#1d3a8a"]
+    },
+    {
+     "name": "away green",
+     "colours": ["#0a5a3a", "#f2f2f2"]
+    },
+    {
+     "name": "city black",
+     "colours": ["#151517", "#e7bd4a"]
+    },
+    {
+     "name": "pink",
+     "colours": ["#ff7ab6", "#151517"]
+    }
+   ],
+   "rides": {
+    "chest": 614,
+    "foreL": 17,
+    "foreR": 17
+   }
+  },
+  "buffalo": {
+   "name": "buffalo-check overshirt",
+   "look": "top",
+   "sim": "top",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "red",
+     "colours": ["#c0272d"]
+    },
+    {
+     "name": "blue",
+     "colours": ["#1d4ed8"]
+    },
+    {
+     "name": "green",
+     "colours": ["#0a5a3a"]
+    },
+    {
+     "name": "pink",
+     "colours": ["#ff7ab6"]
+    }
+   ],
+   "rides": {
+    "chest": 732,
+    "foreL": 33,
+    "uparmL": 91,
+    "foreR": 33,
+    "uparmR": 91
+   }
+  },
+  "bigjeans": {
+   "name": "stacked jeans",
+   "look": "bottom",
+   "sim": "legs",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "raw indigo",
+     "colours": ["#23355e"]
+    },
+    {
+     "name": "light wash",
+     "colours": ["#9bb8dd"]
+    },
+    {
+     "name": "black wash",
+     "colours": ["#2c2c30"]
+    },
+    {
+     "name": "painter",
+     "colours": [
+      "#9bb8dd",
+      ["#ff4fa3", "#ffd21f", "#2de2e6", "#f2f2f2"]
+     ]
+    }
+   ],
+   "rides": {
+    "footL": 143,
+    "shinL": 95,
+    "thighL": 117,
+    "footR": 143,
+    "shinR": 95,
+    "thighR": 117
+   }
+  },
+  "parachute": {
+   "name": "parachute cargos",
+   "look": "bottom",
+   "sim": "legs",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "black",
+     "colours": ["#151517", "#f2f2f2"]
+    },
+    {
+     "name": "olive",
+     "colours": ["#4a5a3a", "#ff6a00"]
+    },
+    {
+     "name": "silver",
+     "colours": ["#bfc3c9", "#151517"]
+    },
+    {
+     "name": "orange",
+     "colours": ["#ff6a00", "#151517"]
+    }
+   ],
+   "rides": {
+    "footL": 80,
+    "shinL": 100,
+    "thighL": 120,
+    "thighR": 120,
+    "footR": 80,
+    "shinR": 100
+   }
+  },
+  "snaps": {
+   "name": "snap pants",
+   "look": "bottom",
+   "sim": "legs",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "black / white",
+     "colours": ["#151517", "#f2f2f2"]
+    },
+    {
+     "name": "royal / white",
+     "colours": ["#1d3a8a", "#f2f2f2"]
+    },
+    {
+     "name": "red / white",
+     "colours": ["#c0272d", "#f2f2f2"]
+    },
+    {
+     "name": "green / gold",
+     "colours": ["#0a5a3a", "#e7bd4a"]
+    }
+   ],
+   "rides": {
+    "footL": 52,
+    "shinL": 76,
+    "thighL": 88,
+    "footR": 52,
+    "shinR": 76,
+    "thighR": 88
+   }
+  },
+  "meshshorts": {
+   "name": "mesh shorts + long socks",
+   "look": "bottom",
+   "sim": "legs",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "black / red",
+     "colours": ["#151517", "#d7141a", "#f4f4f4"]
+    },
+    {
+     "name": "royal / white",
+     "colours": ["#1d3a8a", "#f2f2f2", "#f4f4f4"]
+    },
+    {
+     "name": "mint / green",
+     "colours": ["#9fe3c7", "#0a5a3a", "#f4f4f4"]
+    },
+    {
+     "name": "purple / gold",
+     "colours": ["#5a2bd6", "#e7bd4a", "#151515"]
+    }
+   ],
+   "rides": {
+    "footL": 16,
+    "shinL": 48,
+    "thighL": 66,
+    "footR": 16,
+    "shinR": 48,
+    "thighR": 66
+   }
+  },
+  "courtlow": {
+   "name": "court lows",
+   "look": "shoes",
+   "sim": "feet",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "white / green",
+     "colours": ["#0a5a3a"]
+    },
+    {
+     "name": "white / red",
+     "colours": ["#d7141a"]
+    },
+    {
+     "name": "white / navy",
+     "colours": ["#1d3a8a"]
+    },
+    {
+     "name": "triple black",
+     "colours": ["#151517", "#151517"]
+    }
+   ],
+   "rides": {
+    "footL": 117,
+    "footR": 117
+   }
+  },
+  "lugboot": {
+   "name": "lug-sole boots",
+   "look": "shoes",
+   "sim": "feet",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "black / yellow stitch",
+     "colours": ["#141414", "#ffd21f"]
+    },
+    {
+     "name": "brown",
+     "colours": ["#4a2e1a", "#e7bd4a"]
+    },
+    {
+     "name": "cherry",
+     "colours": ["#5a0d18", "#efe6d2"]
+    }
+   ],
+   "rides": {
+    "footL": 137,
+    "footR": 137
+   }
+  },
+  "digital": {
+   "name": "digital watch",
+   "look": "acc",
+   "sim": "wrist",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "black / green lcd",
+     "colours": ["#151517", "#9cff7a"]
+    },
+    {
+     "name": "white / blue lcd",
+     "colours": ["#f2f2f2", "#7cc3ff"]
+    },
+    {
+     "name": "olive / orange lcd",
+     "colours": ["#4a5a3a", "#ff8c1a"]
+    },
+    {
+     "name": "jelly",
+     "colours": ["#bfe8ff", "#ff7ab6"]
+    }
+   ],
+   "rides": {
+    "foreR": 65
+   }
+  },
+  "phonecase": {
+   "name": "phone in a case",
+   "look": "held",
+   "sim": "bag",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "chrome",
+     "colours": ["#dfe6ee"]
+    },
+    {
+     "name": "pink bear",
+     "colours": ["#ff9ccb"]
+    },
+    {
+     "name": "cheetah",
+     "colours": ["#d9a441", "#2a1c14"]
+    },
+    {
+     "name": "cash clear",
+     "colours": ["#bfe8ff", "#5fa84a"]
+    }
+   ],
+   "rides": {
+    "foreR": 58
+   }
+  },
+  "bodegabag": {
+   "name": "bodega bag",
+   "look": "held",
+   "sim": "bag",
+   "tier": "common",
+   "new": true,
+   "colourways": [
+    {
+     "name": "thank-you white",
+     "colours": ["#f4f4f4", "#d7141a"]
+    },
+    {
+     "name": "black",
+     "colours": ["#151517", "#f4f4f4"]
+    },
+    {
+     "name": "deli yellow",
+     "colours": ["#ffe23a", "#d7141a"]
+    }
+   ],
+   "rides": {
+    "foreR": 166
+   }
+  },
+  "braids": {
+   "name": "box braids",
+   "look": "hair",
+   "sim": "hair",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "jet / gold cuffs",
+     "colours": ["#141214", "#e7bd4a"]
+    },
+    {
+     "name": "honey / silver",
+     "colours": ["#c9892e", "#dfe6ee"]
+    },
+    {
+     "name": "burgundy",
+     "colours": ["#5a1420", "#e7bd4a"]
+    },
+    {
+     "name": "slime",
+     "colours": ["#3fbf3a", "#151515"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "leopard": {
+   "name": "leopard buzz",
+   "look": "hair",
+   "sim": "hair",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "bleach",
+     "colours": ["#eedb98", "#2a1c14"]
+    },
+    {
+     "name": "pink",
+     "colours": ["#ff9ccb", "#2a1016"]
+    },
+    {
+     "name": "lime",
+     "colours": ["#c6ff3a", "#1a2a10"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "fuzzbucket": {
+   "name": "fuzzy bucket",
+   "look": "hat",
+   "sim": "hat",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "cream sherpa",
+     "colours": ["#efe6d2"]
+    },
+    {
+     "name": "cheetah",
+     "colours": ["#d9a441", "#2a1c14"]
+    },
+    {
+     "name": "baby pink",
+     "colours": ["#f7b6d2"]
+    },
+    {
+     "name": "lime",
+     "colours": ["#b5f542"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "holofitted": {
+   "name": "holo-sticker fitted",
+   "look": "hat",
+   "sim": "hat",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "bodega green",
+     "colours": ["#1f5c3a", "#9a9aa0", "#f4f4f4"]
+    },
+    {
+     "name": "night",
+     "colours": ["#151517", "#d7141a", "#e7bd4a"]
+    },
+    {
+     "name": "royal",
+     "colours": ["#1d3a8a", "#ff7ab6", "#f4f4f4"]
+    },
+    {
+     "name": "cream",
+     "colours": ["#efe6d2", "#3a2616", "#3a2616"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "shield": {
+   "name": "shield shades",
+   "look": "eyewear",
+   "sim": "eyes",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "fire mirror",
+     "colours": ["#ffd21f", "#ff4d00"]
+    },
+    {
+     "name": "ice mirror",
+     "colours": ["#2de2e6", "#8a3cff"]
+    },
+    {
+     "name": "smoke",
+     "colours": ["#6a6a74", "#1a1a1e"]
+    },
+    {
+     "name": "silver",
+     "colours": ["#f4f7fb", "#8a9099"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "diamond": {
+   "name": "diamond tooth",
+   "look": "mouth",
+   "sim": "mouth",
+   "tier": "rare",
+   "new": true,
+   "colourways": [],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "openface": {
+   "name": "open-face gold",
+   "look": "mouth",
+   "sim": "mouth",
+   "tier": "rare",
+   "new": true,
+   "colourways": [],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "icestud": {
+   "name": "princess-cut studs",
+   "look": "ears",
+   "sim": "ears",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "yellow gold",
+     "colours": ["#e7bd4a"]
+    },
+    {
+     "name": "white gold",
+     "colours": ["#dfe6ee"]
+    },
+    {
+     "name": "rose gold",
+     "colours": ["#e8a0a0"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "pearls": {
+   "name": "pearl strand",
+   "look": "neck",
+   "sim": "neck",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "white",
+     "colours": ["#f4efe4"]
+    },
+    {
+     "name": "black pearl",
+     "colours": ["#3a3a46"]
+    },
+    {
+     "name": "pink",
+     "colours": ["#f7c9d8"]
+    }
+   ],
+   "rides": {
+    "chest": 30
+   }
+  },
+  "choker": {
+   "name": "iced choker",
+   "look": "neck",
+   "sim": "neck",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "ice",
+     "colours": []
+    },
+    {
+     "name": "onyx / gold",
+     "colours": []
+    }
+   ],
+   "rides": {
+    "chest": 29
+   }
+  },
+  "bootleg": {
+   "name": "bootleg rap tee",
+   "look": "top",
+   "sim": "top",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "black",
+     "colours": ["#151517"]
+    },
+    {
+     "name": "vintage wash",
+     "colours": ["#3a3a40"]
+    },
+    {
+     "name": "white",
+     "colours": ["#f2f2f2"]
+    }
+   ],
+   "rides": {
+    "chest": 630,
+    "uparmL": 74,
+    "foreL": 17,
+    "foreR": 17,
+    "uparmR": 74
+   }
+  },
+  "slabtee": {
+   "name": "graded-slab tee",
+   "look": "top",
+   "sim": "top",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "white",
+     "colours": ["#f2f2f2"]
+    },
+    {
+     "name": "black",
+     "colours": ["#151517"]
+    },
+    {
+     "name": "cream",
+     "colours": ["#efe6d2"]
+    }
+   ],
+   "rides": {
+    "chest": 630,
+    "uparmL": 74,
+    "foreL": 17,
+    "foreR": 17,
+    "uparmR": 74
+   }
+  },
+  "chenille": {
+   "name": "chenille varsity",
+   "look": "top",
+   "sim": "top",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "forest / cream",
+     "colours": ["#0a5a3a", "#efe6d2", "#e7bd4a"]
+    },
+    {
+     "name": "black / black",
+     "colours": ["#151517", "#1e1e22", "#d7141a"]
+    },
+    {
+     "name": "royal / white",
+     "colours": ["#1d3a8a", "#f2f2f2", "#f2f2f2"]
+    },
+    {
+     "name": "pink / cream",
+     "colours": ["#ff7ab6", "#efe6d2", "#151517"]
+    }
+   ],
+   "rides": {
+    "chest": 715,
+    "foreL": 41,
+    "foreR": 41,
+    "uparmL": 114,
+    "uparmR": 114
+   }
+  },
+  "digicamo": {
+   "name": "digi camo cargos",
+   "look": "bottom",
+   "sim": "legs",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "urban",
+     "colours": [
+      ["#8e8e94", "#5e5e64", "#2e2e33", "#c9ced4"]
+     ]
+    },
+    {
+     "name": "desert",
+     "colours": [
+      ["#c8b58a", "#9a8456", "#6b5a3a", "#e0d2ac"]
+     ]
+    },
+    {
+     "name": "pink",
+     "colours": [
+      ["#ff9ccb", "#ff5ea8", "#c2185b", "#ffd1e3"]
+     ]
+    },
+    {
+     "name": "night",
+     "colours": [
+      ["#1b2a4a", "#2e3f6b", "#0d1424", "#4a5f8a"]
+     ]
+    }
+   ],
+   "rides": {
+    "footL": 42,
+    "shinL": 81,
+    "thighL": 76,
+    "footR": 42,
+    "shinR": 81,
+    "thighR": 76
+   }
+  },
+  "doubleknee": {
+   "name": "double-knee carpenters",
+   "look": "bottom",
+   "sim": "legs",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "duck brown",
+     "colours": ["#8a5a2b"]
+    },
+    {
+     "name": "black",
+     "colours": ["#1e1e20"]
+    },
+    {
+     "name": "washed moss",
+     "colours": ["#5a6b4a"]
+    },
+    {
+     "name": "stone",
+     "colours": ["#b8b0a0"]
+    }
+   ],
+   "rides": {
+    "footL": 62,
+    "shinL": 90,
+    "thighL": 114,
+    "footR": 62,
+    "shinR": 93,
+    "thighR": 114
+   }
+  },
+  "chunky": {
+   "name": "chunky runners",
+   "look": "shoes",
+   "sim": "feet",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "triple white",
+     "colours": ["#f4f4f4", "#dcdcdc", "#efe9dc"]
+    },
+    {
+     "name": "sail / volt",
+     "colours": ["#efe9dc", "#c6ff3a", "#9aa0a6"]
+    },
+    {
+     "name": "black ice",
+     "colours": ["#1a1a1e", "#7cc3ff", "#2a2a2e"]
+    },
+    {
+     "name": "bodega",
+     "colours": ["#efe6d2", "#d7141a", "#0a5a3a"]
+    }
+   ],
+   "rides": {
+    "footL": 190,
+    "footR": 190
+   }
+  },
+  "furslide": {
+   "name": "fur slides + socks",
+   "look": "shoes",
+   "sim": "feet",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "cream",
+     "colours": ["#efe6d2", "#f6f6f6"]
+    },
+    {
+     "name": "pink",
+     "colours": ["#ff9ccb", "#f6f6f6"]
+    },
+    {
+     "name": "brown",
+     "colours": ["#6b4a2e", "#151515"]
+    },
+    {
+     "name": "leopard",
+     "colours": ["#d9a441", "#f6f6f6", "#2a1c14"]
+    }
+   ],
+   "rides": {
+    "footL": 123,
+    "footR": 124
+   }
+  },
+  "rings": {
+   "name": "ring stack",
+   "look": "acc",
+   "sim": "wrist",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "gold",
+     "colours": ["#e7bd4a", "#e0182d"]
+    },
+    {
+     "name": "silver",
+     "colours": ["#dfe6ee", "#2b6cff"]
+    },
+    {
+     "name": "gold / ice",
+     "colours": ["#e7bd4a", "#a8e4ff"]
+    }
+   ],
+   "rides": {
+    "foreL": 9,
+    "foreR": 9
+   }
+  },
+  "sling": {
+   "name": "chest sling",
+   "look": "acc",
+   "sim": "bag",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "black nylon",
+     "colours": ["#151517", "#d8d8d8"]
+    },
+    {
+     "name": "monogram",
+     "colours": ["#6b4a2e", "#e7bd4a", "#d9b27a"]
+    },
+    {
+     "name": "reflective",
+     "colours": ["#bfc3c9", "#151517"]
+    },
+    {
+     "name": "orange",
+     "colours": ["#ff6a00", "#151517"]
+    }
+   ],
+   "rides": {
+    "chest": 83
+   }
+  },
+  "kicksbox": {
+   "name": "sneaker box",
+   "look": "held",
+   "sim": "bag",
+   "tier": "rare",
+   "new": true,
+   "colourways": [
+    {
+     "name": "orange",
+     "colours": ["#ff7a1a", "#ff7a1a", "#151517"]
+    },
+    {
+     "name": "black / gold",
+     "colours": ["#151517", "#151517", "#e7bd4a"]
+    },
+    {
+     "name": "teal",
+     "colours": ["#0a8a8a", "#f2f2f2", "#151517"]
+    }
+   ],
+   "rides": {
+    "foreR": 216
+   }
+  },
+  "goggles": {
+   "name": "ski goggles",
+   "look": "eyewear",
+   "sim": "eyes",
+   "tier": "epic",
+   "new": true,
+   "colourways": [
+    {
+     "name": "orange mirror",
+     "colours": ["#ff8c1a", "#151517", "#151517"]
+    },
+    {
+     "name": "blue mirror",
+     "colours": ["#2b6cff", "#f4f4f4", "#d7141a"]
+    },
+    {
+     "name": "gold mirror",
+     "colours": ["#e7bd4a", "#151517", "#f4f4f4"]
+    },
+    {
+     "name": "pink mirror",
+     "colours": ["#ff5ea8", "#f4f4f4", "#151517"]
+    }
+   ],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "fangs": {
+   "name": "gold fangs",
+   "look": "mouth",
+   "sim": "mouth",
+   "tier": "epic",
+   "new": true,
+   "colourways": [],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "perms": {
+   "name": "gold perms",
+   "look": "mouth",
+   "sim": "mouth",
+   "tier": "epic",
+   "new": true,
+   "colourways": [],
+   "rides": {
+    "head": "all"
+   }
+  },
+  "catpiece": {
+   "name": "bodega-cat piece",
+   "look": "neck",
+   "sim": "neck",
+   "tier": "epic",
+   "new": true,
+   "colourways": [
+    {
+     "name": "gold / emerald",
+     "colours": ["#e7bd4a", "#2ecc40"]
+    },
+    {
+     "name": "white gold / sapphire",
+     "colours": ["#dfe6ee", "#2b6cff"]
+    },
+    {
+     "name": "rose / ruby",
+     "colours": ["#e8a0a0", "#e0182d"]
+    }
+   ],
+   "rides": {
+    "chest": 57
+   }
+  },
+  "bubble": {
+   "name": "bubble puffer",
+   "look": "top",
+   "sim": "top",
+   "tier": "epic",
+   "new": true,
+   "colourways": [
+    {
+     "name": "chrome",
+     "colours": ["#dfe6ee"]
+    },
+    {
+     "name": "wet black",
+     "colours": ["#151517"]
+    },
+    {
+     "name": "safety orange",
+     "colours": ["#ff6a00"]
+    },
+    {
+     "name": "slime",
+     "colours": ["#9cff3a"]
+    }
+   ],
+   "rides": {
+    "chest": 1038,
+    "foreL": 133,
+    "uparmL": 282,
+    "foreR": 133,
+    "uparmR": 282
+   }
+  },
+  "leather": {
+   "name": "moto leather",
+   "look": "top",
+   "sim": "top",
+   "tier": "epic",
+   "new": true,
+   "colourways": [
+    {
+     "name": "black",
+     "colours": ["#121214", "#d8d8d8"]
+    },
+    {
+     "name": "oxblood",
+     "colours": ["#4a0d14", "#e7bd4a"]
+    },
+    {
+     "name": "brown",
+     "colours": ["#5a3520", "#e7bd4a"]
+    },
+    {
+     "name": "white",
+     "colours": ["#e9e6de", "#9aa0a6"]
+    }
+   ],
+   "rides": {
+    "foreL": 33,
+    "uparmL": 91,
+    "chest": 734,
+    "foreR": 33,
+    "uparmR": 91
+   }
+  },
+  "courtking": {
+   "name": "court kings",
+   "look": "shoes",
+   "sim": "feet",
+   "tier": "epic",
+   "new": true,
+   "colourways": [
+    {
+     "name": "night shift",
+     "colours": ["#151517", "#d7141a"]
+    },
+    {
+     "name": "cop car",
+     "colours": ["#151517", "#1d4ed8"]
+    },
+    {
+     "name": "money",
+     "colours": ["#0a5a3a", "#e7bd4a"]
+    },
+    {
+     "name": "royal",
+     "colours": ["#1d4ed8", "#151517"]
+    }
+   ],
+   "rides": {
+    "footL": 117,
+    "footR": 117
+   }
+  },
+  "clogs": {
+   "name": "platform clogs",
+   "look": "shoes",
+   "sim": "feet",
+   "tier": "epic",
+   "new": true,
+   "colourways": [
+    {
+     "name": "taupe suede",
+     "colours": ["#8a7a66"]
+    },
+    {
+     "name": "black",
+     "colours": ["#1a1a1a"]
+    },
+    {
+     "name": "lilac",
+     "colours": ["#b9a3e3"]
+    },
+    {
+     "name": "mustard",
+     "colours": ["#d9a441"]
+    }
+   ],
+   "rides": {
+    "footL": 140,
+    "footR": 140
+   }
+  },
+  "pinky": {
+   "name": "iced pinky ring",
+   "look": "acc",
+   "sim": "wrist",
+   "tier": "epic",
+   "new": true,
+   "colourways": [
+    {
+     "name": "gold",
+     "colours": ["#e7bd4a"]
+    },
+    {
+     "name": "white gold",
+     "colours": ["#dfe6ee"]
+    },
+    {
+     "name": "rose gold",
+     "colours": ["#e8a0a0"]
+    }
+   ],
+   "rides": {
+    "foreR": 7,
+    "foreL": 24
+   }
+  },
+  "bricks": {
+   "name": "cash bricks",
+   "look": "held",
+   "sim": "bag",
+   "tier": "epic",
+   "new": true,
+   "colourways": [
+    {
+     "name": "red bands",
+     "colours": ["#d7141a"]
+    },
+    {
+     "name": "mustard straps",
+     "colours": ["#d9a441"]
+    },
+    {
+     "name": "purple straps",
+     "colours": ["#5a2bd6"]
+    }
+   ],
+   "rides": {
+    "foreR": 118
+   }
+  },
+  "gems": {
+   "name": "sherbet gem grill",
+   "look": "mouth",
+   "sim": "mouth",
+   "tier": "grail",
+   "new": true,
+   "colourways": [],
+   "rides": {
+    "head": "all"
+   },
+   "why": "Every tooth a different stone: the one grill you can read from across the street."
+  },
+  "icecuban": {
+   "name": "iced cuban",
+   "look": "neck",
+   "sim": "neck",
+   "tier": "grail",
+   "new": true,
+   "colourways": [
+    {
+     "name": "yellow gold",
+     "colours": ["#e7bd4a"]
+    },
+    {
+     "name": "white gold",
+     "colours": ["#dfe6ee"]
+    },
+    {
+     "name": "rose gold",
+     "colours": ["#e8a0a0"]
+    }
+   ],
+   "rides": {
+    "chest": 64
+   },
+   "why": "Thick enough that the whole block clocks it: the chain robbers look for first."
+  },
+  "cuffs": {
+   "name": "iced handcuffs",
+   "look": "neck",
+   "sim": "neck",
+   "tier": "grail",
+   "new": true,
+   "colourways": [
+    {
+     "name": "ice / gold",
+     "colours": ["ice", "#e7bd4a"]
+    },
+    {
+     "name": "all gold",
+     "colours": ["#e7bd4a", "#e7bd4a"]
+    },
+    {
+     "name": "blacked out",
+     "colours": ["#1e1e22", "#9aa0a6"]
+    }
+   ],
+   "rides": {
+    "chest": 54
+   },
+   "why": "Crime-world humour you have to be rich to wear: iced cuffs hanging off a Cuban."
+  },
+  "furcoat": {
+   "name": "fur coat",
+   "look": "top",
+   "sim": "top",
+   "tier": "grail",
+   "new": true,
+   "colourways": [
+    {
+     "name": "mink",
+     "colours": ["#5a3a26", "#7a5236"]
+    },
+    {
+     "name": "white fox",
+     "colours": ["#f1ede4", "#d8d2c4"]
+    },
+    {
+     "name": "leopard",
+     "colours": ["#d9a441", "#c28a2e", "#2a1c14"]
+    },
+    {
+     "name": "hot pink",
+     "colours": ["#ff5ea8", "#ff9ccb"]
+    }
+   ],
+   "rides": {
+    "chest": 1266,
+    "foreL": 131,
+    "uparmL": 305,
+    "foreR": 134,
+    "uparmR": 301
+   },
+   "why": "The boss coat: you only wear fur on this street if nobody can take it off you."
+  },
+  "chromes": {
+   "name": "liquid chromes",
+   "look": "shoes",
+   "sim": "feet",
+   "tier": "grail",
+   "new": true,
+   "colourways": [
+    {
+     "name": "liquid silver",
+     "colours": ["#dfe6ee"]
+    },
+    {
+     "name": "24k",
+     "colours": ["#e7bd4a"]
+    },
+    {
+     "name": "oil slick",
+     "colours": [
+      ["#8a3cff", "#2b6cff", "#2de2e6", "#6cf542", "#ffd21f", "#ff5ea8"]
+     ]
+    },
+    {
+     "name": "gunmetal",
+     "colours": ["#5a5e68"]
+    }
+   ],
+   "rides": {
+    "footL": 123,
+    "footR": 123
+   },
+   "why": "Liquid-chrome high-tops: the sneaker the drop only ever sells one of."
+  },
+  "bustdown": {
+   "name": "bust-down watch",
+   "look": "acc",
+   "sim": "wrist",
+   "tier": "grail",
+   "new": true,
+   "colourways": [
+    {
+     "name": "yellow gold",
+     "colours": ["#e7bd4a"]
+    },
+    {
+     "name": "white gold",
+     "colours": ["#dfe6ee"]
+    },
+    {
+     "name": "rose gold",
+     "colours": ["#e8a0a0"]
+    }
+   ],
+   "rides": {
+    "foreL": 64,
+    "foreR": 24
+   },
+   "why": "Fully iced watch and tennis bracelet: the wrist that says you already won."
+  },
+  "vinyl": {
+   "name": "1/1 chase vinyl",
+   "look": "held",
+   "sim": "bag",
+   "tier": "grail",
+   "new": true,
+   "colourways": [
+    {
+     "name": "chase chrome",
+     "colours": ["#dfe6ee", "#111111"]
+    },
+    {
+     "name": "bubblegum",
+     "colours": ["#ff7ab6", "#111111"]
+    },
+    {
+     "name": "glow",
+     "colours": ["#9cff7a", "#1a3a12"]
+    },
+    {
+     "name": "black / gold",
+     "colours": ["#151517", "#e7bd4a"]
+    }
+   ],
+   "rides": {
+    "foreR": 141
+   },
+   "why": "The 1/1 chase figure of a big-head: collector culture's grail, carried like a trophy."
+  }
+ }
+}

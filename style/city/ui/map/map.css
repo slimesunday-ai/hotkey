@@ -1,0 +1,208 @@
+/* HUMAN LAYER · SECTION 3b · THE CITY MAP (ui/map/index.js). A printed street map: paper, ink, tints. Every colour and font the canvas uses
+   is a token here (--k-map-*), per skin, read by index.js; the canvas never names a colour. Three readings of "a 90s paper map":
+     clean   a Thomas Guide page: off-white stock, pastel district tints, yellow avenues, an orange Route 9, condensed sans
+     98      a gas-station fold-out: yellowed paper, saturated tints, red Route 9, bold grotesque, the folds showing
+     zine    a photocopy: grey on white, highlighter yellow and pink for the roads, typewriter street names
+   The base sheet and the tint layer print with mix-blend-mode: multiply, so the paper's grain shows through and white reads as paper. */
+#k {
+  --mp-top: calc(54 * var(--k-px));
+  --k-map-fonts: "family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@600;700;800";
+  --k-map-font: "Barlow", "Geist", "Helvetica Neue", Arial, sans-serif; --k-map-font-street: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", sans-serif; --k-map-font-display: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --k-map-w-district: 800; --k-map-w-place: 700; --k-map-w-street: 500; --k-map-w-ave: 700;
+  --k-map-paper: #f6f1e4; --k-map-grain: rgba(120, 100, 60, .06); --k-map-fold: rgba(80, 60, 30, .10); --k-map-fold-hi: rgba(255, 255, 255, .55);
+  --k-map-ink: #26262b; --k-map-ink-2: #4c4b57; --k-map-halo: #f6f1e4;
+  --k-map-woods: #dce7c8; --k-map-woods-dot: #b3c99a; --k-map-ground: #ffffff; --k-map-water: #aad5ea; --k-map-water-ink: #3a7cae;
+  --k-map-block: #efe6d3; --k-map-block-line: rgba(38, 38, 43, .34); --k-map-lot: rgba(38, 38, 43, .26);
+  --k-map-ave: #ffe07a; --k-map-hwy: #f2874a; --k-map-hwy-ink: #6e2400;
+  --k-map-grid: rgba(52, 104, 168, .30); --k-map-ruler: #fbf8ef;
+  --k-map-symbol-bg: #ffffff; --k-map-corner: #26262b; --k-map-corner-ink: #ffffff; --k-map-cross: #d3121b;
+  --k-map-t-downtown: #f5d3c8; --k-map-t-strip: #ebd2ea; --k-map-t-suburbs: #f7eecb; --k-map-t-estates: #e3efcc; --k-map-t-trailer: #f1e2c2; --k-map-t-industrial: #dedae5;
+  --k-map-t-docks: #d5dee7; --k-map-t-junkyard: #e8d8c3; --k-map-t-jail: #d2d2d7; --k-map-t-hospital: #fae3e3; --k-map-t-highway: #ece2d6; --k-map-t-mall: #ecdfca;
+  --k-map-t-park: #c9e2ae; --k-map-t-plaza: #f3e3ba; --k-map-t-parking: #e4e4e4;
+  --k-map-agent: #26262b; --k-map-agent-ring: #ffffff; --k-map-mine: var(--k-yours);
+  --k-map-heat-op: .74; --k-map-turf-op: .34;
+  --k-map-crew-1: #e4572e; --k-map-crew-2: #2e86de; --k-map-crew-3: #10ac84; --k-map-crew-4: #8e44ad; --k-map-crew-5: #e1a10c; --k-map-crew-6: #e84393;
+  --k-map-panel: #fbf8ef; --k-map-panel-ink: #26262b; --k-map-panel-line: #26262b; --k-map-shadow: 3px 4px 0 rgba(38, 38, 43, .22);
+}
+#k[data-skin="98"] {
+  --k-map-fonts: "family=Archivo+Narrow:wght@500;600;700&family=Archivo+Black";
+  --k-map-font: "Archivo Narrow", "Arial Narrow", sans-serif; --k-map-font-street: "Archivo Narrow", "Arial Narrow", sans-serif; --k-map-font-display: "Archivo Black", "Arial Black", sans-serif;
+  --k-map-w-district: 400; --k-map-w-place: 700; --k-map-w-street: 600; --k-map-w-ave: 700;
+  --k-map-paper: #f1e7cb; --k-map-grain: rgba(110, 80, 30, .09); --k-map-fold: rgba(80, 55, 20, .16); --k-map-fold-hi: rgba(255, 250, 230, .6);
+  --k-map-ink: #1b1b20; --k-map-ink-2: #3a3540; --k-map-halo: #f1e7cb;
+  --k-map-woods: #c9dfaa; --k-map-woods-dot: #94b874; --k-map-water: #86c4e8; --k-map-water-ink: #1d66a5;
+  --k-map-block: #ecdcb8; --k-map-block-line: rgba(27, 27, 32, .42); --k-map-lot: rgba(27, 27, 32, .3);
+  --k-map-ave: #ffd200; --k-map-hwy: #e0352b; --k-map-hwy-ink: #ffffff;
+  --k-map-grid: rgba(200, 40, 40, .28); --k-map-ruler: #f7efd6;
+  --k-map-corner: #e0352b; --k-map-corner-ink: #ffffff;
+  --k-map-t-downtown: #f4b8a6; --k-map-t-strip: #e6b4e0; --k-map-t-suburbs: #fbe59c; --k-map-t-estates: #cde5a2; --k-map-t-trailer: #f3d296; --k-map-t-industrial: #c9c4d7;
+  --k-map-t-docks: #b6cee1; --k-map-t-junkyard: #dbc29c; --k-map-t-jail: #bcbcc4; --k-map-t-hospital: #f6c9c9; --k-map-t-highway: #e4d1ba; --k-map-t-mall: #e5cda4;
+  --k-map-t-park: #b1d88a; --k-map-t-plaza: #f6d687; --k-map-t-parking: #d8d8d8;
+  --k-map-agent: #1b1b20; --k-map-ev-death: #1b1b20; --k-map-ev-arrest: #1f4fd8; --k-map-ev-rob: #d81b1b; --k-map-ev-turf: #6b2fd6; --k-map-ev-director: #00897b; --k-map-ev-mark: #c28a00;
+  --k-map-panel: #f7efd6; --k-map-panel-ink: #1b1b20; --k-map-panel-line: #1b1b20; --k-map-shadow: 4px 4px 0 rgba(0, 0, 0, .35);
+}
+#k[data-skin="zine"] {
+  --k-map-fonts: "family=Courier+Prime:wght@400;700&family=Anton";
+  --k-map-font: "Courier Prime", "Courier New", monospace; --k-map-font-street: "Courier Prime", "Courier New", monospace; --k-map-font-display: "Anton", Impact, sans-serif;
+  --k-map-w-district: 400; --k-map-w-place: 700; --k-map-w-street: 700; --k-map-w-ave: 700;
+  --k-map-paper: #f5f3ee; --k-map-grain: rgba(0, 0, 0, .07); --k-map-fold: rgba(0, 0, 0, .12); --k-map-fold-hi: rgba(255, 255, 255, .5);
+  --k-map-ink: #121214; --k-map-ink-2: #2b2b2f; --k-map-halo: #f5f3ee;
+  --k-map-woods: #e4e3dc; --k-map-woods-dot: #8d8b84; --k-map-water: #c7cdd0; --k-map-water-ink: #121214;
+  --k-map-block: #e8e6df; --k-map-block-line: rgba(18, 18, 20, .55); --k-map-lot: rgba(18, 18, 20, .3);
+  --k-map-ave: #ffe14d; --k-map-hwy: #ff4fa3; --k-map-hwy-ink: #121214;
+  --k-map-grid: rgba(18, 18, 20, .18); --k-map-ruler: #ffffff;
+  --k-map-corner: #121214; --k-map-corner-ink: #ffe14d; --k-map-cross: #121214;
+  --k-map-t-downtown: #dcdad3; --k-map-t-strip: #d7d5ce; --k-map-t-suburbs: #eceae4; --k-map-t-estates: #e6e4dd; --k-map-t-trailer: #e1dfd8; --k-map-t-industrial: #cfcdc6;
+  --k-map-t-docks: #d3d1ca; --k-map-t-junkyard: #cac8c1; --k-map-t-jail: #bebcb5; --k-map-t-hospital: #eeece6; --k-map-t-highway: #dedcd5; --k-map-t-mall: #d8d6cf;
+  --k-map-t-park: #d6e8b4; --k-map-t-plaza: #e2e0d9; --k-map-t-parking: #dad8d1;
+  --k-map-agent: #121214; --k-map-ev-death: #121214;
+  --k-map-crew-1: #ff4fa3; --k-map-crew-2: #1d8cff; --k-map-crew-3: #0fa968; --k-map-crew-4: #8a3ffc; --k-map-crew-5: #ffc21a; --k-map-crew-6: #ff6a1a;
+  --k-map-panel: #ffffff; --k-map-panel-ink: #121214; --k-map-panel-line: #121214; --k-map-shadow: 4px 5px 0 rgba(18, 18, 20, .9);
+}
+
+#k[data-skin="zte"] {   /* zte: a TE map printed on bone: STYLE.md §2 wall colours as light tints, Route 9 pink, lime corners, square key stamps */
+  --mp-top: calc(70 * var(--k-px));
+  --k-map-fonts: "family=Space+Mono:wght@400;700";
+  --k-map-font: "Space Mono", ui-monospace, monospace; --k-map-font-street: "Space Mono", ui-monospace, monospace; --k-map-font-display: "AI City Sign", "Space Mono", monospace;
+  --k-map-w-district: 400; --k-map-w-place: 700; --k-map-w-street: 400; --k-map-w-ave: 700;
+  --k-map-paper: #EAE5DA; --k-map-grain: rgba(23, 23, 27, .05); --k-map-fold: rgba(23, 23, 27, .08); --k-map-fold-hi: rgba(255, 255, 255, .4);
+  --k-map-ink: #17171B; --k-map-ink-2: #3a3a40; --k-map-halo: #F4F1EA;
+  --k-map-woods: #D2E5C1; --k-map-woods-dot: #9DC27E; --k-map-ground: #F4F1EA; --k-map-water: #A9D6F5; --k-map-water-ink: #2F5BFF;
+  --k-map-block: #E0DACD; --k-map-block-line: rgba(23, 23, 27, .3); --k-map-lot: rgba(23, 23, 27, .2);
+  --k-map-ave: #FFE59A; --k-map-hwy: #FF4FA3; --k-map-hwy-ink: #17171B;
+  --k-map-grid: rgba(23, 23, 27, .12); --k-map-ruler: #F4F1EA;
+  --k-map-symbol-bg: #F4F1EA; --k-map-corner: #17171B; --k-map-corner-ink: #6CFF4A; --k-map-cross: #E8232A;
+  --k-map-t-downtown: #EFC0CC; --k-map-t-strip: #CEBBE3; --k-map-t-suburbs: #EFDCAA; --k-map-t-estates: #B9DAB7; --k-map-t-trailer: #EFCEAB; --k-map-t-industrial: #CBC8C2;
+  --k-map-t-docks: #BBC3E3; --k-map-t-junkyard: #D6C0B2; --k-map-t-jail: #D9D6D0; --k-map-t-hospital: #F0D9D4; --k-map-t-highway: #E2DFD9; --k-map-t-mall: #B4D8CC;
+  --k-map-t-park: #A5D5A8; --k-map-t-plaza: #EDE0BD; --k-map-t-parking: #DCDAD4;
+  --k-map-agent: #17171B; --k-map-agent-ring: #F4F1EA; --k-map-mine: #FFC21A;
+  --k-map-ev-death: #17171B; --k-map-stamp: key; --k-map-stamp-ink: #F4F1EA;
+  --k-map-crew-1: #EF4A2A; --k-map-crew-2: #2F5BFF; --k-map-crew-3: #25B84C; --k-map-crew-4: #7A3CFF; --k-map-crew-5: #FF7A1A; --k-map-crew-6: #12B3A0;
+  --k-map-panel: #E6E1D6; --k-map-panel-ink: #17171B; --k-map-panel-line: #17171B; --k-map-shadow: 6px 7px 0 #17171B;
+}
+/* ── the sheet ─────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+#k .mp { position: absolute; left: 0; right: 0; top: var(--mp-top); bottom: 0; pointer-events: auto; visibility: hidden; opacity: 0; transform: scale(.985);
+  transition: opacity var(--k-dur) var(--k-ease), transform var(--k-dur) var(--k-ease), visibility 0s linear var(--k-dur); contain: layout paint style; }
+#k .mp.is-open { visibility: visible; opacity: 1; transform: none; transition: opacity var(--k-dur-s) linear, transform var(--k-dur) var(--k-ease), visibility 0s; }
+#k .mp-sheet { position: absolute; inset: 0; overflow: hidden; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
+  background-color: var(--k-map-paper); background-image: radial-gradient(var(--k-map-grain) 1px, transparent 1.3px), radial-gradient(var(--k-map-grain) 1px, transparent 1.3px);
+  background-size: 7px 7px, 13px 13px; background-position: 0 0, 4px 6px; box-shadow: inset 0 0 0 1px var(--k-map-ink); }
+#k .mp-sheet.is-drag { cursor: grabbing; }
+#k .mp-sheet canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+#k .mp-base, #k .mp-tint { mix-blend-mode: multiply; }
+#k .mp-folds { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: multiply;   /* the fold-out's creases: two across, one down */
+  background: linear-gradient(90deg, transparent calc(33.3% - 1px), var(--k-map-fold) calc(33.3% - 1px), var(--k-map-fold) 33.3%, var(--k-map-fold-hi) 33.3%, transparent calc(33.3% + 3px)),
+    linear-gradient(90deg, transparent calc(66.6% - 1px), var(--k-map-fold) calc(66.6% - 1px), var(--k-map-fold) 66.6%, var(--k-map-fold-hi) 66.6%, transparent calc(66.6% + 3px)),
+    linear-gradient(180deg, transparent calc(50% - 1px), var(--k-map-fold) calc(50% - 1px), var(--k-map-fold) 50%, var(--k-map-fold-hi) 50%, transparent calc(50% + 3px)); }
+/* the city's own overlays (pins, labels, trail tags, the tape's bubbles) step back while the map is up */
+#k.is-map .k-pins, #k.is-map .tr-tags, #k.is-map .tp-secrets-layer, #k.is-map > .k-label:not(.mp-label) { visibility: hidden; }
+
+/* ── the legend box (top right) ────────────────────────────────────────────────────────────────────────────────────────────── */
+#k .mp-legend { position: absolute; right: 14px; top: calc(28 * var(--k-px)); width: calc(320 * var(--k-px)); max-height: calc(100% - 120px); overflow: auto; scrollbar-width: thin; background: var(--k-map-panel); color: var(--k-map-panel-ink);
+  border: 1.5px solid var(--k-map-panel-line); box-shadow: var(--k-map-shadow); font: 500 var(--k-fs-xs)/1.35 var(--k-map-font); }
+#k .mp-lg-head { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 10px; border-bottom: 1.5px solid var(--k-map-panel-line); }
+#k .mp-title { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+#k .mp-title b { font: 400 calc(19 * var(--k-px))/1 var(--k-map-font-display); letter-spacing: .04em; text-transform: uppercase; }
+#k[data-skin="clean"] .mp-title b { font-weight: 800; }
+#k .mp-title span { font: 600 var(--k-fs-xs)/1.3 var(--k-map-font-street); letter-spacing: .06em; text-transform: uppercase; opacity: .75; }
+#k .mp-fold { min-height: calc(26 * var(--k-px)); min-width: calc(26 * var(--k-px)); width: calc(26 * var(--k-px)); padding: 0; }
+#k .mp-fold::before { content: ""; width: 8px; height: 8px; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-2px) rotate(45deg); }
+#k .mp.is-folded .mp-fold::before { transform: translateY(2px) rotate(-135deg); }
+#k .mp.is-folded .mp-lg-body { display: none; }
+#k .mp-lg-body { padding: 8px 10px 10px; display: grid; gap: 10px; }
+#k .mp-layers { display: flex; flex-wrap: wrap; gap: 4px; }
+#k .mp-layer { min-height: calc(28 * var(--k-px)); padding: 0 8px; gap: 5px; font-size: var(--k-fs-xs); }
+#k .mp-layer[aria-pressed="false"] { opacity: .72; }
+#k .mp-layer[aria-pressed="true"] { box-shadow: inset 0 0 0 1.5px var(--k-map-panel-line); }
+#k .mp-sw { width: 9px; height: 9px; border-radius: 50%; background: var(--k-map-ink); flex: none; }
+#k .mp-sw[data-layer="places"] { border-radius: 1px; background: var(--k-map-corner); transform: rotate(45deg) scale(.85); }
+#k .mp-sw[data-layer="events"] { background: none; box-shadow: inset 0 0 0 2px var(--k-map-ev-rob, var(--k-ev-rob)); }
+#k .mp-sw[data-layer="trails"] { border-radius: 2px; height: 5px; width: 12px; background: var(--k-trail-1); box-shadow: 0 0 0 1.2px var(--k-trail-ink); }
+#k .mp-sw[data-layer="heat"] { border-radius: 2px; width: 12px; background: linear-gradient(90deg, var(--k-heat-0), var(--k-heat-2), var(--k-heat-4)); }
+#k .mp-sw[data-layer="turf"] { border-radius: 1px; background: repeating-linear-gradient(-45deg, var(--k-map-crew-1) 0 2px, transparent 2px 4px); box-shadow: inset 0 0 0 1px var(--k-map-crew-1); }
+#k .mp-heat-mode { font-weight: 700; text-transform: lowercase; }
+#k .mp-you { font: 700 var(--k-fs-xs)/1.2 var(--k-map-font-street); color: var(--k-yours); }
+#k .mp-you[hidden] { display: none; }
+#k .mp-keys { list-style: none; margin: 0; padding: 8px 0 0; border-top: 1px dashed color-mix(in srgb, var(--k-map-panel-line) 45%, transparent); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px 8px;
+  font: 600 var(--k-fs-xs)/1.1 var(--k-map-font-street); }
+#k .mp-keys li { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+#k .mp-k { width: 16px; height: 8px; flex: none; }
+#k .mp-k-ave { background: var(--k-map-ave); box-shadow: inset 0 0 0 1px var(--k-map-block-line); }
+#k .mp-k-hwy { background: var(--k-map-hwy); box-shadow: inset 0 0 0 1.5px var(--k-map-ink); }
+#k .mp-k-bridge { background: var(--k-map-water); box-shadow: inset 0 2px 0 var(--k-map-ink), inset 0 -2px 0 var(--k-map-ink); }
+#k .mp-k-agent { width: 10px; height: 10px; border-radius: 50%; background: var(--k-map-agent); box-shadow: 0 0 0 2px var(--k-map-agent-ring), 0 0 0 3px var(--k-map-ink); margin: 0 3px; }
+#k .mp-k-mine { width: 11px; height: 11px; border-radius: 50%; background: var(--k-map-mine); box-shadow: 0 0 0 2px var(--k-map-ink); margin: 0 3px; }
+#k .mp-k-corner { width: 9px; height: 9px; background: var(--k-map-corner); transform: rotate(45deg); margin: 0 4px; }
+#k .mp-k-ev { width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--c); margin: 0 2px; }
+#k .mp-k-ev[data-ev="rob"] { --c: var(--k-map-ev-rob, var(--k-ev-rob)); } #k .mp-k-ev[data-ev="arrest"] { --c: var(--k-map-ev-arrest, var(--k-ev-arrest)); } #k .mp-k-ev[data-ev="death"] { --c: var(--k-map-ev-death, var(--k-ev-death)); }
+#k .mp-k-ev[data-ev="turf"] { --c: var(--k-map-ev-turf, var(--k-ev-turf)); } #k .mp-k-ev[data-ev="director"] { --c: var(--k-map-ev-director, var(--k-ev-director)); }
+#k .mp-foot { display: flex; align-items: flex-end; gap: 10px; padding-top: 8px; border-top: 1px dashed color-mix(in srgb, var(--k-map-panel-line) 45%, transparent); }
+#k .mp-scale { flex: 1; display: flex; flex-direction: column; gap: 3px; font: 700 var(--k-fs-xs)/1 var(--k-map-font-street); }
+#k .mp-scale-bar { display: block; height: 6px; border: 1.5px solid var(--k-map-ink); border-top: 0; background: linear-gradient(90deg, var(--k-map-ink) 0 50%, transparent 50%) bottom / 100% 3px no-repeat; transition: width var(--k-dur-s) linear; }
+#k .mp-north { display: grid; justify-items: center; gap: 1px; font: 400 calc(13 * var(--k-px))/1 var(--k-map-font-display); }
+#k[data-skin="clean"] .mp-north b { font-weight: 800; }
+#k .mp-north i { width: 0; height: 0; border: 7px solid transparent; border-bottom: 18px solid var(--k-map-ink); border-top: 0; position: relative; }
+#k .mp-north i::after { content: ""; position: absolute; left: 0; top: 0; width: 0; height: 0; border: solid transparent; border-width: 0 0 18px 7px; border-bottom-color: var(--k-map-panel); transform: translateX(-7px) scaleX(-1); transform-origin: 3.5px 0; opacity: .0; }
+#k .mp-zoom { display: flex; gap: 4px; }
+#k .mp-zoom .k-btn { min-height: calc(28 * var(--k-px)); min-width: calc(28 * var(--k-px)); padding: 0 8px; font-size: calc(15 * var(--k-px)); font-weight: 700; }
+#k .mp-help { font: 500 var(--k-fs-xs)/1.3 var(--k-map-font-street); letter-spacing: .02em; color: color-mix(in srgb, var(--k-map-panel-ink) 70%, transparent); }
+#k .mp-legend .k-lens { flex: none; }
+#k[data-skin="98"] .mp-legend .k-lens { background: var(--k-bg-solid); }   /* (98's lens is light-on-dark; the legend is paper) */
+
+/* ── the place card ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+#k .mp-card { position: absolute; left: 0; top: 0; width: calc(300 * var(--k-px)); padding: 10px 12px 12px; background: var(--k-map-panel); color: var(--k-map-panel-ink); border: 1.5px solid var(--k-map-panel-line); box-shadow: var(--k-map-shadow);
+  font: 500 calc(12.5 * var(--k-px))/1.35 var(--k-map-font); display: grid; gap: 10px; will-change: transform; animation: k-in var(--k-dur) var(--k-ease) both; }
+#k .mp-card[hidden] { display: none; }
+#k .mp-card-head { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; }
+#k .mp-card-sym { width: 28px; height: 28px; }
+#k .mp-card-name { margin: 0; font: 400 calc(19 * var(--k-px))/1.05 var(--k-map-font-display); letter-spacing: .01em; }
+#k[data-skin="clean"] .mp-card-name { font-weight: 800; }
+#k .mp-card-kind { font: 600 var(--k-fs-xs)/1.2 var(--k-map-font-street); letter-spacing: .05em; text-transform: uppercase; color: color-mix(in srgb, var(--k-map-panel-ink) 65%, transparent); }
+#k .mp-card-x { min-height: calc(28 * var(--k-px)); min-width: calc(28 * var(--k-px)); width: calc(28 * var(--k-px)); }
+#k .mp-card-about { margin: 0; font-style: italic; }
+#k .mp-card-sec { display: grid; gap: 6px; }
+#k .mp-card-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+#k .mp-card .k-h { color: inherit; opacity: .8; }
+#k .mp-card-who { display: flex; flex-wrap: wrap; gap: 4px; }
+#k .mp-who { cursor: pointer; border: 0; }
+#k .mp-card .k-list > li { grid-template-columns: calc(70 * var(--k-px)) 1fr; padding: 4px 0; font-size: var(--k-fs-xs); }
+#k .mp-card .k-list .k-what, #k .mp-card .k-empty { color: inherit; }
+#k .mp-card-go .k-btn { width: 100%; }
+#k .mp-chooser { z-index: 2; }
+@media (max-width: 700px) { #k .mp-legend { left: 26px; right: 10px; width: auto; top: auto; bottom: calc(70 * var(--k-px)); max-height: 46%; } #k .mp-card { width: min(300px, calc(100vw - 40px)); } }
+@media (prefers-reduced-motion: reduce) { #k .mp, #k .mp.is-open { transition: opacity var(--k-dur-s) linear, visibility 0s linear var(--k-dur-s); transform: none; } }
+#k .mp-lg-head { flex-wrap: wrap; row-gap: 6px; }
+#k .mp-lg-head .mp-title { flex: 1 1 calc(100% - 44px); }
+#k .mp-lg-head .k-lens { order: 3; }
+
+/* ── zte: the legend and the place card are the kit's gridded bone cards (no rule round them: the ink block is the depth) ──────── */
+#k[data-skin="zte"] .mp-sheet { box-shadow: none; }
+#k[data-skin="zte"] .mp-legend, #k[data-skin="zte"] .mp-card { border: 0; background: var(--zt-grid), var(--zt-bone); font: 400 var(--k-fs-xs)/1.4 var(--k-map-font); }
+#k[data-skin="zte"] .mp-lg-head { padding: 12px 12px 10px 14px; border-bottom: 1px dashed var(--k-line); }
+#k[data-skin="zte"] .mp-title { gap: 4px; }
+#k[data-skin="zte"] .mp-title b { font: 400 calc(18 * var(--k-px))/1 var(--k-font-sign); letter-spacing: 0; }
+#k[data-skin="zte"] .mp-title span { font: 400 var(--zt-fs-label)/1.2 var(--zt-font-label); letter-spacing: 0; opacity: 1; color: var(--zt-slate-text); }
+#k[data-skin="zte"] .mp-fold { min-height: calc(26 * var(--k-px)); min-width: calc(26 * var(--k-px)); }
+#k[data-skin="zte"] .mp-lg-body { padding: 10px 14px 14px; gap: 12px; }
+#k[data-skin="zte"] .mp-layers { gap: 6px; }
+#k[data-skin="zte"] .mp-layer { min-height: calc(28 * var(--k-px)); padding: 0 7px; font-size: var(--zt-fs-label); font-family: var(--zt-font-label); }
+#k[data-skin="zte"] .mp-layer[aria-pressed="false"] { opacity: .72; box-shadow: 1px 1px 0 var(--zt-ink); }
+#k[data-skin="zte"] .mp-layer[aria-pressed="true"] { box-shadow: 2px 2px 0 var(--zt-ink); }
+#k[data-skin="zte"] .mp-sw, #k[data-skin="zte"] .mp-k-agent, #k[data-skin="zte"] .mp-k-mine, #k[data-skin="zte"] .mp-k-ev { border-radius: 0; }
+#k[data-skin="zte"] .mp-sw[data-layer="trails"] { box-shadow: none; height: 7px; border-radius: 0; }
+#k[data-skin="zte"] .mp-sw[data-layer="heat"] { border-radius: 0; }
+#k[data-skin="zte"] .mp-sw[data-layer="events"] { background: var(--k-ev-rob); box-shadow: 1.5px 1.5px 0 var(--zt-ink); }
+#k[data-skin="zte"] .mp-k-ev { background: var(--c); box-shadow: 1.5px 1.5px 0 var(--zt-ink); width: 11px; height: 11px; }
+#k[data-skin="zte"] .mp-keys { border-top: 1px dashed var(--k-line); font: 400 var(--zt-fs-label)/1.1 var(--zt-font-label); letter-spacing: 0; text-transform: uppercase; gap: 7px 8px; padding-top: 10px; }
+#k[data-skin="zte"] .mp-you { font: 400 var(--zt-fs-label)/1.2 var(--zt-font-label); color: var(--zt-ink); background: var(--zt-yel); padding: 3px 5px 2px; letter-spacing: 0; text-transform: uppercase; }
+#k[data-skin="zte"] .mp-foot { border-top: 1px dashed var(--k-line); }
+#k[data-skin="zte"] .mp-scale { font: 400 var(--zt-fs-label)/1 var(--zt-font-label); letter-spacing: 0; text-transform: uppercase; }
+#k[data-skin="zte"] .mp-north { font: 400 calc(18 * var(--k-px))/1 var(--k-font-sign); }
+#k[data-skin="zte"] .mp-zoom .k-btn { min-height: calc(28 * var(--k-px)); min-width: calc(28 * var(--k-px)); font-size: calc(18 * var(--k-px)); }
+#k[data-skin="zte"] .mp-help { font: 400 var(--k-fs-xs)/1.4 var(--k-font); color: var(--zt-ink-2); }
+#k[data-skin="zte"] .mp-card { padding: 14px 14px 14px 16px; gap: 12px; }
+#k[data-skin="zte"] .mp-card-name { font: 400 calc(18 * var(--k-px))/1.05 var(--k-font-sign); text-transform: uppercase; }
+#k[data-skin="zte"] .mp-card-kind { font: 400 var(--zt-fs-label)/1.2 var(--zt-font-label); letter-spacing: 0; color: var(--zt-slate-text); }
+#k[data-skin="zte"] .mp-card-about { font-style: normal; font-weight: 700; }
+#k[data-skin="zte"] .mp-card .k-h { opacity: 1; }
+#k[data-skin="zte"] .mp-who { min-height: calc(24 * var(--k-px)); }

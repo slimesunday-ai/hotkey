@@ -1,0 +1,63 @@
+{
+  "_about": "Camcorder '98 \u00b7 slime's own look (his panel export, 2026-10-05, installed as is): the '97 tape look, full frame (no letterbox), softer chroma (1 px), a little more grain. The viewer default (render/looks.js DEFAULT_LOOK).",
+  "_note": "A snapshot stores only what differs from the defaults: halation, vignette, dither, dof and letterbox carry tuned values but no \"on\", so they are OFF, exactly as in his panel.",
+  "dof": {
+    "strength": 10.8,
+    "falloff": 0.25
+  },
+  "bloom": {
+    "on": true,
+    "threshold": 0.72,
+    "strength": 0.45,
+    "radius": 0.8
+  },
+  "halation": {
+    "strength": 1,
+    "radius": 0.31,
+    "spread": 1.35
+  },
+  "grade": {
+    "on": true,
+    "temperature": -0.04,
+    "tint": 0.1,
+    "contrast": 0.95,
+    "saturation": 1.2,
+    "fade": 0.07
+  },
+  "sharpen": {
+    "on": true,
+    "amount": 0.9,
+    "radius": 1.6
+  },
+  "chroma": {
+    "on": true,
+    "amount": 1
+  },
+  "lens": {
+    "on": true,
+    "amount": 0.03
+  },
+  "vignette": {
+    "amount": 0.3,
+    "radius": 0.7
+  },
+  "grain": {
+    "type": "animated",
+    "amount": 0.135,
+    "size": 1.1,
+    "response": 0.6,
+    "color": "colour",
+    "speed": 30
+  },
+  "dither": {
+    "levels": 12,
+    "strength": 1.35
+  },
+  "letterbox": {
+    "aspect": "1.33",
+    "color": "#0b0b0e"
+  },
+  "stack": {
+    "order": "blur,grade,bloom,halation,sharpen,chroma,lens,vignette,grain,dither,letterbox"
+  }
+}

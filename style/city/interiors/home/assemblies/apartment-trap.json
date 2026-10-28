@@ -1,0 +1,43 @@
+{
+ "tier": "apartment",
+ "name": "trap",
+ "story": "The trap walk-up: a gate over the foil, a kitchen nobody cooks dinner in with the door monitor on the counter, the counting table on a knock-off persian in the middle under the camera, the mattress in the corner, the re-up in boxes, cans by the door.",
+ "room": {"w":20,"d":17,"h":2.7,"walls":{"N":"paint:#9b4f3a","E":"paint:#a7a9b1"},"floor":"linoleum"},
+ "items": [
+  {"id":"door-front","x":12,"z":0,"rot":0,"variant":1,"on":{"wall":"E"}},
+  {"id":"window","x":4,"z":0,"rot":0,"variant":1,"on":{"wall":"E"},"y":0.9},
+  {"id":"mattress-floor","x":0,"z":0,"rot":90,"variant":0,"on":"floor"},
+  {"id":"poster","x":2,"z":0,"rot":0,"variant":2,"on":{"wall":"N"},"y":1},
+  {"id":"counter-sink","x":8,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"tv-crt","x":8,"z":0,"rot":0,"variant":2,"on":{"top":4}},
+  {"id":"stove","x":14,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"fridge","x":17,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"dining-set","x":5,"z":7,"rot":0,"variant":1,"on":"floor"},
+  {"id":"laundry-pile","x":0,"z":5,"rot":0,"variant":0,"on":"floor"},
+  {"id":"pizza-boxes","x":14,"z":10,"rot":0,"variant":1,"on":"floor"},
+  {"id":"box-fan","x":14,"z":7,"rot":270,"variant":0,"on":"floor"},
+  {"id":"rug-persian","x":4,"z":6,"rot":0,"variant":2,"on":"floor"},
+  {"id":"art-print","x":9,"z":0,"rot":0,"variant":1,"on":{"wall":"E"},"y":1.2},
+  {"id":"beer-cans","x":17,"z":9,"rot":0,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":0,"z":9,"rot":0,"variant":1,"on":"floor"},
+  {"id":"lamp-table","x":12,"z":0,"rot":0,"variant":1,"on":{"top":4}}
+ ],
+ "slots": [
+  {"id":"gate","label":"the gate · over the window","place":"wall","x":4,"z":0,"foot":[5,9],"rot":0,"demo":"gate-scissor","variant":0,"fits":["gear","security"],"wall":"E","y":0},
+  {"id":"counter","label":"the counter","place":"surface","x":7,"z":9,"foot":[2,2],"rot":0,"demo":"money-counter","variant":0,"fits":["collectible"],"on":8},
+  {"id":"product","label":"the product","place":"surface","x":9,"z":9,"foot":[2,2],"rot":0,"demo":"baggies-product","variant":0,"fits":["collectible","stash"],"on":8},
+  {"id":"camera","label":"the camera · on the door","place":"wall","x":18,"z":0,"foot":[2,2],"rot":0,"demo":"cctv-camera","variant":0,"fits":["gear","security"],"wall":"N","y":2.05}
+ ],
+ "vacant": [
+  {"id":"door-front","x":12,"z":0,"rot":0,"variant":1,"on":{"wall":"E"}},
+  {"id":"window","x":4,"z":0,"rot":0,"variant":1,"on":{"wall":"E"},"y":0.9},
+  {"id":"counter-sink","x":8,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"stove","x":14,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"fridge","x":17,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"mattress-floor","x":0,"z":0,"rot":90,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":0,"z":9,"rot":0,"variant":1,"on":"floor"},
+  {"id":"boxes-moving","x":5,"z":9,"rot":0,"variant":2,"on":"floor"},
+  {"id":"sign-rent","x":9,"z":12,"rot":0,"variant":1,"on":"floor"},
+  {"id":"paint-kit","x":11,"z":6,"rot":0,"variant":0,"on":"floor"}
+ ]
+}

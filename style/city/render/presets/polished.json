@@ -1,0 +1,13 @@
+{
+  "_about": "Polished · the art review's re-light: warm key, weaker chromatic cool fill (shadow sides ~half value, violet not grey), soft shadows, chunky clouds, sun glow, light height haze, contact shadows; emissive-only bloom for when you switch it to night.",
+  "_tweak": "light.fill / light.env (how dark the shadow sides go), light.shadowRadius, clouds.coverage.",
+  "_stack": "grade runs before bloom on purpose: on the night build bloom otherwise smears a non-finite scene pixel into a black blob (grade's clamp scrubs it). Keep grade on and first while bloom is on.",
+  "light": { "sunColor": "#ffe0b0", "sun": 3.4, "elevation": 42, "skyFill": "#a9b8ff", "groundFill": "#d9b89c", "fill": 0.75, "env": 0.35, "shadowRadius": 3 },
+  "sky": { "top": "#2a8cff", "horizon": "#a6dcff", "ground": "#a6dcff", "sunGlow": 0.35, "glowSize": 20 },
+  "fog": { "haze": 0.12, "hazeTop": 18, "far": 420 },
+  "clouds": { "on": true, "coverage": 0.42, "style": "puffy", "shading": 0.6 },
+  "contact": { "on": true, "strength": 0.45 },
+  "bloom": { "on": true, "emissive": true, "threshold": 0.7, "strength": 0.55, "radius": 0.6 },
+  "grade": { "on": true, "vibrance": 0.08, "contrast": 1.03 },
+  "stack": { "order": "blur,grade,bloom,halation,sharpen,chroma,lens,vignette,grain,dither,letterbox" }
+}

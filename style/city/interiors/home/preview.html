@@ -1,0 +1,55 @@
+<meta charset="utf-8">
+<title>AI City · home objects</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body { margin: 0; height: 100%; background: #2f9bff; overflow: hidden; }
+  #stage canvas { display: block; }
+  .ui { position: fixed; left: 14px; top: 14px; right: 14px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font: 800 12px/1 "Arial Black", Impact, sans-serif; letter-spacing: .02em; }
+  .ui b { background: #17171b; color: #ffc21a; padding: 8px 10px 7px; text-transform: uppercase; }
+  .ui a { text-decoration: none; text-transform: uppercase; background: #fff; color: #17171b; padding: 8px 10px 7px; box-shadow: 3px 3px 0 #17171b; }
+  .ui a:hover, .ui a.on { background: #ffc21a; }
+  .ui a:focus-visible { outline: 3px solid #ff4fa3; outline-offset: 2px; }
+  #labels { position: fixed; inset: 0; pointer-events: none; }
+  .lab { position: absolute; transform: translate(-50%, 0); font: 800 11px/1.15 "Arial Black", Impact, sans-serif; color: #fff; background: #17171bdd; padding: 3px 5px 3px; white-space: nowrap; letter-spacing: .01em; text-align: center; }
+  .lab i { display: block; font: 700 9.5px/1.2 ui-monospace, Menlo, monospace; color: #ffe23a; font-style: normal; }
+  .lab i.g { color: #fff; margin-top: 2px; font-size: 9px; }
+  .lab b.r { display: inline-block; padding: 1px 4px 0; margin-right: 3px; font: 800 9px/1.3 "Arial Black", Impact, sans-serif; text-transform: uppercase; letter-spacing: .03em; color: #17171b; }
+  .r.common { background: #d3d4d7; } .r.rare { background: #3fa9f5; } .r.epic { background: #8c52ff; color: #fff; } .r.grail { background: #ffc21a; }
+  .r.legendary { background: #ff7a1a; } .r.\31of1 { background: #ff00dc; color: #fff; }
+  .lab .slot { background: #ff4fa3; color: #fff; padding: 0 4px; margin-right: 3px; }
+  .ui .row { flex-basis: 100%; height: 0; }
+  .cap { position: fixed; left: 14px; bottom: 14px; font: 800 13px/1.2 "Arial Black", Impact, sans-serif; text-transform: uppercase; background: #17171b; color: #fff; padding: 8px 11px 7px; letter-spacing: .02em; }
+  .cap em { color: #ffc21a; font-style: normal; }
+  .cap:empty { display: none; }
+  body.shot .ui { display: none; }
+  body.nolab #labels { display: none; }
+  #err { position: fixed; left: 14px; bottom: 50px; color: #fff; background: #c00; font: 12px monospace; white-space: pre-wrap; max-width: 60vw; }
+  #err:empty { display: none; }
+</style>
+<div id="stage"></div>
+<div id="labels"></div>
+<div class="cap" id="cap"></div>
+<div class="ui"><b>AI City · home objects</b>
+  <a href="?view=cat&sheet=1">Seating</a><a href="?view=cat&sheet=2">Tables + kitchen</a><a href="?view=cat&sheet=3">Media</a><a href="?view=cat&sheet=4">Light + rugs</a><a href="?view=cat&sheet=5">Wall + collect</a><a href="?view=cat&sheet=6">Security</a>
+  <a href="?view=trailer">Trailer</a><a href="?view=apartment">Walk-up</a><a href="?view=house">House</a><a href="?view=penthouse">Penthouse</a>
+  <a href="#" id="tod">Day / night</a><a href="#" id="far">Near / far</a>
+  <span class="row"></span><b>Catalogue v2</b>
+  <a href="?view=v2&k=base">Base kit</a><a href="?view=v2&k=gear">Gear</a><a href="?view=v2&k=crime">Crime shelf</a><a href="?view=v2&k=collector">Collector</a><a href="?view=v2&k=wallfloor">Wall + floor</a><a href="?view=v2&k=trophy">Trophies</a>
+  <span class="row"></span><b>Assemblies</b><span id="asm" style="display:contents"></span></div>
+<div id="err"></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/" } }</script>
+<script>
+  const Q = new URLSearchParams(location.search);
+  if (Q.has('shot')) document.body.classList.add('shot');
+  if (Q.get('labels') === '0') document.body.classList.add('nolab');
+  addEventListener('error', e => { document.getElementById('err').textContent += (e.message || e) + '\n'; });
+  addEventListener('unhandledrejection', e => { document.getElementById('err').textContent += (e.reason && e.reason.stack || e.reason) + '\n'; });
+  const key = q => { const v = q.get('view') || 'cat'; return v + (v === 'cat' ? '&sheet=' + (q.get('sheet') || 1) : v === 'v2' ? '&k=' + (q.get('k') || 'base') : v === 'asm' ? '&a=' + (q.get('a') || 'trailer-fresh-start') : ''); }, cur = key(Q);
+  const mark = () => document.querySelectorAll('.ui a[href^="?view"]').forEach(a => { if (a.dataset.done) return; a.dataset.done = 1; const q = new URLSearchParams(a.search); if (key(q) === cur) a.classList.add('on');
+    for (const p of ['tod', 'far']) if (Q.get(p)) a.search += `&${p}=${Q.get(p)}`; });
+  mark(); if (!Q.has('shot')) fetch('./assemblies/index.json').then(r => r.json()).then(L => { document.getElementById('asm').innerHTML = L.map(n => `<a href="?view=asm&a=${n}">${n.replace(/-/g, ' ')}</a>`).join(''); mark(); });
+  const flip = (p, a, b) => e => { e.preventDefault(); const q = new URLSearchParams(location.search); q.set(p, q.get(p) === a ? b : a); location.search = q; };
+  document.getElementById('tod').addEventListener('click', flip('tod', 'night', 'day'));
+  document.getElementById('far').addEventListener('click', flip('far', '1', '0'));
+</script>
+<script type="module" src="./preview.js"></script>

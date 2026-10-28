@@ -1,0 +1,45 @@
+{
+ "tier": "house",
+ "name": "family",
+ "story": "Pleasantview, family edition: the couch under the family gallery with a lamp at each end, the recliner pulled up, the console TV with its back to us, the bed in the corner under the window, the fridge on the side wall, the dinner table by the door, a loose board in the floor that nobody mentions.",
+ "room": {"w":22,"d":18,"h":2.8,"walls":{"N":"rose","E":"rose"},"floor":"oak"},
+ "items": [
+  {"id":"rug-rag","x":8,"z":3,"rot":0,"variant":1,"on":"floor"},
+  {"id":"door-front","x":13,"z":0,"rot":0,"variant":2,"on":{"wall":"E"}},
+  {"id":"bed-double","x":0,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"window","x":1,"z":0,"rot":0,"variant":0,"on":{"wall":"N"},"y":1.05},
+  {"id":"table-end","x":6,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"lamp-table","x":6,"z":0,"rot":0,"variant":0,"on":{"top":4}},
+  {"id":"couch-house","x":8,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"art-print","x":9,"z":0,"rot":0,"variant":1,"on":{"wall":"N"},"y":1.15},
+  {"id":"photos-family","x":12,"z":0,"rot":0,"variant":0,"on":{"wall":"N"},"y":1.3},
+  {"id":"table-end","x":17,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"lamp-table","x":17,"z":0,"rot":0,"variant":0,"on":{"top":9}},
+  {"id":"plant-monstera","x":19,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"table-coffee","x":10,"z":5,"rot":0,"variant":0,"on":"floor"},
+  {"id":"recliner","x":3,"z":9,"rot":90,"variant":1,"on":"floor"},
+  {"id":"tv-console","x":10,"z":12,"rot":180,"variant":0,"on":"floor"},
+  {"id":"dining-set","x":16,"z":5,"rot":90,"variant":0,"on":"floor"},
+  {"id":"fridge","x":0,"z":13,"rot":90,"variant":1,"on":"floor"},
+  {"id":"rug-shag","x":16,"z":5,"rot":90,"variant":2,"on":"floor"},
+  {"id":"vase-floor","x":0,"z":16,"rot":0,"variant":2,"on":"floor"},
+  {"id":"pizza-boxes","x":19,"z":3,"rot":0,"variant":1,"on":"floor"},
+  {"id":"sneakers-kicked","x":12,"z":15,"rot":0,"variant":0,"on":"floor"}
+ ],
+ "slots": [
+  {"id":"dog","label":"the dog · by the door","place":"floor","x":14,"z":15,"foot":[4,3],"rot":0,"demo":"dog-bed","variant":1,"fits":["security"]},
+  {"id":"keypad","label":"the keypad","place":"wall","x":11,"z":0,"foot":[2,2],"rot":0,"demo":"alarm-keypad","variant":0,"fits":["gear","security"],"wall":"E","y":1.3},
+  {"id":"console","label":"the console","place":"surface","x":11,"z":6,"foot":[2,2],"rot":0,"demo":"console-yolk","variant":0,"fits":["gear","collectible"],"on":12},
+  {"id":"loose-board","label":"the loose board","place":"floor","x":9,"z":15,"foot":[2,3],"rot":0,"demo":"stash-floorboard","variant":0,"fits":["stash"]}
+ ],
+ "vacant": [
+  {"id":"door-front","x":13,"z":0,"rot":0,"variant":2,"on":{"wall":"E"}},
+  {"id":"window","x":1,"z":0,"rot":0,"variant":0,"on":{"wall":"N"},"y":1.05},
+  {"id":"fridge","x":0,"z":13,"rot":90,"variant":1,"on":"floor"},
+  {"id":"mattress-floor","x":0,"z":0,"rot":90,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":9,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":12,"z":4,"rot":0,"variant":1,"on":"floor"},
+  {"id":"sign-rent","x":9,"z":13,"rot":0,"variant":2,"on":"floor"},
+  {"id":"paint-kit","x":15,"z":8,"rot":0,"variant":1,"on":"floor"}
+ ]
+}

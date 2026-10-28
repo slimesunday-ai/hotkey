@@ -1,0 +1,46 @@
+{
+ "tier": "house",
+ "name": "cook",
+ "story": "The cook's split-level: the kitchen line along the back with the rig at the end of it, foil over the sink, the prep table on its rug, the recliner squared up to the TV, the bed shoved to the front, the family photos still up, boxes of glassware by the door.",
+ "room": {"w":22,"d":18,"h":2.8,"walls":{"N":"paint:#f7f7f2","E":"paint:#25b84c"},"floor":"linoleum"},
+ "items": [
+  {"id":"rug-shag","x":12,"z":4,"rot":0,"variant":1,"on":"floor"},
+  {"id":"door-front","x":13,"z":0,"rot":0,"variant":2,"on":{"wall":"E"}},
+  {"id":"window","x":6,"z":0,"rot":0,"variant":1,"on":{"wall":"N"},"y":1.05},
+  {"id":"fridge","x":0,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"stove","x":3,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"counter-sink","x":6,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"box-fan","x":20,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"dining-set","x":2,"z":6,"rot":0,"variant":1,"on":"floor"},
+  {"id":"dresser","x":20,"z":4,"rot":270,"variant":1,"on":"floor"},
+  {"id":"tv-crt","x":20,"z":4,"rot":270,"variant":0,"on":{"top":8}},
+  {"id":"recliner","x":13,"z":5,"rot":90,"variant":2,"on":"floor"},
+  {"id":"bed-double","x":0,"z":12,"rot":90,"variant":2,"on":"floor"},
+  {"id":"pizza-boxes","x":10,"z":13,"rot":0,"variant":0,"on":"floor"},
+  {"id":"laundry-pile","x":9,"z":15,"rot":0,"variant":0,"on":"floor"},
+  {"id":"rug-shag","x":2,"z":6,"rot":0,"variant":0,"on":"floor"},
+  {"id":"art-print","x":3,"z":0,"rot":0,"variant":1,"on":{"wall":"N"},"y":1.3},
+  {"id":"photos-family","x":0,"z":0,"rot":0,"variant":1,"on":{"wall":"E"},"y":1.3},
+  {"id":"beer-cans","x":14,"z":11,"rot":0,"variant":2,"on":"floor"},
+  {"id":"boxes-moving","x":13,"z":14,"rot":0,"variant":1,"on":"floor"},
+  {"id":"plant-monstera","x":19,"z":9,"rot":0,"variant":1,"on":"floor"}
+ ],
+ "slots": [
+  {"id":"rig","label":"the rig","place":"floor","x":12,"z":0,"foot":[6,3],"rot":0,"demo":"cook-rig","variant":0,"fits":["gear"]},
+  {"id":"scale","label":"the scale","place":"surface","x":4,"z":8,"foot":[2,2],"rot":0,"demo":"scale-digital","variant":0,"fits":["collectible"],"on":7},
+  {"id":"hot-plate","label":"the hot plate","place":"surface","x":10,"z":0,"foot":[2,2],"rot":0,"demo":"hot-plate","variant":0,"fits":["gear","stash"],"on":5},
+  {"id":"camera","label":"the camera · on the door","place":"wall","x":11,"z":0,"foot":[2,2],"rot":0,"demo":"cctv-camera","variant":0,"fits":["gear","security"],"wall":"E","y":2.1}
+ ],
+ "vacant": [
+  {"id":"door-front","x":13,"z":0,"rot":0,"variant":2,"on":{"wall":"E"}},
+  {"id":"window","x":6,"z":0,"rot":0,"variant":1,"on":{"wall":"N"},"y":1.05},
+  {"id":"fridge","x":0,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"stove","x":3,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"counter-sink","x":6,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"mattress-floor","x":0,"z":12,"rot":90,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":12,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":13,"z":5,"rot":0,"variant":1,"on":"floor"},
+  {"id":"sign-rent","x":9,"z":13,"rot":0,"variant":2,"on":"floor"},
+  {"id":"paint-kit","x":16,"z":8,"rot":0,"variant":1,"on":"floor"}
+ ]
+}

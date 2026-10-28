@@ -1,0 +1,54 @@
+/* C1-10, the drawn half · the board (docked right, the dossier's dock) and the morning cards (centre bottom, CH 9's column) on the record
+   path. Kit tokens only (kit.css), so every skin dresses them; the police words keep one colour each, as on the 3D signs. */
+#k .b-counts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: var(--k-s2) var(--k-s3); border-bottom: 1px solid var(--k-line); }
+#k .b-count { display: flex; flex-direction: column; gap: 2px; padding: 6px 8px; border-radius: var(--k-r1); background: var(--k-bg-3); }
+#k .b-count > span { color: var(--k-ink-2); font: 600 var(--k-fs-xs)/1.1 var(--k-font-mono); text-transform: uppercase; letter-spacing: .06em; }
+#k .b-count > b { font: 800 var(--k-fs-l)/1.1 var(--k-font-display); }
+#k .b-held { display: inline-block; padding: 2px 6px; border-radius: var(--k-r1); background: var(--k-ink); color: var(--k-bg-solid); font: 700 var(--k-fs-xs)/1.2 var(--k-font-mono); }
+#k .b-meta { color: var(--k-ink-2); font-size: var(--k-fs-xs); }
+#k .b-who small, #k .m-face small { color: var(--k-ink-3); }
+#k .b-police, #k .b-list { width: 100%; border-collapse: collapse; }
+#k .b-police th, #k .b-police td, #k .b-list th, #k .b-list td { padding: 3px 4px; border-top: 1px solid var(--k-line); text-align: left; vertical-align: top; }
+#k .b-police tr:first-child th, #k .b-list tr:first-child th { border-top: 0; color: var(--k-ink-3); font: 600 var(--k-fs-xs)/1 var(--k-font-mono); text-transform: uppercase; }
+#k .b-police th { text-transform: capitalize; }
+#k .b-lv { display: inline-block; min-width: 6.5em; padding: 1px 6px; border-radius: var(--k-r1); background: var(--k-bg-3); font: 800 var(--k-fs-xs)/1.4 var(--k-font-mono); letter-spacing: .05em; }
+#k .b-lv.is-heavy { background: #d62d2d; color: #fff; }
+#k .b-lv.is-normal { background: #f0a21a; color: #1a1306; }
+#k .b-lv.is-lawless { background: #6f7686; color: #fff; }
+#k .b-posters { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+#k .b-poster { padding: 8px 6px; border: 2px dashed var(--k-ink); border-radius: var(--k-r1); text-align: center; background: var(--k-bg-3); }
+#k .b-poster-w { display: block; letter-spacing: .2em; color: var(--k-wanted); }
+#k .b-poster .b-who { display: block; font-weight: 700; overflow-wrap: anywhere; }
+#k .b-stars { color: var(--k-wanted); font-size: var(--k-fs-l); letter-spacing: .08em; }
+#k .b-corner, #k .b-sale, #k .b-fit, #k .b-grail { padding: 4px 0; border-top: 1px solid var(--k-line); }
+#k .b-corner.is-hot .b-hot { color: var(--k-wanted); font-weight: 700; }
+#k .b-num { text-align: right !important; white-space: nowrap; }
+#k .b-item.is-grail td:first-child > b { color: var(--k-accent); }
+/* the morning cards */
+#k .r-cards { position: absolute; left: 50%; bottom: var(--r-low); transform: translateX(-50%); width: min(calc(820 * var(--k-px)), calc(100vw - 2 * var(--k-panel-w) - 72px));
+  max-height: calc(100vh - var(--r-top) - var(--r-low) - 8px); display: flex; flex-direction: column; pointer-events: auto; background: var(--k-bg); border-radius: var(--k-r3); box-shadow: var(--k-shadow); overflow: hidden; }
+#k .r-cards[hidden] { display: none; }
+#k .m-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; padding: var(--k-s2) var(--k-s3) var(--k-s3); overflow: auto; }
+#k .m-card { display: flex; flex-direction: column; gap: 4px; padding: 8px; border-radius: var(--k-r2); background: var(--k-bg-3); border-top: 4px solid var(--k-accent); }
+#k .m-card.is-booked { border-top-color: #3b6fd6; }
+#k .m-card.is-took { border-top-color: var(--k-wanted); }
+#k .m-card.is-turned { border-top-color: #8a4fd6; }
+#k .m-card.is-outbid { border-top-color: var(--k-ink-3); }
+#k .m-top { display: flex; align-items: baseline; gap: 6px; }
+#k .m-rank { color: var(--k-ink-3); font: 700 var(--k-fs-xs)/1 var(--k-font-mono); }
+#k .m-kind { font: 800 var(--k-fs-m)/1 var(--k-font-display); text-transform: uppercase; letter-spacing: .06em; }
+#k .m-mask { margin-left: auto; color: var(--k-wanted); }
+#k .m-pic { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px; min-height: 96px; }
+#k .m-face { margin: 0; display: flex; flex-direction: column; align-items: center; max-width: 84px; text-align: center; font-size: var(--k-fs-xs); line-height: 1.15; overflow-wrap: anywhere; }
+#k .m-frame { width: 72px; height: 86px; border-radius: var(--k-r1); overflow: hidden; background: linear-gradient(#2a2f3a, #161a22); display: flex; align-items: flex-end; justify-content: center; }
+#k .m-img { width: 72px; height: 86px; object-fit: cover; }
+#k .m-img:not([src]) { visibility: hidden; }
+#k .m-face.is-mug .m-frame { background: repeating-linear-gradient(to top, #6b7383 0 2px, #e3e6ec 2px 11px); }
+#k .m-face.is-lost .m-frame { filter: grayscale(.8); opacity: .8; }
+#k .m-hood { width: 40px; height: 52px; margin-bottom: 4px; border-radius: 20px 20px 8px 8px; background: radial-gradient(ellipse 9px 4px at 50% 38%, #e8e8e8 60%, transparent 62%), #0b0c10; }
+#k .m-arrow { font: 800 var(--k-fs-l)/1 var(--k-font-display); color: var(--k-ink-3); }
+#k .m-pieces { display: flex; flex-direction: column; gap: 2px; }
+#k .m-piece { padding: 2px 6px; border: 1px dashed var(--k-ink-2); border-radius: var(--k-r1); font-size: var(--k-fs-xs); background: var(--k-bg); max-width: 90px; overflow-wrap: anywhere; }
+#k .m-piece.is-struck { text-decoration: line-through; opacity: .75; }
+#k .m-line { margin: 0; color: var(--k-ink-2); font-size: var(--k-fs-xs); }
+#k .m-replay { align-self: flex-start; max-width: 100%; font-size: var(--k-fs-xs); white-space: normal; }

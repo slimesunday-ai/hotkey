@@ -1,0 +1,40 @@
+<meta charset="utf-8">
+<title>AI City · store objects</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body { margin: 0; height: 100%; background: #2f9bff; overflow: hidden; }
+  #stage canvas { display: block; }
+  .ui { position: fixed; left: 14px; top: 14px; right: 14px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font: 800 12px/1 "Arial Black", Impact, sans-serif; letter-spacing: .02em; z-index: 2; }
+  .ui b { background: #17171b; color: #ffc21a; padding: 8px 10px 7px; text-transform: uppercase; }
+  .ui a { text-decoration: none; text-transform: uppercase; background: #fff; color: #17171b; padding: 8px 10px 7px; box-shadow: 3px 3px 0 #17171b; }
+  .ui a:hover, .ui a.on { background: #ffc21a; }
+  #labels { position: fixed; inset: 0; pointer-events: none; }
+  .lab { position: absolute; transform: translate(-50%, 0); font: 800 10px/1.15 "Arial Black", Impact, sans-serif; text-transform: uppercase; color: #fff; background: #17171bdd;
+    padding: 3px 5px 2px; white-space: nowrap; letter-spacing: .02em; text-align: center; }
+  .lab i { font-style: normal; color: #ffe23a; } .lab s { text-decoration: none; color: #9fdcff; font-size: 9px; }
+  .title { position: fixed; left: 14px; bottom: 12px; font: 900 22px/1 "Arial Black", Impact, sans-serif; color: #17171b; background: #ffc21a; padding: 8px 12px 6px; text-transform: uppercase; z-index: 2; }
+  .title:empty { display: none; }
+  body.nolab #labels { display: none; }
+  body.shot .ui { display: none; }
+  #err { position: fixed; left: 14px; bottom: 50px; color: #fff; background: #c00; font: 12px monospace; white-space: pre-wrap; max-width: 70vw; z-index: 3; }
+  #err:empty { display: none; }
+</style>
+<div id="stage"></div>
+<div id="labels"></div>
+<div class="title" id="title"></div>
+<div class="ui"><b>AI City · store objects</b>
+  <a href="?view=cat&page=0">1 Bodega</a><a href="?view=cat&page=1">2 Bodega</a><a href="?view=cat&page=2">3 Pawn</a><a href="?view=cat&page=3">4 Cards · kicks</a><a href="?view=cat&page=4">5 Fits · cuts</a><a href="?view=cat&page=5">6 Wash · pizza</a><a href="?view=cat&page=6">7 Diner · cash</a><a href="?view=cat&page=7">8 Anywhere</a><a href="?view=cat&page=8">9 Wave 2</a>
+  <a href="?view=shop&shop=bodega">Bodega inside</a><a href="?view=shop&shop=bodega&from=street">…through the window</a><a href="#" id="far">Near / far</a><a href="#" id="tod">Day / night</a></div>
+<div id="err"></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/" } }</script>
+<script>
+  const Q = new URLSearchParams(location.search);
+  if (Q.has('shot')) document.body.classList.add('shot');
+  if (Q.get('labels') === '0') document.body.classList.add('nolab');
+  addEventListener('error', e => { document.getElementById('err').textContent += (e.message || e) + '\n'; });
+  addEventListener('unhandledrejection', e => { document.getElementById('err').textContent += (e.reason && e.reason.stack || e.reason) + '\n'; });
+  const flip = (k, a, b) => e => { e.preventDefault(); const q = new URLSearchParams(location.search); q.set(k, q.get(k) === a ? b : a); location.search = q; };
+  document.getElementById('tod').addEventListener('click', flip('tod', 'night', 'day'));
+  document.getElementById('far').addEventListener('click', flip('far', '1', '0'));
+</script>
+<script type="module" src="./preview.js"></script>

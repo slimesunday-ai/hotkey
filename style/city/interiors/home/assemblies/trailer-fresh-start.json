@@ -1,0 +1,38 @@
+{
+ "tier": "trailer",
+ "name": "fresh-start",
+ "story": "Day one at Sunny Acres: the kitchenette, the curb CRT on a coffee table at the foot of the mattress, the mattress on the floor under the window, a recliner off the curb, half of it still in boxes, a box fan doing its best. One thing on the walls: the first trophy (and a print from the swap meet).",
+ "room": {"w":20,"d":14,"h":2.45,"walls":{"N":"paint:#e6e1d6","E":"paint:#e6e1d6"},"floor":"linoleum"},
+ "items": [
+  {"id":"rug-rag","x":12,"z":4,"rot":0,"variant":2,"on":"floor"},
+  {"id":"door-front","x":9,"z":0,"rot":0,"variant":0,"on":{"wall":"E"}},
+  {"id":"window","x":3,"z":0,"rot":0,"variant":0,"on":{"wall":"E"},"y":0.9},
+  {"id":"kitchenette","x":0,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"box-fan","x":6,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"table-coffee","x":8,"z":0,"rot":90,"variant":0,"on":"floor"},
+  {"id":"tv-crt","x":9,"z":1,"rot":90,"variant":0,"on":{"top":5}},
+  {"id":"mattress-floor","x":12,"z":0,"rot":270,"variant":1,"on":"floor"},
+  {"id":"pizza-boxes","x":10,"z":6,"rot":0,"variant":0,"on":"floor"},
+  {"id":"laundry-pile","x":17,"z":5,"rot":0,"variant":1,"on":"floor"},
+  {"id":"recliner","x":4,"z":5,"rot":180,"variant":2,"on":"floor"},
+  {"id":"boxes-moving","x":0,"z":11,"rot":0,"variant":1,"on":"floor"},
+  {"id":"boxes-moving","x":12,"z":5,"rot":0,"variant":2,"on":"floor"},
+  {"id":"art-print","x":6,"z":0,"rot":0,"variant":0,"on":{"wall":"N"},"y":1.2},
+  {"id":"beer-cans","x":9,"z":11,"rot":0,"variant":0,"on":"floor"}
+ ],
+ "slots": [
+  {"id":"first-trophy","label":"first trophy · over the mattress","place":"wall","x":14,"z":0,"foot":[4,4],"rot":0,"demo":"trophy-first-deal","variant":0,"fits":["trophy"],"wall":"N","y":1.2},
+  {"id":"by-the-door","label":"by the door","place":"floor","x":12,"z":10,"foot":[4,3],"rot":0,"demo":"dog-bed","variant":0,"fits":["security"]},
+  {"id":"on-the-counter","label":"on the counter","place":"surface","x":2,"z":0,"foot":[2,2],"rot":0,"demo":"trophy-first-house","variant":0,"fits":["collectible","trophy","stash"],"on":3}
+ ],
+ "vacant": [
+  {"id":"door-front","x":9,"z":0,"rot":0,"variant":0,"on":{"wall":"E"}},
+  {"id":"window","x":3,"z":0,"rot":0,"variant":0,"on":{"wall":"E"},"y":0.9},
+  {"id":"kitchenette","x":0,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"mattress-floor","x":12,"z":0,"rot":270,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":7,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":3,"z":5,"rot":0,"variant":2,"on":"floor"},
+  {"id":"sign-rent","x":9,"z":8,"rot":0,"variant":0,"on":"floor"},
+  {"id":"box-fan","x":17,"z":6,"rot":0,"variant":0,"on":"floor"}
+ ]
+}

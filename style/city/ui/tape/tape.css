@@ -1,0 +1,163 @@
+/* HUMAN LAYER · SECTION 2a · THE TAPE PLAYER: the transport (bottom), the secrets in the city (thought bubbles, DM arcs, deal icons) and
+   the TAPE frame. Built on the kit (ui/kit.css): every colour is a token. The tape's own tokens are below, per skin; a new skin only adds
+   its values here (the markers' six colours, the bubbles, the horizon wall). The lens colour of the whole mode is --k-tape (ARCHIVE:
+   --k-archive), the way back is --k-live. */
+
+/* ── the tape's tokens ──────────────────────────────────────────────────────────────────────────────────────────────────────── */
+#k {
+  --k-ev-rob: #e0313a; --k-ev-arrest: #2a4fe0; --k-ev-death: #13151a; --k-ev-mark: #d69e00; --k-ev-turf: #7b3fe4; --k-ev-director: #0e9aa7;
+  --k-tp-track: rgba(19, 21, 26, .07); --k-tp-night: rgba(19, 21, 26, .07); --k-tp-tick: rgba(19, 21, 26, .32); --k-tp-label: #4b515d;
+  --k-tp-wall: rgba(19, 21, 26, .07); --k-tp-wall-2: rgba(19, 21, 26, .15);
+  --k-think-bg: rgba(255, 255, 255, .93); --k-think-ink: #13151a; --k-dm: #b51a70; --k-deal: #a35a00;
+}
+#k[data-skin="98"] {
+  --k-ev-rob: #ff2b2b; --k-ev-arrest: #4da3ff; --k-ev-death: #f3f3ea; --k-ev-mark: #ffe14d; --k-ev-turf: #c08cff; --k-ev-director: #3ff0e0;
+  --k-tp-track: rgba(255, 255, 255, .06); --k-tp-night: rgba(255, 255, 255, .06); --k-tp-tick: rgba(243, 243, 234, .4); --k-tp-label: #bdc0b2;
+  --k-tp-wall: rgba(255, 182, 46, .06); --k-tp-wall-2: rgba(255, 182, 46, .16);
+  --k-think-bg: rgba(6, 8, 10, .88); --k-think-ink: #f3f3ea; --k-dm: #ff6ad5; --k-deal: #ffb62e;
+}
+#k[data-skin="zine"] {
+  --k-ev-rob: #e3141c; --k-ev-arrest: #1f4fd8; --k-ev-death: #17171b; --k-ev-mark: #e0a800; --k-ev-turf: #6b2fd6; --k-ev-director: #00897b;
+  --k-tp-track: rgba(23, 23, 27, .06); --k-tp-night: rgba(23, 23, 27, .08); --k-tp-tick: rgba(23, 23, 27, .45); --k-tp-label: #48443c;
+  --k-tp-wall: rgba(23, 23, 27, .06); --k-tp-wall-2: rgba(23, 23, 27, .2);
+  --k-think-bg: #fbf8f1; --k-think-ink: #17171b; --k-dm: #d1107a; --k-deal: #c26300;
+}
+
+#k[data-skin="zte"] {
+  --k-ev-rob: #E8232A; --k-ev-arrest: #2F5BFF; --k-ev-death: #17171B; --k-ev-mark: #FFC21A; --k-ev-turf: #7A3CFF; --k-ev-director: #12B3A0;
+  --k-tp-track: rgba(23, 23, 27, .06); --k-tp-night: rgba(23, 23, 27, .1); --k-tp-tick: rgba(23, 23, 27, .5); --k-tp-label: #3a3a40;
+  --k-tp-wall: rgba(255, 79, 163, .1); --k-tp-wall-2: rgba(255, 79, 163, .3);
+  --k-think-bg: #F4F1EA; --k-think-ink: #17171B; --k-dm: #FF4FA3; --k-deal: #6CFF4A;
+}
+/* ── the mode: a TAPE frame round the screen (the lens colour), so the state is never in doubt ──────────────────────────────────── */
+#k .tp-frame { position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 3px var(--c, var(--k-tape)); opacity: 0; transition: opacity var(--k-dur) var(--k-ease); --c: var(--k-tape); }
+#k .tp-frame[data-lens="archive"] { --c: var(--k-archive); }
+#k .tp-frame.is-on { opacity: .9; }
+#k[data-skin="zine"] .tp-frame { box-shadow: inset 0 0 0 4px var(--c); }
+
+/* ── LIVE: the way in (a small chip, bottom left) ─────────────────────────────────────────────────────────────────────────── */
+#k .tp-in { position: absolute; left: 14px; bottom: 14px; display: flex; align-items: center; gap: 6px; padding: 4px 4px 4px 8px; border-radius: var(--k-r2); background: var(--k-bg);
+  -webkit-backdrop-filter: var(--k-blur); backdrop-filter: var(--k-blur); box-shadow: var(--k-shadow-s); pointer-events: auto; }
+#k .tp-in .k-btn { min-height: calc(28 * var(--k-px)); padding: 0 10px; }
+#k .tp-in[hidden] { display: none; }
+
+/* ── the transport ─────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+/* --tp-bottom: the transport sits above the camera bar (camera/hud.js #camhud: 12 px up, its keys and hint line ~42 px; zte's boxed
+   row ~59 px) with a gap, not on it (review 10-09 #15: 4 px over it, zte 21 px); the toasts go above it while it is on (kit.css) */
+#k { --tp-bottom: calc(70 * var(--k-px)); }   /* (WM5: the camera bar's hint sits on a plate now, ~51 px with the keys) */
+#k[data-skin="zte"] { --tp-bottom: calc(88 * var(--k-px)); }
+#k .tp-bar { --c: var(--k-tape); --cb: var(--k-tape-bg); position: absolute; left: 16px; right: 16px; bottom: var(--tp-bottom); margin: 0 auto; max-width: max(1040px, min(calc(1040 * var(--k-px)), 70vw)); pointer-events: auto;
+  background: var(--k-bg); -webkit-backdrop-filter: var(--k-blur); backdrop-filter: var(--k-blur); border-radius: var(--k-r3); box-shadow: var(--k-shadow), inset 0 2px 0 var(--c);
+  padding: 8px 12px 8px; display: grid; gap: 4px; opacity: 0; visibility: hidden; transform: translateY(14px);
+  transition: transform var(--k-dur) var(--k-ease), opacity var(--k-dur-s) linear, visibility 0s linear var(--k-dur), right var(--k-dur) var(--k-ease), left var(--k-dur) var(--k-ease); }
+#k .tp-bar.is-on { opacity: 1; visibility: visible; transform: none; transition: transform var(--k-dur) var(--k-ease), opacity var(--k-dur-s) linear, visibility 0s, right var(--k-dur) var(--k-ease), left var(--k-dur) var(--k-ease); }
+#k .tp-bar[data-lens="archive"] { --c: var(--k-archive); --cb: var(--k-archive-bg); }
+#k:has(.k-panel.is-open.dock-right) .tp-bar { right: calc(var(--k-panel-w) + 28px); }
+#k:has(.k-panel.is-open.dock-left) .tp-bar { left: calc(var(--k-panel-w) + 28px); }
+@media (max-width: 1400px) { #k:has(.k-panel.is-open) .tp-row kbd { display: none; } }   /* (a side panel narrows the row: the keys' hints go first; zte cut Back to live at 1280) */
+#k .tp-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+#k .tp-row .tp-grow { flex: 1; min-width: 8px; }
+#k .tp-lens { height: calc(24 * var(--k-px)); font-size: var(--k-fs-xs); padding: 0 9px 0 7px; }
+#k .tp-time { display: flex; flex-direction: column; gap: 1px; min-width: 128px; flex: 0 1 auto; overflow: hidden; }   /* (a long readout is cut, never pushes the row: review 10-09 #10) */
+#k .tp-time b { font: 650 var(--k-fs-l)/1.05 var(--k-font-mono); font-variant-numeric: tabular-nums; color: var(--k-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#k .tp-time span { font: 500 var(--k-fs-xs)/1.1 var(--k-font); color: var(--k-ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#k .tp-btns { display: inline-flex; gap: 4px; }
+#k .tp-play { width: calc(40 * var(--k-px)); min-width: calc(40 * var(--k-px)); padding: 0; background: var(--c); color: var(--k-bg-solid); }
+#k .tp-play:hover { background: var(--c); filter: brightness(1.08); }
+#k .tp-speeds { display: inline-flex; padding: 2px; gap: 1px; border-radius: var(--k-r1); background: var(--k-bg-3); }
+#k .tp-speeds button { min-height: calc(30 * var(--k-px)); min-width: calc(34 * var(--k-px)); padding: 0 7px; border: 0; border-radius: var(--k-r1); background: none; color: var(--k-ink-2); font: 600 var(--k-fs-s)/1 var(--k-font-mono); cursor: pointer; }
+#k .tp-speeds button:hover { color: var(--k-ink); }
+#k .tp-speeds button[aria-pressed="true"] { background: var(--k-bg-solid); color: var(--k-ink); box-shadow: var(--k-shadow-s); }
+#k .tp-secrets.is-on { background: var(--cb); color: var(--c); box-shadow: inset 0 0 0 1px var(--c); }
+#k .tp-live { background: var(--k-live-bg); color: var(--k-live); box-shadow: inset 0 0 0 1px var(--k-live); font-weight: 600; }
+#k .tp-live:hover { background: var(--k-live); color: var(--k-bg-solid); }
+#k .tp-live .k-live-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+#k .tp-msg { flex: 0 1000 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 var(--k-fs-s)/1.3 var(--k-font); color: var(--k-ink-2); }   /* (one line, cut to fit: the whole text on hover; review 10-09 #10: it pushed Secrets over Back to live) */
+#k .tp-bar.is-idle .tp-btns .k-btn, #k .tp-bar.is-idle .tp-track { opacity: .45; cursor: default; }
+#k .tp-bar.is-idle .tp-speeds { display: none; }   /* (nothing to play: the room goes to the why) */
+/* the track: canvas (ticks, night, markers, the horizon wall, 2b's layers) + the playhead (DOM: moved with a transform, never a redraw) */
+#k .tp-track { position: relative; height: calc(50 * var(--k-px)); cursor: pointer; touch-action: none; user-select: none; outline: none; border-radius: var(--k-r1); }
+#k .tp-track:focus-visible { outline: 2px solid var(--k-focus); outline-offset: 2px; }
+#k .tp-track canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+#k .tp-head { position: absolute; left: 0; top: 2px; bottom: 0; width: 0; will-change: transform; pointer-events: none; }
+#k .tp-head::before { content: ""; position: absolute; left: -1px; top: 10px; bottom: 2px; width: 2px; background: var(--c); border-radius: 2px; }
+#k .tp-head::after { content: ""; position: absolute; left: -6px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px var(--k-bg-solid), var(--k-shadow-s); }
+#k[data-skin="98"] .tp-head::after, #k[data-skin="zine"] .tp-head::after { border-radius: 0; transform: rotate(45deg) scale(.85); }
+#k .tp-bar.is-scrub .tp-head::after { transform: scale(1.25); }
+#k .tp-loading { position: absolute; inset: 14px 0 12px; border-radius: var(--k-r1); background: linear-gradient(90deg, var(--k-tp-track) 0%, var(--k-tp-wall-2) 50%, var(--k-tp-track) 100%) 0 0 / 200% 100%; animation: tp-shimmer 1.2s linear infinite; }
+#k .tp-loading[hidden] { display: none; }
+@keyframes tp-shimmer { to { background-position: -200% 0; } }
+/* the marker tip */
+#k .tp-tip { position: absolute; left: 0; bottom: calc(100% + 8px); max-width: calc(320 * var(--k-px)); padding: 7px 10px 8px; border-radius: var(--k-r2); background: var(--k-ink); color: var(--k-bg-solid); box-shadow: var(--k-shadow-s);
+  font: 500 var(--k-fs-xs)/1.35 var(--k-font); pointer-events: none; opacity: 0; transition: opacity var(--k-dur-s) linear; white-space: normal; z-index: 2; }
+#k .tp-tip.is-on { opacity: 1; }
+#k .tp-tip .tp-tip-h { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; font: 650 var(--k-fs-xs)/1 var(--k-font); letter-spacing: .05em; text-transform: uppercase; }
+#k .tp-tip .tp-tip-h i { width: 8px; height: 8px; border-radius: 50%; background: var(--ev); }
+#k .tp-tip .tp-tip-h span { opacity: .7; font-family: var(--k-font-mono); letter-spacing: 0; text-transform: none; }
+#k .tp-tip .tp-tip-k { margin-top: 4px; opacity: .62; font: 600 var(--k-fs-xs)/1.2 var(--k-font-mono); }
+@media (max-width: 760px) { #k .tp-bar { bottom: 60px; left: 8px !important; right: 8px !important; } #k .tp-speeds button { min-width: 30px; padding: 0 5px; } #k .tp-hide-s { display: none !important; } }
+
+/* ── the secrets in the city: thought bubbles, DM arcs, deal icons (only while TAPE is open) ─────────────────────────────────── */
+#k .tp-secrets-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+#k .tp-secrets-layer svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+#k .tp-arc { fill: none; stroke: var(--k-dm); stroke-width: 2; stroke-dasharray: 5 4; stroke-linecap: round; opacity: .9; }
+#k .tp-arc-end { fill: var(--k-dm); }
+#k .tp-think { position: absolute; left: 0; top: 0; max-width: calc(230 * var(--k-px)); padding: 6px 9px 7px; border-radius: var(--k-r2); background: var(--k-think-bg); color: var(--k-think-ink);
+  -webkit-backdrop-filter: var(--k-blur); backdrop-filter: var(--k-blur); box-shadow: var(--k-shadow-s); font: italic 500 var(--k-fs-xs)/1.32 var(--k-font); will-change: transform, opacity;
+  opacity: 0; transition: opacity 260ms linear; display: block; }
+#k .tp-think.is-on { opacity: var(--o, 1); }
+#k .tp-think::after { content: ""; position: absolute; left: var(--tail, 50%); bottom: -9px; width: 7px; height: 7px; margin-left: -10px; border-radius: 50%; background: var(--k-think-bg); box-shadow: 6px 6px 0 -1.5px var(--k-think-bg); }
+#k .tp-think b { display: block; font: normal 650 var(--k-fs-xs)/1.2 var(--k-font); letter-spacing: .03em; color: var(--k-tape); margin-bottom: 1px; text-transform: none; }
+#k .tp-think.is-sel b { color: var(--k-ring-hot); }
+#k .tp-think.is-dm { font-style: normal; box-shadow: var(--k-shadow-s), inset 3px 0 0 var(--k-dm); padding-left: 11px; }
+#k .tp-think.is-dm b { color: var(--k-dm); }
+#k .tp-think.is-dm::after { display: none; }
+#k[data-skin="98"] .tp-think { font: 400 var(--k-fs-s)/1.25 var(--k-font); font-style: normal; border: 1px solid var(--k-line); }
+#k[data-skin="98"] .tp-think::after { border-radius: 0; }
+#k[data-skin="zine"] .tp-think { font-style: normal; border: 1.5px solid var(--k-ink); }
+#k .tp-deal { position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 3px; height: calc(20 * var(--k-px)); padding: 0 6px 0 4px; border-radius: 999px; background: var(--k-deal); color: var(--k-bg-solid);
+  font: 650 var(--k-fs-xs)/1 var(--k-font); letter-spacing: .03em; box-shadow: var(--k-shadow-s); will-change: transform, opacity; opacity: 0; transition: opacity 220ms linear; white-space: nowrap; }
+#k .tp-deal.is-on { opacity: var(--o, 1); }
+#k .tp-deal svg { width: 12px; height: 12px; }
+#k[data-skin="98"] .tp-deal, #k[data-skin="zine"] .tp-deal { border-radius: 0; }
+
+/* ── zte: the transport is a TE strip on gridded bone (a pink edge on top: you are on the tape), paper keys, the secrets as paper ─── */
+#k[data-skin="zte"] .tp-frame { box-shadow: inset 0 0 0 4px var(--c); }
+#k[data-skin="zte"] .tp-in { padding: 5px; gap: 5px; border-radius: 0; background: var(--zt-grid), var(--zt-bone); box-shadow: 4px 4px 0 var(--zt-ink); }
+#k[data-skin="zte"] .tp-in .k-btn { min-height: calc(30 * var(--k-px)); padding: 0 9px; }
+#k[data-skin="zte"] .tp-bar { padding: 12px 14px 10px; gap: 6px; border-radius: 0; background: var(--zt-grid), var(--zt-bone); box-shadow: 6px 7px 0 var(--zt-ink), inset 0 5px 0 var(--c); }
+#k[data-skin="zte"] .tp-row { gap: 8px; }
+#k[data-skin="zte"] .tp-time b { font: 400 calc(18 * var(--k-px))/1 var(--k-font-sign); }
+#k[data-skin="zte"] .tp-time span { font: 400 var(--zt-fs-label)/1.3 var(--zt-font-label); letter-spacing: 0; text-transform: uppercase; color: var(--zt-slate-text); }
+#k[data-skin="zte"] .tp-play { width: calc(44 * var(--k-px)); min-width: calc(44 * var(--k-px)); background: var(--c); color: var(--zt-ink); }
+#k[data-skin="zte"] .tp-play:hover { background: var(--c); filter: none; }
+#k[data-skin="zte"] .tp-bar[data-lens="archive"] .tp-play { color: var(--zt-white); }
+#k[data-skin="zte"] .tp-speeds { gap: 5px; padding: 0 2px 2px 0; border-radius: 0; background: none; }
+#k[data-skin="zte"] .tp-speeds button { min-height: calc(30 * var(--k-px)); min-width: calc(34 * var(--k-px)); border-radius: 0; background: var(--zt-white); color: var(--zt-ink); box-shadow: 2px 2px 0 var(--zt-ink); font: 400 var(--zt-fs-label)/1 var(--zt-font-label); }
+#k[data-skin="zte"] .tp-speeds button[aria-pressed="true"] { background: var(--zt-ink); color: var(--zt-lime); box-shadow: none; transform: translate(2px, 2px); }
+#k[data-skin="zte"] .tp-secrets.is-on { background: var(--c); color: var(--zt-ink); box-shadow: 2px 2px 0 var(--zt-ink); }
+#k[data-skin="zte"] .tp-live, #k[data-skin="zte"] .tp-live:hover { background: var(--zt-lime); color: var(--zt-ink); box-shadow: 2px 2px 0 var(--zt-ink); }
+#k[data-skin="zte"] .tp-live .k-live-dot { border-radius: 0; width: 6px; height: 6px; }
+#k[data-skin="zte"] .tp-msg { font: 400 var(--k-fs-s)/1.3 var(--k-font); }
+#k[data-skin="zte"] .tp-track { border-radius: 0; background: var(--zt-white); box-shadow: 2px 2px 0 var(--zt-ink); }
+#k[data-skin="zte"] .tp-head::before { left: -1px; width: 2px; border-radius: 0; background: var(--zt-ink); }
+#k[data-skin="zte"] .tp-head::after { left: -6px; width: 12px; height: 12px; border-radius: 0; background: var(--c); box-shadow: 2px 2px 0 var(--zt-ink); transform: none; }
+#k[data-skin="zte"] .tp-bar.is-scrub .tp-head::after { transform: scale(1.25); }
+#k[data-skin="zte"] .tp-loading { border-radius: 0; }
+#k[data-skin="zte"] .tp-tip { border-radius: 0; background: var(--zt-ink); color: var(--zt-white); box-shadow: 3px 3px 0 var(--zt-pink); font: 400 var(--k-fs-xs)/1.4 var(--k-font); }
+#k[data-skin="zte"] .tp-tip .tp-tip-h { font: 400 var(--zt-fs-label)/1 var(--zt-font-label); letter-spacing: 0; }
+#k[data-skin="zte"] .tp-tip .tp-tip-h i { border-radius: 0; }
+#k[data-skin="zte"] .tp-arc { stroke-width: 2.5; stroke-dasharray: 6 4; stroke-linecap: butt; }
+#k[data-skin="zte"] .tp-think { padding: 7px 10px 8px; border-radius: 0; box-shadow: 3px 3px 0 var(--zt-ink); font: 400 var(--k-fs-xs)/1.4 var(--k-font); font-style: normal; }
+#k[data-skin="zte"] .tp-think::after { border-radius: 0; width: 6px; height: 6px; bottom: -10px; background: var(--k-think-bg); box-shadow: 2px 2px 0 var(--zt-ink), 7px 7px 0 -1px var(--k-think-bg), 8px 8px 0 -1px var(--zt-ink); }
+#k[data-skin="zte"] .tp-think b { display: table; margin-bottom: 5px; padding: 2px 4px 1px; background: var(--zt-pink); color: var(--zt-ink); font: 400 var(--zt-fs-label)/1 var(--zt-font-label); letter-spacing: 0; text-transform: uppercase; }
+#k[data-skin="zte"] .tp-think.is-sel b { background: var(--zt-ink); color: var(--zt-pink); }
+#k[data-skin="zte"] .tp-think.is-dm { box-shadow: 3px 3px 0 var(--zt-ink), inset 4px 0 0 var(--k-dm); padding-left: 13px; }
+#k[data-skin="zte"] .tp-think.is-dm b { background: var(--zt-ink); color: var(--zt-pink); }
+#k[data-skin="zte"] .tp-deal { height: calc(20 * var(--k-px)); padding: 0 6px 0 4px; border-radius: 0; background: var(--k-deal); color: var(--zt-ink); box-shadow: 2px 2px 0 var(--zt-ink); font: 400 var(--zt-fs-label)/1 var(--zt-font-label); letter-spacing: 0; }
+#k[data-skin="zte"] .d-asof { height: calc(22 * var(--k-px)); font-size: calc(18 * var(--k-px)); }
+#k[data-skin="zte"] .tp-lens { height: calc(24 * var(--k-px)); font-size: calc(18 * var(--k-px)); padding: 0 7px 0 6px; }
+
+/* ── the dossier in TAPE: the "as of" stamp under the name (moves with the scrubber) ─────────────────────────────────────────── */
+#k .d-asof { margin-top: 6px; height: calc(22 * var(--k-px)); font-size: var(--k-fs-xs); }
+#k .d-asof[hidden] { display: none; }

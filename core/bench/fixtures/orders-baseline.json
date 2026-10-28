@@ -1,0 +1,6 @@
+{
+  "smuggler": [{ "kind": "sell", "item": "chems", "min": 15 }, { "kind": "sell", "item": "parts", "min": 15 }, { "kind": "pay" }],
+  "chemist": [{ "kind": "buy", "item": "chems", "units": 4, "max": 15 }, { "kind": "sell", "item": "doses", "min": 15 }, { "kind": "pay" }],
+  "dealer": [{ "kind": "buy", "item": "doses", "units": 7, "max": 15 }, { "kind": "pay" }],
+  "gunrunner": [{ "kind": "buy", "item": "parts", "units": 4, "max": 15 }, { "kind": "pay" }]
+}

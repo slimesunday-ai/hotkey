@@ -1,0 +1,414 @@
+{
+ "tier": "mainland",
+ "name": "mainland-gambrel",
+ "style": "gambrel",
+ "room": {
+  "h": 2.8,
+  "w": 66,
+  "d": 28,
+  "walls": {
+   "N": "paint:#f6f0ff",
+   "E": "paint:#a57cff"
+  },
+  "floor": "oak",
+  "zones": [
+   {
+    "x": 0,
+    "z": 0,
+    "w": 20,
+    "d": 28,
+    "floor": "concrete"
+   },
+   {
+    "x": 21,
+    "z": 0,
+    "w": 9,
+    "d": 16,
+    "floor": "tile"
+   }
+  ],
+  "built": [
+   {
+    "kind": "car",
+    "x": 6,
+    "z": 6,
+    "w": 10,
+    "d": 16
+   },
+   {
+    "kind": "wall",
+    "x": 20,
+    "z": 0,
+    "w": 1,
+    "d": 19
+   },
+   {
+    "kind": "wall",
+    "x": 30,
+    "z": 0,
+    "w": 1,
+    "d": 16
+   },
+   {
+    "kind": "wall",
+    "x": 44,
+    "z": 0,
+    "w": 1,
+    "d": 18
+   }
+  ]
+ },
+ "items": [
+  {
+   "id": "bookshelf",
+   "x": 0,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "paint-kit",
+   "x": 16,
+   "z": 23,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "beer-cans",
+   "x": 1,
+   "z": 24,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "toilet",
+   "x": 25,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "sink-bath",
+   "x": 27,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "medicine-cabinet",
+   "x": 27,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "wall": "N"
+   }
+  },
+  {
+   "id": "bathtub",
+   "x": 21,
+   "z": 5,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "bed-double",
+   "x": 34,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "table-end",
+   "x": 32,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "lamp-table",
+   "x": 32,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": {
+    "top": 8
+   }
+  },
+  {
+   "id": "table-end",
+   "x": 40,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "lamp-table",
+   "x": 40,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "top": 10
+   }
+  },
+  {
+   "id": "photos-family",
+   "x": 35,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "wall": "N"
+   },
+   "y": 1.25
+  },
+  {
+   "id": "rug-shag",
+   "x": 33,
+   "z": 9,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "dresser",
+   "x": 40,
+   "z": 17,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "plant-cactus",
+   "x": 43,
+   "z": 17,
+   "rot": 0,
+   "variant": 1,
+   "on": {
+    "top": 14
+   }
+  },
+  {
+   "id": "ceiling-fan",
+   "x": 35,
+   "z": 9,
+   "rot": 0,
+   "variant": 0,
+   "on": "ceiling"
+  },
+  {
+   "id": "counter-sink",
+   "x": 45,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "stove",
+   "x": 51,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "fridge",
+   "x": 54,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "rug-rag",
+   "x": 46,
+   "z": 6,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "dining-set",
+   "x": 46,
+   "z": 6,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "plant-cactus",
+   "x": 49,
+   "z": 8,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "top": 21
+   }
+  },
+  {
+   "id": "door-front",
+   "x": 57,
+   "z": 0,
+   "rot": 0,
+   "variant": 2,
+   "on": {
+    "wall": "N"
+   }
+  },
+  {
+   "id": "rug-persian",
+   "x": 54,
+   "z": 13,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "couch-house",
+   "x": 54,
+   "z": 13,
+   "rot": 90,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "table-coffee",
+   "x": 59,
+   "z": 15,
+   "rot": 90,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "lamp-arc",
+   "x": 54,
+   "z": 21,
+   "rot": 90,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "plant-monstera",
+   "x": 63,
+   "z": 24,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "vase-floor",
+   "x": 45,
+   "z": 24,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  }
+ ],
+ "slots": [
+  {
+   "id": "trophies",
+   "label": "the trophy shelf",
+   "place": "surface",
+   "x": 0,
+   "z": 0,
+   "foot": [
+    4,
+    2
+   ],
+   "rot": 0,
+   "demo": "trophy-crew-crown",
+   "variant": 0,
+   "fits": [
+    "trophy"
+   ],
+   "on": 0
+  },
+  {
+   "id": "display",
+   "label": "the display wall",
+   "place": "wall",
+   "x": 6,
+   "z": 0,
+   "foot": [
+    8,
+    6
+   ],
+   "rot": 0,
+   "demo": "sneaker-wall",
+   "variant": 0,
+   "fits": [
+    "collectible"
+   ],
+   "wall": "N",
+   "y": 0.6
+  },
+  {
+   "id": "garage",
+   "label": "the garage corner",
+   "place": "floor",
+   "x": 17,
+   "z": 1,
+   "foot": [
+    3,
+    3
+   ],
+   "rot": 0,
+   "demo": "arcade-cab",
+   "variant": 0,
+   "fits": [
+    "gaming",
+    "collectible"
+   ]
+  },
+  {
+   "id": "stash",
+   "label": "the vent",
+   "place": "wall",
+   "x": 22,
+   "z": 0,
+   "foot": [
+    2,
+    1
+   ],
+   "rot": 0,
+   "demo": "stash-vent",
+   "variant": 0,
+   "fits": [
+    "stash"
+   ],
+   "wall": "N",
+   "y": 0.25
+  },
+  {
+   "id": "tv",
+   "label": "the TV wall",
+   "place": "wall",
+   "x": 12,
+   "z": 0,
+   "foot": [
+    7,
+    4
+   ],
+   "rot": 0,
+   "demo": "tv-flat",
+   "variant": 0,
+   "fits": [
+    "electronics",
+    "gear"
+   ],
+   "wall": "E",
+   "y": 1
+  }
+ ]
+}

@@ -1,0 +1,136 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Held + Grip</title>
+<style>
+  :root { --ink: #17171b; --gold: #ffc21a; --pink: #ff4fa3; --sky: #9fdcff; --paper: #f7f7f2; }
+  html, body { margin: 0; background: var(--sky); color: var(--ink); font: 800 12px/1.35 "Arial Black", Impact, sans-serif; }
+  header { padding: 16px 16px 6px; }
+  h1 { margin: 0 0 6px; font-size: 26px; letter-spacing: .02em; text-transform: uppercase; }
+  header p { margin: 0 0 8px; max-width: 980px; font: 600 13px/1.45 ui-sans-serif, system-ui, sans-serif; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+  .legend span { background: var(--ink); color: var(--gold); padding: 6px 8px 5px; text-transform: uppercase; box-shadow: 3px 3px 0 var(--pink); }
+  .legend b { color: #fff; }
+  canvas#sheet { display: block; max-width: 100%; height: auto; margin: 0 16px 16px 0; }
+  #err { position: fixed; left: 8px; bottom: 8px; color: #c00; font: 12px monospace; white-space: pre-wrap; background: #fff; } #err:empty { display: none; }
+  body.shot header { display: none; } body.shot canvas#sheet { margin: 0; }
+</style>
+<header>
+  <h1>Held + grip</h1>
+  <p>Every held item in the hand that carries it: a hand shaped for the grip, the item lined up with the fingers, and the arm posed for how it's carried. Each row: two close-ups of the grip (standing), then standing, walking and idling, drawn with the city walkers' own body (anim/bake.js segments, anim/walk2.js + grip.js shader).</p>
+  <div class="legend"><span><b>pinch</b> phone · flip · mp3 · camera · floppy</span><span><b>fist</b> can · spray · crowbar · cash · bricks · mouse · vinyl</span><span><b>hook</b> bodega bag · duffel</span><span><b>flat ×2</b> sneaker box</span>
+  <span><b>holds</b> phone (up, swing .18) · side (swing .85) · hook (straight, out, swing .45) · carry (both, no swing) · display (level, out) · drink (upright)</span></div>
+</header>
+<canvas id="sheet"></canvas><div id="err"></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/" } }</script>
+<script>addEventListener('error', e => { document.getElementById('err').textContent += (e.message || e) + '\n'; }); addEventListener('unhandledrejection', e => { document.getElementById('err').textContent += 'promise: ' + (e.reason?.stack || e.reason) + '\n'; });</script>
+<script type="module">
+// HELD + GRIP (2026-09-29) · every held item on a character, drawn by the city walkers' own path: anim/bake.js bakeSegLooks (closed
+// rigid segments), anim/walk2.js (+ grip.js: the hold's arm pose), gait2.js, idle.js, gpu.js tierize. One body per item (held2.js heldLooks).
+// URL: (default) the sheet: per item, close-up 3/4 · close-up outside · standing · walking · idling
+//      &close=1            the two close-up columns only (the board's before/after)   &ch=<module>: another chars.js (a "before" copy)
+//      &strip=id,id,…&n=8&sdt=.12   walk strips (side view), one row per item      &idle=<id>&n=6&sdt=.6: the idle over time
+//      &gif=id,id,…&n=24&sdt=.04    GIF frames: the items walking side by side, one frame per row
+//      &only=id,id  the sheet for those items · &fw=&fh= cell size · &shot=1 (no header; title "ready" when drawn) · &dbg=back
+import * as THREE from 'three';
+import { tierize } from '../gpu.js';
+import { bakeSegLooks } from '../anim/bake.js';
+import { WALK } from '../anim/walk.js';
+import { WALK2, createAnimTexture2, animUniforms2, writeGait2, installAnim2 } from '../anim/walk2.js';
+import { gait2State, stepGait2 } from '../anim/gait2.js';
+import { stepIdle, IDLE_NAMES } from '../anim/idle.js';
+import { HELD_IDS, heldLooks, holdOf, GRIP } from '../../../world/held2.js';
+const Q = new URLSearchParams(location.search), SHOT = Q.has('shot'), DBG = Q.get('dbg') || '';
+if (SHOT) document.body.classList.add('shot');
+const CH = await import(Q.get('ch') || '../../../world/chars.js');
+const list = s => (s || '').split(',').filter(Boolean);
+const MODE = Q.has('gif') ? 'gif' : Q.has('strip') ? 'strip' : Q.has('idle') ? 'idle' : 'sheet', CLOSE = Q.has('close');
+const IDS = MODE === 'gif' ? list(Q.get('gif')) : MODE === 'strip' ? list(Q.get('strip')) : MODE === 'idle' ? list(Q.get('idle')) : (list(Q.get('only')).length ? list(Q.get('only')) : HELD_IDS);
+const ALL = heldLooks(CH.look), looks = IDS.map(id => ALL[HELD_IDS.indexOf(id)]).filter(Boolean);
+const N = +(Q.get('n') || (MODE === 'gif' ? 24 : MODE === 'idle' ? 6 : 8)), SDT = +(Q.get('sdt') || (MODE === 'gif' ? 1 / 24 : MODE === 'idle' ? .6 : .12));
+const FW = +(Q.get('fw') || (MODE === 'gif' ? 960 : MODE === 'sheet' ? 260 : 220)), FH = +(Q.get('fh') || (MODE === 'gif' ? 400 : MODE === 'sheet' ? 300 : 280));
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setPixelRatio(1); renderer.setSize(FW, FH);
+renderer.toneMapping = THREE.NeutralToneMapping; renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x9fdcff);
+const sun = new THREE.DirectionalLight(0xfff2dc, 3.0), sunDir = new THREE.Vector3(-0.52, 0.74, 0.42).normalize(); sun.castShadow = true; sun.shadow.bias = -0.0003; sun.shadow.normalBias = .03; sun.shadow.mapSize.set(2048, 2048);
+sun.position.copy(sunDir).multiplyScalar(30); Object.assign(sun.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6, near: 1, far: 80 }); scene.add(sun, sun.target, new THREE.HemisphereLight(0xd6ecff, 0xe0cfb0, 1.05));
+const floor = new THREE.Mesh(new THREE.BoxGeometry(40, .02, 40), new THREE.MeshStandardMaterial({ color: 0xd9d4c7, roughness: .9 })); floor.position.y = -.01; floor.receiveShadow = true; scene.add(floor);
+
+// the bake: the city's walkers' full tier, exactly
+const LK = bakeSegLooks(looks, CH, THREE);
+const geoOf = t => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(t.P, 3)); g.setAttribute('normal', new THREE.BufferAttribute(t.N, 3, true));
+  g.setAttribute('color', new THREE.BufferAttribute(t.C, 4, true)); g.setAttribute('aPart', new THREE.BufferAttribute(new Float32Array(t.K), 1)); g.setIndex(new THREE.BufferAttribute(t.I, 1)); return g; };
+const GEOS = LK.map(l => geoOf(l.full)), VN = GEOS.reduce((s, g) => s + g.attributes.position.count, 0), IN = GEOS.reduce((s, g) => s + g.index.count, 0);
+const backDbg = m => { if (DBG !== 'back') return m; m.side = THREE.DoubleSide; const prev = m.onBeforeCompile, key = m.customProgramCacheKey?.bind(m);
+  m.onBeforeCompile = (sh, r) => { prev?.call(m, sh, r); sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\n  if (!gl_FrontFacing) gl_FragColor = vec4(1., 0., 1., 1.);'); };
+  m.customProgramCacheKey = () => (key ? key() : '') + '|dbgback'; return m; };
+const cap = Math.max(4, looks.length), tex = createAnimTexture2(cap), [uni, G] = animUniforms2(tex, WALK2, { ...WALK });
+const mat = installAnim2(backDbg(tierize(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .62, metalness: 0 }), { vmat: true })), uni);
+const depth = installAnim2(new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking }), uni);
+const B = new THREE.BatchedMesh(cap, VN, IN, mat); B.customDepthMaterial = depth; B.castShadow = B.receiveShadow = true; B.sortObjects = false; B.frustumCulled = false; B.perObjectFrustumCulled = false;
+const ids = GEOS.map(g => B.addGeometry(g)); scene.add(B);
+const M4 = new THREE.Matrix4(), QN = new THREE.Quaternion(), V3 = new THREE.Vector3(), ONE = new THREE.Vector3(1, 1, 1), YA = new THREE.Vector3(0, 1, 0);
+looks.forEach((l, k) => { B.addInstance(ids[k]); M4.identity(); B.setMatrixAt(k, M4); });
+const place = (k, x, z, yaw) => { QN.setFromAxisAngle(YA, yaw); V3.set(x, 0, z); M4.compose(V3, QN, ONE); B.setMatrixAt(k, M4); };
+const only = k => looks.forEach((l, i) => B.setVisibleAt(i, i === k));
+const states = looks.map((l, k) => gait2State({ u: 0, it: k * 1.3 }));
+const draw = () => { const d = tex.image.data; states.forEach((g, k) => writeGait2(d, cap, k, g)); tex.needsUpdate = true; renderer.render(scene, camera); };
+// the gait, in 1/60 s steps: walking (v m/s) or standing (an idle variant, or none)
+const walkTo = (g, t0, t1, v) => { for (let t = t0; t < t1 - 1e-6; t += 1 / 60) { const dt = Math.min(1 / 60, t1 - t); stepGait2(g, v * dt, dt, WALK2, G, 0); stepIdle(g, v < .05, dt); } };
+const FOCUS = { phone: [0, .07, .1], side: [0, -.07, .03], hook: [.04, -.13, 0], carry: [0, 0, .08], display: [.02, .12, 0], drink: [0, .03, .04] };   // close-up aim: the item, not the wrist
+const IDLE_OF = { phone: 2, carry: 1, hook: 3, side: 3, display: 1, drink: 3 };
+// where the hand is, standing, for the close-ups: walk2.js's arm chain with the hold's angles (metres, body frame, facing +z)
+const NEWHELD = !!CH.compose(looks[0]).HX;   // (a "before" chars.js has no grip: aim at its hanging hand)
+function handAt(L) { const h = NEWHELD ? holdOf(L) : {}, p = h.pose || [0, .04, .08, 0];
+  if (h.both) return [0, .6, .45];
+  const rx = (v, a) => [v[0], Math.cos(a) * v[1] - Math.sin(a) * v[2], Math.sin(a) * v[1] + Math.cos(a) * v[2]], ry = (v, a) => [Math.cos(a) * v[0] + Math.sin(a) * v[2], v[1], -Math.sin(a) * v[0] + Math.cos(a) * v[2]],
+    rz = (v, a) => [Math.cos(a) * v[0] - Math.sin(a) * v[1], Math.sin(a) * v[0] + Math.cos(a) * v[1], v[2]], add = (a, b) => a.map((x, i) => x + b[i]), sub = (a, b) => a.map((x, i) => x - b[i]);
+  const E = [.325, .6, 0], Sh = [.25, .825, 0], Hd = [.325, .38, .03];
+  let v = add(E, ry(rx(sub(Hd, E), -p[2]), -p[3])); v = add(Sh, rz(rx(sub(v, Sh), -p[0]), p[1])); return v; }
+const camera = new THREE.PerspectiveCamera(30, FW / FH, .02, 100);
+const aim = (x, z, yaw, pos, tgt, fov = 30) => { const r = v => [x + v[0] * Math.cos(yaw) + v[2] * Math.sin(yaw), v[1], z - v[0] * Math.sin(yaw) + v[2] * Math.cos(yaw)];
+  camera.fov = fov; camera.aspect = FW / FH; camera.updateProjectionMatrix(); camera.position.set(...r(pos)); camera.lookAt(...r(tgt)); sun.target.position.set(x, 0, z); sun.position.set(x, 0, z).addScaledVector(sunDir, 30); };
+
+const sheet = document.getElementById('sheet'), g2 = sheet.getContext('2d'), gl = renderer.getContext(), px = new Uint8Array(FW * FH * 4); let magenta = 0;
+const label = (s, x, y, big) => { g2.font = `800 ${big ? 13 : 11}px "Arial Black", Impact, sans-serif`; const w = g2.measureText(s).width + 10; g2.fillStyle = '#17171b'; g2.fillRect(x, y, w, big ? 20 : 17); g2.fillStyle = '#ffc21a'; g2.fillText(s, x + 5, y + (big ? 15 : 13)); };
+const cell = (x, y) => { renderer.render(scene, camera); g2.drawImage(renderer.domElement, x, y, FW, FH);
+  if (DBG === 'back') { gl.readPixels(0, 0, FW, FH, gl.RGBA, gl.UNSIGNED_BYTE, px); for (let i = 0; i < px.length; i += 4) if (px[i] > 235 && px[i + 1] < 30 && px[i + 2] > 235) magenta++; }
+  g2.strokeStyle = '#17171b'; g2.lineWidth = 2; g2.strokeRect(x + 1, y + 1, FW - 2, FH - 2); };
+const nameOf = L => `${CH.NAMES.held[L.held.id] || (CH.NEWI && CH.NEWI[L.held.id] ? CH.NEWI[L.held.id].name : L.held.id)}`;
+const gripOf = L => `${(GRIP[L.held.id] || ['?'])[0]} · ${(GRIP[L.held.id] || [0, '?'])[1]}`;
+
+if (MODE === 'sheet') {
+  const COLS = CLOSE ? ['close 3/4', 'close outside'] : ['close 3/4', 'close outside', 'standing', 'walking', 'idling'];
+  sheet.width = COLS.length * FW; sheet.height = looks.length * FH + 26;
+  COLS.forEach((c, i) => label(c.toUpperCase(), i * FW + 6, 4, true));
+  for (let k = 0; k < looks.length; k++) { const L = looks[k], y = 26 + k * FH, g = states[k], hold = holdOf(L), hand = handAt(L); only(k);
+    // standing (no idle): the close-ups and the full figure
+    Object.assign(g, gait2State({ u: 0, it: 0 })); walkTo(g, 0, .6, 0); draw();
+    const F = FOCUS[NEWHELD ? (GRIP[L.held.id] || [0, 'side'])[1] : 'side'] || [0, 0, 0], hx = hand[0] + F[0], hy = hand[1] + F[1], hz = hand[2] + F[2];
+    aim(0, 0, 0, [hx + .62, hy + .3, hz + 1.0], [hx - .03, hy - .02, hz + .03], 30); cell(0, y);
+    aim(0, 0, 0, [hx + 1.15, hy + .12, hz + .1], [hx, hy - .02, hz + .02], 30); cell(FW, y);
+    label(nameOf(L), 6, y + 6, true); label(gripOf(L), 6, y + 28);
+    if (CLOSE) continue;
+    aim(0, 0, 0, [1.55, 1.2, 2.6], [0, .78, 0], 30); cell(2 * FW, y);
+    Object.assign(g, gait2State({ u: 0, it: 0 })); walkTo(g, 0, 1.45, 1.2); draw(); aim(0, 0, 0, [3.2, .95, .35], [0, .78, 0], 30); cell(3 * FW, y);
+    const iv = IDLE_OF[(GRIP[L.held.id] || [0, 'side'])[1]] ?? 0;
+    Object.assign(g, gait2State({ u: 0, it: 1.2, idle: iv })); walkTo(g, 0, 3.2, 0); draw(); aim(0, 0, 0, [1.7, 1.25, 2.5], [0, .8, 0], 30); cell(4 * FW, y); label(IDLE_NAMES[iv], 4 * FW + 6, y + 6); }
+} else if (MODE === 'strip' || MODE === 'idle') {
+  sheet.width = N * FW; sheet.height = looks.length * FH;
+  for (let k = 0; k < looks.length; k++) { const L = looks[k], g = states[k]; only(k); const idle = MODE === 'idle';
+    Object.assign(g, gait2State({ u: 0, it: 0, idle: idle ? 2 : -1 })); let t = 0; const T0 = idle ? .4 : 1.2; walkTo(g, 0, T0, idle ? 0 : 1.2); t = T0;
+    for (let f = 0; f < N; f++) { if (f) { walkTo(g, t, t + SDT, idle ? 0 : 1.2); t += SDT; } draw();
+      if (idle) aim(0, 0, 0, [1.7, 1.3, 2.35], [.02, .74, .1], 30); else aim(0, 0, 0, [4.3, 1.0, .35], [0, .66, .05], 30);
+      cell(f * FW, k * FH); label(f === 0 ? `${nameOf(L)} · ${gripOf(L)} · t ${t.toFixed(2)}` : `t ${t.toFixed(2)}`, f * FW + 6, k * FH + 6); } }
+} else {   // gif: the items side by side, walking to the left of the frame; one frame per row
+  const COLS = +(Q.get('cols') || 1), cx = f => (f % COLS) * FW, cy = f => Math.floor(f / COLS) * FH;
+  sheet.width = COLS * FW; sheet.height = Math.ceil(N / COLS) * FH; const GAP = 1.4, n = looks.length;
+  looks.forEach((l, k) => { place(k, (k - (n - 1) / 2) * GAP, 0, -Math.PI / 2);   // walking left: the holding (right) arm to the camera
+   B.setVisibleAt(k, true); Object.assign(states[k], gait2State({ u: k * .19, it: k })); walkTo(states[k], 0, 1.2, 1.2); });
+  const span = (n - 1) * GAP; let t = 1.2;
+  for (let f = 0; f < N; f++) { if (f) { states.forEach(g => walkTo(g, t, t + SDT, 1.2)); t += SDT; } draw(); aim(0, 0, 0, [0, 1.0, span * .88 + 2.3], [0, .68, 0], 30);
+    cell(cx(f), cy(f)); looks.forEach((l, k) => { V3.set((k - (n - 1) / 2) * GAP, 1.9, 0).project(camera); const x = (V3.x + 1) / 2 * FW, y = (1 - V3.y) / 2 * FH; g2.font = '800 11px "Arial Black", Impact, sans-serif'; const s = nameOf(l), w = g2.measureText(s).width + 10; label(s, cx(f) + x - w / 2, cy(f) + Math.max(6, y - 22)); }); }
+}
+window.__held = { magenta, looks: looks.map(l => l.held.id), mode: MODE }; document.title = 'ready';
+</script>

@@ -1,0 +1,17 @@
+{
+  "_about": "Noir Night · silver black-and-white: hard pools under every lamp, most windows dark, mist low in the streets, blooming signs, 2.39 bars.",
+  "_tweak": "grade.saturation (0 = pure silver; ~0.3 lets the neon back), night.pools, fog.haze.",
+  "_stack": "grade runs before bloom on purpose: on the night build bloom otherwise smears a non-finite scene pixel into a black blob (grade's clamp scrubs it). Keep grade on and first while bloom is on.",
+  "time": { "tod": "night" },
+  "light": { "sunColor": "#8fa4ff", "sun": 0.25, "skyFill": "#4050a0", "groundFill": "#201830", "fill": 0.6, "env": 0.3 },
+  "sky": { "top": "#0b1240", "horizon": "#3b2a7a", "ground": "#3b2a7a" },
+  "fog": { "near": 40, "far": 300, "haze": 0.35, "hazeTop": 14 },
+  "contact": { "on": true, "strength": 0.6 },
+  "night": { "pools": 0.75, "poolSize": 10, "poolColor": "#ffe0b0", "windows": 0.5, "dark": 0.6, "lampLight": 22 },
+  "bloom": { "on": true, "emissive": true, "threshold": 0.5, "strength": 1.2, "radius": 0.7 },
+  "grade": { "on": true, "contrast": 1.2, "saturation": 0.2, "lut": "silver", "lutMix": 1, "gamma": 1.08 },
+  "vignette": { "on": true, "amount": 0.55, "radius": 0.6 },
+  "grain": { "type": "animated", "amount": 0.12, "size": 1.4 },
+  "letterbox": { "on": true, "aspect": "2.39" },
+  "stack": { "order": "blur,grade,bloom,halation,sharpen,chroma,lens,vignette,grain,dither,letterbox" }
+}

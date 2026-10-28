@@ -1,0 +1,1028 @@
+{
+ "version": 1,
+ "note": "measured by style/city/tools/transit-measure.mjs on the city's own traffic + walkers (a follow cam's crowd); real seconds. seg = stop → next stop, the dwell not included.",
+ "dt": 0.03333333333333333,
+ "samples": 7,
+ "dwell": 6,
+ "lines": {
+  "bus-14": {
+   "fwd": {
+    "sig": "3a8cb11791e5",
+    "seg": [
+     {
+      "from": "bus-mall-gate",
+      "to": "bus-central-ivy",
+      "m": 164.4,
+      "flat": 20.6,
+      "med": 26.6,
+      "p90": 27.7,
+      "min": 17.1,
+      "max": 28.2,
+      "n": 7,
+      "xs": [
+       25.9,
+       27.4,
+       25.3,
+       26.6,
+       26.6,
+       17.1,
+       28.2
+      ]
+     },
+     {
+      "from": "bus-central-ivy",
+      "to": "bus-st-mercy",
+      "m": 205.1,
+      "flat": 25.6,
+      "med": 35.7,
+      "p90": 42.4,
+      "min": 28.4,
+      "max": 47.3,
+      "n": 7,
+      "xs": [
+       32.3,
+       35.7,
+       39.2,
+       47.3,
+       39,
+       34.1,
+       28.4
+      ]
+     },
+     {
+      "from": "bus-st-mercy",
+      "to": "bus-long-bridge",
+      "m": 442.9,
+      "flat": 55.4,
+      "med": 72.1,
+      "p90": 381.3,
+      "min": 58,
+      "max": 801.2,
+      "n": 7,
+      "xs": [
+       66.4,
+       72.1,
+       101.3,
+       58,
+       74.9,
+       65.4,
+       801.2
+      ]
+     }
+    ],
+    "runs": 7,
+    "failed": 0,
+    "held": {
+     "queue:none": 0.9,
+     "room": 8.5,
+     "queue:moving": 0.5,
+     "box": 1,
+     "walkIn": 6,
+     "queue:light": 19.5,
+     "inBox": 1.2,
+     "queue:room": 75.6,
+     "queue:stopped": 0.1,
+     "queue:late": 7.4
+    }
+   },
+   "rev": {
+    "sig": "839f9324a0af",
+    "seg": [
+     {
+      "from": "bus-long-bridge",
+      "to": "bus-st-mercy",
+      "m": 331.5,
+      "flat": 41.4,
+      "med": 97.2,
+      "p90": 116.8,
+      "min": 73.8,
+      "max": 126.3,
+      "n": 7,
+      "xs": [
+       84.5,
+       126.3,
+       97.2,
+       73.8,
+       110.4,
+       109.1,
+       86.1
+      ]
+     },
+     {
+      "from": "bus-st-mercy",
+      "to": "bus-central-ivy",
+      "m": 205.2,
+      "flat": 25.7,
+      "med": 24.1,
+      "p90": 26.1,
+      "min": 19.3,
+      "max": 26.9,
+      "n": 7,
+      "xs": [
+       22.6,
+       26.9,
+       23.7,
+       25.6,
+       25,
+       19.3,
+       24.1
+      ]
+     },
+     {
+      "from": "bus-central-ivy",
+      "to": "bus-mall-gate",
+      "m": 164.4,
+      "flat": 20.5,
+      "med": 16.9,
+      "p90": 23.2,
+      "min": 16.5,
+      "max": 25.1,
+      "n": 7,
+      "xs": [
+       21.7,
+       16.9,
+       25.1,
+       16.5,
+       16.5,
+       16.8,
+       22
+      ]
+     }
+    ],
+    "runs": 7,
+    "failed": 0,
+    "held": {
+     "queue:moving": 0.5,
+     "room": 28.1,
+     "queue:room": 1,
+     "queue:light": 0.2,
+     "box": 4,
+     "queue:stopped": 0.1,
+     "inBox": 1,
+     "queue:none": 0.6
+    }
+   }
+  },
+  "bus-22": {
+   "fwd": {
+    "sig": "b3551a54c007",
+    "seg": [
+     {
+      "from": "bus-union-gatehill",
+      "to": "bus-pleasantview-park",
+      "m": 206.3,
+      "flat": 25.8,
+      "med": 25.1,
+      "p90": 25.9,
+      "min": 24.1,
+      "max": 26.1,
+      "n": 7,
+      "xs": [
+       24.6,
+       26.1,
+       24.4,
+       25.2,
+       25.7,
+       25.1,
+       24.1
+      ]
+     },
+     {
+      "from": "bus-pleasantview-park",
+      "to": "bus-ps280",
+      "m": 188.2,
+      "flat": 23.5,
+      "med": 29.5,
+      "p90": 36.8,
+      "min": 25.2,
+      "max": 36.9,
+      "n": 7,
+      "xs": [
+       36.7,
+       27.3,
+       25.2,
+       25.3,
+       36.9,
+       33.5,
+       29.5
+      ]
+     },
+     {
+      "from": "bus-ps280",
+      "to": "bus-route-9-motel",
+      "m": 188.6,
+      "flat": 23.6,
+      "med": 25.3,
+      "p90": 29,
+      "min": 22,
+      "max": 31.9,
+      "n": 7,
+      "xs": [
+       25.5,
+       25.3,
+       22,
+       22.7,
+       31.9,
+       27,
+       24.3
+      ]
+     }
+    ],
+    "runs": 7,
+    "failed": 0,
+    "held": {
+     "queue:none": 0.7,
+     "room": 1.4,
+     "queue:moving": 0.1,
+     "queue:light": 0.1,
+     "box": 0,
+     "queue:room": 0,
+     "queue:late": 0,
+     "inBox": 0.2
+    }
+   },
+   "rev": {
+    "sig": "7001510d3622",
+    "seg": [
+     {
+      "from": "bus-route-9-motel",
+      "to": "bus-ps280",
+      "m": 229,
+      "flat": 28.6,
+      "med": 31.2,
+      "p90": 33.1,
+      "min": 30.1,
+      "max": 34.5,
+      "n": 7,
+      "xs": [
+       30.2,
+       30.1,
+       32.1,
+       31.2,
+       31.4,
+       34.5,
+       30.2
+      ]
+     },
+     {
+      "from": "bus-ps280",
+      "to": "bus-pleasantview-park",
+      "m": 330.9,
+      "flat": 41.4,
+      "med": 39,
+      "p90": 40.1,
+      "min": 38.1,
+      "max": 41.2,
+      "n": 7,
+      "xs": [
+       39.1,
+       41.2,
+       39.4,
+       39,
+       38.1,
+       38.1,
+       38.1
+      ]
+     },
+     {
+      "from": "bus-pleasantview-park",
+      "to": "bus-union-gatehill",
+      "m": 382.7,
+      "flat": 47.8,
+      "med": 48.5,
+      "p90": 57.3,
+      "min": 46.7,
+      "max": 57.7,
+      "n": 7,
+      "xs": [
+       47.9,
+       46.7,
+       48.1,
+       57.1,
+       55.7,
+       48.5,
+       57.7
+      ]
+     }
+    ],
+    "runs": 7,
+    "failed": 0,
+    "held": {
+     "queue:none": 0.9,
+     "queue:moving": 0.1,
+     "queue:light": 0.1,
+     "walkIn": 0.1,
+     "room": 0.4
+    }
+   }
+  },
+  "bus-4": {
+   "fwd": {
+    "sig": "4dc554bc674a",
+    "seg": [
+     {
+      "from": "bus-dock-shift",
+      "to": "bus-heap-gate",
+      "m": 338.2,
+      "flat": 42.3,
+      "med": 81.2,
+      "p90": 96,
+      "min": 54.5,
+      "max": 105.8,
+      "n": 7,
+      "xs": [
+       89.5,
+       54.5,
+       54.8,
+       82.1,
+       60.8,
+       81.2,
+       105.8
+      ]
+     },
+     {
+      "from": "bus-heap-gate",
+      "to": "bus-sunny-acres",
+      "m": 372.1,
+      "flat": 46.5,
+      "med": 65.4,
+      "p90": 78,
+      "min": 46.3,
+      "max": 80.8,
+      "n": 7,
+      "xs": [
+       72.3,
+       58.6,
+       53.7,
+       65.4,
+       76.2,
+       80.8,
+       46.3
+      ]
+     },
+     {
+      "from": "bus-sunny-acres",
+      "to": "bus-grand",
+      "m": 424.2,
+      "flat": 53,
+      "med": 67.8,
+      "p90": 86.3,
+      "min": 52,
+      "max": 90.1,
+      "n": 7,
+      "xs": [
+       56.3,
+       65.8,
+       67.8,
+       71.5,
+       90.1,
+       52,
+       83.8
+      ]
+     },
+     {
+      "from": "bus-grand",
+      "to": "bus-blackpine",
+      "m": 310,
+      "flat": 38.8,
+      "med": 56.4,
+      "p90": 69,
+      "min": 47,
+      "max": 82.2,
+      "n": 7,
+      "xs": [
+       50.2,
+       52.1,
+       56.4,
+       47,
+       60.2,
+       56.4,
+       82.2
+      ]
+     },
+     {
+      "from": "bus-blackpine",
+      "to": "bus-mall-gate",
+      "m": 59.7,
+      "flat": 7.5,
+      "med": 13.9,
+      "p90": 21.8,
+      "min": 10.6,
+      "max": 22.5,
+      "n": 7,
+      "xs": [
+       10.6,
+       13.9,
+       21.4,
+       22.5,
+       14.6,
+       12.6,
+       10.6
+      ]
+     }
+    ],
+    "runs": 7,
+    "failed": 0,
+    "held": {
+     "box": 5.3,
+     "room": 23.8,
+     "queue:moving": 2.9,
+     "inBox": 4.7,
+     "queue:none": 1,
+     "queue:room": 1.9,
+     "queue:late": 0.1,
+     "queue:light": 1.5,
+     "queue:stopped": 0.3,
+     "walkIn": 2.6
+    }
+   },
+   "rev": {
+    "sig": "013b051801d0",
+    "seg": [
+     {
+      "from": "bus-mall-gate",
+      "to": "bus-blackpine",
+      "m": 361.3,
+      "flat": 45.2,
+      "med": 45.9,
+      "p90": 53.8,
+      "min": 40.5,
+      "max": 54.8,
+      "n": 7,
+      "xs": [
+       40.5,
+       44,
+       54.8,
+       53.2,
+       52.5,
+       45.9,
+       42.7
+      ]
+     },
+     {
+      "from": "bus-blackpine",
+      "to": "bus-grand",
+      "m": 328.7,
+      "flat": 41.1,
+      "med": 68.2,
+      "p90": 79.4,
+      "min": 52.8,
+      "max": 80.8,
+      "n": 7,
+      "xs": [
+       65.8,
+       52.8,
+       78.4,
+       80.8,
+       68.2,
+       70.4,
+       63.6
+      ]
+     },
+     {
+      "from": "bus-grand",
+      "to": "bus-sunny-acres",
+      "m": 389.9,
+      "flat": 48.7,
+      "med": 75.5,
+      "p90": 94.5,
+      "min": 54.7,
+      "max": 100.7,
+      "n": 7,
+      "xs": [
+       75.2,
+       54.7,
+       100.7,
+       75.5,
+       90.4,
+       56.3,
+       79.8
+      ]
+     },
+     {
+      "from": "bus-sunny-acres",
+      "to": "bus-heap-gate",
+      "m": 630.7,
+      "flat": 78.8,
+      "med": 119.4,
+      "p90": 131.9,
+      "min": 83.9,
+      "max": 134.5,
+      "n": 7,
+      "xs": [
+       86.5,
+       120.7,
+       130.2,
+       83.9,
+       85,
+       119.4,
+       134.5
+      ]
+     },
+     {
+      "from": "bus-heap-gate",
+      "to": "bus-dock-shift",
+      "m": 88.5,
+      "flat": 11.1,
+      "med": 16.6,
+      "p90": 22.2,
+      "min": 16,
+      "max": 30.1,
+      "n": 7,
+      "xs": [
+       16.7,
+       16,
+       30.1,
+       16.9,
+       16.4,
+       16.6,
+       16.4
+      ]
+     }
+    ],
+    "runs": 7,
+    "failed": 0,
+    "held": {
+     "queue:none": 1.6,
+     "queue:light": 7.7,
+     "queue:stopped": 1.7,
+     "queue:moving": 1.3,
+     "inBox": 2.1,
+     "queue:late": 1.3,
+     "box": 4.5,
+     "queue:room": 5.3,
+     "room": 22.1,
+     "walkIn": 2.2
+    }
+   }
+  }
+ },
+ "taxi": {
+  "rides": 48,
+  "fit": {
+   "t0": 6.3,
+   "speed": 10.76,
+   "sig": 1
+  },
+  "ratio": {
+   "med": 0.952,
+   "p90": 1.228
+  },
+  "pickup": {
+   "med": 11.6,
+   "p90": 18.1
+  },
+  "getOut": 2.7,
+  "flat": {
+   "speed": 11,
+   "hail": 10
+  },
+  "vsFlat": {
+   "med": 1.513,
+   "p90": 2.025
+  },
+  "held": {
+   "queue:light": 0.2,
+   "queue:none": 0.3,
+   "room": 1.1,
+   "queue:moving": 0.2,
+   "queue:room": 0.7,
+   "inBox": 0.1,
+   "queue:stopped": 0.4
+  },
+  "sample": [
+   {
+    "from": "taxi-st-mercy",
+    "to": "docks",
+    "m": 338.1,
+    "nsig": 11,
+    "pick": 16.2,
+    "pickOff": true,
+    "ride": 46.5
+   },
+   {
+    "from": "hospital",
+    "to": "highway.last-chance",
+    "m": 501.5,
+    "nsig": 16,
+    "pick": 8.8,
+    "pickOff": true,
+    "ride": 84.7
+   },
+   {
+    "from": "forest.ferry-landing",
+    "to": "bus-mall-gate",
+    "m": 746.3,
+    "nsig": 23,
+    "pick": 15.6,
+    "pickOff": true,
+    "ride": 94.7
+   },
+   {
+    "from": "lab-west",
+    "to": "docks",
+    "m": 462.9,
+    "nsig": 13,
+    "pick": 14.9,
+    "pickOff": true,
+    "ride": 69.3
+   },
+   {
+    "from": "corner-1_-1",
+    "to": "docks",
+    "m": 292.4,
+    "nsig": 9,
+    "pick": 12.6,
+    "pickOff": true,
+    "ride": 37.3
+   },
+   {
+    "from": "suburbs.kent-pine",
+    "to": "police",
+    "m": 248.8,
+    "nsig": 8,
+    "pick": 9.6,
+    "pickOff": true,
+    "ride": 31.4
+   },
+   {
+    "from": "corner-1_6",
+    "to": "taxi-st-mercy",
+    "m": 315.6,
+    "nsig": 10,
+    "pick": 9.6,
+    "pickOff": true,
+    "ride": 46.4
+   },
+   {
+    "from": "bus-heap-gate",
+    "to": "trailer",
+    "m": 291,
+    "nsig": 9,
+    "pick": 12.5,
+    "pickOff": true,
+    "ride": 56
+   },
+   {
+    "from": "forest.ferry-landing",
+    "to": "docks",
+    "m": 651.2,
+    "nsig": 21,
+    "pick": 16,
+    "pickOff": true,
+    "ride": 99.3
+   },
+   {
+    "from": "jail",
+    "to": "industrial.foundry",
+    "m": 343.3,
+    "nsig": 10,
+    "pick": 18.9,
+    "pickOff": true,
+    "ride": 37
+   },
+   {
+    "from": "hospital.smokers",
+    "to": "strip.no-witness",
+    "m": 193.7,
+    "nsig": 6,
+    "pick": 8.7,
+    "pickOff": true,
+    "ride": 23.9
+   },
+   {
+    "from": "estates.auction",
+    "to": "taxi-st-mercy",
+    "m": 656.3,
+    "nsig": 21,
+    "pick": 8.9,
+    "pickOff": true,
+    "ride": 67.9
+   },
+   {
+    "from": "corner-3_-6",
+    "to": "police",
+    "m": 202.8,
+    "nsig": 6,
+    "pick": 11.2,
+    "pickOff": true,
+    "ride": 23.4
+   },
+   {
+    "from": "jail.visitors",
+    "to": "downtown.fringe-gym",
+    "m": 406,
+    "nsig": 12,
+    "pick": 12,
+    "pickOff": true,
+    "ride": 57.8
+   },
+   {
+    "from": "corner-2_-8",
+    "to": "suburbs.kent-pine",
+    "m": 487.6,
+    "nsig": 15,
+    "pick": 15.6,
+    "pickOff": true,
+    "ride": 60.4
+   },
+   {
+    "from": "hospital",
+    "to": "highway.last-chance",
+    "m": 501.5,
+    "nsig": 16,
+    "pick": 15,
+    "pickOff": true,
+    "ride": 78.2
+   },
+   {
+    "from": "corner--1_1",
+    "to": "corner--8_-2",
+    "m": 365.9,
+    "nsig": 8,
+    "pick": 9.2,
+    "pickOff": true,
+    "ride": 50.8
+   },
+   {
+    "from": "lab-south",
+    "to": "corner--1_6",
+    "m": 175.1,
+    "nsig": 5,
+    "pick": 9,
+    "pickOff": true,
+    "ride": 32.6
+   },
+   {
+    "from": "corner--8_-2",
+    "to": "mall.food-court",
+    "m": 270.7,
+    "nsig": 6,
+    "pick": 8.6,
+    "pickOff": true,
+    "ride": 35.1
+   },
+   {
+    "from": "trailer",
+    "to": "bus-route-9-motel",
+    "m": 592.7,
+    "nsig": 19,
+    "pick": 9.6,
+    "pickOff": true,
+    "ride": 100.1
+   },
+   {
+    "from": "taxi-st-mercy",
+    "to": "store",
+    "m": 180.2,
+    "nsig": 6,
+    "pick": 18.1,
+    "pickOff": true,
+    "ride": 21.1
+   },
+   {
+    "from": "corner-1_6",
+    "to": "court",
+    "m": 291.6,
+    "nsig": 9,
+    "pick": 10.9,
+    "pickOff": true,
+    "ride": 34
+   },
+   {
+    "from": "industrial.chop-shop",
+    "to": "highway.last-chance",
+    "m": 567.6,
+    "nsig": 18,
+    "pick": 10.9,
+    "pickOff": true,
+    "ride": 69.9
+   },
+   {
+    "from": "police",
+    "to": "corner--8_-2",
+    "m": 362.5,
+    "nsig": 8,
+    "pick": 19,
+    "pickOff": true,
+    "ride": 51.4
+   },
+   {
+    "from": "woods",
+    "to": "trailer.park-office",
+    "m": 299.7,
+    "nsig": 4,
+    "pick": 10,
+    "pickOff": true,
+    "ride": 42.2
+   },
+   {
+    "from": "trailer",
+    "to": "bus-ps280",
+    "m": 575.5,
+    "nsig": 18,
+    "pick": 9.5,
+    "pickOff": true,
+    "ride": 63.9
+   },
+   {
+    "from": "downtown.fringe-gym",
+    "to": "trailer.park-office",
+    "m": 209,
+    "nsig": 7,
+    "pick": 18.2,
+    "pickOff": true,
+    "ride": 29.8
+   },
+   {
+    "from": "docks",
+    "to": "suburbs.kent-pine",
+    "m": 476.6,
+    "nsig": 15,
+    "pick": 8.9,
+    "pickOff": true,
+    "ride": 51.7
+   },
+   {
+    "from": "corner--1_1",
+    "to": "hospital",
+    "m": 334.6,
+    "nsig": 10,
+    "pick": 7.5,
+    "pickOff": true,
+    "ride": 43.2
+   },
+   {
+    "from": "downtown.bank",
+    "to": "lab-south",
+    "m": 366.5,
+    "nsig": 12,
+    "pick": 21.2,
+    "pickOff": true,
+    "ride": 47.6
+   },
+   {
+    "from": "highway.last-chance",
+    "to": "downtown.fringe-signs",
+    "m": 444.2,
+    "nsig": 14,
+    "pick": 17.4,
+    "pickOff": true,
+    "ride": 57.2
+   },
+   {
+    "from": "bus-route-9-motel",
+    "to": "docks",
+    "m": 567.6,
+    "nsig": 18,
+    "pick": 11.7,
+    "pickOff": true,
+    "ride": 58.7
+   },
+   {
+    "from": "corner-2_-8",
+    "to": "police",
+    "m": 264.6,
+    "nsig": 8,
+    "pick": 17.9,
+    "pickOff": true,
+    "ride": 45.9
+   },
+   {
+    "from": "mall.food-court",
+    "to": "bus-route-9-motel",
+    "m": 495.7,
+    "nsig": 16,
+    "pick": 18.5,
+    "pickOff": true,
+    "ride": 64.3
+   },
+   {
+    "from": "bus-sunny-acres",
+    "to": "bus-gatehill",
+    "m": 215,
+    "nsig": 7,
+    "pick": 9.9,
+    "pickOff": true,
+    "ride": 31.9
+   },
+   {
+    "from": "mall.food-court",
+    "to": "hospital",
+    "m": 451.6,
+    "nsig": 14,
+    "pick": 11.5,
+    "pickOff": true,
+    "ride": 69
+   },
+   {
+    "from": "taxi-union",
+    "to": "corner--4_-1",
+    "m": 364.8,
+    "nsig": 11,
+    "pick": 9,
+    "pickOff": true,
+    "ride": 51.4
+   },
+   {
+    "from": "hospital.smokers",
+    "to": "bus-blackpine",
+    "m": 554.2,
+    "nsig": 14,
+    "pick": 12,
+    "pickOff": true,
+    "ride": 69.8
+   },
+   {
+    "from": "police",
+    "to": "trailer.coin-laundry",
+    "m": 253.7,
+    "nsig": 7,
+    "pick": 15.4,
+    "pickOff": true,
+    "ride": 24.6
+   },
+   {
+    "from": "corner-3_-6",
+    "to": "corner--1_1",
+    "m": 338.1,
+    "nsig": 10,
+    "pick": 11.4,
+    "pickOff": true,
+    "ride": 46.6
+   },
+   {
+    "from": "fitstreet",
+    "to": "taxi-st-mercy",
+    "m": 244.3,
+    "nsig": 8,
+    "pick": 11.6,
+    "pickOff": true,
+    "ride": 60.8
+   },
+   {
+    "from": "strip.honest-pawn",
+    "to": "heap",
+    "m": 204.3,
+    "nsig": 6,
+    "pick": 11.8,
+    "pickOff": true,
+    "ride": 48
+   },
+   {
+    "from": "mall.food-court",
+    "to": "lab-west",
+    "m": 330.7,
+    "nsig": 4,
+    "pick": 16.5,
+    "pickOff": true,
+    "ride": 37.2
+   },
+   {
+    "from": "heap",
+    "to": "corner-3_1",
+    "m": 364.2,
+    "nsig": 11,
+    "pick": 10.4,
+    "pickOff": true,
+    "ride": 49.8
+   },
+   {
+    "from": "taxi-jay",
+    "to": "bus-long-bridge",
+    "m": 574.8,
+    "nsig": 18,
+    "pick": 10.3,
+    "pickOff": true,
+    "ride": 117.2
+   },
+   {
+    "from": "bus-dock-shift",
+    "to": "trailer",
+    "m": 448.8,
+    "nsig": 14,
+    "pick": 9.1,
+    "pickOff": true,
+    "ride": 71.4
+   },
+   {
+    "from": "lab-west",
+    "to": "bus-grand",
+    "m": 185.1,
+    "nsig": 4,
+    "pick": 17.2,
+    "pickOff": true,
+    "ride": 33.9
+   },
+   {
+    "from": "docks",
+    "to": "downtown.fringe-church",
+    "m": 317.6,
+    "nsig": 10,
+    "pick": 9.6,
+    "pickOff": true,
+    "ride": 43.7
+   }
+  ]
+ }
+}

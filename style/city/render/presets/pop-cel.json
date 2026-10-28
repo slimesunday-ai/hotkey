@@ -1,0 +1,12 @@
+{
+  "_about": "Pop Cel · the toon punch pushed: bright, bouncy, candy-saturated; crisp hard shadows with lilac-violet shadow sides (Sunset Overdrive), chunky toon clouds, a light posterise for cel banding.",
+  "_tweak": "light.skyFill (the shadow hue), grade.saturation, dither.strength (the posterise).",
+  "light": { "sunColor": "#fff2c4", "sun": 3.6, "elevation": 44, "skyFill": "#b48cff", "groundFill": "#ffb08a", "fill": 0.8, "env": 0.35, "shadowRadius": 0.4 },
+  "sky": { "top": "#2b95ff", "horizon": "#8fe8ff", "ground": "#8fe8ff", "curve": 0.6 },
+  "clouds": { "on": true, "coverage": 0.45, "style": "chunky", "shading": 1 },
+  "contact": { "on": true, "strength": 0.55, "color": "#4a2090" },
+  "grade": { "on": true, "contrast": 1, "saturation": 1.38, "vibrance": 0.25, "gain": 1.04 },
+  "sharpen": { "on": true, "amount": 0.4 },
+  "dither": { "on": true, "pattern": "bayer4", "levels": 6, "strength": 0.6 },
+  "grain": { "on": false }
+}

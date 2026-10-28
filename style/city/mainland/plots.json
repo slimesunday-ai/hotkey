@@ -1,0 +1,3011 @@
+{
+ "version": 1,
+ "generated": "mainland/layout.mjs",
+ "frame": "+x east, +z south (toward the water), metres; seawall at z = 0",
+ "section": {
+  "hw": 4,
+  "curb": 0.3,
+  "verge": 1,
+  "walk": 1.5,
+  "row": 6.8
+ },
+ "walls": {
+  "coral": 16747100,
+  "butter": 16765503,
+  "sky": 5814263,
+  "mint": 4182176,
+  "lilac": 10845439,
+  "pink": 16740270,
+  "white": 16052714,
+  "teal": 1225632,
+  "orange": 16742938
+ },
+ "courts": {
+  "sunny": {
+   "name": "SUNNY CT",
+   "bulb": [76, -118]
+  },
+  "willow": {
+   "name": "WILLOW BEND",
+   "loop": {
+    "c": [-64, -104],
+    "rx": 20,
+    "rz": 13
+   }
+  }
+ },
+ "streets": [
+  {
+   "id": "harbor",
+   "name": "HARBOR RD",
+   "built": true,
+   "hw": 4,
+   "line": true,
+   "pts": [
+    [12, -7.5],
+    [12, -312]
+   ]
+  },
+  {
+   "id": "bayview",
+   "name": "BAYVIEW DR",
+   "built": false,
+   "hw": 4,
+   "pts": [
+    [12, -44],
+    [236, -44]
+   ]
+  },
+  {
+   "id": "bayview-end",
+   "name": "BAYVIEW DR",
+   "built": false,
+   "hw": 4,
+   "bulb": [246, -44],
+   "r": 13,
+   "island": 0
+  },
+  {
+   "id": "sunny",
+   "name": "SUNNY CT",
+   "built": true,
+   "hw": 4,
+   "pts": [
+    [12, -96],
+    [15.1, -96.02],
+    [18.11, -96.07],
+    [21.04, -96.16],
+    [23.88, -96.29],
+    [26.63, -96.45],
+    [29.3, -96.64],
+    [31.88, -96.87],
+    [34.37, -97.14],
+    [36.77, -97.45],
+    [39.09, -97.79],
+    [41.32, -98.16],
+    [43.47, -98.57],
+    [45.53, -99.02],
+    [47.5, -99.5],
+    [49.39, -100.02],
+    [51.18, -100.57],
+    [52.9, -101.16],
+    [54.52, -101.79],
+    [56.06, -102.45],
+    [57.51, -103.14],
+    [58.88, -103.87],
+    [60.15, -104.64],
+    [61.34, -105.45],
+    [62.45, -106.29],
+    [63.47, -107.16],
+    [64.4, -108.07],
+    [65.24, -109.02],
+    [66, -110]
+   ]
+  },
+  {
+   "id": "sunny-bulb",
+   "name": "SUNNY CT",
+   "built": true,
+   "hw": 4,
+   "bulb": [76, -118],
+   "r": 13,
+   "island": 4.4
+  },
+  {
+   "id": "willow",
+   "name": "WILLOW BEND",
+   "built": true,
+   "hw": 4,
+   "pts": [
+    [12, -72],
+    [10.03, -72.07],
+    [8.13, -72.29],
+    [6.28, -72.63],
+    [4.48, -73.1],
+    [2.74, -73.68],
+    [1.05, -74.37],
+    [-0.6, -75.16],
+    [-2.21, -76.04],
+    [-3.78, -77],
+    [-5.32, -78.04],
+    [-6.82, -79.14],
+    [-8.3, -80.3],
+    [-9.75, -81.5],
+    [-11.18, -82.75],
+    [-12.59, -84.04],
+    [-13.99, -85.34],
+    [-15.37, -86.67],
+    [-16.75, -88],
+    [-18.12, -89.33],
+    [-19.5, -90.66],
+    [-20.87, -91.96],
+    [-22.25, -93.25],
+    [-23.64, -94.5],
+    [-25.04, -95.7],
+    [-26.45, -96.86],
+    [-27.89, -97.96],
+    [-29.34, -99],
+    [-30.83, -99.96],
+    [-32.34, -100.84],
+    [-33.88, -101.63],
+    [-35.46, -102.32],
+    [-37.08, -102.9],
+    [-38.73, -103.37],
+    [-40.44, -103.71],
+    [-42.19, -103.93],
+    [-44, -104]
+   ]
+  },
+  {
+   "id": "willow-loop",
+   "name": "WILLOW BEND",
+   "built": true,
+   "hw": 4,
+   "pts": [
+    [-44, -104],
+    [-44.13, -102.54],
+    [-44.5, -101.11],
+    [-45.12, -99.71],
+    [-45.98, -98.36],
+    [-47.07, -97.08],
+    [-48.36, -95.89],
+    [-49.86, -94.81],
+    [-51.53, -93.84],
+    [-53.36, -92.99],
+    [-55.32, -92.29],
+    [-57.39, -91.73],
+    [-59.55, -91.33],
+    [-61.76, -91.08],
+    [-64, -91],
+    [-66.24, -91.08],
+    [-68.45, -91.33],
+    [-70.61, -91.73],
+    [-72.68, -92.29],
+    [-74.64, -92.99],
+    [-76.47, -93.84],
+    [-78.14, -94.81],
+    [-79.64, -95.89],
+    [-80.93, -97.08],
+    [-82.02, -98.36],
+    [-82.88, -99.71],
+    [-83.5, -101.11],
+    [-83.87, -102.54],
+    [-84, -104],
+    [-83.87, -105.46],
+    [-83.5, -106.89],
+    [-82.88, -108.29],
+    [-82.02, -109.64],
+    [-80.93, -110.92],
+    [-79.64, -112.11],
+    [-78.14, -113.19],
+    [-76.47, -114.16],
+    [-74.64, -115.01],
+    [-72.68, -115.71],
+    [-70.61, -116.27],
+    [-68.45, -116.67],
+    [-66.24, -116.92],
+    [-64, -117],
+    [-61.76, -116.92],
+    [-59.55, -116.67],
+    [-57.39, -116.27],
+    [-55.32, -115.71],
+    [-53.36, -115.01],
+    [-51.53, -114.16],
+    [-49.86, -113.19],
+    [-48.36, -112.11],
+    [-47.07, -110.92],
+    [-45.98, -109.64],
+    [-45.12, -108.29],
+    [-44.5, -106.89],
+    [-44.13, -105.46],
+    [-44, -104]
+   ],
+   "loop": {
+    "c": [-64, -104],
+    "rx": 20,
+    "rz": 13
+   }
+  },
+  {
+   "id": "orchard",
+   "name": "ORCHARD LN",
+   "built": false,
+   "hw": 4,
+   "pts": [
+    [150, -44],
+    [150, -190]
+   ]
+  },
+  {
+   "id": "juniper",
+   "name": "JUNIPER WAY",
+   "built": false,
+   "hw": 4,
+   "pts": [
+    [-148, -190],
+    [206, -190]
+   ]
+  },
+  {
+   "id": "aster",
+   "name": "ASTER CT",
+   "built": false,
+   "hw": 4,
+   "bulb": [-160, -190],
+   "r": 13,
+   "island": 4.4
+  },
+  {
+   "id": "sycamore",
+   "name": "SYCAMORE CT",
+   "built": false,
+   "hw": 4,
+   "bulb": [218, -190],
+   "r": 13,
+   "island": 4.4
+  },
+  {
+   "id": "clover",
+   "name": "CLOVER CT",
+   "built": false,
+   "hw": 4,
+   "pts": [
+    [12, -258],
+    [70, -258]
+   ]
+  },
+  {
+   "id": "clover-bulb",
+   "name": "CLOVER CT",
+   "built": false,
+   "hw": 4,
+   "bulb": [82, -258],
+   "r": 13,
+   "island": 4.4
+  }
+ ],
+ "plots": [
+  {
+   "id": "ML-001",
+   "address": {
+    "number": 1,
+    "street": "SUNNY CT"
+   },
+   "street": "sunny",
+   "rect": {
+    "x": 31.25,
+    "z": -103.65,
+    "w": 17.5,
+    "d": 20,
+    "rot": 0.1071
+   },
+   "center": [29.99, -113.87],
+   "corners": [
+    [21.85, -103],
+    [40.45, -104.92],
+    [36.69, -124.56],
+    [20.97, -122.98]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "porch",
+   "wall": "sky"
+  },
+  {
+   "id": "ML-002",
+   "address": {
+    "number": 3,
+    "street": "SUNNY CT"
+   },
+   "street": "sunny",
+   "rect": {
+    "x": 49.35,
+    "z": -107.13,
+    "w": 17.5,
+    "d": 20,
+    "rot": 0.3316
+   },
+   "center": [44.97, -116.79],
+   "corners": [
+    [40.74, -104.97],
+    [56.66, -110.49],
+    [45.48, -127.07],
+    [36.98, -124.62]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "gambrel",
+   "wall": "lilac"
+  },
+  {
+   "id": "ML-003",
+   "address": {
+    "number": 2,
+    "street": "SUNNY CT"
+   },
+   "street": "sunny",
+   "rect": {
+    "x": 44.13,
+    "z": -91.78,
+    "w": 20,
+    "d": 18,
+    "rot": -2.9524
+   },
+   "center": [46.16, -83.67],
+   "corners": [
+    [33.84, -90.25],
+    [54.58, -94.55],
+    [60.44, -77.53],
+    [35.77, -72.35]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "ranch",
+   "wall": "mint"
+  },
+  {
+   "id": "ML-004",
+   "address": {
+    "number": 3,
+    "street": "SUNNY CT"
+   },
+   "street": "sunny-bulb",
+   "rect": {
+    "x": 78.23,
+    "z": -102.16,
+    "w": 12.76,
+    "d": 24,
+    "rot": -3.002
+   },
+   "center": [79.57, -92.57],
+   "corners": [
+    [71.72, -102.58],
+    [84.36, -104.36],
+    [96.9, -83.89],
+    [65.31, -79.45]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "slab",
+   "wall": "white"
+  },
+  {
+   "id": "ML-005",
+   "address": {
+    "number": 5,
+    "street": "SUNNY CT"
+   },
+   "street": "sunny-bulb",
+   "rect": {
+    "x": 89.57,
+    "z": -109.52,
+    "w": 12.25,
+    "d": 24,
+    "rot": -2.1293
+   },
+   "center": [97.94, -104.29],
+   "corners": [
+    [85.29, -104.97],
+    [91.78, -115.36],
+    [115.45, -111.4],
+    [99.23, -85.44]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "springfield",
+   "wall": "coral"
+  },
+  {
+   "id": "ML-006",
+   "address": {
+    "number": 7,
+    "street": "SUNNY CT"
+   },
+   "street": "sunny-bulb",
+   "rect": {
+    "x": 91.38,
+    "z": -122.41,
+    "w": 12.25,
+    "d": 24,
+    "rot": -1.2915
+   },
+   "center": [100.87, -125.13],
+   "corners": [
+    [91.9, -116.19],
+    [88.52, -127.96],
+    [107.3, -142.9],
+    [115.74, -113.47]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "trophy",
+   "wall": "white",
+   "head": true
+  },
+  {
+   "id": "ML-007",
+   "address": {
+    "number": 9,
+    "street": "SUNNY CT"
+   },
+   "street": "sunny-bulb",
+   "rect": {
+    "x": 83.01,
+    "z": -132.38,
+    "w": 11.73,
+    "d": 24,
+    "rot": -0.4538
+   },
+   "center": [87.42, -141.42],
+   "corners": [
+    [87.8, -128.81],
+    [77.26, -133.95],
+    [79.14, -157.88],
+    [105.49, -145.02]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "cape",
+   "wall": "butter"
+  },
+  {
+   "id": "ML-008",
+   "address": {
+    "number": 11,
+    "street": "SUNNY CT"
+   },
+   "street": "sunny-bulb",
+   "rect": {
+    "x": 70.53,
+    "z": -133.04,
+    "w": 11.73,
+    "d": 24,
+    "rot": 0.3491
+   },
+   "center": [67.09, -142.48],
+   "corners": [
+    [76.42, -133.99],
+    [65.4, -129.98],
+    [49.5, -147.96],
+    [77.05, -157.99]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "springfield",
+   "wall": "pink"
+  },
+  {
+   "id": "ML-009",
+   "address": {
+    "number": 2,
+    "street": "HARBOR RD"
+   },
+   "street": "harbor",
+   "rect": {
+    "x": 18.8,
+    "z": -60,
+    "w": 17,
+    "d": 20,
+    "rot": -1.5708
+   },
+   "center": [28.8, -60],
+   "corners": [
+    [18.8, -51.65],
+    [18.8, -68.35],
+    [38.8, -68.35],
+    [38.8, -51.65]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "cape",
+   "wall": "lilac"
+  },
+  {
+   "id": "ML-010",
+   "address": {
+    "number": 1,
+    "street": "WILLOW BEND"
+   },
+   "street": "willow",
+   "rect": {
+    "x": -10.83,
+    "z": -73.65,
+    "w": 21,
+    "d": 22,
+    "rot": 2.5094
+   },
+   "center": [-15.76, -65.26],
+   "corners": [
+    [-0.46, -67.64],
+    [-19.3, -81.02],
+    [-34.5, -65.11],
+    [-8.76, -47.27]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "butterfly",
+   "wall": "teal"
+  },
+  {
+   "id": "ML-011",
+   "address": {
+    "number": 3,
+    "street": "WILLOW BEND"
+   },
+   "street": "willow",
+   "rect": {
+    "x": -26.85,
+    "z": -88.24,
+    "w": 21,
+    "d": 22,
+    "rot": 2.4087
+   },
+   "center": [-33.61, -79.02],
+   "corners": [
+    [-19.52, -81.23],
+    [-34.12, -93.99],
+    [-46.1, -75.54],
+    [-34.72, -65.32]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "cape",
+   "wall": "sky"
+  },
+  {
+   "id": "ML-012",
+   "address": {
+    "number": 3,
+    "street": "WILLOW BEND"
+   },
+   "street": "willow-loop",
+   "rect": {
+    "x": -67.83,
+    "z": -84.4,
+    "w": 17,
+    "d": 24,
+    "rot": 3.039
+   },
+   "center": [-69.05, -72.46],
+   "corners": [
+    [-59.37, -83.53],
+    [-76.28, -85.27],
+    [-78.74, -61.39],
+    [-61.83, -59.65]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "slab",
+   "wall": "white"
+  },
+  {
+   "id": "ML-013",
+   "address": {
+    "number": 5,
+    "street": "WILLOW BEND"
+   },
+   "street": "willow-loop",
+   "rect": {
+    "x": -83.49,
+    "z": -90.27,
+    "w": 17,
+    "d": 24,
+    "rot": 2.4825
+   },
+   "center": [-90.83, -80.78],
+   "corners": [
+    [-76.77, -85.06],
+    [-90.2, -95.47],
+    [-104.9, -76.5],
+    [-91.46, -66.09]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "gambrel",
+   "wall": "mint"
+  },
+  {
+   "id": "ML-014",
+   "address": {
+    "number": 7,
+    "street": "WILLOW BEND"
+   },
+   "street": "willow-loop",
+   "rect": {
+    "x": -90.8,
+    "z": -104,
+    "w": 17,
+    "d": 24,
+    "rot": 1.5708
+   },
+   "center": [-102.8, -104],
+   "corners": [
+    [-90.8, -95.5],
+    [-90.8, -112.5],
+    [-114.8, -112.5],
+    [-114.8, -95.5]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "porch",
+   "wall": "butter",
+   "head": true
+  },
+  {
+   "id": "ML-015",
+   "address": {
+    "number": 9,
+    "street": "WILLOW BEND"
+   },
+   "street": "willow-loop",
+   "rect": {
+    "x": -83.49,
+    "z": -117.73,
+    "w": 17,
+    "d": 24,
+    "rot": 0.6591
+   },
+   "center": [-90.83, -127.22],
+   "corners": [
+    [-90.2, -112.53],
+    [-76.77, -122.94],
+    [-91.46, -141.91],
+    [-104.9, -131.5]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "butterfly",
+   "wall": "orange"
+  },
+  {
+   "id": "ML-016",
+   "address": {
+    "number": 11,
+    "street": "WILLOW BEND"
+   },
+   "street": "willow-loop",
+   "rect": {
+    "x": -67.83,
+    "z": -123.6,
+    "w": 17,
+    "d": 24,
+    "rot": 0.1026
+   },
+   "center": [-69.05, -135.54],
+   "corners": [
+    [-76.28, -122.73],
+    [-59.37, -124.47],
+    [-61.83, -148.35],
+    [-78.74, -146.61]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "springfield",
+   "wall": "lilac"
+  },
+  {
+   "id": "ML-017",
+   "address": {
+    "number": 13,
+    "street": "WILLOW BEND"
+   },
+   "street": "willow-loop",
+   "rect": {
+    "x": -50.84,
+    "z": -121.32,
+    "w": 17,
+    "d": 24,
+    "rot": -0.3858
+   },
+   "center": [-46.33, -132.44],
+   "corners": [
+    [-58.72, -124.52],
+    [-42.97, -118.13],
+    [-33.94, -140.36],
+    [-49.69, -146.76]
+   ],
+   "status": "built",
+   "prime": false,
+   "style": "ranch",
+   "wall": "pink"
+  },
+  {
+   "id": "ML-018",
+   "address": {
+    "number": 2,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 32.75,
+    "z": -37.2,
+    "w": 17.5,
+    "d": 26,
+    "rot": 3.1416
+   },
+   "center": [32.75, -24.2],
+   "corners": [
+    [24.15, -37.2],
+    [41.35, -37.2],
+    [41.35, -11.2],
+    [24.15, -11.2]
+   ],
+   "status": "available",
+   "prime": true,
+   "primeWhy": "corner",
+   "waterfront": true
+  },
+  {
+   "id": "ML-019",
+   "address": {
+    "number": 4,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 50.25,
+    "z": -37.2,
+    "w": 17.5,
+    "d": 26,
+    "rot": 3.1416
+   },
+   "center": [50.25, -24.2],
+   "corners": [
+    [41.65, -37.2],
+    [58.85, -37.2],
+    [58.85, -11.2],
+    [41.65, -11.2]
+   ],
+   "status": "available",
+   "prime": false,
+   "waterfront": true
+  },
+  {
+   "id": "ML-020",
+   "address": {
+    "number": 6,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 67.75,
+    "z": -37.2,
+    "w": 17.5,
+    "d": 26,
+    "rot": 3.1416
+   },
+   "center": [67.75, -24.2],
+   "corners": [
+    [59.15, -37.2],
+    [76.35, -37.2],
+    [76.35, -11.2],
+    [59.15, -11.2]
+   ],
+   "status": "available",
+   "prime": false,
+   "waterfront": true
+  },
+  {
+   "id": "ML-021",
+   "address": {
+    "number": 8,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 85.25,
+    "z": -37.2,
+    "w": 17.5,
+    "d": 26,
+    "rot": 3.1416
+   },
+   "center": [85.25, -24.2],
+   "corners": [
+    [76.65, -37.2],
+    [93.85, -37.2],
+    [93.85, -11.2],
+    [76.65, -11.2]
+   ],
+   "status": "available",
+   "prime": true,
+   "primeWhy": "waterfront",
+   "waterfront": true
+  },
+  {
+   "id": "ML-022",
+   "address": {
+    "number": 10,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 102.75,
+    "z": -37.2,
+    "w": 17.5,
+    "d": 26,
+    "rot": 3.1416
+   },
+   "center": [102.75, -24.2],
+   "corners": [
+    [94.15, -37.2],
+    [111.35, -37.2],
+    [111.35, -11.2],
+    [94.15, -11.2]
+   ],
+   "status": "available",
+   "prime": false,
+   "waterfront": true
+  },
+  {
+   "id": "ML-023",
+   "address": {
+    "number": 12,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 120.25,
+    "z": -37.2,
+    "w": 17.5,
+    "d": 26,
+    "rot": 3.1416
+   },
+   "center": [120.25, -24.2],
+   "corners": [
+    [111.65, -37.2],
+    [128.85, -37.2],
+    [128.85, -11.2],
+    [111.65, -11.2]
+   ],
+   "status": "available",
+   "prime": false,
+   "waterfront": true
+  },
+  {
+   "id": "ML-024",
+   "address": {
+    "number": 14,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 137.75,
+    "z": -37.2,
+    "w": 17.5,
+    "d": 26,
+    "rot": 3.1416
+   },
+   "center": [137.75, -24.2],
+   "corners": [
+    [129.15, -37.2],
+    [146.35, -37.2],
+    [146.35, -11.2],
+    [129.15, -11.2]
+   ],
+   "status": "available",
+   "prime": false,
+   "waterfront": true
+  },
+  {
+   "id": "ML-025",
+   "address": {
+    "number": 16,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 155.25,
+    "z": -37.2,
+    "w": 17.5,
+    "d": 26,
+    "rot": 3.1416
+   },
+   "center": [155.25, -24.2],
+   "corners": [
+    [146.65, -37.2],
+    [163.85, -37.2],
+    [163.85, -11.2],
+    [146.65, -11.2]
+   ],
+   "status": "available",
+   "prime": true,
+   "primeWhy": "waterfront",
+   "waterfront": true
+  },
+  {
+   "id": "ML-026",
+   "address": {
+    "number": 18,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 172.75,
+    "z": -37.2,
+    "w": 17.5,
+    "d": 26,
+    "rot": 3.1416
+   },
+   "center": [172.75, -24.2],
+   "corners": [
+    [164.15, -37.2],
+    [181.35, -37.2],
+    [181.35, -11.2],
+    [164.15, -11.2]
+   ],
+   "status": "available",
+   "prime": false,
+   "waterfront": true
+  },
+  {
+   "id": "ML-027",
+   "address": {
+    "number": 20,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 190.25,
+    "z": -37.2,
+    "w": 17.5,
+    "d": 26,
+    "rot": 3.1416
+   },
+   "center": [190.25, -24.2],
+   "corners": [
+    [181.65, -37.2],
+    [198.85, -37.2],
+    [198.85, -11.2],
+    [181.65, -11.2]
+   ],
+   "status": "available",
+   "prime": false,
+   "waterfront": true
+  },
+  {
+   "id": "ML-028",
+   "address": {
+    "number": 22,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 207.75,
+    "z": -37.2,
+    "w": 17.5,
+    "d": 26,
+    "rot": 3.1416
+   },
+   "center": [207.75, -24.2],
+   "corners": [
+    [199.15, -37.2],
+    [216.35, -37.2],
+    [216.35, -11.2],
+    [199.15, -11.2]
+   ],
+   "status": "available",
+   "prime": false,
+   "waterfront": true
+  },
+  {
+   "id": "ML-029",
+   "address": {
+    "number": 1,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 52.17,
+    "z": -50.8,
+    "w": 16.33,
+    "d": 20,
+    "rot": 0
+   },
+   "center": [52.17, -60.8],
+   "corners": [
+    [44.15, -50.8],
+    [60.18, -50.8],
+    [60.18, -70.8],
+    [44.15, -70.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-030",
+   "address": {
+    "number": 3,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 68.5,
+    "z": -50.8,
+    "w": 16.33,
+    "d": 20,
+    "rot": 0
+   },
+   "center": [68.5, -60.8],
+   "corners": [
+    [60.48, -50.8],
+    [76.52, -50.8],
+    [76.52, -70.8],
+    [60.48, -70.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-031",
+   "address": {
+    "number": 5,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 84.83,
+    "z": -50.8,
+    "w": 16.33,
+    "d": 20,
+    "rot": 0
+   },
+   "center": [84.83, -60.8],
+   "corners": [
+    [76.82, -50.8],
+    [92.85, -50.8],
+    [92.85, -70.8],
+    [76.82, -70.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-032",
+   "address": {
+    "number": 7,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 101.17,
+    "z": -50.8,
+    "w": 16.33,
+    "d": 20,
+    "rot": 0
+   },
+   "center": [101.17, -60.8],
+   "corners": [
+    [93.15, -50.8],
+    [109.18, -50.8],
+    [109.18, -70.8],
+    [93.15, -70.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-033",
+   "address": {
+    "number": 9,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 117.5,
+    "z": -50.8,
+    "w": 16.33,
+    "d": 20,
+    "rot": 0
+   },
+   "center": [117.5, -60.8],
+   "corners": [
+    [109.48, -50.8],
+    [125.52, -50.8],
+    [125.52, -70.8],
+    [109.48, -70.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-034",
+   "address": {
+    "number": 11,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 133.83,
+    "z": -50.8,
+    "w": 16.33,
+    "d": 20,
+    "rot": 0
+   },
+   "center": [133.83, -60.8],
+   "corners": [
+    [125.82, -50.8],
+    [141.85, -50.8],
+    [141.85, -70.8],
+    [125.82, -70.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-035",
+   "address": {
+    "number": 13,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 167.5,
+    "z": -50.8,
+    "w": 19,
+    "d": 20,
+    "rot": 0
+   },
+   "center": [167.5, -60.8],
+   "corners": [
+    [158.15, -50.8],
+    [176.85, -50.8],
+    [176.85, -70.8],
+    [158.15, -70.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-036",
+   "address": {
+    "number": 15,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 186.5,
+    "z": -50.8,
+    "w": 19,
+    "d": 20,
+    "rot": 0
+   },
+   "center": [186.5, -60.8],
+   "corners": [
+    [177.15, -50.8],
+    [195.85, -50.8],
+    [195.85, -70.8],
+    [177.15, -70.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-037",
+   "address": {
+    "number": 17,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview",
+   "rect": {
+    "x": 205.5,
+    "z": -50.8,
+    "w": 19,
+    "d": 20,
+    "rot": 0
+   },
+   "center": [205.5, -60.8],
+   "corners": [
+    [196.15, -50.8],
+    [214.85, -50.8],
+    [214.85, -70.8],
+    [196.15, -70.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-038",
+   "address": {
+    "number": 3,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview-end",
+   "rect": {
+    "x": 259.86,
+    "z": -36,
+    "w": 12.76,
+    "d": 22,
+    "rot": -2.0944
+   },
+   "center": [267.44, -31.62],
+   "corners": [
+    [255.52, -31.14],
+    [261.9, -42.19],
+    [283.76, -39.7],
+    [268.6, -13.45]
+   ],
+   "status": "available",
+   "prime": true,
+   "primeWhy": "waterfront point",
+   "waterfront": true
+  },
+  {
+   "id": "ML-039",
+   "address": {
+    "number": 5,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview-end",
+   "rect": {
+    "x": 261.04,
+    "z": -49.47,
+    "w": 12.76,
+    "d": 22,
+    "rot": -1.2217
+   },
+   "center": [269.27, -52.47],
+   "corners": [
+    [261.97, -43.02],
+    [257.61, -55.01],
+    [273.56, -70.16],
+    [283.93, -41.68]
+   ],
+   "status": "available",
+   "prime": true,
+   "primeWhy": "cul-de-sac head"
+  },
+  {
+   "id": "ML-040",
+   "address": {
+    "number": 7,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview-end",
+   "rect": {
+    "x": 251.47,
+    "z": -59.04,
+    "w": 10.15,
+    "d": 22,
+    "rot": -0.3491
+   },
+   "center": [254.76, -68.06],
+   "corners": [
+    [255.96, -56.52],
+    [246.42, -59.99],
+    [246.99, -81.99],
+    [269.66, -73.74]
+   ],
+   "status": "available",
+   "prime": true,
+   "primeWhy": "cul-de-sac head"
+  },
+  {
+   "id": "ML-041",
+   "address": {
+    "number": 9,
+    "street": "BAYVIEW DR"
+   },
+   "street": "bayview-end",
+   "rect": {
+    "x": 240.53,
+    "z": -59.04,
+    "w": 10.15,
+    "d": 22,
+    "rot": 0.3491
+   },
+   "center": [237.24, -68.06],
+   "corners": [
+    [245.58, -59.99],
+    [236.04, -56.52],
+    [222.34, -73.74],
+    [245.01, -81.99]
+   ],
+   "status": "available",
+   "prime": true,
+   "primeWhy": "cul-de-sac head"
+  },
+  {
+   "id": "ML-042",
+   "address": {
+    "number": 2,
+    "street": "ORCHARD LN"
+   },
+   "street": "orchard",
+   "rect": {
+    "x": 156.8,
+    "z": -82.8,
+    "w": 17.6,
+    "d": 18,
+    "rot": -1.5708
+   },
+   "center": [165.8, -82.8],
+   "corners": [
+    [156.8, -74.15],
+    [156.8, -91.45],
+    [174.8, -91.45],
+    [174.8, -74.15]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-043",
+   "address": {
+    "number": 4,
+    "street": "ORCHARD LN"
+   },
+   "street": "orchard",
+   "rect": {
+    "x": 156.8,
+    "z": -100.4,
+    "w": 17.6,
+    "d": 18,
+    "rot": -1.5708
+   },
+   "center": [165.8, -100.4],
+   "corners": [
+    [156.8, -91.75],
+    [156.8, -109.05],
+    [174.8, -109.05],
+    [174.8, -91.75]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-044",
+   "address": {
+    "number": 6,
+    "street": "ORCHARD LN"
+   },
+   "street": "orchard",
+   "rect": {
+    "x": 156.8,
+    "z": -118,
+    "w": 17.6,
+    "d": 18,
+    "rot": -1.5708
+   },
+   "center": [165.8, -118],
+   "corners": [
+    [156.8, -109.35],
+    [156.8, -126.65],
+    [174.8, -126.65],
+    [174.8, -109.35]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-045",
+   "address": {
+    "number": 8,
+    "street": "ORCHARD LN"
+   },
+   "street": "orchard",
+   "rect": {
+    "x": 156.8,
+    "z": -135.6,
+    "w": 17.6,
+    "d": 18,
+    "rot": -1.5708
+   },
+   "center": [165.8, -135.6],
+   "corners": [
+    [156.8, -126.95],
+    [156.8, -144.25],
+    [174.8, -144.25],
+    [174.8, -126.95]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-046",
+   "address": {
+    "number": 10,
+    "street": "ORCHARD LN"
+   },
+   "street": "orchard",
+   "rect": {
+    "x": 156.8,
+    "z": -153.2,
+    "w": 17.6,
+    "d": 18,
+    "rot": -1.5708
+   },
+   "center": [165.8, -153.2],
+   "corners": [
+    [156.8, -144.55],
+    [156.8, -161.85],
+    [174.8, -161.85],
+    [174.8, -144.55]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-047",
+   "address": {
+    "number": 1,
+    "street": "ORCHARD LN"
+   },
+   "street": "orchard",
+   "rect": {
+    "x": 143.2,
+    "z": -82.8,
+    "w": 17.6,
+    "d": 18,
+    "rot": 1.5708
+   },
+   "center": [134.2, -82.8],
+   "corners": [
+    [143.2, -74.15],
+    [143.2, -91.45],
+    [125.2, -91.45],
+    [125.2, -74.15]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-048",
+   "address": {
+    "number": 3,
+    "street": "ORCHARD LN"
+   },
+   "street": "orchard",
+   "rect": {
+    "x": 143.2,
+    "z": -100.4,
+    "w": 17.6,
+    "d": 18,
+    "rot": 1.5708
+   },
+   "center": [134.2, -100.4],
+   "corners": [
+    [143.2, -91.75],
+    [143.2, -109.05],
+    [125.2, -109.05],
+    [125.2, -91.75]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-049",
+   "address": {
+    "number": 5,
+    "street": "ORCHARD LN"
+   },
+   "street": "orchard",
+   "rect": {
+    "x": 143.2,
+    "z": -118,
+    "w": 17.6,
+    "d": 18,
+    "rot": 1.5708
+   },
+   "center": [134.2, -118],
+   "corners": [
+    [143.2, -109.35],
+    [143.2, -126.65],
+    [125.2, -126.65],
+    [125.2, -109.35]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-050",
+   "address": {
+    "number": 7,
+    "street": "ORCHARD LN"
+   },
+   "street": "orchard",
+   "rect": {
+    "x": 143.2,
+    "z": -135.6,
+    "w": 17.6,
+    "d": 18,
+    "rot": 1.5708
+   },
+   "center": [134.2, -135.6],
+   "corners": [
+    [143.2, -126.95],
+    [143.2, -144.25],
+    [125.2, -144.25],
+    [125.2, -126.95]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-051",
+   "address": {
+    "number": 9,
+    "street": "ORCHARD LN"
+   },
+   "street": "orchard",
+   "rect": {
+    "x": 143.2,
+    "z": -153.2,
+    "w": 17.6,
+    "d": 18,
+    "rot": 1.5708
+   },
+   "center": [134.2, -153.2],
+   "corners": [
+    [143.2, -144.55],
+    [143.2, -161.85],
+    [125.2, -161.85],
+    [125.2, -144.55]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-052",
+   "address": {
+    "number": 1,
+    "street": "HARBOR RD"
+   },
+   "street": "harbor",
+   "rect": {
+    "x": 5.2,
+    "z": -122.83,
+    "w": 14.67,
+    "d": 22,
+    "rot": 1.5708
+   },
+   "center": [-5.8, -122.83],
+   "corners": [
+    [5.2, -115.65],
+    [5.2, -130.02],
+    [-16.8, -130.02],
+    [-16.8, -115.65]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-053",
+   "address": {
+    "number": 3,
+    "street": "HARBOR RD"
+   },
+   "street": "harbor",
+   "rect": {
+    "x": 5.2,
+    "z": -137.5,
+    "w": 14.67,
+    "d": 22,
+    "rot": 1.5708
+   },
+   "center": [-5.8, -137.5],
+   "corners": [
+    [5.2, -130.32],
+    [5.2, -144.68],
+    [-16.8, -144.68],
+    [-16.8, -130.32]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-054",
+   "address": {
+    "number": 5,
+    "street": "HARBOR RD"
+   },
+   "street": "harbor",
+   "rect": {
+    "x": 5.2,
+    "z": -152.17,
+    "w": 14.67,
+    "d": 22,
+    "rot": 1.5708
+   },
+   "center": [-5.8, -152.17],
+   "corners": [
+    [5.2, -144.98],
+    [5.2, -159.35],
+    [-16.8, -159.35],
+    [-16.8, -144.98]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-055",
+   "address": {
+    "number": 4,
+    "street": "HARBOR RD"
+   },
+   "street": "harbor",
+   "rect": {
+    "x": 18.8,
+    "z": -149.5,
+    "w": 20,
+    "d": 22,
+    "rot": -1.5708
+   },
+   "center": [29.8, -149.5],
+   "corners": [
+    [18.8, -139.65],
+    [18.8, -159.35],
+    [40.8, -159.35],
+    [40.8, -139.65]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-056",
+   "address": {
+    "number": 7,
+    "street": "HARBOR RD"
+   },
+   "street": "harbor",
+   "rect": {
+    "x": 5.2,
+    "z": -229.2,
+    "w": 17.4,
+    "d": 22,
+    "rot": 1.5708
+   },
+   "center": [-5.8, -229.2],
+   "corners": [
+    [5.2, -220.65],
+    [5.2, -237.75],
+    [-16.8, -237.75],
+    [-16.8, -220.65]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-057",
+   "address": {
+    "number": 9,
+    "street": "HARBOR RD"
+   },
+   "street": "harbor",
+   "rect": {
+    "x": 5.2,
+    "z": -246.6,
+    "w": 17.4,
+    "d": 22,
+    "rot": 1.5708
+   },
+   "center": [-5.8, -246.6],
+   "corners": [
+    [5.2, -238.05],
+    [5.2, -255.15],
+    [-16.8, -255.15],
+    [-16.8, -238.05]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-058",
+   "address": {
+    "number": 11,
+    "street": "HARBOR RD"
+   },
+   "street": "harbor",
+   "rect": {
+    "x": 5.2,
+    "z": -264,
+    "w": 17.4,
+    "d": 22,
+    "rot": 1.5708
+   },
+   "center": [-5.8, -264],
+   "corners": [
+    [5.2, -255.45],
+    [5.2, -272.55],
+    [-16.8, -272.55],
+    [-16.8, -255.45]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-059",
+   "address": {
+    "number": 13,
+    "street": "HARBOR RD"
+   },
+   "street": "harbor",
+   "rect": {
+    "x": 5.2,
+    "z": -281.4,
+    "w": 17.4,
+    "d": 22,
+    "rot": 1.5708
+   },
+   "center": [-5.8, -281.4],
+   "corners": [
+    [5.2, -272.85],
+    [5.2, -289.95],
+    [-16.8, -289.95],
+    [-16.8, -272.85]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-060",
+   "address": {
+    "number": 15,
+    "street": "HARBOR RD"
+   },
+   "street": "harbor",
+   "rect": {
+    "x": 5.2,
+    "z": -298.8,
+    "w": 17.4,
+    "d": 22,
+    "rot": 1.5708
+   },
+   "center": [-5.8, -298.8],
+   "corners": [
+    [5.2, -290.25],
+    [5.2, -307.35],
+    [-16.8, -307.35],
+    [-16.8, -290.25]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-061",
+   "address": {
+    "number": 2,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -114.86,
+    "z": -183.2,
+    "w": 18.29,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [-114.86, -172.2],
+   "corners": [
+    [-123.85, -183.2],
+    [-105.86, -183.2],
+    [-105.86, -161.2],
+    [-123.85, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-062",
+   "address": {
+    "number": 4,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -96.57,
+    "z": -183.2,
+    "w": 18.29,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [-96.57, -172.2],
+   "corners": [
+    [-105.56, -183.2],
+    [-87.58, -183.2],
+    [-87.58, -161.2],
+    [-105.56, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-063",
+   "address": {
+    "number": 6,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -78.29,
+    "z": -183.2,
+    "w": 18.29,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [-78.29, -172.2],
+   "corners": [
+    [-87.28, -183.2],
+    [-69.29, -183.2],
+    [-69.29, -161.2],
+    [-87.28, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-064",
+   "address": {
+    "number": 8,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -60,
+    "z": -183.2,
+    "w": 18.29,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [-60, -172.2],
+   "corners": [
+    [-68.99, -183.2],
+    [-51.01, -183.2],
+    [-51.01, -161.2],
+    [-68.99, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-065",
+   "address": {
+    "number": 10,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -41.71,
+    "z": -183.2,
+    "w": 18.29,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [-41.71, -172.2],
+   "corners": [
+    [-50.71, -183.2],
+    [-32.72, -183.2],
+    [-32.72, -161.2],
+    [-50.71, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-066",
+   "address": {
+    "number": 12,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -23.43,
+    "z": -183.2,
+    "w": 18.29,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [-23.43, -172.2],
+   "corners": [
+    [-32.42, -183.2],
+    [-14.44, -183.2],
+    [-14.44, -161.2],
+    [-32.42, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-067",
+   "address": {
+    "number": 14,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -5.14,
+    "z": -183.2,
+    "w": 18.29,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [-5.14, -172.2],
+   "corners": [
+    [-14.14, -183.2],
+    [3.85, -183.2],
+    [3.85, -161.2],
+    [-14.14, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-068",
+   "address": {
+    "number": 1,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -114.86,
+    "z": -196.8,
+    "w": 18.29,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [-114.86, -207.8],
+   "corners": [
+    [-123.85, -196.8],
+    [-105.86, -196.8],
+    [-105.86, -218.8],
+    [-123.85, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-069",
+   "address": {
+    "number": 3,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -96.57,
+    "z": -196.8,
+    "w": 18.29,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [-96.57, -207.8],
+   "corners": [
+    [-105.56, -196.8],
+    [-87.58, -196.8],
+    [-87.58, -218.8],
+    [-105.56, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-070",
+   "address": {
+    "number": 5,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -78.29,
+    "z": -196.8,
+    "w": 18.29,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [-78.29, -207.8],
+   "corners": [
+    [-87.28, -196.8],
+    [-69.29, -196.8],
+    [-69.29, -218.8],
+    [-87.28, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-071",
+   "address": {
+    "number": 7,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -60,
+    "z": -196.8,
+    "w": 18.29,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [-60, -207.8],
+   "corners": [
+    [-68.99, -196.8],
+    [-51.01, -196.8],
+    [-51.01, -218.8],
+    [-68.99, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-072",
+   "address": {
+    "number": 9,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -41.71,
+    "z": -196.8,
+    "w": 18.29,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [-41.71, -207.8],
+   "corners": [
+    [-50.71, -196.8],
+    [-32.72, -196.8],
+    [-32.72, -218.8],
+    [-50.71, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-073",
+   "address": {
+    "number": 11,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -23.43,
+    "z": -196.8,
+    "w": 18.29,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [-23.43, -207.8],
+   "corners": [
+    [-32.42, -196.8],
+    [-14.44, -196.8],
+    [-14.44, -218.8],
+    [-32.42, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-074",
+   "address": {
+    "number": 13,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": -5.14,
+    "z": -196.8,
+    "w": 18.29,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [-5.14, -207.8],
+   "corners": [
+    [-14.14, -196.8],
+    [3.85, -196.8],
+    [3.85, -218.8],
+    [-14.14, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-075",
+   "address": {
+    "number": 16,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 28.86,
+    "z": -183.2,
+    "w": 17.71,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [28.86, -172.2],
+   "corners": [
+    [20.15, -183.2],
+    [37.56, -183.2],
+    [37.56, -161.2],
+    [20.15, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-076",
+   "address": {
+    "number": 18,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 46.57,
+    "z": -183.2,
+    "w": 17.71,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [46.57, -172.2],
+   "corners": [
+    [37.86, -183.2],
+    [55.28, -183.2],
+    [55.28, -161.2],
+    [37.86, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-077",
+   "address": {
+    "number": 20,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 64.29,
+    "z": -183.2,
+    "w": 17.71,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [64.29, -172.2],
+   "corners": [
+    [55.58, -183.2],
+    [72.99, -183.2],
+    [72.99, -161.2],
+    [55.58, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-078",
+   "address": {
+    "number": 22,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 82,
+    "z": -183.2,
+    "w": 17.71,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [82, -172.2],
+   "corners": [
+    [73.29, -183.2],
+    [90.71, -183.2],
+    [90.71, -161.2],
+    [73.29, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-079",
+   "address": {
+    "number": 24,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 99.71,
+    "z": -183.2,
+    "w": 17.71,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [99.71, -172.2],
+   "corners": [
+    [91.01, -183.2],
+    [108.42, -183.2],
+    [108.42, -161.2],
+    [91.01, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-080",
+   "address": {
+    "number": 26,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 117.43,
+    "z": -183.2,
+    "w": 17.71,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [117.43, -172.2],
+   "corners": [
+    [108.72, -183.2],
+    [126.14, -183.2],
+    [126.14, -161.2],
+    [108.72, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-081",
+   "address": {
+    "number": 15,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 28.86,
+    "z": -196.8,
+    "w": 17.71,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [28.86, -207.8],
+   "corners": [
+    [20.15, -196.8],
+    [37.56, -196.8],
+    [37.56, -218.8],
+    [20.15, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-082",
+   "address": {
+    "number": 17,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 46.57,
+    "z": -196.8,
+    "w": 17.71,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [46.57, -207.8],
+   "corners": [
+    [37.86, -196.8],
+    [55.28, -196.8],
+    [55.28, -218.8],
+    [37.86, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-083",
+   "address": {
+    "number": 19,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 64.29,
+    "z": -196.8,
+    "w": 17.71,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [64.29, -207.8],
+   "corners": [
+    [55.58, -196.8],
+    [72.99, -196.8],
+    [72.99, -218.8],
+    [55.58, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-084",
+   "address": {
+    "number": 21,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 82,
+    "z": -196.8,
+    "w": 17.71,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [82, -207.8],
+   "corners": [
+    [73.29, -196.8],
+    [90.71, -196.8],
+    [90.71, -218.8],
+    [73.29, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-085",
+   "address": {
+    "number": 23,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 99.71,
+    "z": -196.8,
+    "w": 17.71,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [99.71, -207.8],
+   "corners": [
+    [91.01, -196.8],
+    [108.42, -196.8],
+    [108.42, -218.8],
+    [91.01, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-086",
+   "address": {
+    "number": 25,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 117.43,
+    "z": -196.8,
+    "w": 17.71,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [117.43, -207.8],
+   "corners": [
+    [108.72, -196.8],
+    [126.14, -196.8],
+    [126.14, -218.8],
+    [108.72, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-087",
+   "address": {
+    "number": 27,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 135.14,
+    "z": -196.8,
+    "w": 17.71,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [135.14, -207.8],
+   "corners": [
+    [126.44, -196.8],
+    [143.85, -196.8],
+    [143.85, -218.8],
+    [126.44, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-088",
+   "address": {
+    "number": 28,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 171,
+    "z": -183.2,
+    "w": 26,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [171, -172.2],
+   "corners": [
+    [158.15, -183.2],
+    [183.85, -183.2],
+    [183.85, -161.2],
+    [158.15, -161.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-089",
+   "address": {
+    "number": 29,
+    "street": "JUNIPER WAY"
+   },
+   "street": "juniper",
+   "rect": {
+    "x": 171,
+    "z": -196.8,
+    "w": 26,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [171, -207.8],
+   "corners": [
+    [158.15, -196.8],
+    [183.85, -196.8],
+    [183.85, -218.8],
+    [158.15, -218.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-090",
+   "address": {
+    "number": 7,
+    "street": "ASTER CT"
+   },
+   "street": "aster",
+   "rect": {
+    "x": -148.69,
+    "z": -201.31,
+    "w": 11.47,
+    "d": 22,
+    "rot": -0.7854
+   },
+   "center": [-142.18, -207.82],
+   "corners": [
+    [-145.38, -196.51],
+    [-153.49, -204.62],
+    [-144.54, -224.71],
+    [-125.29, -205.46]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-091",
+   "address": {
+    "number": 9,
+    "street": "ASTER CT"
+   },
+   "street": "aster",
+   "rect": {
+    "x": -160,
+    "z": -206,
+    "w": 11.47,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [-160, -215.21],
+   "corners": [
+    [-154.27, -204.94],
+    [-165.73, -204.94],
+    [-173.62, -225.48],
+    [-146.38, -225.48]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-092",
+   "address": {
+    "number": 11,
+    "street": "ASTER CT"
+   },
+   "street": "aster",
+   "rect": {
+    "x": -171.31,
+    "z": -201.31,
+    "w": 11.47,
+    "d": 22,
+    "rot": 0.7854
+   },
+   "center": [-177.82, -207.82],
+   "corners": [
+    [-166.51, -204.62],
+    [-174.62, -196.51],
+    [-194.71, -205.46],
+    [-175.46, -224.71]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-093",
+   "address": {
+    "number": 13,
+    "street": "ASTER CT"
+   },
+   "street": "aster",
+   "rect": {
+    "x": -176,
+    "z": -190,
+    "w": 11.47,
+    "d": 22,
+    "rot": 1.5708
+   },
+   "center": [-185.21, -190],
+   "corners": [
+    [-174.94, -195.73],
+    [-174.94, -184.27],
+    [-195.48, -176.38],
+    [-195.48, -203.62]
+   ],
+   "status": "available",
+   "prime": true,
+   "primeWhy": "cul-de-sac head"
+  },
+  {
+   "id": "ML-094",
+   "address": {
+    "number": 15,
+    "street": "ASTER CT"
+   },
+   "street": "aster",
+   "rect": {
+    "x": -171.31,
+    "z": -178.69,
+    "w": 11.47,
+    "d": 22,
+    "rot": 2.3562
+   },
+   "center": [-177.82, -172.18],
+   "corners": [
+    [-174.62, -183.49],
+    [-166.51, -175.38],
+    [-175.46, -155.29],
+    [-194.71, -174.54]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-095",
+   "address": {
+    "number": 3,
+    "street": "ASTER CT"
+   },
+   "street": "aster",
+   "rect": {
+    "x": -160,
+    "z": -174,
+    "w": 11.47,
+    "d": 22,
+    "rot": -3.1416
+   },
+   "center": [-160, -164.79],
+   "corners": [
+    [-165.73, -175.06],
+    [-154.27, -175.06],
+    [-146.38, -154.52],
+    [-173.62, -154.52]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-096",
+   "address": {
+    "number": 5,
+    "street": "ASTER CT"
+   },
+   "street": "aster",
+   "rect": {
+    "x": -148.69,
+    "z": -178.69,
+    "w": 11.47,
+    "d": 22,
+    "rot": -2.3562
+   },
+   "center": [-142.18, -172.18],
+   "corners": [
+    [-153.49, -175.38],
+    [-145.38, -183.49],
+    [-125.29, -174.54],
+    [-144.54, -155.29]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-097",
+   "address": {
+    "number": 15,
+    "street": "SYCAMORE CT"
+   },
+   "street": "sycamore",
+   "rect": {
+    "x": 206.69,
+    "z": -178.69,
+    "w": 11.47,
+    "d": 22,
+    "rot": 2.3562
+   },
+   "center": [200.18, -172.18],
+   "corners": [
+    [203.38, -183.49],
+    [211.49, -175.38],
+    [202.54, -155.29],
+    [183.29, -174.54]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-098",
+   "address": {
+    "number": 3,
+    "street": "SYCAMORE CT"
+   },
+   "street": "sycamore",
+   "rect": {
+    "x": 218,
+    "z": -174,
+    "w": 11.47,
+    "d": 22,
+    "rot": -3.1416
+   },
+   "center": [218, -164.79],
+   "corners": [
+    [212.27, -175.06],
+    [223.73, -175.06],
+    [231.62, -154.52],
+    [204.38, -154.52]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-099",
+   "address": {
+    "number": 5,
+    "street": "SYCAMORE CT"
+   },
+   "street": "sycamore",
+   "rect": {
+    "x": 229.31,
+    "z": -178.69,
+    "w": 11.47,
+    "d": 22,
+    "rot": -2.3562
+   },
+   "center": [235.82, -172.18],
+   "corners": [
+    [224.51, -175.38],
+    [232.62, -183.49],
+    [252.71, -174.54],
+    [233.46, -155.29]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-100",
+   "address": {
+    "number": 7,
+    "street": "SYCAMORE CT"
+   },
+   "street": "sycamore",
+   "rect": {
+    "x": 234,
+    "z": -190,
+    "w": 11.47,
+    "d": 22,
+    "rot": -1.5708
+   },
+   "center": [243.21, -190],
+   "corners": [
+    [232.94, -184.27],
+    [232.94, -195.73],
+    [253.48, -203.62],
+    [253.48, -176.38]
+   ],
+   "status": "available",
+   "prime": true,
+   "primeWhy": "cul-de-sac head"
+  },
+  {
+   "id": "ML-101",
+   "address": {
+    "number": 9,
+    "street": "SYCAMORE CT"
+   },
+   "street": "sycamore",
+   "rect": {
+    "x": 229.31,
+    "z": -201.31,
+    "w": 11.47,
+    "d": 22,
+    "rot": -0.7854
+   },
+   "center": [235.82, -207.82],
+   "corners": [
+    [232.62, -196.51],
+    [224.51, -204.62],
+    [233.46, -224.71],
+    [252.71, -205.46]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-102",
+   "address": {
+    "number": 11,
+    "street": "SYCAMORE CT"
+   },
+   "street": "sycamore",
+   "rect": {
+    "x": 218,
+    "z": -206,
+    "w": 11.47,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [218, -215.21],
+   "corners": [
+    [223.73, -204.94],
+    [212.27, -204.94],
+    [204.38, -225.48],
+    [231.62, -225.48]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-103",
+   "address": {
+    "number": 13,
+    "street": "SYCAMORE CT"
+   },
+   "street": "sycamore",
+   "rect": {
+    "x": 206.69,
+    "z": -201.31,
+    "w": 11.47,
+    "d": 22,
+    "rot": 0.7854
+   },
+   "center": [200.18, -207.82],
+   "corners": [
+    [211.49, -204.62],
+    [203.38, -196.51],
+    [183.29, -205.46],
+    [202.54, -224.71]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-104",
+   "address": {
+    "number": 2,
+    "street": "CLOVER CT"
+   },
+   "street": "clover",
+   "rect": {
+    "x": 32,
+    "z": -251.2,
+    "w": 20,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [32, -240.2],
+   "corners": [
+    [22.15, -251.2],
+    [41.85, -251.2],
+    [41.85, -229.2],
+    [22.15, -229.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-105",
+   "address": {
+    "number": 4,
+    "street": "CLOVER CT"
+   },
+   "street": "clover",
+   "rect": {
+    "x": 52,
+    "z": -251.2,
+    "w": 20,
+    "d": 22,
+    "rot": 3.1416
+   },
+   "center": [52, -240.2],
+   "corners": [
+    [42.15, -251.2],
+    [61.85, -251.2],
+    [61.85, -229.2],
+    [42.15, -229.2]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-106",
+   "address": {
+    "number": 1,
+    "street": "CLOVER CT"
+   },
+   "street": "clover",
+   "rect": {
+    "x": 32,
+    "z": -264.8,
+    "w": 20,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [32, -275.8],
+   "corners": [
+    [22.15, -264.8],
+    [41.85, -264.8],
+    [41.85, -286.8],
+    [22.15, -286.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-107",
+   "address": {
+    "number": 3,
+    "street": "CLOVER CT"
+   },
+   "street": "clover",
+   "rect": {
+    "x": 52,
+    "z": -264.8,
+    "w": 20,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [52, -275.8],
+   "corners": [
+    [42.15, -264.8],
+    [61.85, -264.8],
+    [61.85, -286.8],
+    [42.15, -286.8]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-108",
+   "address": {
+    "number": 3,
+    "street": "CLOVER CT"
+   },
+   "street": "clover-bulb",
+   "rect": {
+    "x": 90,
+    "z": -244.14,
+    "w": 12.76,
+    "d": 22,
+    "rot": -2.618
+   },
+   "center": [94.38, -236.56],
+   "corners": [
+    [83.81, -242.1],
+    [94.86, -248.48],
+    [112.55, -235.4],
+    [86.3, -220.24]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-109",
+   "address": {
+    "number": 5,
+    "street": "CLOVER CT"
+   },
+   "street": "clover-bulb",
+   "rect": {
+    "x": 97.76,
+    "z": -255.22,
+    "w": 12.76,
+    "d": 22,
+    "rot": -1.7453
+   },
+   "center": [106.38, -253.7],
+   "corners": [
+    [95.34, -249.17],
+    [97.56, -261.74],
+    [118.95, -266.87],
+    [113.69, -237.03]
+   ],
+   "status": "available",
+   "prime": true,
+   "primeWhy": "cul-de-sac head"
+  },
+  {
+   "id": "ML-110",
+   "address": {
+    "number": 7,
+    "street": "CLOVER CT"
+   },
+   "street": "clover-bulb",
+   "rect": {
+    "x": 94.26,
+    "z": -268.28,
+    "w": 12.76,
+    "d": 22,
+    "rot": -0.8727
+   },
+   "center": [100.97, -273.92],
+   "corners": [
+    [97.34, -262.54],
+    [89.14, -272.32],
+    [98.96, -292.01],
+    [118.44, -268.79]
+   ],
+   "status": "available",
+   "prime": false
+  },
+  {
+   "id": "ML-111",
+   "address": {
+    "number": 9,
+    "street": "CLOVER CT"
+   },
+   "street": "clover-bulb",
+   "rect": {
+    "x": 82,
+    "z": -274,
+    "w": 12.76,
+    "d": 22,
+    "rot": 0
+   },
+   "center": [82, -282.76],
+   "corners": [
+    [88.38, -272.67],
+    [75.62, -272.67],
+    [66.85, -292.85],
+    [97.15, -292.85]
+   ],
+   "status": "available",
+   "prime": false
+  }
+ ]
+}

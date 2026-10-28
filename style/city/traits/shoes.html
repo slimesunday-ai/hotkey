@@ -1,0 +1,247 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI City Shoes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;800&family=VT323&display=swap">
+<style>
+  :root { --ink: #0a0a0a; --paper: #ffffff; --mute: #6d6d6d; --common: #8e8e94; --rare: #2f5bff; --epic: #8a3cff; --grail: #e7bd4a; --tile: #e4e4e4; }
+  html, body { background: var(--paper); }
+  body { margin: 0; color: var(--ink); font: 14px/1.45 Archivo, "Helvetica Neue", Arial, sans-serif; }
+  body.walk { background: #9fdcff; } body.walk .wrap { display: none; }
+  .wrap { max-width: 1560px; margin: 0 auto; padding: 14px 16px 48px; }
+  .px { font-family: VT323, "Courier New", monospace; font-size: 18px; letter-spacing: .02em; text-transform: uppercase; line-height: 1; }
+  header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-bottom: 6px solid var(--ink); padding-bottom: 8px; }
+  .mast { font-family: Anton, Impact, sans-serif; font-size: clamp(56px, 10vw, 150px); line-height: .82; margin: 0; }
+  .kick { display: flex; flex-direction: column; gap: 6px; text-align: right; padding-bottom: 6px; }
+  .kick b { font-family: Anton, Impact, sans-serif; font-weight: 400; font-size: 26px; line-height: 1; text-transform: uppercase; }
+  .legend { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+  h2 { font-family: Anton, Impact, sans-serif; font-weight: 400; font-size: clamp(30px, 3.4vw, 46px); line-height: .9; text-transform: uppercase; margin: 0; }
+  .sec { padding-top: 26px; display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; border-bottom: 2px solid var(--ink); padding-bottom: 6px; }
+  canvas { display: block; width: 100%; }
+  .tier { font-family: VT323, monospace; font-size: 16px; text-transform: uppercase; padding: 1px 6px 0; color: #fff; white-space: nowrap; }
+  .tier.common { background: var(--common); } .tier.rare { background: var(--rare); } .tier.epic { background: var(--epic); } .tier.grail { background: var(--grail); color: var(--ink); }
+  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .name { font-weight: 800; font-size: 14px; }
+  .cw { font-size: 11.5px; color: #333; line-height: 1.3; }
+  .why { font-size: 11.5px; color: #6b5310; line-height: 1.3; }
+  /* old → new */
+  .on { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; padding-top: 12px; }
+  .on .pair { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3px; }
+  .on .pair canvas { aspect-ratio: 1; background: var(--tile); }
+  .on .lab { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 3px; } .on .lab span { font-size: 11px; color: var(--mute); }
+  .on .lab span.new { color: var(--ink); font-weight: 800; }
+  /* the line-up */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(460px, 1fr)); gap: 18px 14px; padding-top: 12px; }
+  .card { display: flex; flex-direction: column; gap: 5px; }
+  .close { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3px; } .close canvas { aspect-ratio: 1; background: var(--tile); }
+  .bodies { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; } .bodies canvas { aspect-ratio: 4 / 5; background: var(--tile); }
+  .tag { font-family: VT323, monospace; font-size: 14px; color: var(--mute); text-transform: uppercase; }
+  .tag.new { color: #d7141a; } .tag.redrawn { color: #0a5a3a; }
+  /* fits */
+  .fits { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px 14px; padding-top: 14px; }
+  @media (max-width: 1100px) { .fits { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .fits { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid, .on { grid-template-columns: 1fr; } }
+  .fit { display: flex; flex-direction: column; gap: 5px; } .fit canvas.pfp { aspect-ratio: 1; } .fit canvas.ft { aspect-ratio: 2 / 1; }
+  .fit .handle { font-weight: 800; font-size: 14px; } .fit .credits { font-size: 11.5px; color: #333; line-height: 1.35; }
+  .walkbox { padding-top: 12px; } .walkbox iframe { width: 100%; aspect-ratio: 1200 / 2100; border: 0; display: block; background: #9fdcff; }
+  .notes { max-width: 980px; padding-top: 10px; font-size: 13.5px; } .notes li { margin: 3px 0; }
+  #sheet { display: none; } body.walk #sheet { display: block; width: 100vw; height: auto; }
+  #err { color: #c00; font: 12px monospace; white-space: pre-wrap; } #err:empty { display: none; }
+  #stats { position: fixed; right: 8px; bottom: 8px; background: #17171b; color: #ffc21a; padding: 6px 8px; white-space: pre; font: 800 12px/1.3 "Arial Black", Impact, sans-serif; } #stats:empty { display: none; }
+  #prog { color: var(--mute); }
+</style>
+<div class="wrap">
+  <header>
+    <h1 class="mast">SHOES</h1>
+    <div class="kick"><span class="px">AI City · Fit Street · the shoe pass 2026-09-29</span><b id="count">…</b>
+      <div class="legend" id="legend"></div><span class="px" id="prog">rendering…</span></div>
+  </header>
+  <div id="err"></div>
+  <section id="s-study">
+    <div class="sec"><h2>What reads at 1/20</h2><span class="px">the study · world/TRAITS-NEW.md "Shoes"</span></div>
+    <ul class="notes">
+      <li><b>Scale.</b> A shoe is 5 × 9 × ≤ 6 voxels (25 × 45 × 30 cm) under a 16-voxel head on a 10-voxel leg. From the street camera a voxel is ~5 px at 10 m and ~2.5 px at 20 m, so only the silhouette and two or three value blocks survive; laces, tabs and marks are for the pfp.</li>
+      <li><b>The shoe is the plinth.</b> The big head wants a wide base: 5 wide plus a 1-voxel outboard flare on chunky soles, keeping the 2-voxel gap between the feet.</li>
+      <li><b>Midsole = the street read.</b> 1 row (court, skate), 2 (runner), 3 (tank, platform), always in a value that breaks from the upper, over a dark 1-row outsole.</li>
+      <li><b>Toe spring.</b> The front sole voxel lifts one row: it reads as a rocker from the side and keeps the toe off the ground at toe-off (the toe pivots at z 6).</li>
+      <li><b>Collar ≤ y 5.</b> Low y 3, mid 4, high 5. Over the ankle (z −2…2) y 3–5 rides the shin; the toe box and heel ride the foot; y ≥ 6 would ride the thigh and shear at the knee.</li>
+      <li><b>Pants eat the collar.</b> Stacked denim covers y ≥ 2 over z −3…3 and shorts pull tube socks over x −4…−2, z −1…1, so the identity lives in the sole, the toe box, the heel and the outer face. Tongues sit at z 2, in front of the shin.</li>
+    </ul>
+  </section>
+  <section id="s-oldnew">
+    <div class="sec"><h2>Drop 02: old → new</h2><span class="px">same ids, same tiers · 3/4 and side · colourway 0</span></div>
+    <div class="on" id="oldnew"></div>
+  </section>
+  <section id="s-lineup">
+    <div class="sec"><h2>The line-up</h2><span class="px">side (cw 0) · 3/4 (cw 1–3) · full body on three characters</span></div>
+    <div class="grid" id="lineup"></div>
+  </section>
+  <section id="s-fits">
+    <div class="sec"><h2>Fits</h2><span class="px">six pfp fits built round the shoes</span></div>
+    <div class="fits" id="fits"></div>
+  </section>
+  <section id="s-walk">
+    <div class="sec"><h2>The walk</h2><span class="px">side view · the lab's segmented walk (anim/bake.js bakeSegLooks + walk2.js) · 5 frames</span></div>
+    <div class="walkbox"><iframe id="walkframe" loading="eager" title="walk strip"></iframe></div>
+  </section>
+</div>
+<canvas id="sheet"></canvas><div id="stats"></div>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/" } }
+</script>
+<script>addEventListener('error', e => { const el = document.getElementById('err'); if (el) el.textContent += (e.message || e) + '\n'; }); addEventListener('unhandledrejection', e => { const el = document.getElementById('err'); if (el) el.textContent += 'promise: ' + (e.reason?.stack || e.reason) + '\n'; });</script>
+<script type="module">
+// THE SHOE PASS · the page. Default: the study, Drop 02 old → new, the line-up (every shoe on three characters, close + full body),
+// six fits, and the walk strip (this same file with ?walk=1 in an iframe).
+// URL: ?sec=oldnew|lineup|fits (one section only, for board shots) · &ids=a,b (line-up filter)
+// ?walk=1 · &ids=a,b,… (shoe ids, one walker each) · &cam=side|tq|feet · &strip=5 &sdt=.1 &t=1 · &fw=1200 &fh=300 · &dbg=back (inside faces
+//   magenta; counted) · &grid=1 (one row per walker, a close 3/4 of the feet per frame)
+import * as THREE from 'three';
+import * as CH from '../../../world/chars.js';
+import { withLegacy, SHOE_IDS, REDRAWN } from '../../../world/shoes2.js';
+const { build, dispose, look, NAMES, NEWI, TIER_ORDER, credits } = CH;
+const Q = new URLSearchParams(location.search), WALKMODE = Q.has('walk');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const badge = t => `<span class="tier ${t}">${t}</span>`;
+const byTier = (a, b) => TIER_ORDER.indexOf(NEWI[a].tier) - TIER_ORDER.indexOf(NEWI[b].tier);
+const WALK_IDS = ['chunky', 'retrohigh', 'workboot', 'bulbs'];
+// the three try-on characters: shorts (the whole shoe shows), stacked denim (the street default), track pants
+const BASES = [
+  look({ handle: 'shorts', skin: 'deep', hair: { id: 'buzz', c: 0x2a1c14 }, eyes: 'bored', mouth: 'flat', top: { id: 'tee', c: 0xf2f2f2, print: 'star' }, bottom: { id: 'shorts' }, shoes: { id: 'dad' } }),
+  look({ handle: 'stacked', skin: 'pale', hair: { id: 'long', c: 0x151214 }, eyes: 'side', mouth: 'smirk', top: { id: 'hoodie', c: 0x151517, logo: 'small' }, bottom: { id: 'baggy', c: 0x2b3f66 }, shoes: { id: 'dad' } }),
+  look({ handle: 'track', skin: 'terracotta', hair: { id: 'afro' }, eyes: 'mean', mouth: 'flat', top: { id: 'tank' }, bottom: { id: 'track', c: 0x151517 }, shoes: { id: 'dad' } }),
+];
+const wear = (base, id, cw) => { const L = structuredClone(base); L.shoes = { id, cw }; return L; };
+// the six fits (approved + Drop 02 pieces; no held items: that slot is being redone)
+const FITS = [
+  { tier: 'rare', L: look({ handle: 'hardwood.home', skin: 'brown', hair: { id: 'twists', cw: 0 }, eyes: 'side', mouth: 'gold', top: { id: 'bball', cw: 0 }, neck: { id: 'cuban' }, bottom: { id: 'shorts' }, shoes: { id: 'retrohigh', cw: 0 }, bg: '#ff7a1a' }) },
+  { tier: 'rare', L: look({ handle: 'yard.season', skin: 'tan', hat: { id: 'skully', cw: 0 }, eyes: 'mean', mouth: 'iced', top: { id: 'buffalo', cw: 0 }, neck: { id: 'rope' }, bottom: { id: 'doubleknee', cw: 0 }, shoes: { id: 'workboot', cw: 0 }, bg: '#ffe23a' }) },
+  { tier: 'rare', L: look({ handle: 'cloud.tank', skin: 'pale', hair: { id: 'mohawk', cw: 0 }, eyewear: { id: 'tinies', cw: 1 }, eyes: 'bored', mouth: 'smirk', top: { id: 'trackjkt', cw: 0 }, bottom: { id: 'meshshorts', cw: 0 }, shoes: { id: 'sculptrun', cw: 1 }, bg: '#2f5bff' }) },
+  { tier: 'rare', L: look({ handle: 'loafer.szn', skin: 'deep', hat: { id: 'silkrag', cw: 0 }, eyes: 'sleepy', mouth: 'grill', top: { id: 'leather', cw: 0 }, neck: { id: 'pearls', cw: 0 }, bottom: { id: 'shorts', c: 0x151517 }, shoes: { id: 'lugloafer', cw: 1 }, bg: '#c89bf5' }) },
+  { tier: 'common', L: look({ handle: 'dad.on.vacation', skin: 'terracotta', hat: { id: 'bucket' }, eyes: 'happy', mouth: 'smile', top: { id: 'catee', cw: 0 }, bottom: { id: 'shorts' }, shoes: { id: 'sandalsocks', cw: 1 }, acc: { id: 'digital', cw: 1 }, bg: '#6cff4a' }) },
+  { tier: 'grail', L: look({ handle: 'moon.walker', skin: 'brown', hair: { id: 'braids', cw: 0 }, eyewear: { id: 'shield', cw: 2 }, mouth: 'gems', top: { id: 'furcoat', cw: 1 }, neck: { id: 'icecuban', cw: 0 }, bottom: { id: 'meshshorts', cw: 3 }, shoes: { id: 'bulbs', cw: 0 }, bg: '#161616' }) },
+];
+
+if (WALKMODE) { document.body.className = 'walk'; await walkSheet(); } else studio();
+
+// ───────── the studio (the fit check's sweep + flash; one renderer drawn into many canvases)
+function studio() {
+  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setPixelRatio(1); renderer.setSize(1024, 1024, false);
+  renderer.toneMapping = THREE.NeutralToneMapping; renderer.toneMappingExposure = 1.05; renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap; renderer.autoClear = false;
+  const scene = new THREE.Scene(); const pmrem = new THREE.PMREMGenerator(renderer);
+  import('three/addons/environments/RoomEnvironment.js').then(({ RoomEnvironment }) => { scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture; scene.environmentIntensity = .45; go(); });
+  const sweepMat = new THREE.MeshStandardMaterial({ color: 0xe4e4e4, roughness: .95 });
+  { const prof = []; for (let z = 8; z > -0.8; z -= .4) prof.push([z, 0]); for (let a = 0; a <= 90; a += 6) { const r = .9, t = THREE.MathUtils.degToRad(a); prof.push([-0.8 - r * Math.sin(t), r - r * Math.cos(t)]); } for (let y = 1.2; y < 9; y += .6) prof.push([-1.7, y]);
+    const pos = [], idx = []; prof.forEach(([z, y], i) => { pos.push(-12, y, z, 12, y, z); if (i) { const a = (i - 1) * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } });
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals();
+    const sweep = new THREE.Mesh(g, sweepMat); sweep.receiveShadow = true; scene.add(sweep); }
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x999999, .7));
+  const flash = new THREE.DirectionalLight(0xffffff, 2.7); flash.castShadow = true; flash.shadow.mapSize.set(2048, 2048); flash.shadow.bias = -0.0005; flash.shadow.normalBias = .01;
+  Object.assign(flash.shadow.camera, { left: -2.5, right: 2.5, top: 3, bottom: -1, near: .5, far: 20 }); scene.add(flash, flash.target); flash.target.position.set(0, .5, 0);
+  const cam = (pos, at, fov = 24, aspect = 1) => { const c = new THREE.PerspectiveCamera(fov, aspect, .1, 50); c.position.set(...pos); c.lookAt(...at); return c; };
+  // feet: the pair in a 3/4 from the front; side: the left foot's outer face, toes to the right; full: the fit check's full body
+  const CAM = { feet: cam([1.2, .72, 2.1], [0, .16, 0], 20), side: cam([.05, .2, 2.4], [.05, .19, 0], 17), full: cam([.55, 1.32, 5.6], [0, 1.03, 0], 26, 4 / 5),
+    pfp: cam([.5, 1.05, 4.9], [0, .92, 0], 24), ft: cam([.95, .3, 1.5], [0, .12, 0], 22, 2) };
+  const RY = { feet: .95, side: Math.PI / 2, full: .42, pfp: .42, ft: .5 };
+  function snap(L, bg, view, ctx, w = 256, h = 256, legacy = false) { const make = () => build(L), o = legacy ? withLegacy(make) : make(); o.rotation.y = RY[view]; if (view === 'side') { const r = o.userData.rig; r.armL.visible = r.armR.visible = false; o.userData.head.visible = false; } scene.add(o);
+    sweepMat.color.set(bg); const c = CAM[view]; flash.position.copy(c.position).add(new THREE.Vector3(-1.5, 1.3, .2));
+    renderer.setViewport(0, 0, w, h); renderer.setScissor(0, 0, w, h); renderer.setScissorTest(true); renderer.clear(); renderer.render(scene, c);
+    ctx.drawImage(renderer.domElement, 0, 1024 - h, w, h, 0, 0, ctx.canvas.width, ctx.canvas.height); scene.remove(o); dispose(o); }
+  const SEC = Q.get('sec'), only = s => !SEC || SEC === s; for (const s of ['study', 'oldnew', 'lineup', 'fits', 'walk']) if (!only(s)) document.getElementById('s-' + s).remove();
+  const ids = [...SHOE_IDS].sort(byTier), idf = Q.get('ids') ? Q.get('ids').split(',') : null, count = {}; for (const id of ids) count[NEWI[id].tier] = (count[NEWI[id].tier] || 0) + 1;
+  document.getElementById('legend').innerHTML = TIER_ORDER.map(t => `${badge(t)}<span class="px">${count[t] || 0}</span>`).join(' ');
+  document.getElementById('count').textContent = `${REDRAWN.length} redrawn · ${ids.length - REDRAWN.length} new · ${ids.length * 4} colourways`;
+  const jobs = [];
+  if (only('oldnew')) { const el = document.getElementById('oldnew');
+    for (const id of REDRAWN) { const e = NEWI[id], d = document.createElement('div'); d.className = 'card';
+      d.innerHTML = `<div class="pair"><canvas width="256" height="256"></canvas><canvas width="256" height="256"></canvas><canvas width="256" height="256"></canvas><canvas width="256" height="256"></canvas></div>
+        <div class="lab"><span>old 3/4</span><span class="new">new 3/4</span><span>old side</span><span class="new">new side</span></div><div class="row"><span class="name">${esc(e.name)}</span>${badge(e.tier)}</div>`;
+      el.appendChild(d); const cv = d.querySelectorAll('canvas'), L = wear(BASES[0], id, 0);
+      jobs.push(() => snap(L, '#e4e4e4', 'feet', cv[0].getContext('2d'), 256, 256, true), () => snap(L, '#e4e4e4', 'feet', cv[1].getContext('2d')),
+        () => snap(L, '#e4e4e4', 'side', cv[2].getContext('2d'), 256, 256, true), () => snap(L, '#e4e4e4', 'side', cv[3].getContext('2d'))); } }
+  if (only('lineup')) { const el = document.getElementById('lineup');
+    for (const id of ids.filter(i => !idf || idf.includes(i))) { const e = NEWI[id], d = document.createElement('div'); d.className = 'card';
+      d.innerHTML = `<div class="close">${'<canvas width="256" height="256"></canvas>'.repeat(4)}</div><div class="bodies">${'<canvas width="256" height="320"></canvas>'.repeat(3)}</div>
+        <div class="row"><span class="name">${esc(e.name)} <span class="tag ${e.shoes2}">${e.shoes2}</span></span>${badge(e.tier)}</div>
+        <div class="cw"><span class="px" style="font-size:14px">${id}</span> · ${e.cw.map(c => esc(c[0])).join(' · ')}</div>${e.why ? `<div class="why">${esc(e.why)}</div>` : ''}`;
+      el.appendChild(d); const cv = d.querySelectorAll('canvas');
+      jobs.push(() => snap(wear(BASES[0], id, 0), '#e4e4e4', 'side', cv[0].getContext('2d')));
+      for (let k = 1; k < 4; k++) jobs.push(() => snap(wear(BASES[k - 1], id, k), '#e4e4e4', 'feet', cv[k].getContext('2d')));
+      for (let k = 0; k < 3; k++) jobs.push(() => snap(wear(BASES[k], id, k + 1), '#e4e4e4', 'full', cv[4 + k].getContext('2d'), 512, 640)); } }
+  if (only('fits')) { const el = document.getElementById('fits');
+    for (const { tier, L } of FITS) { const d = document.createElement('div'), e = NEWI[L.shoes.id]; d.className = 'fit';
+      d.innerHTML = `<canvas class="pfp" width="360" height="360"></canvas><canvas class="ft" width="360" height="180"></canvas><div class="row"><span class="handle">${esc(L.handle)}</span>${badge(tier)}</div>
+        <div class="credits"><b>${esc(e.cw[L.shoes.cw | 0][0])} ${esc(e.name)}</b> · ${esc(NAMES.skin[L.skin])} · ${esc(credits(L))}</div>`;
+      el.appendChild(d); const [a, b] = d.querySelectorAll('canvas');
+      jobs.push(() => snap(L, L.bg, 'pfp', a.getContext('2d'), 512, 512), () => snap(L, L.bg, 'ft', b.getContext('2d'), 512, 256)); } }
+  if (Q.has('dev')) { document.querySelectorAll('section').forEach(e => e.remove()); const w = document.querySelector('.wrap'), d = document.createElement('div'); w.appendChild(d);
+    d.style.cssText = 'display:grid;grid-template-columns:repeat(6,240px);gap:3px;padding-top:6px'; const cwv = +(Q.get('cw') || 0);
+    for (const id of ids.filter(i => !idf || idf.includes(i))) { const e = NEWI[id]; d.insertAdjacentHTML('beforeend', `<div><div class="name" style="font-size:12px">${id} · ${e.tier}</div><canvas width="240" height="240"></canvas></div><div><div class="name" style="font-size:12px">&nbsp;</div><canvas width="240" height="240"></canvas></div>`);
+      const cv = d.querySelectorAll('canvas'), a = cv[cv.length - 2], b = cv[cv.length - 1];
+      jobs.push(() => snap(wear(BASES[0], id, cwv), '#e4e4e4', 'side', a.getContext('2d'), 240, 240, Q.has('old')), () => snap(wear(BASES[+(Q.get('base') || 0)], id, cwv + 1), '#e4e4e4', 'feet', b.getContext('2d'), 240, 240, Q.has('old'))); } }
+  if (only('walk') && document.getElementById('walkframe')) document.getElementById('walkframe').src = `?walk=1&ids=${WALK_IDS.join(',')}&strip=5&fw=1200&fh=420`;
+  const total = jobs.length, prog = document.getElementById('prog'); let done = 0;
+  function tick() { const t0 = performance.now(); while (jobs.length && performance.now() - t0 < 40) { try { jobs.shift()(); } catch (err) { document.getElementById('err').textContent += err.stack + '\n'; } done++; }
+    prog.textContent = `rendered ${done} / ${total}`; if (jobs.length) setTimeout(tick, 0); else { prog.textContent = `${total} renders · ${ids.length} shoes`; document.title = 'ready'; } }
+  function go() { setTimeout(tick, 0); }
+}
+
+// ───────── the walk: anim/bake.js bakeSegLooks (closed rigid segments + joint slabs), walk2.js's shader, gait2.js's gait, gpu.js tierize:
+// the city's walkers' own path (a copy of traits/walk.html's sheet, with shoes for fits)
+async function walkSheet() {
+  const [{ tierize }, { bakeSegLooks }, { WALK }, W2, { gait2State, stepGait2 }, { stepIdle }] = await Promise.all([import('../gpu.js'), import('../anim/bake.js'), import('../anim/walk.js'), import('../anim/walk2.js'), import('../anim/gait2.js'), import('../anim/idle.js')]);
+  const { WALK2, createAnimTexture2, animUniforms2, writeGait2, installAnim2 } = W2;
+  const CAMN = Q.get('cam') || 'side', DBG = Q.get('dbg') || '', N = +(Q.get('strip') || 5), SDT = +(Q.get('sdt') || .1), T0 = +(Q.get('t') || 1), GRID = Q.has('grid');
+  const FW = +(Q.get('fw') || (GRID ? 300 : 1200)), FH = +(Q.get('fh') || (GRID ? 300 : 420)), V = 1.2, DT = 1 / 60;
+  const IDS = (Q.get('ids') || WALK_IDS.join(',')).split(','), base = look({ skin: 'brown', hair: { id: 'buzz', c: 0x2a1c14 }, eyes: 'bored', mouth: 'flat', top: { id: 'tee', c: 0x151517, print: 'star' }, bottom: { id: 'shorts' }, shoes: { id: 'dad' } });
+  const fits = IDS.map((id, k) => { const L = wear(base, id, +(Q.get('cw') || 0)); L.handle = NEWI[id] ? NEWI[id].name : id; L.skin = ['brown', 'pale', 'deep', 'tan', 'terracotta'][k % 5]; return { tier: NEWI[id]?.tier || 'approved', L }; });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setPixelRatio(1); renderer.setSize(FW, FH);
+  renderer.toneMapping = THREE.NeutralToneMapping; renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x9fdcff);
+  const sun = new THREE.DirectionalLight(0xfff2dc, 3.0), sunDir = new THREE.Vector3(-0.52, 0.74, 0.42).normalize(); sun.castShadow = true; sun.shadow.bias = -0.0003; sun.shadow.normalBias = .03; sun.shadow.mapSize.set(2048, 2048);
+  sun.position.copy(sunDir).multiplyScalar(40); Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, near: 1, far: 100 }); scene.add(sun, sun.target, new THREE.HemisphereLight(0xd6ecff, 0xe0cfb0, 1.05));
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(40, .02, 12), new THREE.MeshStandardMaterial({ color: 0xd9d4c7, roughness: .9 })); floor.position.y = -.01; floor.receiveShadow = true; scene.add(floor);
+  const wall = new THREE.Mesh(new THREE.BoxGeometry(40, 6, .2), new THREE.MeshStandardMaterial({ color: 0xf0e6d2, roughness: .9 })); wall.position.set(0, 3, -3.2); wall.receiveShadow = true; scene.add(wall);
+  const LK = bakeSegLooks(fits.map(f => f.L), CH, THREE);
+  const geoOf = t => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(t.P, 3)); g.setAttribute('normal', new THREE.BufferAttribute(t.N, 3, true));
+    g.setAttribute('color', new THREE.BufferAttribute(t.C, 4, true)); g.setAttribute('aPart', new THREE.BufferAttribute(new Float32Array(t.K), 1)); if (t.SL) g.setAttribute('aSlab', new THREE.BufferAttribute(new Float32Array(t.SL), 1));
+    g.setIndex(new THREE.BufferAttribute(t.I, 1)); return g; };
+  const GEOS = LK.map(l => geoOf(l.full)), VN = GEOS.reduce((s, g) => s + g.attributes.position.count, 0), IN = GEOS.reduce((s, g) => s + g.index.count, 0);
+  const backDbg = m => { if (DBG !== 'back') return m; m.side = THREE.DoubleSide; const prev = m.onBeforeCompile, key = m.customProgramCacheKey?.bind(m);
+    m.onBeforeCompile = (sh, r) => { prev?.call(m, sh, r); sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\n  if (!gl_FrontFacing) gl_FragColor = vec4(1., 0., 1., 1.);'); };
+    m.customProgramCacheKey = () => (key ? key() : '') + '|dbgback'; return m; };
+  const cap = fits.length, tex = createAnimTexture2(cap), [uni, G] = animUniforms2(tex, WALK2, { ...WALK });
+  const mat = installAnim2(backDbg(tierize(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .62, metalness: 0 }), { vmat: true })), uni);
+  const depth = installAnim2(new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking }), uni);
+  const B = new THREE.BatchedMesh(cap, VN, IN, mat); B.customDepthMaterial = depth; B.castShadow = B.receiveShadow = true; B.sortObjects = false; B.frustumCulled = false; B.perObjectFrustumCulled = false;
+  const ids = GEOS.map(g => B.addGeometry(g)); scene.add(B);
+  const YAW = { side: Math.PI / 2, tq: Math.PI / 2 - .7, feet: Math.PI / 2 - .7, front: 0, back: Math.PI }[CAMN] ?? Math.PI / 2, GAP = GRID ? 4 : 1.2;
+  const actors = fits.map((f, k) => ({ x: (k - (cap - 1) / 2) * GAP, z: 0, yaw: YAW, g: gait2State({ u: k * .13, it: k * 1.7 }) }));
+  const M4 = new THREE.Matrix4(), QN = new THREE.Quaternion(), V3 = new THREE.Vector3(), ONE = new THREE.Vector3(1, 1, 1), YA = new THREE.Vector3(0, 1, 0);
+  actors.forEach((a, k) => { B.addInstance(ids[k]); QN.setFromAxisAngle(YA, a.yaw); V3.set(a.x, 0, a.z); M4.compose(V3, QN, ONE); B.setMatrixAt(k, M4); });
+  let t = 0; const step = dt => { t += dt; for (const a of actors) { stepGait2(a.g, V * dt, dt, WALK2, G, 0); stepIdle(a.g, false, dt); } };
+  const draw = () => { const d = tex.image.data; actors.forEach((a, k) => writeGait2(d, cap, k, a.g)); tex.needsUpdate = true; renderer.render(scene, camera); };
+  const span = (cap - 1) * GAP + 1.0, camera = new THREE.PerspectiveCamera(GRID ? 20 : 26, FW / FH, .05, 200);
+  const CAMS = { side: [[0, .9, span * .95], [0, .84, 0]], tq: [[span * .2, .9, span * .9], [0, .4, 0]], front: [[0, .6, span], [0, .4, 0]], back: [[0, .7, -span], [0, .4, 0]] };
+  const [cp, ct] = CAMS[CAMN] || CAMS.side; camera.position.set(...cp); camera.lookAt(...ct); sun.target.position.set(0, 0, 0);
+  const sheet = document.getElementById('sheet'), g2 = sheet.getContext('2d'); sheet.width = GRID ? N * FW : FW; sheet.height = GRID ? cap * FH : N * FH;
+  const FOC = { feet: [[1.1, .55, 1.7], [0, .18, 0]], tq: [[1.9, 1.35, 4.3], [0, .95, 0]], back: [[-1.1, .6, -1.7], [0, .2, 0]] };
+  const focus = i => { actors.forEach((a, k) => B.setVisibleAt(k, k === i)); const a = actors[i], [p, q] = FOC[CAMN] || FOC.feet; camera.position.set(a.x + p[0], p[1], p[2]); camera.lookAt(a.x + q[0], q[1], q[2]); };
+  while (t + DT / 2 < T0) step(DT);
+  const gl = renderer.getContext(), px = new Uint8Array(FW * FH * 4); let magenta = 0; const perFrame = [];
+  const count = () => { if (DBG !== 'back') return 0; gl.readPixels(0, 0, FW, FH, gl.RGBA, gl.UNSIGNED_BYTE, px); let m = 0; for (let i = 0; i < px.length; i += 4) if (px[i] > 235 && px[i + 1] < 30 && px[i + 2] > 235) m++; return m; };
+  const label = (s, x, y) => { g2.font = '800 13px "Arial Black", Impact, sans-serif'; const w = g2.measureText(s).width + 12; g2.fillStyle = '#17171b'; g2.fillRect(x, y, w, 20); g2.fillStyle = '#ffc21a'; g2.fillText(s, x + 6, y + 15); };
+  for (let k = 0; k < N; k++) { if (k) { const tt = T0 + k * SDT; while (t + DT / 2 < tt) step(DT); if (tt - t > 1e-6) step(tt - t); }
+    if (GRID) { let m = 0; for (let i = 0; i < cap; i++) { focus(i); draw(); g2.drawImage(renderer.domElement, k * FW, i * FH, FW, FH); const c = count(); m += c;
+        label(`${fits[i].L.handle} · t ${t.toFixed(2)}${DBG ? ' · ' + c : ''}`, k * FW + 2, i * FH + 2); g2.strokeStyle = '#17171b'; g2.lineWidth = 2; g2.strokeRect(k * FW + 1, i * FH + 1, FW - 2, FH - 2); } magenta += m; perFrame.push(m); continue; }
+    draw(); g2.drawImage(renderer.domElement, 0, k * FH, FW, FH); { const m = count(); magenta += m; if (DBG === 'back') perFrame.push(m); }
+    label(`${k + 1} · t ${t.toFixed(2)} s · ${CAMN}${DBG ? ' · ' + DBG : ''}`, 2, k * FH + 2);
+    if (k === 0) actors.forEach((a, i) => { V3.set(a.x, .06, a.z).project(camera); const x = (V3.x + 1) / 2 * FW, y = (1 - V3.y) / 2 * FH; const s = `${fits[i].L.handle} · ${fits[i].tier}`;
+      g2.font = '800 13px "Arial Black", Impact, sans-serif'; const w = g2.measureText(s).width + 12; label(s, x - w / 2, Math.min(FH - 22, y + 4)); });
+    g2.strokeStyle = '#17171b'; g2.lineWidth = 2; g2.strokeRect(1, k * FH + 1, FW - 2, FH - 2); }
+  document.getElementById('stats').textContent = DBG === 'back' ? `inside-face (magenta) pixels: ${magenta} (per frame ${perFrame.join(', ')})` : '';
+  window.__walk = { magenta, perFrame, ids: IDS }; document.title = 'ready';
+}
+</script>

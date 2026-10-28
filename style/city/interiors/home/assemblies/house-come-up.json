@@ -1,0 +1,43 @@
+{
+ "tier": "house",
+ "name": "come-up",
+ "story": "The come-up: first real money. The bar under a neon with two stools and the bar fridge, the good couch squared up to the wall kept clear for something gilded, the bed with a print over it and a speaker at its side, a vase nobody waters, the safe tucked behind the couch.",
+ "room": {"w":22,"d":18,"h":2.8,"walls":{"N":"paint:#17171b","E":"paint:#e7bd4a"},"floor":"oak"},
+ "items": [
+  {"id":"rug-persian","x":7,"z":8,"rot":90,"variant":2,"on":"floor"},
+  {"id":"door-front","x":13,"z":0,"rot":0,"variant":2,"on":{"wall":"E"}},
+  {"id":"bar-home","x":1,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"stool-bar","x":2,"z":3,"rot":180,"variant":2,"on":"floor"},
+  {"id":"stool-bar","x":6,"z":3,"rot":180,"variant":2,"on":"floor"},
+  {"id":"table-end","x":10,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"lamp-table","x":10,"z":0,"rot":0,"variant":1,"on":{"top":5}},
+  {"id":"bed-double","x":12,"z":0,"rot":0,"variant":2,"on":"floor"},
+  {"id":"art-print","x":13,"z":0,"rot":0,"variant":3,"on":{"wall":"N"},"y":1.15},
+  {"id":"plant-monstera","x":18,"z":0,"rot":0,"variant":2,"on":"floor"},
+  {"id":"couch-house","x":4,"z":8,"rot":90,"variant":2,"on":"floor"},
+  {"id":"table-coffee","x":11,"z":10,"rot":90,"variant":1,"on":"floor"},
+  {"id":"fridge","x":0,"z":5,"rot":90,"variant":2,"on":"floor"},
+  {"id":"rug-rag","x":12,"z":7,"rot":0,"variant":2,"on":"floor"},
+  {"id":"poster","x":18,"z":0,"rot":0,"variant":0,"on":{"wall":"N"},"y":1.4},
+  {"id":"vase-floor","x":20,"z":10,"rot":0,"variant":1,"on":"floor"},
+  {"id":"speaker","x":9,"z":3,"rot":0,"variant":0,"on":"floor"},
+  {"id":"sneakers-kicked","x":15,"z":15,"rot":0,"variant":1,"on":"floor"},
+  {"id":"beer-cans","x":8,"z":13,"rot":0,"variant":1,"on":"floor"}
+ ],
+ "slots": [
+  {"id":"frame","label":"the frame","place":"wall","x":3,"z":0,"foot":[7,9],"rot":0,"demo":"frame-gilded","variant":0,"fits":["collectible"],"wall":"E","y":0.5},
+  {"id":"neon","label":"the neon · over the bar","place":"wall","x":1,"z":0,"foot":[8,2],"rot":0,"demo":"neon-sign","variant":0,"fits":["collectible"],"wall":"N","y":1.7},
+  {"id":"safe","label":"the safe","place":"floor","x":0,"z":13,"foot":[4,5],"rot":0,"demo":"safe-big","variant":0,"fits":["gear","security","stash"]},
+  {"id":"on-the-table","label":"on the table","place":"surface","x":11,"z":11,"foot":[2,2],"rot":0,"demo":"chain-bust","variant":0,"fits":["collectible","trophy"],"on":11}
+ ],
+ "vacant": [
+  {"id":"door-front","x":13,"z":0,"rot":0,"variant":2,"on":{"wall":"E"}},
+  {"id":"bar-home","x":1,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"fridge","x":0,"z":5,"rot":90,"variant":2,"on":"floor"},
+  {"id":"mattress-floor","x":12,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":4,"z":9,"rot":0,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":8,"z":4,"rot":0,"variant":1,"on":"floor"},
+  {"id":"sign-rent","x":9,"z":13,"rot":0,"variant":2,"on":"floor"},
+  {"id":"paint-kit","x":16,"z":9,"rot":0,"variant":1,"on":"floor"}
+ ]
+}

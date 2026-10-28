@@ -1,0 +1,25 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>portrait</title>
+<!-- UI STYLE LAB · renders one agent's real look (cast.js, seeded by the handle exactly as ui/portrait.js specOf does) as a transparent
+     head-and-shoulders PNG at 480 x 568, same lights as the dossier portrait. Driven headless by tools/assets.mjs (window.__png). -->
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/" } }</script>
+<script type="module">
+import * as THREE from 'three';
+const CH = await import('../../../cast.js');
+const fnv = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; };
+const Q = new URLSearchParams(location.search), handle = Q.get('h') || 'www.girl', W = 480, H = 568, turn = +(Q.get('turn') ?? -.42);
+const c = document.createElement('canvas'); c.width = W; c.height = H; document.body.append(c);
+const R = new THREE.WebGLRenderer({ canvas: c, antialias: true, alpha: true, preserveDrawingBuffer: true });
+R.setPixelRatio(1); R.setSize(W, H, false); R.setClearColor(0, 0); R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.05;
+const scene = new THREE.Scene();
+scene.add(new THREE.HemisphereLight(0xdfeeff, 0x6b5a48, 1.6));
+const key = new THREE.DirectionalLight(0xfff1dc, 2.6); key.position.set(2.2, 3.4, 3); scene.add(key);
+const rim = new THREE.DirectionalLight(0x9fc8ff, 1.3); rim.position.set(-3, 2, -2.5); scene.add(rim);
+const o = CH.build(CH.rollLook(fnv(handle) & 0xffffff)); if (o.userData.open) { o.userData.open.visible = true; o.userData.shut.visible = false; } CH.pose(o, 0, 0);
+const box = new THREE.Box3().setFromObject(o), hgt = Math.max(.5, box.max.y - box.min.y); o.position.set(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
+const pivot = new THREE.Group(); pivot.add(o); pivot.rotation.y = turn; scene.add(pivot);
+const cam = new THREE.PerspectiveCamera(23, W / H, .1, 50); const [cy, cd, cl] = (Q.get('cam') || '.8,2.45,.66').split(',').map(Number); cam.position.set(0, hgt * cy, hgt * cd); cam.lookAt(0, hgt * cl, 0);
+window.__hgt = hgt;
+R.render(scene, cam); window.__png = c.toDataURL('image/png'); document.title = 'ready';
+</script>

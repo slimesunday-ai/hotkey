@@ -1,0 +1,383 @@
+{
+ "tier": "mainland",
+ "name": "mainland-porch",
+ "style": "porch",
+ "room": {
+  "h": 2.8,
+  "w": 40,
+  "d": 32,
+  "walls": {
+   "N": "paint:#f7f2e8",
+   "E": "paint:#58b7f7"
+  },
+  "floor": "oak",
+  "zones": [
+   {
+    "x": 0,
+    "z": 0,
+    "w": 9,
+    "d": 16,
+    "floor": "tile"
+   }
+  ],
+  "built": [
+   {
+    "kind": "wall",
+    "x": 9,
+    "z": 0,
+    "w": 1,
+    "d": 16
+   },
+   {
+    "kind": "wall",
+    "x": 22,
+    "z": 0,
+    "w": 1,
+    "d": 20
+   }
+  ]
+ },
+ "items": [
+  {
+   "id": "toilet",
+   "x": 4,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "sink-bath",
+   "x": 6,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "medicine-cabinet",
+   "x": 6,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "wall": "N"
+   }
+  },
+  {
+   "id": "bathtub",
+   "x": 0,
+   "z": 5,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "bed-double",
+   "x": 13,
+   "z": 0,
+   "rot": 0,
+   "variant": 2,
+   "on": "floor"
+  },
+  {
+   "id": "table-end",
+   "x": 11,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "lamp-table",
+   "x": 11,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": {
+    "top": 5
+   }
+  },
+  {
+   "id": "table-end",
+   "x": 19,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "lamp-table",
+   "x": 19,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "top": 7
+   }
+  },
+  {
+   "id": "photos-family",
+   "x": 14,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "wall": "N"
+   },
+   "y": 1.25
+  },
+  {
+   "id": "rug-shag",
+   "x": 12,
+   "z": 9,
+   "rot": 0,
+   "variant": 2,
+   "on": "floor"
+  },
+  {
+   "id": "dresser",
+   "x": 18,
+   "z": 17,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "plant-cactus",
+   "x": 21,
+   "z": 17,
+   "rot": 0,
+   "variant": 1,
+   "on": {
+    "top": 11
+   }
+  },
+  {
+   "id": "ceiling-fan",
+   "x": 14,
+   "z": 9,
+   "rot": 0,
+   "variant": 0,
+   "on": "ceiling"
+  },
+  {
+   "id": "counter-sink",
+   "x": 23,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "stove",
+   "x": 29,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "fridge",
+   "x": 32,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "rug-rag",
+   "x": 24,
+   "z": 6,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "dining-set",
+   "x": 24,
+   "z": 6,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "plant-cactus",
+   "x": 27,
+   "z": 8,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "top": 18
+   }
+  },
+  {
+   "id": "door-front",
+   "x": 25,
+   "z": 0,
+   "rot": 0,
+   "variant": 2,
+   "on": {
+    "wall": "E"
+   }
+  },
+  {
+   "id": "speaker",
+   "x": 38,
+   "z": 11,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "speaker",
+   "x": 38,
+   "z": 22,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "rug-persian",
+   "x": 26,
+   "z": 14,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "couch-house",
+   "x": 27,
+   "z": 13,
+   "rot": 90,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "table-coffee",
+   "x": 32,
+   "z": 15,
+   "rot": 90,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "lamp-arc",
+   "x": 27,
+   "z": 21,
+   "rot": 90,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "bookshelf",
+   "x": 10,
+   "z": 11,
+   "rot": 90,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "plant-monstera",
+   "x": 1,
+   "z": 26,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "vase-floor",
+   "x": 20,
+   "z": 25,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "beanbag",
+   "x": 24,
+   "z": 26,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  }
+ ],
+ "slots": [
+  {
+   "id": "stash",
+   "label": "the vent",
+   "place": "wall",
+   "x": 1,
+   "z": 0,
+   "foot": [
+    2,
+    1
+   ],
+   "rot": 0,
+   "demo": "stash-vent",
+   "variant": 0,
+   "fits": [
+    "stash"
+   ],
+   "wall": "N",
+   "y": 0.25
+  },
+  {
+   "id": "display",
+   "label": "the jersey wall",
+   "place": "wall",
+   "x": 35,
+   "z": 0,
+   "foot": [
+    5,
+    6
+   ],
+   "rot": 0,
+   "demo": "jersey-frame",
+   "variant": 0,
+   "fits": [
+    "collectible"
+   ],
+   "wall": "N",
+   "y": 1
+  },
+  {
+   "id": "tv",
+   "label": "the TV wall",
+   "place": "wall",
+   "x": 14,
+   "z": 0,
+   "foot": [
+    7,
+    4
+   ],
+   "rot": 0,
+   "demo": "tv-flat",
+   "variant": 0,
+   "fits": [
+    "electronics",
+    "gear"
+   ],
+   "wall": "E",
+   "y": 1
+  },
+  {
+   "id": "trophies",
+   "label": "the trophy shelf",
+   "place": "surface",
+   "x": 10,
+   "z": 11,
+   "foot": [
+    2,
+    4
+   ],
+   "rot": 0,
+   "demo": "trophy-first-house",
+   "variant": 0,
+   "fits": [
+    "trophy"
+   ],
+   "on": 27
+  }
+ ]
+}

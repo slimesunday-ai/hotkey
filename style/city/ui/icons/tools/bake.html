@@ -1,0 +1,18 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>AI City · icon bake</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body { margin: 0; background: #2b2d33; color: #f3f3ea; font: 12px/1.3 ui-monospace, Menlo, monospace; }
+  #out { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; }
+  #out img { image-rendering: auto; background: #cdc5b8; }
+  #err { color: #ff6b6b; white-space: pre-wrap; padding: 12px; }
+</style>
+<div id="err"></div>
+<div id="out"></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/" } }</script>
+<script>
+  addEventListener('error', e => { document.getElementById('err').textContent += (e.message || e) + '\n'; });
+  addEventListener('unhandledrejection', e => { document.getElementById('err').textContent += (e.reason && e.reason.stack || e.reason) + '\n'; });
+</script>
+<script type="module" src="./bake.js"></script>

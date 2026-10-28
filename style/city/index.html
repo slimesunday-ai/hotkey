@@ -1,0 +1,121 @@
+<meta charset="utf-8">
+<title>AI City · Downtown & Fit Street</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body { margin: 0; height: 100%; background: #2f9bff; overflow: hidden; }
+  #stage canvas { display: block; }
+  .grain { position: fixed; inset: 0; pointer-events: none; mix-blend-mode: overlay; opacity: .13; }
+  .ui { position: fixed; left: 14px; top: 14px; right: 14px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font: 800 12px/1 "Arial Black", Impact, sans-serif; letter-spacing: .02em; }
+  .ui b { background: #17171b; color: #ffc21a; padding: 8px 10px 7px; text-transform: uppercase; }
+  .ui button { font: inherit; text-transform: uppercase; border: 0; background: #fff; color: #17171b; padding: 8px 10px 7px; cursor: pointer; box-shadow: 3px 3px 0 #17171b; }
+  .ui button:hover { background: #ffc21a; }
+  .ui button:focus-visible, #bench button:focus-visible { outline: 3px solid #ff4fa3; outline-offset: 2px; }
+  .ui .q { background: #17171b; color: #fff; padding: 8px 10px 7px; }
+  .ui select { font: inherit; text-transform: uppercase; border: 0; background: #6cff4a; color: #17171b; padding: 7px 8px 6px; cursor: pointer; box-shadow: 3px 3px 0 #17171b; max-width: 260px; }
+  .ui select:focus-visible { outline: 3px solid #ff4fa3; outline-offset: 2px; }
+  .hint { position: fixed; right: 14px; bottom: 12px; font: 600 calc(12.5 * var(--k-px, 1px))/1.3 "Arial Black", sans-serif; color: #fff; background: rgba(23, 23, 27, .88); padding: 4px 8px 3px; text-transform: uppercase; }   /* (an ink plate: the scene behind it is anything) */
+  body.shot .ui, body.shot .hint { display: none; }
+  #err { position: fixed; left: 14px; bottom: 12px; color: #fff; background: #c00; font: 12px monospace; white-space: pre-wrap; max-width: 60vw; }
+  #err:empty { display: none; }
+  #modfail { position: fixed; left: 14px; top: 56px; color: #fff; background: #d7141a; font: 700 12px/1.4 ui-monospace, Menlo, monospace; white-space: pre-wrap; max-width: 70vw; padding: 8px 10px; box-shadow: 4px 4px 0 #17171b; }
+  #modfail:empty { display: none; }
+  #simbadge { position: fixed; right: 14px; top: 14px; z-index: 5; background: #d7141a; color: #fff; font: 800 12px/1 "Arial Black", Impact, sans-serif; letter-spacing: .02em; text-transform: uppercase; padding: 8px 10px 7px; box-shadow: 3px 3px 0 #17171b; }   /* SIM LIVE pass: ?sim=live and the sim does not answer */
+  #modfail::before { content: "MODULE ERRORS · the rest of the city loaded"; display: block; font: 800 12px/1.2 "Arial Black", Impact, sans-serif; color: #ffe23a; margin-bottom: 4px; }
+  #bench { position: fixed; left: 14px; right: 14px; bottom: 14px; max-height: 70vh; overflow: auto; background: #17171b; color: #f7f7f2; padding: 14px 16px; box-shadow: 5px 5px 0 #ff4fa3; font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+  #bench b { display: block; color: #6cff4a; font: 800 13px/1 "Arial Black", Impact, sans-serif; margin-bottom: 8px; letter-spacing: .04em; }
+  #bench pre { margin: 0 0 10px; white-space: pre; overflow-x: auto; }
+  #bench button { font: 800 12px/1 "Arial Black", Impact, sans-serif; text-transform: uppercase; border: 0; background: #ffe23a; color: #17171b; padding: 9px 12px 8px; cursor: pointer; box-shadow: 3px 3px 0 #ff4fa3; }
+  #bench .hint2 { margin-left: 12px; color: #9fdcff; font: 600 11px/1 "Arial Black", sans-serif; text-transform: uppercase; }
+  /* LOADING SCREEN (2026-10-05, loading.js) · the load-in is a roll-down gate on Springfield Street: sky-blue corrugated steel, the AI CITY
+     throw-up, a corner that builds itself from the real load, the stage on a green street sign, the city-news crawl. It rolls up into the city. */
+  #loadin { position: fixed; inset: 0; z-index: 20; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    padding: 12px 16px 58px; box-sizing: border-box; background: repeating-linear-gradient(180deg, #2f9bff 0 14px, #2384e6 14px 17px, #63b8ff 17px 19px);
+    transition: transform .38s cubic-bezier(.55, 0, .9, .6); will-change: transform;   /* (down: a quick slam, like a dropped shutter) */
+    font: 800 13px/1.2 "Arial Black", Impact, sans-serif; color: #17171b; text-transform: uppercase; letter-spacing: .03em; }
+  #loadin.off { transform: translateY(calc(-100% - 24px)); pointer-events: none; transition: transform .85s cubic-bezier(.6, 0, .25, 1); }   /* (up: eased off the latch) */
+  #loadin.skip { display: none; }
+  #loadin .tag { font-size: clamp(46px, min(12vw, 11vh), 110px); line-height: .86; color: #ffc21a; text-align: center; transform: rotate(-4deg); text-shadow: .06em .06em 0 #17171b; letter-spacing: -.02em; }
+  #loadin .tag small { display: block; margin-top: .3em; font-size: .19em; letter-spacing: .14em; color: #ff4fa3; text-shadow: .1em .1em 0 #17171b; }
+  #loadin canvas { display: block; width: min(560px, calc(100vw - 32px), 50vh); aspect-ratio: 30.4 / 33; flex: none; }
+  #loadin .sign { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: min(300px, calc(100vw - 32px)); max-width: calc(100vw - 32px); box-sizing: border-box;
+    background: #14a83b; color: #fff; padding: 9px 16px 8px; box-shadow: 4px 4px 0 #17171b; text-align: center; }
+  #loadin .sign b { font-size: 18px; letter-spacing: .04em; }
+  #loadin .sign span { font: 600 11px/1.2 ui-monospace, Menlo, monospace; text-transform: none; letter-spacing: 0; color: #e4ffe4; }
+  #loadin .bar { width: min(300px, calc(100vw - 32px)); height: 12px; background: #17171b; box-shadow: 4px 4px 0 #ff4fa3; flex: none; }
+  #loadin .bar i { display: block; height: 100%; background: #ffc21a; transform-origin: 0 50%; transform: scaleX(0); }
+  #loadin .peeps { min-height: 13px; font-size: 11px; color: #17171b; }
+  #loadin .news { position: absolute; left: 0; right: 0; bottom: 14px; height: 30px; display: flex; align-items: stretch; background: #17171b; color: #f7f7f2; font-size: 12px; line-height: 30px; }
+  #loadin .news b { flex: none; padding: 0 10px; background: #e8232a; color: #fff; position: relative; z-index: 1; }
+  #loadin .crawl { flex: 1; overflow: hidden; white-space: nowrap; }
+  #loadin .crawl div { display: inline-block; padding-left: 16px; animation: crawl 90s linear infinite; }
+  #loadin .crawl .tip { color: #6cff4a; } #loadin .crawl i { font-style: normal; color: #ffc21a; margin: 0 14px; }
+  #loadin .lip { position: absolute; left: 0; right: 0; bottom: 0; height: 14px; background: #2384e6; }
+  #loadin .lip::before, #loadin .lip::after { content: ""; position: absolute; top: 3px; left: 22%; width: 44px; height: 7px; background: #ffc21a; box-shadow: 2px 2px 0 #17171b; }
+  #loadin .lip::after { left: auto; right: 22%; }
+  @keyframes crawl { to { transform: translateX(-50%); } }
+  @media (max-height: 560px) { #loadin .tag small, #loadin .peeps { display: none; } }
+  @media (prefers-reduced-motion: reduce) { #loadin, #loadin.off { transition: opacity .4s; } #loadin.off { transform: none; opacity: 0; } #loadin .crawl div { animation: none; } }
+  #err, #modfail { z-index: 30; }
+  body.shot #loadin { display: none; }
+  /* render pipeline pass · the render panel (render/panel.js): the static grain above is the grain section's `static` type */
+  .ui button[data-render] { background: #17171b; color: #ffc21a; box-shadow: 3px 3px 0 #ffc21a; }
+  .ui button[data-render]:hover, .ui button[data-render].on { background: #ffc21a; color: #17171b; box-shadow: 3px 3px 0 #17171b; }
+  #rpanel { position: fixed; right: 14px; top: 58px; bottom: 14px; width: min(380px, calc(100vw - 32px)); z-index: 10; display: flex; flex-direction: column; background: #17171b; color: #f7f7f2; box-shadow: 5px 5px 0 #ffc21a; font: 600 11px/1.35 ui-monospace, Menlo, monospace; }
+  #rpanel[hidden], body.shot #rpanel { display: none; }
+  #rpanel button { font: 800 11px/1 "Arial Black", Impact, sans-serif; text-transform: uppercase; border: 0; background: #fff; color: #17171b; padding: 6px 8px 5px; cursor: pointer; box-shadow: 2px 2px 0 #ffc21a; }
+  #rpanel button:hover { background: #ffc21a; }
+  #rpanel button:focus-visible, #rpanel input:focus-visible, #rpanel select:focus-visible { outline: 3px solid #ff4fa3; outline-offset: 1px; }
+  #rpanel select { font: 800 11px/1 "Arial Black", Impact, sans-serif; text-transform: uppercase; border: 0; background: #6cff4a; color: #17171b; padding: 5px 6px 4px; cursor: pointer; min-width: 0; }
+  #rpanel .rp-top { display: flex; align-items: center; gap: 10px; padding: 10px 12px 8px; }
+  #rpanel .rp-top b { font: 800 15px/1 "Arial Black", Impact, sans-serif; color: #ffc21a; text-transform: uppercase; letter-spacing: .04em; }
+  #rpanel .rp-cost { flex: 1; color: #9fdcff; }
+  #rpanel .rp-x { background: none; color: #f7f7f2; box-shadow: none; }
+  #rpanel .rp-looks { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 10px; }
+  #rpanel .rp-look { flex: 1 1 100%; }
+  #rpanel .rp-note { padding: 0 12px 8px; color: #ff4fa3; }
+  #rpanel .rp-note:empty { display: none; }
+  #rpanel .rp-groups { flex: 1; overflow: auto; padding: 0 12px 12px; overscroll-behavior: contain; }
+  #rpanel .rp-group { margin: 8px 0 6px; font: 800 12px/1 "Arial Black", Impact, sans-serif; color: #ffc21a; text-transform: uppercase; letter-spacing: .03em; }
+  #rpanel .rp-sec { background: #26262d; margin-bottom: 5px; }
+  #rpanel .rp-head { display: flex; align-items: center; gap: 6px; padding: 5px 8px; }
+  #rpanel .rp-tw { background: none; color: #ffc21a; box-shadow: none; padding: 2px 3px; width: 18px; }
+  #rpanel .rp-title { flex: 1; font: 800 12px/1.1 "Arial Black", Impact, sans-serif; text-transform: uppercase; cursor: pointer; }
+  #rpanel .rp-sec.off .rp-title { color: #8b8b95; }
+  #rpanel .rp-ms { color: #6cff4a; white-space: nowrap; }
+  #rpanel .rp-mv { padding: 3px 5px 2px; box-shadow: none; background: #3a3a44; color: #f7f7f2; }
+  #rpanel .rp-body { display: grid; gap: 5px; padding: 3px 10px 9px 32px; }
+  #rpanel .rp-body[hidden] { display: none; }
+  #rpanel .rp-row { display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) 42px; align-items: center; gap: 6px; }
+  #rpanel .rp-row .rp-wide { grid-column: 2 / 4; }
+  #rpanel .rp-k { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #c9c9d1; }
+  #rpanel .rp-row.mod .rp-k { color: #ffc21a; }
+  #rpanel .rp-v { text-align: right; color: #9fdcff; }
+  #rpanel input[type=range] { width: 100%; margin: 0; accent-color: #ffc21a; }
+  #rpanel input[type=checkbox] { width: 16px; height: 16px; margin: 0; accent-color: #ffc21a; justify-self: start; }
+  #rpanel input[type=color] { width: 100%; height: 20px; border: 0; padding: 0; background: none; cursor: pointer; }
+  #rpanel input[type=text] { font: inherit; background: #f7f7f2; border: 0; padding: 3px 5px; }
+</style>
+<div id="stage"></div>
+<div class="grain"></div>
+<div class="ui"><b>AI City · Downtown &amp; Fit Street</b>
+  <select id="goto" aria-label="Go to a place"><option value="">Go to…</option></select>
+  <button data-view="overview">Overview</button><button data-view="roofs">Roofs</button><button data-view="fitstreet">Fit St</button><button data-view="avenue">Avenue</button><button data-view="side-1">Side St</button><button data-view="corner">Corner</button><button data-view="stress">Island (stress)</button>
+  <button data-tod="day">Day</button><button data-tod="night">Night</button><button data-rush>Rush</button>
+  <span class="q">Quality: <span id="preset">…</span></span><button data-q="low">Low</button><button data-q="medium">Med</button><button data-q="high">High</button><button data-q="auto">Auto</button><button data-render aria-expanded="false" title="render settings: post stack, light, looks ( \ )">Render</button></div>
+<div class="hint">drag to move · right- or shift-drag to turn · scroll to zoom<br>WASD / arrows move · Q E turn · R F zoom · shift = faster</div>
+<div id="err"></div>
+<div id="modfail"></div>
+<div id="simbadge" hidden></div>
+<div id="loadin"><div class="tag" aria-hidden="true">AI City<small>Springfield Street</small></div><canvas aria-hidden="true"></canvas><div class="sign"><b role="status">Waking the city</b><span>loading the code</span></div><div class="bar" aria-hidden="true"><i></i></div><div class="peeps" aria-hidden="true"></div><div class="news" aria-hidden="true"><b>City news</b><div class="crawl"></div></div><div class="lip"></div></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/" } }</script>
+<script>
+  if (new URLSearchParams(location.search).has('shot')) document.body.classList.add('shot');
+  addEventListener('error', e => { document.getElementById('err').textContent += (e.message || e) + '\n'; });
+  addEventListener('unhandledrejection', e => { document.getElementById('err').textContent += (e.reason && e.reason.stack || e.reason) + '\n'; });
+  { const c = document.createElement('canvas'); c.width = c.height = 160; const g = c.getContext('2d'), d = g.createImageData(160, 160);
+    let a = 20260928; const rnd = () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };   // (render pass: seeded, so two shots match pixel for pixel)
+    for (let i = 0; i < d.data.length; i += 4) { const v = rnd() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
+    g.putImageData(d, 0, 0); document.querySelector('.grain').style.backgroundImage = `url(${c.toDataURL()})`; }
+</script>
+<script type="module" src="./loading.js"></script>
+<script type="module" src="./main.js"></script>

@@ -1,0 +1,462 @@
+{
+ "tier": "mainland",
+ "name": "mainland-trophy",
+ "style": "trophy",
+ "room": {
+  "h": 2.8,
+  "w": 62,
+  "d": 28,
+  "walls": {
+   "N": "paint:#f4f1ea",
+   "E": "paint:#2f5bff"
+  },
+  "floor": "stone",
+  "zones": [
+   {
+    "x": 0,
+    "z": 0,
+    "w": 9,
+    "d": 16,
+    "floor": "tile"
+   },
+   {
+    "x": 47,
+    "z": 0,
+    "w": 15,
+    "d": 28,
+    "floor": "concrete"
+   }
+  ],
+  "built": [
+   {
+    "kind": "wall",
+    "x": 9,
+    "z": 0,
+    "w": 1,
+    "d": 16
+   },
+   {
+    "kind": "wall",
+    "x": 24,
+    "z": 0,
+    "w": 1,
+    "d": 18
+   },
+   {
+    "kind": "wall",
+    "x": 46,
+    "z": 0,
+    "w": 1,
+    "d": 19
+   },
+   {
+    "kind": "car",
+    "x": 50,
+    "z": 6,
+    "w": 10,
+    "d": 16
+   }
+  ]
+ },
+ "items": [
+  {
+   "id": "toilet",
+   "x": 4,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "sink-bath",
+   "x": 6,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "medicine-cabinet",
+   "x": 6,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "wall": "N"
+   }
+  },
+  {
+   "id": "bathtub",
+   "x": 0,
+   "z": 5,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "bed-platform",
+   "x": 13,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "table-end",
+   "x": 11,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "lamp-table",
+   "x": 11,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": {
+    "top": 5
+   }
+  },
+  {
+   "id": "table-end",
+   "x": 21,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "lamp-table",
+   "x": 21,
+   "z": 0,
+   "rot": 0,
+   "variant": 0,
+   "on": {
+    "top": 7
+   }
+  },
+  {
+   "id": "rug-persian",
+   "x": 13,
+   "z": 10,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "dresser",
+   "x": 20,
+   "z": 18,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "plant-cactus",
+   "x": 23,
+   "z": 18,
+   "rot": 0,
+   "variant": 1,
+   "on": {
+    "top": 10
+   }
+  },
+  {
+   "id": "ceiling-fan",
+   "x": 14,
+   "z": 10,
+   "rot": 0,
+   "variant": 0,
+   "on": "ceiling"
+  },
+  {
+   "id": "counter-sink",
+   "x": 25,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "stove",
+   "x": 31,
+   "z": 0,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "fridge",
+   "x": 34,
+   "z": 0,
+   "rot": 0,
+   "variant": 2,
+   "on": "floor"
+  },
+  {
+   "id": "bar-home",
+   "x": 26,
+   "z": 6,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "stool-bar",
+   "x": 27,
+   "z": 10,
+   "rot": 180,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "stool-bar",
+   "x": 31,
+   "z": 10,
+   "rot": 180,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "rug-rag",
+   "x": 26,
+   "z": 5,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "door-front",
+   "x": 37,
+   "z": 0,
+   "rot": 0,
+   "variant": 3,
+   "on": {
+    "wall": "N"
+   }
+  },
+  {
+   "id": "plinth",
+   "x": 42,
+   "z": 1,
+   "rot": 0,
+   "variant": 2,
+   "on": "floor"
+  },
+  {
+   "id": "plinth",
+   "x": 42,
+   "z": 6,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "lava-lamp",
+   "x": 43,
+   "z": 7,
+   "rot": 0,
+   "variant": 1,
+   "on": {
+    "top": 22
+   }
+  },
+  {
+   "id": "rug-shag",
+   "x": 32,
+   "z": 10,
+   "rot": 0,
+   "variant": 2,
+   "on": "floor"
+  },
+  {
+   "id": "table-coffee",
+   "x": 34,
+   "z": 12,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "sofa-low",
+   "x": 32,
+   "z": 17,
+   "rot": 180,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "lamp-arc",
+   "x": 30,
+   "z": 14,
+   "rot": 90,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "plant-monstera",
+   "x": 43,
+   "z": 23,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "bookshelf",
+   "x": 47,
+   "z": 0,
+   "rot": 0,
+   "variant": 2,
+   "on": "floor"
+  },
+  {
+   "id": "paint-kit",
+   "x": 58,
+   "z": 23,
+   "rot": 0,
+   "variant": 1,
+   "on": "floor"
+  },
+  {
+   "id": "beer-cans",
+   "x": 48,
+   "z": 24,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  },
+  {
+   "id": "ceiling-fan",
+   "x": 30,
+   "z": 12,
+   "rot": 0,
+   "variant": 1,
+   "on": "ceiling"
+  },
+  {
+   "id": "plant-monstera",
+   "x": 1,
+   "z": 22,
+   "rot": 0,
+   "variant": 0,
+   "on": "floor"
+  }
+ ],
+ "slots": [
+  {
+   "id": "stash",
+   "label": "the vent",
+   "place": "wall",
+   "x": 1,
+   "z": 0,
+   "foot": [
+    2,
+    1
+   ],
+   "rot": 0,
+   "demo": "stash-vent",
+   "variant": 0,
+   "fits": [
+    "stash"
+   ],
+   "wall": "N",
+   "y": 0.25
+  },
+  {
+   "id": "art",
+   "label": "the art wall",
+   "place": "wall",
+   "x": 13,
+   "z": 0,
+   "foot": [
+    8,
+    6
+   ],
+   "rot": 0,
+   "demo": "art-big",
+   "variant": 0,
+   "fits": [
+    "collectible"
+   ],
+   "wall": "N",
+   "y": 1.05
+  },
+  {
+   "id": "plinth",
+   "label": "the plinth",
+   "place": "surface",
+   "x": 42,
+   "z": 1,
+   "foot": [
+    3,
+    3
+   ],
+   "rot": 0,
+   "demo": "trophy-gold-grill",
+   "variant": 0,
+   "fits": [
+    "trophy",
+    "collectible"
+   ],
+   "on": 21
+  },
+  {
+   "id": "trophies",
+   "label": "the trophy shelf",
+   "place": "surface",
+   "x": 47,
+   "z": 0,
+   "foot": [
+    4,
+    2
+   ],
+   "rot": 0,
+   "demo": "trophy-crew-crown",
+   "variant": 0,
+   "fits": [
+    "trophy"
+   ],
+   "on": 29
+  },
+  {
+   "id": "display",
+   "label": "the display wall",
+   "place": "wall",
+   "x": 53,
+   "z": 0,
+   "foot": [
+    8,
+    6
+   ],
+   "rot": 0,
+   "demo": "cap-wall",
+   "variant": 0,
+   "fits": [
+    "collectible"
+   ],
+   "wall": "N",
+   "y": 0.6
+  },
+  {
+   "id": "caps",
+   "label": "the cap wall",
+   "place": "wall",
+   "x": 10,
+   "z": 0,
+   "foot": [
+    8,
+    4
+   ],
+   "rot": 0,
+   "demo": "cap-wall",
+   "variant": 0,
+   "fits": [
+    "collectible"
+   ],
+   "wall": "E",
+   "y": 1.5
+  }
+ ]
+}

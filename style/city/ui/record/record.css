@@ -1,0 +1,91 @@
+/* C1-11, the drawn half · the record path's panels (ui/record/). Kit tokens only (kit.css), so every skin dresses them.
+   Layout: the menu top left; People docked left and the dossier docked right; CH 9 top centre between them; the ticker along the
+   bottom; all of it above the record player's controls (--r-bar, measured by ui/record/index.js). The map takes the space between the
+   menu and the ticker, alone (opening it closes the others). */
+body.r-ui:not(.dev) > .ui, body.r-ui:not(.dev) > .hint { display: none !important; }
+#k[data-record] { --r-bar: 82px; --r-tick-h: calc(34 * var(--k-px)); --r-top: calc(60 * var(--k-px)); --r-low: calc(var(--r-bar) + var(--r-tick-h) + 10px); }
+#k[data-record] .k-panel { top: var(--r-top); bottom: var(--r-low); }
+#k .r-menu { position: absolute; left: 14px; top: 14px; display: flex; gap: 6px; pointer-events: auto; }
+#k .r-menu .k-btn { background: var(--k-bg); box-shadow: var(--k-shadow-s); }
+#k .r-panel { color: var(--k-ink); }
+#k .r-head { display: flex; gap: var(--k-s2); align-items: flex-start; padding: var(--k-s3) var(--k-s3) var(--k-s2); border-bottom: 1px solid var(--k-line); }
+#k .r-id { flex: 1; min-width: 0; }
+#k .r-title { margin: 0; font: 700 var(--k-fs-xl)/1.1 var(--k-font-display); overflow-wrap: anywhere; }
+#k .r-sub { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 4px; color: var(--k-ink-2); }
+#k .r-body { padding: var(--k-s2) var(--k-s3) var(--k-s3); }
+#k .r-sec { padding: var(--k-s2) 0; border-bottom: 1px solid var(--k-line); }
+#k .r-sec:last-child { border-bottom: 0; }
+#k .r-h { margin: 0 0 6px; font: 700 var(--k-fs-m)/1.2 var(--k-font-display); text-transform: var(--k-case-label); letter-spacing: var(--k-track-label); }
+#k .r-stat { display: flex; justify-content: space-between; gap: var(--k-s2); padding: 2px 0; }
+#k .r-stat > span:first-child { color: var(--k-ink-2); }
+#k .r-stat > :last-child { text-align: right; overflow-wrap: anywhere; }
+#k .r-say { margin: 6px 0; padding: 6px 10px; border-left: 3px solid var(--k-accent); background: var(--k-bg-3); font-style: italic; }
+#k .r-note { margin: 6px 0 4px; color: var(--k-ink-2); display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+#k .r-none { margin: 4px 0; color: var(--k-ink-3); }
+#k .r-list { list-style: none; margin: 0; padding: 0; }
+#k .r-rows > li, #k .r-tie, #k .r-bounty { padding: 4px 0; border-top: 1px solid var(--k-line); }
+#k .r-row { display: block; }
+#k .r-when { color: var(--k-ink-3); font: 500 var(--k-fs-xs)/1 var(--k-font-mono); margin-right: 6px; white-space: nowrap; }
+#k .r-part.is-person { font-weight: var(--k-weight-strong); }
+#k .r-live, #k .r-badge { display: inline-block; padding: 2px 6px; border-radius: var(--k-r1); font: 700 var(--k-fs-xs)/1.2 var(--k-font-mono); letter-spacing: .04em; vertical-align: 1px; margin-right: 6px; }
+#k .r-live { color: var(--k-live); background: var(--k-live-bg); }
+#k .r-badge { color: var(--k-tape); background: var(--k-tape-bg); }
+#k .r-flag { display: inline-block; padding: 1px 6px; border-radius: var(--k-r1); background: var(--k-bg-3); font-weight: 700; }
+#k .r-flag.is-wanted { background: var(--k-wanted); color: var(--k-wanted-ink); }
+#k .r-x { margin-left: auto; }
+/* People */
+#k .r-person, #k .r-crew { display: grid; grid-template-columns: auto 1fr auto; gap: 2px 8px; align-items: baseline; padding: 6px 4px; border-top: 1px solid var(--k-line); cursor: pointer; border-radius: var(--k-r1); }
+#k .r-person:hover, #k .r-person:focus-visible { background: var(--k-bg-3); outline: none; }
+#k .r-roster .r-person { grid-template-columns: 1fr auto; }
+#k .r-pmeta { grid-column: 1 / -1; color: var(--k-ink-2); }
+#k .r-ladder .r-pmeta { grid-column: 2 / -1; }
+#k .r-rank { font: 700 var(--k-fs-l)/1 var(--k-font-display); color: var(--k-ink-3); min-width: 1.6em; }
+#k .r-heat { white-space: nowrap; }
+#k[data-record] .k-tabs { margin: var(--k-s2) var(--k-s3) 0; }
+/* CH 9 */
+#k .r-ch9 { position: absolute; left: 50%; top: var(--r-top); transform: translateX(-50%); width: min(calc(440 * var(--k-px)), calc(100vw - 2 * var(--k-panel-w) - 72px));
+  max-height: calc(100vh - var(--r-top) - var(--r-low) - 8px); display: flex; flex-direction: column; pointer-events: auto; background: var(--k-bg); border-radius: var(--k-r3); box-shadow: var(--k-shadow); overflow: hidden; }
+#k .r-ch9[hidden] { display: none; }
+#k .r-ch9 .r-body { overflow: auto; }
+#k .r-ch9-banner { margin: 0 0 6px; padding: 6px 10px; border-radius: var(--k-r1); background: var(--k-ink); color: var(--k-bg-solid); }
+#k .r-ch9-top { font: 600 var(--k-fs-l)/1.3 var(--k-font-display); padding: 6px 0 8px; }
+/* the ticker */
+#k .r-ticker { position: absolute; left: 14px; right: 14px; bottom: var(--r-bar); height: var(--r-tick-h); display: flex; align-items: center; gap: 10px; pointer-events: auto;
+  background: var(--k-bg); border-radius: var(--k-r2); box-shadow: var(--k-shadow-s); overflow: hidden; }
+#k .r-ticker[hidden] { display: none; }
+#k .r-tick-k { flex: none; align-self: stretch; display: flex; align-items: center; padding: 0 10px; background: var(--k-accent); color: var(--k-accent-ink); font: 800 var(--k-fs-s)/1 var(--k-font-display); letter-spacing: .08em; }
+#k .r-tick-win { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; }
+#k .r-track { display: inline-flex; gap: 22px; align-items: center; padding-right: 40px; animation: r-scroll var(--r-tick-s, 60s) linear infinite; }
+#k .r-ticker:hover .r-track { animation-play-state: paused; }
+#k .r-track > .r-row { display: inline; white-space: nowrap; }
+#k .r-tick-sep { font: 700 var(--k-fs-xs)/1 var(--k-font-mono); color: var(--k-tape); }
+@keyframes r-scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+@media (prefers-reduced-motion: reduce) { #k .r-track { animation: none; } }
+/* the map */
+#k .r-map { position: absolute; left: 14px; right: 14px; top: var(--r-top); bottom: var(--r-low); pointer-events: auto; background: var(--k-map-paper, #f6f1e4); border-radius: var(--k-r2); box-shadow: var(--k-shadow); overflow: hidden; color: var(--k-map-ink, #222); }
+#k .r-map[hidden] { display: none; }
+#k .r-map-sheet { position: absolute; left: 0; top: 0; bottom: 0; right: 220px; }
+#k .r-map-base { position: absolute; left: 0; top: 0; mix-blend-mode: multiply; }
+#k .r-map-marks { position: absolute; inset: 0; }
+#k .r-mk { position: absolute; left: 0; top: 0; white-space: nowrap; font: 600 calc(11 * var(--k-px))/1.1 var(--k-map-font, system-ui); }
+#k .r-place i { position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%; background: var(--k-map-ink, #222); }
+#k .r-place span { position: absolute; left: 5px; top: -6px; color: var(--k-map-ink-2, #444); text-shadow: 0 0 2px var(--k-map-halo, #fff), 0 0 2px var(--k-map-halo, #fff); }
+#k .r-district { z-index: 2; translate: -50% -130%; display: flex; flex-direction: column; align-items: center; padding: 3px 7px; border-radius: var(--k-r1); background: var(--k-map-ink, #222); color: var(--k-map-halo, #fff); }
+#k .r-district b { letter-spacing: .12em; }
+#k .r-corner { z-index: 3; }
+#k .r-corner i { position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; transform: rotate(45deg); background: var(--k-map-corner, #ffd23f); border: 2px solid var(--k-map-ink, #222); }
+#k .r-corner.is-hot i { background: var(--k-wanted); }
+#k .r-corner > span { position: absolute; left: 10px; top: 4px; padding: 1px 5px; background: var(--k-map-halo, #fff); border: 1px solid var(--k-map-ink, #222); }
+#k .r-map-legend { position: absolute; left: 12px; top: 10px; padding: 8px 12px; background: var(--k-map-halo, #fff); border: 2px solid var(--k-map-ink, #222); z-index: 4; }
+#k .r-posters { position: absolute; right: 0; top: 0; bottom: 0; width: 220px; padding: 10px; overflow: auto; border-left: 2px solid var(--k-map-ink, #222); background: var(--k-map-halo, #fff); }
+#k .r-poster { margin: 0 0 8px; padding: 8px; border: 2px dashed var(--k-map-ink, #222); text-align: center; }
+#k .r-poster-w { display: block; letter-spacing: .2em; color: var(--k-wanted); }
+#k .r-poster-n { font: 800 var(--k-fs-l)/1.1 var(--k-font-display); }
+#k .r-map-x { position: absolute; right: 228px; top: 8px; z-index: 5; }
+/* C1-8 · TV mode (ui/record/tv.js): the director's lower third, above the ticker; the menu's TV button lit while it is on */
+#k .r-tv-cap { position: absolute; left: 14px; bottom: var(--r-low); max-width: min(560px, calc(100vw - 28px)); padding: 8px 12px 9px; background: var(--k-bg); color: var(--k-ink); box-shadow: var(--k-shadow-s); border-left: 4px solid var(--k-accent); pointer-events: none; }
+#k .r-tv-cap[hidden] { display: none; }
+#k .r-tv-bug { float: right; margin: 0 0 0 10px; }
+#k .r-tv-who { font: 700 var(--k-fs-l, 16px)/1.2 var(--k-font-display); overflow-wrap: anywhere; }
+#k .r-tv-what { margin-top: 2px; color: var(--k-ink-2); text-transform: var(--k-case-label); letter-spacing: var(--k-track-label); }
+#k .r-tv-btn.is-on { background: var(--k-accent); color: var(--k-accent-ink, var(--k-ink)); }

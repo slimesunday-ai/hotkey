@@ -1,0 +1,89 @@
+{
+  "_about": "A deep-slide homage: dense blacks, punchy contrast, rich magenta-leaning reds, deep greens, restrained blues, very fine grain, a narrow latitude. The tape's grade, sharpening and chroma are off so the stock speaks; bloom and lens stay from '98.",
+  "_tweak": "stock.amount, stock.shoulder.",
+  "_base": "camcorder-98 (slime's look): its bloom, lens, dof and stack, with the film sections on top; post-only, so it keeps the page's time of day (night build included).",
+  "dof": {
+    "strength": 10.8,
+    "falloff": 0.25
+  },
+  "bloom": {
+    "on": true,
+    "threshold": 0.72,
+    "strength": 0.45,
+    "radius": 0.8
+  },
+  "halation": {
+    "strength": 0.2,
+    "radius": 0.4,
+    "spread": 1.35,
+    "on": true
+  },
+  "grade": {
+    "on": false,
+    "temperature": -0.04,
+    "tint": 0.1,
+    "contrast": 0.95,
+    "saturation": 1.2,
+    "fade": 0.07
+  },
+  "sharpen": {
+    "on": false,
+    "amount": 0.9,
+    "radius": 1.6
+  },
+  "chroma": {
+    "on": false,
+    "amount": 1
+  },
+  "lens": {
+    "on": true,
+    "amount": 0.03
+  },
+  "vignette": {
+    "amount": 0.3,
+    "radius": 0.7
+  },
+  "grain": {
+    "type": "film",
+    "amount": 0.055,
+    "response": 0.9,
+    "color": "colour",
+    "format": "35 mm"
+  },
+  "dither": {
+    "levels": 12,
+    "strength": 1.35
+  },
+  "letterbox": {
+    "aspect": "1.33",
+    "color": "#0b0b0e"
+  },
+  "film": {
+    "on": true
+  },
+  "stock": {
+    "on": true,
+    "stock": "slide 64",
+    "amount": 1
+  },
+  "weave": {
+    "on": true,
+    "amount": 0.45,
+    "vertical": 0.35,
+    "judder": 0.03
+  },
+  "flicker": {
+    "on": true,
+    "amount": 0.008,
+    "style": "projector"
+  },
+  "dust": {
+    "on": true,
+    "density": 0.15,
+    "white": 0.5,
+    "hairs": 0.08
+  },
+  "stack": {
+    "order": "blur,grade,bloom,halation,sharpen,chroma,lens,vignette,grain,dither,letterbox"
+  }
+}

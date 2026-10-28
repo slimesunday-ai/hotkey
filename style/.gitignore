@@ -1,0 +1,7 @@
+# raw screenshots stay on disk; the review boards (board-*.jpg) are the committed record
+*.png
+# the baked city is generated: node style/city/tools/bake.mjs rebuilds it (streaming pass)
+city/baked/
+# the character audit: poses.json is captured from the live walk shader (run.mjs --poses rebuilds it), results.json is per run
+city/studio/audit/poses.json
+city/studio/audit/results.json

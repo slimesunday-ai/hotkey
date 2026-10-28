@@ -1,0 +1,94 @@
+/* HUMAN LAYER · SECTION 2b · the diary room (a modal over the city: the camcorder screen + its controls) and the toys' bar (heat,
+   clip). The diary's canvas reads its colours from these tokens on #k (per skin): --d-wall/-2 the room's wall, --d-chair/-2 the
+   chair, --d-rec the REC dot, --d-osd the OSD type, --d-cap-bg/-ink the caption box, --d-think/--d-say/--d-dm the line kinds.
+   Fonts are the skin's own (--k-font-display, --k-font-mono, --k-font). */
+#k {
+  --d-wall: #3b1f6e; --d-wall-2: #170a33; --d-chair: #ff3d7f; --d-chair-2: #b5105a; --d-rec: #ff2b2b; --d-osd: #f6f6ee;
+  --d-cap-bg: rgba(10, 10, 16, .8); --d-cap-ink: #ffffff; --d-think: #ffd84d; --d-say: #7fe7ff; --d-dm: #ff8ad8;
+  --d-scrim: rgba(8, 9, 14, .62);
+}
+#k[data-skin="98"] { --d-wall: #13324a; --d-wall-2: #050d16; --d-chair: #ff6a2b; --d-chair-2: #a8340d; --d-osd: #f3f3ea; --d-think: #ffe14d; --d-say: #52ff86; --d-dm: #ff6ad5; --d-scrim: rgba(0, 0, 0, .72); }
+#k[data-skin="zine"] { --d-wall: #ff4fa3; --d-wall-2: #a3105c; --d-chair: #ffc21a; --d-chair-2: #c98a00; --d-cap-bg: rgba(23, 23, 27, .88); --d-think: #ffc21a; --d-say: #9fe8ff; --d-dm: #ff9fd0; --d-scrim: rgba(241, 236, 225, .55); }
+
+#k[data-skin="zte"] { --d-wall: #FF4FA3; --d-wall-2: #A3175F; --d-chair: #FFC21A; --d-chair-2: #B8860B; --d-rec: #E8232A; --d-osd: #F4F1EA; --d-cap-bg: rgba(23, 23, 27, .9); --d-cap-ink: #F4F1EA;
+  --d-think: #FFC21A; --d-say: #6CFF4A; --d-dm: #FF9FD0; --d-scrim: rgba(230, 225, 214, .62); }
+/* ── the room ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+#k .dy-room { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; pointer-events: auto; background: var(--d-scrim); z-index: 3;
+  opacity: 0; transition: opacity var(--k-dur) var(--k-ease); }
+#k .dy-room.is-open { opacity: 1; }
+#k .dy-room[hidden] { display: none; }
+#k .dy-box { width: min(1040px, 94vw, calc((100vh - 120px) * 16 / 9)); display: grid; gap: 8px; transform: translateY(10px) scale(.985); transition: transform var(--k-dur) var(--k-ease); }
+#k .dy-room.is-open .dy-box { transform: none; }
+#k .dy-screen { position: relative; aspect-ratio: 16 / 9; background: #000; border-radius: var(--k-r2); overflow: hidden; box-shadow: var(--k-shadow); }
+#k .dy-cv { display: block; width: 100%; height: 100%; cursor: pointer; }
+#k .dy-bar { display: flex; align-items: center; gap: 6px; padding: 6px; background: var(--k-bg); -webkit-backdrop-filter: var(--k-blur); backdrop-filter: var(--k-blur); border-radius: var(--k-r2); box-shadow: var(--k-shadow-s); }
+#k .dy-mid { display: flex; align-items: center; gap: 10px; padding: 0 6px; min-width: 0; }
+#k .dy-title { margin: 0; font: 650 var(--k-fs-m)/1.1 var(--k-font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#k .dy-sp { flex: 1; }
+#k .dy-prev svg { transform: scaleX(-1); }
+#k .dy-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+@media (max-width: 700px) { #k .dy-bar { flex-wrap: wrap; } #k .dy-sp { display: none; } }
+
+/* ── the toys' bar (top left): heat + clip ─────────────────────────────────────────────────────────────────────────────────── */
+#k .s2-bar { position: absolute; left: 14px; top: calc(104 * var(--k-px)); display: flex; flex-direction: column; align-items: flex-start; gap: 6px; pointer-events: none; max-width: calc(100vw - 28px);
+  transition: left var(--k-dur) var(--k-ease); }
+#k:has(.k-panel.is-open.dock-left) .s2-bar { left: calc(var(--k-panel-w) + 28px); }   /* (the dossier docked left: step aside, as 2a's transport does) */
+@media (max-width: 700px) { #k .s2-bar { top: calc(96 * var(--k-px)); } }
+#k .s2-bar .tr-legend { position: static; }
+#k .s2-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+#k .s2-tools[hidden] { display: none; }
+#k .s2-bar > * { pointer-events: auto; }
+#k .s2-bar .ht-bar { position: static; }
+#k .cl-bar { display: flex; align-items: center; gap: 4px; padding: 5px; background: var(--k-bg); -webkit-backdrop-filter: var(--k-blur); backdrop-filter: var(--k-blur); border-radius: var(--k-r2); box-shadow: var(--k-shadow-s); }
+#k .cl-bar .k-btn { min-height: calc(28 * var(--k-px)); padding: 0 9px; font-size: var(--k-fs-xs); }
+#k .cl-rec::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--d-rec); }
+#k .cl-rec.is-rec { background: var(--d-rec); color: #fff; }
+#k .cl-rec.is-rec::before { background: #fff; animation: dy-blink 1s steps(1) infinite; }
+#k .cl-bar[hidden], #k .cl-cut[hidden] { display: none; }
+#k .cl-burn[aria-pressed="true"] { background: var(--k-ink); color: var(--k-bg-solid); }
+#k .cl-len { height: calc(28 * var(--k-px)); border: 0; border-radius: var(--k-r1); background: var(--k-bg-3); color: var(--k-ink); font: 500 var(--k-fs-xs)/1 var(--k-font); padding: 0 4px; }
+@keyframes dy-blink { 50% { opacity: 0; } }
+
+/* ── the dossier's two entry points (a quiet row under the actions) ────────────────────────────────────────────────────────── */
+#k .d-more { display: flex; gap: 6px; padding: 0 var(--k-s4) var(--k-s3); margin-top: -4px; }
+#k .d-more:empty { display: none; }
+#k .d-more .k-btn.dm-tools { flex: none; width: calc(34 * var(--k-px)); padding: 0; font-weight: 700; letter-spacing: .05em; }
+#k .d-more .k-btn.dm-map { flex: none; width: calc(34 * var(--k-px)); padding: 0; }   /* (the pin is an icon, not a share of the row: "Where they went" fits at 1280; review 10-09 #15) */
+#k .d-more .k-btn { flex: 1 1 0; min-height: calc(30 * var(--k-px)); background: none; box-shadow: inset 0 0 0 1px var(--k-line); color: var(--k-ink-2); font-size: var(--k-fs-xs); }
+#k .d-more .k-btn:hover { background: var(--k-bg-3); color: var(--k-ink); }
+@media (max-width: 1480px) { #k .d-more .k-btn:not(.dm-map):not(.dm-tools) { flex: 1 1 auto; padding: 0 6px; } }   /* (WM5: at ≥ 12.5 px "Where they went" needs more than half the row; the keys share it by their words) */
+#k .d-more .k-btn.is-on { background: var(--k-ink); color: var(--k-bg-solid); box-shadow: none; }
+#k .d-more .k-btn .dm-sw { width: 12px; height: 5px; border-radius: 3px; background: var(--tr, currentColor); box-shadow: 0 0 0 1.5px var(--k-trail-ink); }
+#k .d-more .k-btn .dm-lens { font: 650 var(--k-fs-xs)/1 var(--k-font); letter-spacing: .05em; color: var(--k-tape); }
+#k .d-more .k-btn.is-yours .dm-lens { color: var(--k-yours); } #k .d-more .k-btn.is-archive .dm-lens { color: var(--k-archive); }
+
+/* ── skins ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+#k[data-skin="98"] .dy-screen { border-radius: 0; box-shadow: 0 0 0 1px var(--k-line), 0 0 0 6px #000, 0 0 0 7px var(--k-line); }
+#k[data-skin="98"] .dy-bar, #k[data-skin="98"] .cl-bar { border-radius: 0; border: 1px solid var(--k-line); }
+#k[data-skin="98"] .dy-title { font: 400 calc(24 * var(--k-px))/1 var(--k-font-display); letter-spacing: .04em; text-transform: uppercase; }
+#k[data-skin="98"] .cl-len { border-radius: 0; background: var(--k-silver); color: #000; }
+#k[data-skin="98"] .d-more .k-btn { background: none; color: var(--k-ink-2); box-shadow: inset 0 0 0 1px var(--k-line); text-shadow: none; }
+#k[data-skin="98"] .d-more .k-btn.is-on { background: var(--k-silver); color: #000; }
+#k[data-skin="zine"] .dy-screen { border-radius: 0; box-shadow: 6px 7px 0 var(--k-ink), 0 0 0 3px var(--k-ink); transform: rotate(-.4deg); }
+#k[data-skin="zine"] .dy-bar, #k[data-skin="zine"] .cl-bar { border-radius: 0; background: #fff; box-shadow: 3px 3px 0 var(--k-ink), inset 0 0 0 2px var(--k-ink); }
+#k[data-skin="zine"] .dy-title { font: 400 calc(22 * var(--k-px))/1 var(--k-font-display); text-transform: uppercase; }
+#k[data-skin="zine"] .cl-len { border-radius: 0; background: #fff; box-shadow: inset 0 0 0 1.5px var(--k-ink); }
+#k[data-skin="zine"] .d-more .k-btn { background: #fff; box-shadow: inset 0 0 0 1.5px var(--k-ink); color: var(--k-ink); }
+#k[data-skin="zine"] .d-more .k-btn.is-on { background: var(--k-ink); color: var(--k-yellow); }
+#k[data-skin="zte"] .dy-screen { border-radius: 0; box-shadow: 8px 9px 0 var(--zt-ink); }
+#k[data-skin="zte"] .dy-bar, #k[data-skin="zte"] .cl-bar { gap: 5px; padding: 5px; border-radius: 0; background: var(--zt-grid), var(--zt-bone); box-shadow: 4px 4px 0 var(--zt-ink); }
+#k[data-skin="zte"] .dy-title { font: 400 calc(18 * var(--k-px))/1 var(--k-font-sign); text-transform: uppercase; }
+#k[data-skin="zte"] .cl-bar .k-btn { min-height: calc(28 * var(--k-px)); padding: 0 8px; font-size: var(--zt-fs-label); font-family: var(--zt-font-label); }
+#k[data-skin="zte"] .cl-rec::before { border-radius: 0; }
+#k[data-skin="zte"] .cl-rec.is-rec { background: var(--d-rec); color: var(--zt-white); }
+#k[data-skin="zte"] .cl-burn[aria-pressed="true"] { background: var(--zt-ink); color: var(--zt-lime); box-shadow: none; transform: translate(2px, 2px); }
+#k[data-skin="zte"] .cl-len { height: calc(28 * var(--k-px)); border-radius: 0; background: var(--zt-white); box-shadow: 2px 2px 0 var(--zt-ink); font: 400 var(--zt-fs-label)/1 var(--zt-font-label); text-transform: uppercase; padding: 0 6px; }
+#k[data-skin="zte"] .d-more { gap: 6px; padding: 0 18px 14px; margin-top: -2px; }
+#k[data-skin="zte"] .d-more .k-btn { min-height: calc(30 * var(--k-px)); padding: 0 6px; background: var(--zt-white); color: var(--zt-ink); box-shadow: 2px 2px 0 var(--zt-ink); font: 700 var(--k-fs-xs)/1 var(--k-font); text-transform: uppercase; letter-spacing: 0; }   /* (Space Mono, as the tabs: the row is tight) */
+#k[data-skin="zte"] .d-more .k-btn.dm-map { flex: none; width: calc(36 * var(--k-px)); padding: 0; }
+#k[data-skin="zte"] .d-more .k-btn:hover { background: #fff; }
+#k[data-skin="zte"] .d-more .k-btn.is-on { background: var(--zt-ink); color: var(--zt-lime); box-shadow: none; transform: translate(2px, 2px); }
+#k[data-skin="zte"] .d-more .k-btn .dm-sw { width: 12px; height: 8px; border-radius: 0; box-shadow: 1.5px 1.5px 0 var(--zt-ink); }
+#k[data-skin="zte"] .d-more .k-btn .dm-lens { padding: 2px 3px 1px; background: var(--k-tape); color: var(--zt-ink); font: 400 var(--zt-fs-label)/1 var(--zt-font-label); letter-spacing: 0; }
+#k[data-skin="zte"] .d-more .k-btn.is-yours .dm-lens { background: var(--k-yours); color: var(--zt-ink); } #k[data-skin="zte"] .d-more .k-btn.is-archive .dm-lens { background: var(--k-archive); color: var(--zt-white); }
+@media (prefers-reduced-motion: reduce) { #k .dy-room, #k .dy-box { transition: none; } #k .cl-rec.is-rec::before { animation: none; } }

@@ -1,0 +1,647 @@
+{
+ "generated": "2026-10-10T04:51:18.839Z",
+ "note": "Declared by the district kits (districts/<name>.js: transit, safehouses). A subway slot is the station house built on the lot under it, or (entry: stairs) an open stair entrance on the lot behind the sidewalk, centred on the slot along the street; a bus or taxi slot is a curb strip reserved before the lots are built (the stop may slide up to 5 m along the curb to clear an awning: the page reports the final spot in the block anchors, res.anchors.transit). Safehouses are spots only (no geometry yet).",
+ "transit": [
+  {
+   "id": "subway-1st-kent",
+   "kind": "subway",
+   "name": "1ST ST",
+   "lines": "T",
+   "x": 57.5,
+   "z": -45.5,
+   "face": "+z",
+   "kit": "downtown",
+   "block": [
+    1,
+    -2
+   ],
+   "dist": "downtown"
+  },
+  {
+   "id": "subway-washington",
+   "kind": "subway",
+   "name": "WASHINGTON",
+   "lines": "T N",
+   "x": 50.5,
+   "z": 26.5,
+   "face": "+z",
+   "kit": "downtown",
+   "block": [
+    1,
+    0
+   ],
+   "dist": "downtown"
+  },
+  {
+   "id": "bus-central-ivy",
+   "kind": "bus",
+   "name": "CENTRAL AVE",
+   "x": -56.1,
+   "z": -4.4,
+   "rot": 0,
+   "kit": "downtown",
+   "block": [
+    -2,
+    -1
+   ],
+   "dist": "downtown"
+  },
+  {
+   "id": "subway-market-kent",
+   "kind": "subway",
+   "name": "MARKET AV",
+   "lines": "T",
+   "x": 53.5,
+   "z": -134.5,
+   "face": "-z",
+   "kit": "downtown",
+   "block": [
+    1,
+    -4
+   ],
+   "dist": "downtown"
+  },
+  {
+   "id": "bus-jackson-kent",
+   "kind": "bus",
+   "name": "JACKSON ST",
+   "x": 54,
+   "z": 104.6,
+   "rot": 0,
+   "kit": "downtown",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown"
+  },
+  {
+   "id": "subway-fit-street",
+   "kind": "subway",
+   "name": "FIT ST",
+   "lines": "N",
+   "x": -89.5,
+   "z": -9.5,
+   "face": "+z",
+   "kit": "downtown",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown"
+  },
+  {
+   "id": "subway-st-mercy",
+   "kind": "subway",
+   "name": "ST MERCY",
+   "lines": "N",
+   "x": 123.5,
+   "z": -9.5,
+   "face": "+z",
+   "kit": "downtown",
+   "block": [
+    3,
+    -1
+   ],
+   "dist": "downtown"
+  },
+  {
+   "id": "bus-pleasantview-park",
+   "kind": "bus",
+   "name": "PLEASANTVIEW PARK",
+   "x": -4.55,
+   "z": 202.4,
+   "rot": 1,
+   "kit": "suburbs",
+   "block": [
+    -1,
+    5
+   ],
+   "dist": "suburbs"
+  },
+  {
+   "id": "bus-ps280",
+   "kind": "bus",
+   "name": "P.S. 280",
+   "x": 139.45,
+   "z": 274.5,
+   "rot": 1,
+   "kit": "suburbs",
+   "block": [
+    3,
+    7
+   ],
+   "dist": "suburbs"
+  },
+  {
+   "id": "subway-pleasantview",
+   "kind": "subway",
+   "name": "PLEASANTVIEW",
+   "lines": "T U",
+   "x": -17,
+   "z": 188.5,
+   "face": "-z",
+   "entry": "stairs",
+   "kit": "suburbs",
+   "block": [
+    -1,
+    5
+   ],
+   "dist": "suburbs"
+  },
+  {
+   "id": "taxi-jay",
+   "kind": "taxi",
+   "name": "JAY ST",
+   "x": -32.7,
+   "z": 60.5,
+   "rot": 3,
+   "kit": "strip",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip"
+  },
+  {
+   "id": "bus-grand",
+   "kind": "bus",
+   "name": "GRAND AVE",
+   "x": -148.55,
+   "z": -47.5,
+   "rot": 1,
+   "kit": "strip",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip"
+  },
+  {
+   "id": "subway-low-tide",
+   "kind": "subway",
+   "name": "LOW TIDE",
+   "lines": "T H",
+   "x": 82.5,
+   "z": -242.5,
+   "face": "-z",
+   "entry": "stairs",
+   "kit": "industrial",
+   "block": [
+    2,
+    -7
+   ],
+   "dist": "industrial"
+  },
+  {
+   "id": "bus-dock-shift",
+   "kind": "bus",
+   "name": "DOCK ST",
+   "x": 95,
+   "z": -247.5,
+   "rot": 2,
+   "kit": "industrial",
+   "block": [
+    2,
+    -7
+   ],
+   "dist": "industrial"
+  },
+  {
+   "id": "subway-heap",
+   "kind": "subway",
+   "name": "MAIN ST",
+   "lines": "H",
+   "x": 9.5,
+   "z": -197.55,
+   "face": "-x",
+   "entry": "stairs",
+   "kit": "industrial",
+   "block": [
+    0,
+    -6
+   ],
+   "dist": "industrial"
+  },
+  {
+   "id": "bus-heap-gate",
+   "kind": "bus",
+   "name": "MAIN ST",
+   "x": -4.5,
+   "z": -210.5,
+   "rot": 1,
+   "kit": "junkyard",
+   "block": [
+    -1,
+    -6
+   ],
+   "dist": "junkyard"
+  },
+  {
+   "id": "bus-sunny-acres",
+   "kind": "bus",
+   "name": "SUNNY ACRES",
+   "x": -183.4,
+   "z": -48.5,
+   "rot": 1,
+   "kit": "trailer",
+   "block": [
+    -6,
+    -2
+   ],
+   "dist": "trailer"
+  },
+  {
+   "id": "subway-elm",
+   "kind": "subway",
+   "name": "ELM ST",
+   "lines": "H U",
+   "x": -189.5,
+   "z": -41.3,
+   "face": "+x",
+   "entry": "stairs",
+   "kit": "trailer",
+   "block": [
+    -6,
+    -2
+   ],
+   "dist": "trailer"
+  },
+  {
+   "id": "bus-mall-gate",
+   "kind": "bus",
+   "name": "MALL GATE",
+   "x": -240.5,
+   "z": 4.4,
+   "rot": 2,
+   "kit": "mall",
+   "block": [
+    -7,
+    0
+   ],
+   "dist": "mall"
+  },
+  {
+   "id": "subway-sunny-acres",
+   "kind": "subway",
+   "name": "SUNNY ACRES",
+   "lines": "N H",
+   "x": -214,
+   "z": 13.5,
+   "face": "-z",
+   "entry": "stairs",
+   "kit": "mall",
+   "block": [
+    -6,
+    0
+   ],
+   "dist": "mall"
+  },
+  {
+   "id": "subway-blackpine",
+   "kind": "subway",
+   "name": "BLACKPINE",
+   "lines": "H",
+   "x": -278.5,
+   "z": 32.4,
+   "face": "-x",
+   "entry": "stairs",
+   "kit": "mall",
+   "block": [
+    -8,
+    0
+   ],
+   "dist": "mall"
+  },
+  {
+   "id": "bus-blackpine",
+   "kind": "bus",
+   "name": "BLACKPINE",
+   "x": -291.4,
+   "z": 44.4,
+   "rot": 1,
+   "kit": "forest",
+   "block": [
+    -9,
+    1
+   ],
+   "dist": "forest"
+  },
+  {
+   "id": "subway-gatehill",
+   "kind": "subway",
+   "name": "GATEHILL",
+   "lines": "U",
+   "x": -188.75,
+   "z": 136.5,
+   "face": "+z",
+   "entry": "stairs",
+   "kit": "forest",
+   "block": [
+    -6,
+    3
+   ],
+   "dist": "forest"
+  },
+  {
+   "id": "bus-gatehill",
+   "kind": "bus",
+   "name": "GATEHILL",
+   "x": -183.4,
+   "z": 194.5,
+   "rot": 1,
+   "kit": "estates",
+   "block": [
+    -6,
+    5
+   ],
+   "dist": "estates"
+  },
+  {
+   "id": "taxi-union",
+   "kind": "taxi",
+   "name": "UNION AVE",
+   "x": -240.5,
+   "z": 148.4,
+   "rot": 2,
+   "kit": "estates",
+   "block": [
+    -7,
+    4
+   ],
+   "dist": "estates"
+  },
+  {
+   "id": "bus-union-gatehill",
+   "kind": "bus",
+   "name": "GATEHILL",
+   "x": -192.5,
+   "z": 152.4,
+   "rot": 2,
+   "kit": "estates",
+   "block": [
+    -6,
+    4
+   ],
+   "dist": "estates"
+  },
+  {
+   "id": "bus-st-mercy",
+   "kind": "bus",
+   "name": "ST MERCY",
+   "x": 176.8,
+   "z": -4.4,
+   "rot": 0,
+   "kit": "hospital",
+   "block": [
+    4,
+    -1
+   ],
+   "dist": "hospital"
+  },
+  {
+   "id": "taxi-st-mercy",
+   "kind": "taxi",
+   "name": "ST MERCY",
+   "x": 186.6,
+   "z": -4.3,
+   "rot": 0,
+   "kit": "hospital",
+   "block": [
+    5,
+    -1
+   ],
+   "dist": "hospital"
+  },
+  {
+   "id": "bus-route-9-motel",
+   "kind": "bus",
+   "name": "ROUTE 9",
+   "x": 259.5,
+   "z": 190,
+   "rot": 3,
+   "kit": "highway",
+   "block": [
+    7,
+    5
+   ],
+   "dist": "highway"
+  },
+  {
+   "id": "subway-motel",
+   "kind": "subway",
+   "name": "ROUTE 9",
+   "lines": "U",
+   "x": 264.5,
+   "z": 201,
+   "face": "-x",
+   "entry": "stairs",
+   "kit": "highway",
+   "block": [
+    7,
+    5
+   ],
+   "dist": "highway"
+  },
+  {
+   "id": "bus-iron-island",
+   "kind": "bus",
+   "name": "IRON ISLAND",
+   "x": 275.2,
+   "z": -329.4,
+   "rot": 0,
+   "kit": "jail",
+   "block": [
+    7,
+    -10
+   ],
+   "dist": "jail"
+  },
+  {
+   "id": "bus-long-bridge",
+   "kind": "bus",
+   "name": "LONG BRIDGE",
+   "x": 259.5,
+   "z": -294.2,
+   "rot": 3,
+   "kit": "jail",
+   "block": [
+    7,
+    -9
+   ],
+   "dist": "sea"
+  }
+ ],
+ "safehouses": [
+  {
+   "id": "safe-ivy-walkup",
+   "name": "the Ivy St walk-up",
+   "x": -62,
+   "z": -24,
+   "note": "reserved: lock-in walk from Jay & 1st",
+   "kit": "downtown",
+   "block": [
+    -2,
+    -1
+   ],
+   "dist": "downtown"
+  },
+  {
+   "id": "safe-elm-coop",
+   "name": "the pigeon coop on Elm St",
+   "x": -166.2,
+   "z": -23.4,
+   "note": "reserved: the loft on the six-storey roof at Elm & 1st, over Sunny Acres; the pigeon man does not ask",
+   "kit": "downtown",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown"
+  },
+  {
+   "id": "safe-fox-run-garage",
+   "name": "the garage behind 186 Fox Run",
+   "x": -64.1,
+   "z": 308.9,
+   "note": "reserved: a detached garage at the back of a lot on the last street before the woods",
+   "kit": "suburbs",
+   "block": [
+    -2,
+    8
+   ],
+   "dist": "suburbs"
+  },
+  {
+   "id": "safe-jay-walkup",
+   "name": "the room over Sing Sing",
+   "x": -46.5,
+   "z": 56.2,
+   "note": "reserved: a karaoke room upstairs, one floor over the Jay St corner",
+   "kit": "strip",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip"
+  },
+  {
+   "id": "safe-chop-back-room",
+   "name": "the chop shop back room",
+   "x": 96.5,
+   "z": -200,
+   "note": "behind the paint booth on Maple & Foundry",
+   "kit": "industrial",
+   "block": [
+    2,
+    -6
+   ],
+   "dist": "industrial"
+  },
+  {
+   "id": "safe-reefer-box",
+   "name": "the dead reefer box",
+   "x": 127,
+   "z": -264,
+   "note": "a container in the second row at the crane; the door that isn't locked",
+   "kit": "docks",
+   "block": [
+    3,
+    -8
+   ],
+   "dist": "docks"
+  },
+  {
+   "id": "safe-heap-trailer",
+   "name": "the office trailer",
+   "x": -56,
+   "z": -197,
+   "note": "the Heap's office; knock loud",
+   "kit": "junkyard",
+   "block": [
+    -2,
+    -6
+   ],
+   "dist": "junkyard"
+  },
+  {
+   "id": "safe-coin-laundry",
+   "name": "the coin laundry back room",
+   "x": -232,
+   "z": -14,
+   "note": "reserved: open all night, one door on Central Ave",
+   "kit": "trailer",
+   "block": [
+    -7,
+    -1
+   ],
+   "dist": "trailer"
+  },
+  {
+   "id": "safe-mall-cinema",
+   "name": "the projection booth over the dead food court",
+   "x": -206,
+   "z": 46,
+   "note": "reserved: the wing roof still holds there; a ladder from the atrium",
+   "kit": "mall",
+   "block": [
+    -6,
+    1
+   ],
+   "dist": "mall"
+  },
+  {
+   "id": "safe-lake-camp",
+   "name": "the campsite by the lake",
+   "x": -422,
+   "z": 78,
+   "note": "a tent on the north shore; nobody asks, the canoe is the back door",
+   "kit": "forest",
+   "block": [
+    -12,
+    2
+   ],
+   "dist": "forest"
+  },
+  {
+   "id": "safe-amberley-staff",
+   "name": "the Amberley service floor",
+   "x": -258.4,
+   "z": 270,
+   "note": "reserved: the staff door off Cedar St, under the auction house (a way into Gatehill that skips the doormen)",
+   "kit": "estates",
+   "block": [
+    -8,
+    7
+   ],
+   "dist": "estates"
+  },
+  {
+   "id": "safe-mercy-morgue",
+   "name": "the morgue door",
+   "x": 190.6,
+   "z": -56.2,
+   "note": "the steel doors of the 1889 wing on the service lane; the night man leaves them on the latch",
+   "kit": "hospital",
+   "block": [
+    5,
+    -2
+   ],
+   "dist": "hospital"
+  },
+  {
+   "id": "safe-motel-12",
+   "name": "room 12, Motel 9",
+   "x": 278.5,
+   "z": 208,
+   "note": "the last room upstairs: cash by the night, no questions, the bathroom window opens onto Pike Rd",
+   "kit": "highway",
+   "block": [
+    7,
+    5
+   ],
+   "dist": "highway"
+  }
+ ],
+ "errors": []
+}

@@ -1,0 +1,39 @@
+{
+ "tier": "trailer",
+ "name": "nans-place",
+ "story": "Nan's old trailer: honey panelling, the bed with the family over it, her recliner turned to the console TV, the dresser under the window, a shoebox peeking out from under the bed.",
+ "room": {"w":20,"d":14,"h":2.45,"walls":{"N":"panelling:honey","E":"paint:#d9a21a"},"floor":"carpet:#b3202a"},
+ "items": [
+  {"id":"rug-rag","x":8,"z":5,"rot":0,"variant":0,"on":"floor"},
+  {"id":"door-front","x":9,"z":0,"rot":0,"variant":0,"on":{"wall":"E"}},
+  {"id":"window","x":3,"z":0,"rot":0,"variant":2,"on":{"wall":"E"},"y":0.9},
+  {"id":"bed-double","x":1,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"table-end","x":7,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"lamp-table","x":7,"z":0,"rot":0,"variant":0,"on":{"top":4}},
+  {"id":"photos-family","x":2,"z":0,"rot":0,"variant":0,"on":{"wall":"N"},"y":1.25},
+  {"id":"tv-console","x":10,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"photos-family","x":10,"z":0,"rot":0,"variant":1,"on":{"wall":"N"},"y":1.35},
+  {"id":"kitchenette","x":14,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"recliner","x":10,"z":6,"rot":180,"variant":1,"on":"floor"},
+  {"id":"table-end","x":14,"z":7,"rot":0,"variant":1,"on":"floor"},
+  {"id":"lamp-table","x":14,"z":7,"rot":0,"variant":2,"on":{"top":11}},
+  {"id":"dresser","x":18,"z":3,"rot":270,"variant":0,"on":"floor"},
+  {"id":"plant-cactus","x":18,"z":3,"rot":0,"variant":0,"on":{"top":13}},
+  {"id":"box-fan","x":0,"z":10,"rot":45,"variant":1,"on":"floor"}
+ ],
+ "slots": [
+  {"id":"on-the-dresser","label":"on the dresser","place":"surface","x":18,"z":5,"foot":[2,2],"rot":0,"demo":"trophy-first-house","variant":0,"fits":["collectible","trophy"],"on":13},
+  {"id":"under-the-bed","label":"under the bed","place":"floor","x":3,"z":8,"foot":[2,1],"rot":0,"demo":"stash-shoebox","variant":0,"fits":["stash"]},
+  {"id":"over-the-tv","label":"over the TV","place":"wall","x":14,"z":0,"foot":[4,4],"rot":0,"demo":"trophy-in-the-bank","variant":0,"fits":["trophy"],"wall":"N","y":1.2}
+ ],
+ "vacant": [
+  {"id":"door-front","x":9,"z":0,"rot":0,"variant":0,"on":{"wall":"E"}},
+  {"id":"window","x":3,"z":0,"rot":0,"variant":2,"on":{"wall":"E"},"y":0.9},
+  {"id":"kitchenette","x":14,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"mattress-floor","x":0,"z":0,"rot":90,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":9,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":4,"z":6,"rot":0,"variant":2,"on":"floor"},
+  {"id":"sign-rent","x":9,"z":8,"rot":0,"variant":0,"on":"floor"},
+  {"id":"box-fan","x":12,"z":1,"rot":0,"variant":0,"on":"floor"}
+ ]
+}

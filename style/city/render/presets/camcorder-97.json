@@ -1,0 +1,15 @@
+{
+  "_about": "Camcorder '97 · a 4:3 home tape: soft bloomy highlights, over-sharpened edges, a little chroma fringe, a green-magenta drift, coloured noise.",
+  "_tweak": "chroma.amount, sharpen.amount, letterbox.on (off = full frame), grade.tint.",
+  "_stack": "grade runs before bloom on purpose: on the night build bloom otherwise smears a non-finite scene pixel into a black blob (grade's clamp scrubs it). Keep grade on and first while bloom is on.",
+  "light": { "fill": 0.95, "env": 0.45 },
+  "bloom": { "on": true, "threshold": 0.72, "strength": 0.45, "radius": 0.8 },
+  "grade": { "on": true, "temperature": -0.04, "tint": 0.1, "contrast": 0.95, "saturation": 1.2, "gamma": 1, "fade": 0.07 },
+  "sharpen": { "on": true, "amount": 0.9, "radius": 1.6 },
+  "chroma": { "on": true, "amount": 3 },
+  "lens": { "on": true, "amount": 0.03 },
+  "vignette": { "on": true, "amount": 0.3, "radius": 0.7 },
+  "grain": { "type": "animated", "amount": 0.1, "size": 2, "color": "colour", "speed": 30, "response": 0.6 },
+  "letterbox": { "on": true, "aspect": "1.33", "color": "#0b0b0e" },
+  "stack": { "order": "blur,grade,bloom,halation,sharpen,chroma,lens,vignette,grain,dither,letterbox" }
+}

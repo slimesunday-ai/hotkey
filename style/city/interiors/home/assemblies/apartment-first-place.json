@@ -1,0 +1,45 @@
+{
+ "tier": "apartment",
+ "name": "first-place",
+ "story": "First place in the walk-up: the mattress under a pair of posters with a lamp at its head, milk crates for a bookcase, the futon on its rug across from the curb TV on the dresser, the avocado kitchenette along the side wall, the radiator knocking under the window AC, one box still not unpacked.",
+ "room": {"w":20,"d":17,"h":2.7,"walls":{"N":"brick","E":"paint:#2f5bff"},"floor":"planks"},
+ "items": [
+  {"id":"rug-shag","x":3,"z":9,"rot":90,"variant":2,"on":"floor"},
+  {"id":"door-front","x":15,"z":0,"rot":0,"variant":1,"on":{"wall":"N"}},
+  {"id":"ac-window","x":0,"z":0,"rot":0,"variant":0,"on":{"wall":"E"},"y":0.75},
+  {"id":"mattress-floor","x":0,"z":0,"rot":270,"variant":1,"on":"floor"},
+  {"id":"poster","x":0,"z":0,"rot":0,"variant":1,"on":{"wall":"N"},"y":1},
+  {"id":"poster","x":4,"z":0,"rot":0,"variant":3,"on":{"wall":"N"},"y":1},
+  {"id":"table-end","x":8,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"lamp-table","x":8,"z":0,"rot":0,"variant":2,"on":{"top":6}},
+  {"id":"crate-shelf","x":10,"z":0,"rot":0,"variant":0,"on":"floor"},
+  {"id":"boombox","x":10,"z":1,"rot":0,"variant":1,"on":{"top":8}},
+  {"id":"radiator","x":19,"z":0,"rot":270,"variant":2,"on":"floor"},
+  {"id":"futon","x":0,"z":9,"rot":90,"variant":0,"on":"floor"},
+  {"id":"table-coffee","x":6,"z":11,"rot":90,"variant":0,"on":"floor"},
+  {"id":"dresser","x":18,"z":11,"rot":270,"variant":1,"on":"floor"},
+  {"id":"tv-crt","x":18,"z":11,"rot":270,"variant":1,"on":{"top":13}},
+  {"id":"laundry-pile","x":0,"z":5,"rot":0,"variant":1,"on":"floor"},
+  {"id":"pizza-boxes","x":10,"z":13,"rot":0,"variant":2,"on":"floor"},
+  {"id":"kitchenette","x":17,"z":5,"rot":270,"variant":1,"on":"floor"},
+  {"id":"boxes-moving","x":12,"z":5,"rot":0,"variant":0,"on":"floor"},
+  {"id":"beer-cans","x":8,"z":8,"rot":0,"variant":2,"on":"floor"}
+ ],
+ "slots": [
+  {"id":"on-the-crates","label":"on the crates","place":"surface","x":13,"z":0,"foot":[2,2],"rot":0,"demo":"vinyl-nobody","variant":0,"fits":["collectible","trophy","stash"],"on":8},
+  {"id":"on-the-table","label":"on the table","place":"surface","x":6,"z":12,"foot":[2,2],"rot":0,"demo":"console-toastr","variant":0,"fits":["gear","collectible"],"on":12},
+  {"id":"by-the-door","label":"by the door","place":"wall","x":13,"z":0,"foot":[2,3],"rot":0,"demo":"trophy-first-deal","variant":0,"fits":["trophy"],"wall":"N","y":1.55},
+  {"id":"corner","label":"the corner","place":"floor","x":14,"z":14,"foot":[4,3],"rot":0,"demo":"dog-bed","variant":1,"fits":["security"]}
+ ],
+ "vacant": [
+  {"id":"door-front","x":15,"z":0,"rot":0,"variant":1,"on":{"wall":"N"}},
+  {"id":"ac-window","x":0,"z":0,"rot":0,"variant":0,"on":{"wall":"E"},"y":0.75},
+  {"id":"radiator","x":19,"z":0,"rot":270,"variant":2,"on":"floor"},
+  {"id":"kitchenette","x":17,"z":5,"rot":270,"variant":1,"on":"floor"},
+  {"id":"mattress-floor","x":0,"z":0,"rot":270,"variant":0,"on":"floor"},
+  {"id":"boxes-moving","x":10,"z":0,"rot":0,"variant":1,"on":"floor"},
+  {"id":"boxes-moving","x":5,"z":9,"rot":0,"variant":2,"on":"floor"},
+  {"id":"sign-rent","x":8,"z":12,"rot":0,"variant":1,"on":"floor"},
+  {"id":"paint-kit","x":12,"z":8,"rot":0,"variant":0,"on":"floor"}
+ ]
+}

@@ -1,0 +1,478 @@
+{
+ "version": 1,
+ "about": "Trait studio keep / kill decisions (style/city/studio/). Key: slot/id. status keep | kill | undecided; note; cw: per-colourway overrides by index. Written by POST /api/curation (style/serve.mjs); read by world/curation.js curationFilter().",
+ "updated": "2026-09-30T03:20:10.724Z",
+ "traits": {
+  "mouth/grill": {
+   "status": "kill",
+   "at": "2026-09-30T02:56:08.567Z"
+  },
+  "mouth/pout": {
+   "status": "kill",
+   "at": "2026-09-30T02:56:17.919Z"
+  },
+  "mouth/grimace": {
+   "status": "kill",
+   "at": "2026-09-30T02:56:29.723Z"
+  },
+  "mouth/lolli": {
+   "status": "keep",
+   "at": "2026-09-30T02:56:34.098Z"
+  },
+  "mouth/o": {
+   "status": "keep",
+   "at": "2026-09-30T02:56:41.509Z"
+  },
+  "mouth/smile": {
+   "status": "keep",
+   "at": "2026-09-30T02:56:43.430Z"
+  },
+  "mouth/smirk": {
+   "status": "keep",
+   "at": "2026-09-30T02:56:45.834Z"
+  },
+  "mouth/tongue": {
+   "status": "keep",
+   "at": "2026-09-30T02:56:48.736Z"
+  },
+  "mouth/diamond": {
+   "status": "keep",
+   "at": "2026-09-30T02:56:57.704Z"
+  },
+  "mouth/openface": {
+   "status": "keep",
+   "at": "2026-09-30T02:57:05.535Z"
+  },
+  "mouth/perms": {
+   "status": "keep",
+   "at": "2026-09-30T02:57:30.295Z"
+  },
+  "mouth/gapgold": {
+   "status": "kill",
+   "at": "2026-09-30T02:57:43.006Z"
+  },
+  "mouth/septum": {
+   "status": "keep",
+   "at": "2026-09-30T02:57:52.400Z"
+  },
+  "mouth/gems": {
+   "status": "undecided",
+   "note": "i dont like how the two white pixels come out, it would be better flat"
+  },
+  "mouth/fangs": {
+   "status": "kill",
+   "at": "2026-09-30T02:58:36.184Z"
+  },
+  "mouth/frown": {
+   "status": "keep",
+   "at": "2026-09-30T02:58:42.958Z"
+  },
+  "mouth/flat": {
+   "status": "keep",
+   "at": "2026-09-30T02:58:45.271Z"
+  },
+  "mouth/iced": {
+   "status": "keep",
+   "at": "2026-09-30T02:58:53.061Z"
+  },
+  "mouth/gum": {
+   "status": "keep",
+   "at": "2026-09-30T02:58:54.557Z"
+  },
+  "mouth/gold": {
+   "status": "kill",
+   "at": "2026-09-30T02:59:07.306Z"
+  },
+  "hat/bandana": {
+   "status": "keep",
+   "at": "2026-09-30T02:59:16.725Z"
+  },
+  "hat/durag": {
+   "status": "keep",
+   "at": "2026-09-30T02:59:24.561Z"
+  },
+  "hat/beanie": {
+   "status": "keep",
+   "at": "2026-09-30T02:59:27.555Z"
+  },
+  "hat/fitted": {
+   "status": "keep",
+   "at": "2026-09-30T02:59:32.218Z"
+  },
+  "hat/bucket": {
+   "status": "keep",
+   "at": "2026-09-30T02:59:55.053Z"
+  },
+  "hat/trucker": {
+   "status": "keep",
+   "at": "2026-09-30T02:59:59.028Z"
+  },
+  "hat/balaclava": {
+   "status": "keep",
+   "at": "2026-09-30T03:00:10.274Z"
+  },
+  "hat/beret": {
+   "status": "keep",
+   "at": "2026-09-30T03:00:16.296Z"
+  },
+  "hat/halo": {
+   "status": "keep",
+   "at": "2026-09-30T03:00:20.646Z"
+  },
+  "hat/cursorclip": {
+   "status": "kill",
+   "at": "2026-09-30T03:00:26.752Z"
+  },
+  "hat/skully": {
+   "status": "keep",
+   "at": "2026-09-30T03:00:29.319Z"
+  },
+  "hat/tiedana": {
+   "status": "keep",
+   "at": "2026-09-30T03:00:31.982Z"
+  },
+  "hat/holofitted": {
+   "status": "keep",
+   "at": "2026-09-30T03:00:56.721Z"
+  },
+  "eyes/beachball": {
+   "status": "keep",
+   "at": "2026-09-30T03:02:03.694Z"
+  },
+  "eyes/bored": {
+   "status": "keep",
+   "at": "2026-09-30T03:02:05.466Z"
+  },
+  "eyes/crying": {
+   "status": "keep",
+   "at": "2026-09-30T03:02:10.325Z"
+  },
+  "eyes/cursor": {
+   "status": "keep",
+   "at": "2026-09-30T03:02:12.615Z"
+  },
+  "eyes/happy": {
+   "status": "keep",
+   "at": "2026-09-30T03:02:14.798Z"
+  },
+  "eyes/heart": {
+   "status": "keep",
+   "at": "2026-09-30T03:02:16.841Z"
+  },
+  "eyes/laser": {
+   "status": "keep",
+   "at": "2026-09-30T03:02:30.429Z"
+  },
+  "eyes/mean": {
+   "status": "kill",
+   "at": "2026-09-30T03:02:40.259Z"
+  },
+  "eyes/shook": {
+   "status": "keep",
+   "at": "2026-09-30T03:02:42.436Z"
+  },
+  "eyes/side": {
+   "status": "keep",
+   "at": "2026-09-30T03:02:46.044Z"
+  },
+  "eyes/sleepy": {
+   "status": "keep",
+   "at": "2026-09-30T03:02:48.447Z"
+  },
+  "eyes/sparkle": {
+   "status": "keep",
+   "at": "2026-09-30T03:02:50.615Z"
+  },
+  "eyes/wink": {
+   "status": "keep",
+   "at": "2026-09-30T03:02:52.935Z"
+  },
+  "eyewear/anaglyph": {
+   "status": "keep",
+   "at": "2026-09-30T03:03:01.518Z"
+  },
+  "eyewear/ovals": {
+   "status": "keep",
+   "at": "2026-09-30T03:03:04.117Z"
+  },
+  "eyewear/wrap": {
+   "status": "keep",
+   "at": "2026-09-30T03:03:05.993Z"
+  },
+  "eyewear/cursorshades": {
+   "status": "keep",
+   "at": "2026-09-30T03:03:12.204Z"
+  },
+  "eyewear/shutter": {
+   "status": "keep",
+   "at": "2026-09-30T03:03:30.847Z"
+  },
+  "eyewear/dwi": {
+   "status": "keep",
+   "at": "2026-09-30T03:03:33.413Z"
+  },
+  "eyewear/tinies": {
+   "status": "keep",
+   "at": "2026-09-30T03:03:35.393Z"
+  },
+  "eyewear/shield": {
+   "status": "keep",
+   "at": "2026-09-30T03:03:37.474Z"
+  },
+  "eyewear/goggles": {
+   "status": "keep",
+   "at": "2026-09-30T03:03:42.371Z"
+  },
+  "hair/afro": {
+   "status": "keep",
+   "at": "2026-09-30T03:04:31.204Z"
+  },
+  "hair/buzz": {
+   "status": "keep",
+   "at": "2026-09-30T03:04:38.770Z"
+  },
+  "hair/spikes": {
+   "status": "keep",
+   "at": "2026-09-30T03:04:40.982Z"
+  },
+  "hair/swoop": {
+   "status": "keep",
+   "at": "2026-09-30T03:04:52.087Z"
+  },
+  "hair/buns": {
+   "status": "keep",
+   "at": "2026-09-30T03:04:55.728Z"
+  },
+  "hair/dreads": {
+   "status": "keep",
+   "at": "2026-09-30T03:04:57.583Z"
+  },
+  "hair/long": {
+   "status": "keep",
+   "at": "2026-09-30T03:05:11.113Z"
+  },
+  "hair/mohawk": {
+   "status": "keep",
+   "at": "2026-09-30T03:05:14.984Z"
+  },
+  "hair/twists": {
+   "status": "kill",
+   "at": "2026-09-30T03:05:21.048Z"
+  },
+  "hair/braids": {
+   "status": "keep",
+   "at": "2026-09-30T03:05:26.540Z"
+  },
+  "hair/leopard": {
+   "status": "keep",
+   "at": "2026-09-30T03:05:31.116Z"
+  },
+  "ears/phones": {
+   "status": "keep",
+   "at": "2026-09-30T03:05:43.416Z"
+  },
+  "ears/studs": {
+   "status": "keep",
+   "at": "2026-09-30T03:05:53.171Z"
+  },
+  "ears/cross": {
+   "status": "keep",
+   "at": "2026-09-30T03:05:58.498Z"
+  },
+  "ears/hoops": {
+   "status": "keep",
+   "note": "they dont look gold and arent going through the ear",
+   "at": "2026-09-30T03:06:25.657Z"
+  },
+  "ears/icestud": {
+   "status": "keep",
+   "at": "2026-09-30T03:06:32.448Z"
+  },
+  "ears/earstack": {
+   "status": "kill",
+   "at": "2026-09-30T03:07:15.825Z"
+  },
+  "ears/hoopstack": {
+   "status": "undecided",
+   "note": "there is a gap in the earing, would look better with just the bottom piece"
+  },
+  "mark/blush": {
+   "status": "keep",
+   "at": "2026-09-30T03:08:06.906Z"
+  },
+  "mark/scar": {
+   "status": "keep",
+   "at": "2026-09-30T03:08:15.951Z"
+  },
+  "mark/tear": {
+   "status": "keep",
+   "at": "2026-09-30T03:08:19.304Z"
+  },
+  "mark/ibeam": {
+   "status": "kill",
+   "at": "2026-09-30T03:08:21.894Z"
+  },
+  "mark/cursor": {
+   "status": "kill",
+   "at": "2026-09-30T03:08:25.164Z"
+  },
+  "mark/cmd": {
+   "status": "kill",
+   "at": "2026-09-30T03:08:27.909Z"
+  },
+  "mark/barcode": {
+   "status": "kill",
+   "at": "2026-09-30T03:08:30.516Z"
+  },
+  "mark/bandaid": {
+   "status": "kill",
+   "at": "2026-09-30T03:08:34.432Z"
+  },
+  "mark/404": {
+   "status": "keep",
+   "at": "2026-09-30T03:08:38.411Z"
+  },
+  "neck/dollar2": {
+   "status": "keep",
+   "at": "2026-09-30T03:09:21.640Z"
+  },
+  "neck/padlock2": {
+   "status": "keep",
+   "at": "2026-09-30T03:09:27.197Z"
+  },
+  "neck/noggin": {
+   "status": "keep",
+   "at": "2026-09-30T03:09:44.249Z"
+  },
+  "neck/chase": {
+   "status": "keep",
+   "at": "2026-09-30T03:09:47.188Z"
+  },
+  "neck/layers": {
+   "status": "kill",
+   "at": "2026-09-30T03:09:50.639Z"
+  },
+  "neck/nameplate": {
+   "status": "keep",
+   "at": "2026-09-30T03:10:00.314Z"
+  },
+  "neck/catpiece": {
+   "status": "keep",
+   "at": "2026-09-30T03:10:06.491Z"
+  },
+  "neck/floppy": {
+   "status": "kill",
+   "at": "2026-09-30T03:10:13.376Z"
+  },
+  "neck/rope": {
+   "status": "kill",
+   "at": "2026-09-30T03:10:15.550Z"
+  },
+  "neck/padlock": {
+   "status": "kill",
+   "at": "2026-09-30T03:10:18.734Z"
+  },
+  "neck/dollar": {
+   "status": "kill",
+   "at": "2026-09-30T03:10:25.877Z"
+  },
+  "neck/stack": {
+   "status": "kill",
+   "at": "2026-09-30T03:10:30.098Z"
+  },
+  "neck/cuban": {
+   "status": "kill",
+   "at": "2026-09-30T03:10:32.750Z"
+  },
+  "neck/piece": {
+   "status": "kill",
+   "at": "2026-09-30T03:10:35.579Z"
+  },
+  "neck/tennis": {
+   "status": "kill",
+   "at": "2026-09-30T03:10:37.964Z"
+  },
+  "neck/cursor": {
+   "status": "kill",
+   "at": "2026-09-30T03:11:04.386Z"
+  },
+  "neck/choker": {
+   "status": "keep",
+   "at": "2026-09-30T03:11:08.162Z"
+  },
+  "neck/cmd": {
+   "status": "kill",
+   "at": "2026-09-30T03:11:11.097Z"
+  },
+  "neck/pearls": {
+   "status": "keep",
+   "at": "2026-09-30T03:11:18.176Z"
+  },
+  "neck/icecuban": {
+   "status": "kill",
+   "at": "2026-09-30T03:11:22.795Z"
+  },
+  "neck/cuffs": {
+   "status": "keep",
+   "at": "2026-09-30T03:11:32.106Z"
+  },
+  "neck/figaro": {
+   "status": "keep",
+   "at": "2026-09-30T03:11:36.336Z"
+  },
+  "neck/tennischoker": {
+   "status": "kill",
+   "at": "2026-09-30T03:11:46.315Z"
+  },
+  "neck/exhibit": {
+   "status": "keep",
+   "at": "2026-09-30T03:11:55.173Z"
+  },
+  "neck/rope2": {
+   "status": "kill",
+   "at": "2026-09-30T03:12:18.063Z"
+  },
+  "held/flip": {
+   "status": "kill",
+   "at": "2026-09-30T03:19:14.293Z"
+  },
+  "held/floppydisk": {
+   "status": "kill",
+   "at": "2026-09-30T03:19:18.914Z"
+  },
+  "held/ipod": {
+   "status": "kill",
+   "at": "2026-09-30T03:19:26.379Z"
+  },
+  "held/phonecase": {
+   "status": "kill",
+   "at": "2026-09-30T03:19:42.118Z"
+  },
+  "held/kicksbox": {
+   "status": "keep",
+   "at": "2026-09-30T03:19:47.154Z"
+  },
+  "held/bricks": {
+   "status": "keep",
+   "at": "2026-09-30T03:19:51.269Z"
+  },
+  "held/vinyl": {
+   "status": "kill",
+   "at": "2026-09-30T03:19:54.168Z"
+  },
+  "held/can": {
+   "status": "keep",
+   "at": "2026-09-30T03:20:01.940Z"
+  },
+  "held/cash": {
+   "status": "keep",
+   "at": "2026-09-30T03:20:10.724Z"
+  }
+ },
+ "counts": {
+  "traits": 214,
+  "keep": 80,
+  "kill": 34,
+  "undecided": 100
+ }
+}

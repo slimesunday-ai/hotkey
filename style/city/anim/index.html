@@ -1,0 +1,53 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>AI City · Animation Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --ink: #17171b; --gold: #ffc21a; --pink: #ff4fa3; --lime: #6cff4a; --sky: #9fdcff; --paper: #f7f7f2; }
+  html, body { margin: 0; height: 100%; background: var(--sky); overflow: hidden; }
+  canvas#gl { display: block; }
+  .ui { position: fixed; left: 14px; top: 14px; right: 300px; display: flex; flex-direction: column; gap: 8px; font: 800 12px/1 "Arial Black", Impact, sans-serif; letter-spacing: .02em; pointer-events: none; }
+  .row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; pointer-events: auto; }
+  .ui b, .tag { background: var(--ink); color: var(--gold); padding: 8px 10px 7px; text-transform: uppercase; }
+  .ui button { font: inherit; text-transform: uppercase; border: 0; background: #fff; color: var(--ink); padding: 8px 10px 7px; cursor: pointer; box-shadow: 3px 3px 0 var(--ink); }
+  .ui button:hover { background: var(--gold); }
+  .ui button.on { background: var(--ink); color: var(--gold); box-shadow: 3px 3px 0 var(--gold); }
+  .ui button:focus-visible, #tune input:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
+  .ui .lab { color: var(--ink); background: rgba(255,255,255,.6); padding: 8px 6px 7px; }
+  #tune { position: fixed; right: 14px; top: 14px; width: 262px; background: var(--ink); color: var(--paper); padding: 12px 14px; box-shadow: 5px 5px 0 var(--pink); font: 11px/1.3 ui-monospace, Menlo, monospace; }
+  #tune h3 { margin: 0 0 8px; color: var(--lime); font: 800 13px/1 "Arial Black", Impact, sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+  #tune label { display: grid; grid-template-columns: 86px 1fr 40px; gap: 6px; align-items: center; margin: 3px 0; }
+  #tune input[type=range] { width: 100%; accent-color: var(--gold); }
+  #tune output { color: var(--gold); text-align: right; }
+  #tune button { margin-top: 8px; font: 800 11px/1 "Arial Black", Impact, sans-serif; text-transform: uppercase; border: 0; background: var(--gold); color: var(--ink); padding: 7px 10px 6px; cursor: pointer; box-shadow: 3px 3px 0 var(--pink); }
+  #tune .sep { border-top: 1px solid #34343c; margin: 8px 0 6px; }
+  #stats { position: fixed; left: 14px; bottom: 12px; background: var(--ink); color: var(--paper); padding: 8px 10px; font: 11px/1.4 ui-monospace, Menlo, monospace; white-space: pre; box-shadow: 4px 4px 0 var(--gold); }
+  #bench { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--ink); color: var(--paper); padding: 16px 18px; font: 12px/1.5 ui-monospace, Menlo, monospace; white-space: pre; box-shadow: 6px 6px 0 var(--pink); z-index: 9; }
+  #bench:empty { display: none; }
+  #labels { position: fixed; inset: 0; pointer-events: none; }
+  #labels span { position: absolute; transform: translate(-50%, 0); background: var(--ink); color: var(--gold); font: 800 11px/1 "Arial Black", Impact, sans-serif; text-transform: uppercase; padding: 5px 6px 4px; white-space: nowrap; box-shadow: 2px 2px 0 var(--pink); }
+  #strip { position: fixed; inset: 0; display: none; background: var(--ink); }
+  body.strip #strip { display: block; } body.strip canvas#gl { position: fixed; left: -99999px; }
+  body.shot .ui, body.shot #tune, body.shot #stats { display: none; }
+  #err { position: fixed; left: 14px; bottom: 60px; color: #fff; background: #c00; font: 12px monospace; white-space: pre-wrap; max-width: 60vw; z-index: 10; }
+  #err:empty { display: none; }
+  @media (max-width: 760px) { .ui { right: 14px; } #tune { top: auto; bottom: 64px; width: calc(100vw - 58px); max-height: 38vh; overflow: auto; } }
+</style>
+<div class="ui">
+  <div class="row"><b>ANIM LAB</b><span class="lab">scene</span><span id="scenes" class="row"></span></div>
+  <div class="row"><span class="lab">walk</span><span id="ab" class="row"></span><span class="lab">time</span><span id="time" class="row"></span></div>
+  <div class="row"><span class="lab">camera</span><span id="cams" class="row"></span><span class="lab" id="crowdLab">crowd</span><span id="crowd" class="row"></span></div>
+</div>
+<div id="tune"><h3>Tune the walk</h3><div id="sliders"></div><div class="sep"></div><div id="tuneBtns"></div></div>
+<div id="labels"></div>
+<div id="stats"></div>
+<pre id="bench"></pre>
+<canvas id="strip"></canvas>
+<div id="err"></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/" } }</script>
+<script>
+  const q = new URLSearchParams(location.search); if (q.has('shot')) document.body.classList.add('shot'); if (q.has('strip')) document.body.classList.add('strip', 'shot');
+  addEventListener('error', e => { document.getElementById('err').textContent += (e.message || e) + '\n'; });
+  addEventListener('unhandledrejection', e => { document.getElementById('err').textContent += 'promise: ' + (e.reason?.stack || e.reason) + '\n'; });
+</script>
+<script type="module" src="./lab.js"></script>

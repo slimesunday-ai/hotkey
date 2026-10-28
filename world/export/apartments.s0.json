@@ -1,0 +1,12811 @@
+{
+ "version": 1,
+ "note": "The apartments registry (the home ladder's second rung: walk-up units over the shops). FIXED ids, like the lots (10-01): this file is the law, not the geometry. tools/apartments-seed.mjs only appends new units and marks vanished ones gone: true; it never re-keys or removes. x, z = the building's street door (where an agent goes in).",
+ "apartments": [
+  {
+   "id": "apt:-1_-1·L0·1",
+   "building": "bld:-1_-1·L0",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -28.45,
+   "z": -21.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-1·L0·2",
+   "building": "bld:-1_-1·L0",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -28.45,
+   "z": -21.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-1·L0·3",
+   "building": "bld:-1_-1·L0",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -28.45,
+   "z": -21.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-1·L0·4",
+   "building": "bld:-1_-1·L0",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -28.45,
+   "z": -21.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-1·L0·5",
+   "building": "bld:-1_-1·L0",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -28.45,
+   "z": -21.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-1·L1·1",
+   "building": "bld:-1_-1·L1",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -26.75,
+   "z": -18.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_-1·L1·2",
+   "building": "bld:-1_-1·L1",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -26.75,
+   "z": -18.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_-1·L1·3",
+   "building": "bld:-1_-1·L1",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -26.75,
+   "z": -18.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_-1·L1·4",
+   "building": "bld:-1_-1·L1",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -26.75,
+   "z": -18.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_-1·L2·1",
+   "building": "bld:-1_-1·L2",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -28.45,
+   "z": -7.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-1·L2·2",
+   "building": "bld:-1_-1·L2",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -28.45,
+   "z": -7.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-1·L2·3",
+   "building": "bld:-1_-1·L2",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -28.45,
+   "z": -7.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-1·L2·4",
+   "building": "bld:-1_-1·L2",
+   "block": [
+    -1,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -28.45,
+   "z": -7.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-2·L0·1",
+   "building": "bld:-1_-2·L0",
+   "block": [
+    -1,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -26.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-2·L0·2",
+   "building": "bld:-1_-2·L0",
+   "block": [
+    -1,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -26.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-2·L0·3",
+   "building": "bld:-1_-2·L0",
+   "block": [
+    -1,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -26.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-2·L0·4",
+   "building": "bld:-1_-2·L0",
+   "block": [
+    -1,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -26.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-2·L0·5",
+   "building": "bld:-1_-2·L0",
+   "block": [
+    -1,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -26.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-2·L5·1",
+   "building": "bld:-1_-2·L5",
+   "block": [
+    -1,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -28.45,
+   "z": -51.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-2·L5·2",
+   "building": "bld:-1_-2·L5",
+   "block": [
+    -1,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -28.45,
+   "z": -51.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-2·L5·3",
+   "building": "bld:-1_-2·L5",
+   "block": [
+    -1,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -28.45,
+   "z": -51.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L0·1",
+   "building": "bld:-1_-3·L0",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -22.75,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L0·2",
+   "building": "bld:-1_-3·L0",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -22.75,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L0·3",
+   "building": "bld:-1_-3·L0",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -22.75,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L0·4",
+   "building": "bld:-1_-3·L0",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -22.75,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L1·1",
+   "building": "bld:-1_-3·L1",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -10.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L1·2",
+   "building": "bld:-1_-3·L1",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -10.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L2·1",
+   "building": "bld:-1_-3·L2",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -22.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L2·2",
+   "building": "bld:-1_-3·L2",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -22.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L2·3",
+   "building": "bld:-1_-3·L2",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -22.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L3·1",
+   "building": "bld:-1_-3·L3",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -7.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L3·2",
+   "building": "bld:-1_-3·L3",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -7.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L3·3",
+   "building": "bld:-1_-3·L3",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -7.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L3·4",
+   "building": "bld:-1_-3·L3",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -7.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L3·5",
+   "building": "bld:-1_-3·L3",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -7.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L5·1",
+   "building": "bld:-1_-3·L5",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -16.25,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L5·2",
+   "building": "bld:-1_-3·L5",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -16.25,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L5·3",
+   "building": "bld:-1_-3·L5",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -16.25,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L5·4",
+   "building": "bld:-1_-3·L5",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -16.25,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L9·1",
+   "building": "bld:-1_-3·L9",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -5.55,
+   "z": -77.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L9·2",
+   "building": "bld:-1_-3·L9",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -5.55,
+   "z": -77.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L9·3",
+   "building": "bld:-1_-3·L9",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -5.55,
+   "z": -77.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_-3·L9·4",
+   "building": "bld:-1_-3·L9",
+   "block": [
+    -1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -5.55,
+   "z": -77.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L0·1",
+   "building": "bld:-1_1·L0",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -26.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L0·2",
+   "building": "bld:-1_1·L0",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -26.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L3·1",
+   "building": "bld:-1_1·L3",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -5.55,
+   "z": 46.75,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L3·2",
+   "building": "bld:-1_1·L3",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -5.55,
+   "z": 46.75,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L4·1",
+   "building": "bld:-1_1·L4",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -9.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L4·2",
+   "building": "bld:-1_1·L4",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -9.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L4·3",
+   "building": "bld:-1_1·L4",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -9.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L5·1",
+   "building": "bld:-1_1·L5",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -15.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L5·2",
+   "building": "bld:-1_1·L5",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -15.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L5·3",
+   "building": "bld:-1_1·L5",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -15.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L5·4",
+   "building": "bld:-1_1·L5",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 4,
+   "x": -15.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L6·1",
+   "building": "bld:-1_1·L6",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -22.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_1·L6·2",
+   "building": "bld:-1_1·L6",
+   "block": [
+    -1,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -22.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_2·L0·1",
+   "building": "bld:-1_2·L0",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -26.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_2·L0·2",
+   "building": "bld:-1_2·L0",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -26.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_2·L0·3",
+   "building": "bld:-1_2·L0",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -26.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_2·L10·2",
+   "building": "bld:-1_2·L10",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -7.25,
+   "z": 83.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_2·L10·3",
+   "building": "bld:-1_2·L10",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -7.25,
+   "z": 83.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_2·L10·4",
+   "building": "bld:-1_2·L10",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -7.25,
+   "z": 83.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_2·L1·1",
+   "building": "bld:-1_2·L1",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -13.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_2·L1·2",
+   "building": "bld:-1_2·L1",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -13.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_2·L2·1",
+   "building": "bld:-1_2·L2",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -21.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_2·L3·1",
+   "building": "bld:-1_2·L3",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -7.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_2·L3·2",
+   "building": "bld:-1_2·L3",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -7.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-1_2·L5·2",
+   "building": "bld:-1_2·L5",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -18.55,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_2·L5·3",
+   "building": "bld:-1_2·L5",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -18.55,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_2·L5·4",
+   "building": "bld:-1_2·L5",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -18.55,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_2·L7·2",
+   "building": "bld:-1_2·L7",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -26.75,
+   "z": 77.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_2·L7·3",
+   "building": "bld:-1_2·L7",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -26.75,
+   "z": 77.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_2·L8·2",
+   "building": "bld:-1_2·L8",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -26.75,
+   "z": 81.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:-1_2·L8·3",
+   "building": "bld:-1_2·L8",
+   "block": [
+    -1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -26.75,
+   "z": 81.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_-2·L1·1",
+   "building": "bld:-2_-2·L1",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -38.75,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-2·L1·2",
+   "building": "bld:-2_-2·L1",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -38.75,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-2·L1·3",
+   "building": "bld:-2_-2·L1",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -38.75,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-2·L1·4",
+   "building": "bld:-2_-2·L1",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -38.75,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-2·L5·1",
+   "building": "bld:-2_-2·L5",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -47.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-2·L5·2",
+   "building": "bld:-2_-2·L5",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -47.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-2·L5·3",
+   "building": "bld:-2_-2·L5",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -47.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-2·L5·4",
+   "building": "bld:-2_-2·L5",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -47.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-2·L5·5",
+   "building": "bld:-2_-2·L5",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -47.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-2·L6·1",
+   "building": "bld:-2_-2·L6",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -60.45,
+   "z": -46.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-2·L6·2",
+   "building": "bld:-2_-2·L6",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -60.45,
+   "z": -46.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-2·L6·3",
+   "building": "bld:-2_-2·L6",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -60.45,
+   "z": -46.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-2·L6·4",
+   "building": "bld:-2_-2·L6",
+   "block": [
+    -2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -60.45,
+   "z": -46.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L0·1",
+   "building": "bld:-2_-3·L0",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -58.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L0·2",
+   "building": "bld:-2_-3·L0",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -58.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L0·3",
+   "building": "bld:-2_-3·L0",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -58.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L0·4",
+   "building": "bld:-2_-3·L0",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -58.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L0·5",
+   "building": "bld:-2_-3·L0",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -58.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L1·2",
+   "building": "bld:-2_-3·L1",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -40.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L1·3",
+   "building": "bld:-2_-3·L1",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -40.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L1·4",
+   "building": "bld:-2_-3·L1",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -40.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L1·6",
+   "building": "bld:-2_-3·L1",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 6,
+   "x": -40.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L2·1",
+   "building": "bld:-2_-3·L2",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -54.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L2·2",
+   "building": "bld:-2_-3·L2",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -54.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L2·3",
+   "building": "bld:-2_-3·L2",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -54.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L2·4",
+   "building": "bld:-2_-3·L2",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -54.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L3·1",
+   "building": "bld:-2_-3·L3",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -37.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L3·2",
+   "building": "bld:-2_-3·L3",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -37.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L3·3",
+   "building": "bld:-2_-3·L3",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -37.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L3·4",
+   "building": "bld:-2_-3·L3",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -37.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L3·5",
+   "building": "bld:-2_-3·L3",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -37.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L4·1",
+   "building": "bld:-2_-3·L4",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -48.35,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L4·2",
+   "building": "bld:-2_-3·L4",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -48.35,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L4·3",
+   "building": "bld:-2_-3·L4",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -48.35,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L8·1",
+   "building": "bld:-2_-3·L8",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -60.45,
+   "z": -79.25,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L8·2",
+   "building": "bld:-2_-3·L8",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -60.45,
+   "z": -79.25,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L8·3",
+   "building": "bld:-2_-3·L8",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -60.45,
+   "z": -79.25,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L9·1",
+   "building": "bld:-2_-3·L9",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -60.45,
+   "z": -75.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L9·3",
+   "building": "bld:-2_-3·L9",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -60.45,
+   "z": -75.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L9·4",
+   "building": "bld:-2_-3·L9",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -60.45,
+   "z": -75.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-3·L9·5",
+   "building": "bld:-2_-3·L9",
+   "block": [
+    -2,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -60.45,
+   "z": -75.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L0·1",
+   "building": "bld:-2_-4·L0",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -58.95,
+   "z": -122.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L0·2",
+   "building": "bld:-2_-4·L0",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -58.95,
+   "z": -122.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L1·1",
+   "building": "bld:-2_-4·L1",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -52.95,
+   "z": -122.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L1·2",
+   "building": "bld:-2_-4·L1",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -52.95,
+   "z": -122.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L1·3",
+   "building": "bld:-2_-4·L1",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -52.95,
+   "z": -122.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L1·4",
+   "building": "bld:-2_-4·L1",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -52.95,
+   "z": -122.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L2·1",
+   "building": "bld:-2_-4·L2",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -60.45,
+   "z": -109.75,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L2·2",
+   "building": "bld:-2_-4·L2",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -60.45,
+   "z": -109.75,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L2·3",
+   "building": "bld:-2_-4·L2",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -60.45,
+   "z": -109.75,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L2·4",
+   "building": "bld:-2_-4·L2",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -60.45,
+   "z": -109.75,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L3·1",
+   "building": "bld:-2_-4·L3",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -53.05,
+   "z": -99.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L3·2",
+   "building": "bld:-2_-4·L3",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -53.05,
+   "z": -99.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_-4·L3·3",
+   "building": "bld:-2_-4·L3",
+   "block": [
+    -2,
+    -4
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -53.05,
+   "z": -99.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_0·L0·1",
+   "building": "bld:-2_0·L0",
+   "block": [
+    -2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -58.95,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_0·L0·2",
+   "building": "bld:-2_0·L0",
+   "block": [
+    -2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -58.95,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_0·L1·1",
+   "building": "bld:-2_0·L1",
+   "block": [
+    -2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -39.75,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_0·L1·2",
+   "building": "bld:-2_0·L1",
+   "block": [
+    -2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -39.75,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_0·L1·3",
+   "building": "bld:-2_0·L1",
+   "block": [
+    -2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -39.75,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_0·L1·4",
+   "building": "bld:-2_0·L1",
+   "block": [
+    -2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -39.75,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_0·L1·5",
+   "building": "bld:-2_0·L1",
+   "block": [
+    -2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -39.75,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_0·L2·1",
+   "building": "bld:-2_0·L2",
+   "block": [
+    -2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -55.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_0·L2·2",
+   "building": "bld:-2_0·L2",
+   "block": [
+    -2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -55.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_0·L7·1",
+   "building": "bld:-2_0·L7",
+   "block": [
+    -2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -60.45,
+   "z": 16.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_0·L7·2",
+   "building": "bld:-2_0·L7",
+   "block": [
+    -2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -60.45,
+   "z": 16.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_0·L7·3",
+   "building": "bld:-2_0·L7",
+   "block": [
+    -2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -60.45,
+   "z": 16.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·L0·1",
+   "building": "bld:-2_1·L0",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -58.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·L0·2",
+   "building": "bld:-2_1·L0",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -58.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·L0·3",
+   "building": "bld:-2_1·L0",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -58.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·L1·1",
+   "building": "bld:-2_1·L1",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -51.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·L1·2",
+   "building": "bld:-2_1·L1",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -51.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·L1·3",
+   "building": "bld:-2_1·L1",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -51.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·L1·4",
+   "building": "bld:-2_1·L1",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 4,
+   "x": -51.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·L3·1",
+   "building": "bld:-2_1·L3",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -37.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·L3·2",
+   "building": "bld:-2_1·L3",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -37.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·L7·1",
+   "building": "bld:-2_1·L7",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -60.45,
+   "z": 51.75,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·L7·2",
+   "building": "bld:-2_1·L7",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -60.45,
+   "z": 51.75,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·L7·3",
+   "building": "bld:-2_1·L7",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -60.45,
+   "z": 51.75,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·karaoke·1",
+   "building": "bld:-2_1·karaoke",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -35.5,
+   "z": 52.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_1·karaoke·2",
+   "building": "bld:-2_1·karaoke",
+   "block": [
+    -2,
+    1
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -35.5,
+   "z": 52.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_2·L10·2",
+   "building": "bld:-2_2·L10",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -37.25,
+   "z": 80.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L10·3",
+   "building": "bld:-2_2·L10",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -37.25,
+   "z": 80.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L10·4",
+   "building": "bld:-2_2·L10",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -37.25,
+   "z": 80.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L2·1",
+   "building": "bld:-2_2·L2",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -54.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_2·L3·1",
+   "building": "bld:-2_2·L3",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -41.55,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_2·L3·2",
+   "building": "bld:-2_2·L3",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -41.55,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_2·L3·3",
+   "building": "bld:-2_2·L3",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -41.55,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_2·L3·4",
+   "building": "bld:-2_2·L3",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -41.55,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-2_2·L4·2",
+   "building": "bld:-2_2·L4",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -48.45,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L4·3",
+   "building": "bld:-2_2·L4",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -48.45,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L4·4",
+   "building": "bld:-2_2·L4",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -48.45,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L5·2",
+   "building": "bld:-2_2·L5",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -44.45,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L5·3",
+   "building": "bld:-2_2·L5",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -44.45,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L8·2",
+   "building": "bld:-2_2·L8",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -58.75,
+   "z": 78.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L8·3",
+   "building": "bld:-2_2·L8",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -58.75,
+   "z": 78.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L8·4",
+   "building": "bld:-2_2·L8",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -58.75,
+   "z": 78.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L8·5",
+   "building": "bld:-2_2·L8",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -58.75,
+   "z": 78.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L9·2",
+   "building": "bld:-2_2·L9",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -37.25,
+   "z": 76.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-2_2·L9·3",
+   "building": "bld:-2_2·L9",
+   "block": [
+    -2,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -37.25,
+   "z": 76.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-1·L0·1",
+   "building": "bld:-3_-1·L0",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -90.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L0·2",
+   "building": "bld:-3_-1·L0",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -90.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L0·3",
+   "building": "bld:-3_-1·L0",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -90.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L0·4",
+   "building": "bld:-3_-1·L0",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -90.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L0·5",
+   "building": "bld:-3_-1·L0",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -90.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L1·1",
+   "building": "bld:-3_-1·L1",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -72.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L1·2",
+   "building": "bld:-3_-1·L1",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -72.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L1·3",
+   "building": "bld:-3_-1·L1",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -72.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L1·4",
+   "building": "bld:-3_-1·L1",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -72.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L2·1",
+   "building": "bld:-3_-1·L2",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -87.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L2·2",
+   "building": "bld:-3_-1·L2",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -87.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L2·3",
+   "building": "bld:-3_-1·L2",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -87.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L2·4",
+   "building": "bld:-3_-1·L2",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -87.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L3·1",
+   "building": "bld:-3_-1·L3",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -73.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L3·2",
+   "building": "bld:-3_-1·L3",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -73.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L3·3",
+   "building": "bld:-3_-1·L3",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -73.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L3·4",
+   "building": "bld:-3_-1·L3",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -73.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L3·5",
+   "building": "bld:-3_-1·L3",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -73.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-1·L5·2",
+   "building": "bld:-3_-1·L5",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -75.65,
+   "z": -26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-1·L5·3",
+   "building": "bld:-3_-1·L5",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -75.65,
+   "z": -26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-1·L5·4",
+   "building": "bld:-3_-1·L5",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -75.65,
+   "z": -26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-1·L6·2",
+   "building": "bld:-3_-1·L6",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -84.55,
+   "z": -7.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-1·L6·3",
+   "building": "bld:-3_-1·L6",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -84.55,
+   "z": -7.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-1·L6·4",
+   "building": "bld:-3_-1·L6",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -84.55,
+   "z": -7.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-1·L8·1",
+   "building": "bld:-3_-1·L8",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -90.75,
+   "z": -19.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-1·L8·2",
+   "building": "bld:-3_-1·L8",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -90.75,
+   "z": -19.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-1·L8·3",
+   "building": "bld:-3_-1·L8",
+   "block": [
+    -3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -90.75,
+   "z": -19.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-2·L0·1",
+   "building": "bld:-3_-2·L0",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -90.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L0·2",
+   "building": "bld:-3_-2·L0",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -90.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L0·3",
+   "building": "bld:-3_-2·L0",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -90.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L0·4",
+   "building": "bld:-3_-2·L0",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -90.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L0·5",
+   "building": "bld:-3_-2·L0",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -90.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L3·1",
+   "building": "bld:-3_-2·L3",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -69.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L3·2",
+   "building": "bld:-3_-2·L3",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -69.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L3·3",
+   "building": "bld:-3_-2·L3",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -69.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L5·1",
+   "building": "bld:-3_-2·L5",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -81.25,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L5·2",
+   "building": "bld:-3_-2·L5",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -81.25,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L5·3",
+   "building": "bld:-3_-2·L5",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -81.25,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L5·4",
+   "building": "bld:-3_-2·L5",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -81.25,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L6·1",
+   "building": "bld:-3_-2·L6",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -76.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L6·2",
+   "building": "bld:-3_-2·L6",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -76.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L6·3",
+   "building": "bld:-3_-2·L6",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -76.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L7·1",
+   "building": "bld:-3_-2·L7",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -82.15,
+   "z": -37.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-2·L7·2",
+   "building": "bld:-3_-2·L7",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -82.15,
+   "z": -37.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-2·L7·3",
+   "building": "bld:-3_-2·L7",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -82.15,
+   "z": -37.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-2·L8·1",
+   "building": "bld:-3_-2·L8",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -92.45,
+   "z": -48.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L8·2",
+   "building": "bld:-3_-2·L8",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -92.45,
+   "z": -48.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-2·L8·3",
+   "building": "bld:-3_-2·L8",
+   "block": [
+    -3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -92.45,
+   "z": -48.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L1·1",
+   "building": "bld:-3_-3·L1",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -72.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L1·2",
+   "building": "bld:-3_-3·L1",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -72.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L1·3",
+   "building": "bld:-3_-3·L1",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -72.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L1·5",
+   "building": "bld:-3_-3·L1",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -72.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L1·6",
+   "building": "bld:-3_-3·L1",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 6,
+   "x": -72.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L2·1",
+   "building": "bld:-3_-3·L2",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -84.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L3·1",
+   "building": "bld:-3_-3·L3",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -69.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L4·2",
+   "building": "bld:-3_-3·L4",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -79.75,
+   "z": -90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-3·L4·3",
+   "building": "bld:-3_-3·L4",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -79.75,
+   "z": -90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-3·L4·4",
+   "building": "bld:-3_-3·L4",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -79.75,
+   "z": -90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-3·L6·1",
+   "building": "bld:-3_-3·L6",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -77.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L6·2",
+   "building": "bld:-3_-3·L6",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -77.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L6·3",
+   "building": "bld:-3_-3·L6",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -77.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L6·4",
+   "building": "bld:-3_-3·L6",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -77.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L6·5",
+   "building": "bld:-3_-3·L6",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -77.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_-3·L9·2",
+   "building": "bld:-3_-3·L9",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -69.25,
+   "z": -76.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-3·L9·3",
+   "building": "bld:-3_-3·L9",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -69.25,
+   "z": -76.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_-3·L9·4",
+   "building": "bld:-3_-3·L9",
+   "block": [
+    -3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -69.25,
+   "z": -76.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_1·L0·1",
+   "building": "bld:-3_1·L0",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -90.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L0·2",
+   "building": "bld:-3_1·L0",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -90.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L0·3",
+   "building": "bld:-3_1·L0",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -90.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L0·4",
+   "building": "bld:-3_1·L0",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -90.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L10·2",
+   "building": "bld:-3_1·L10",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -69.25,
+   "z": 52.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_1·L10·3",
+   "building": "bld:-3_1·L10",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -69.25,
+   "z": 52.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_1·L1·1",
+   "building": "bld:-3_1·L1",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -71.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L1·2",
+   "building": "bld:-3_1·L1",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -71.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L1·3",
+   "building": "bld:-3_1·L1",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -71.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L1·4",
+   "building": "bld:-3_1·L1",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -71.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L2·1",
+   "building": "bld:-3_1·L2",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -87.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L2·2",
+   "building": "bld:-3_1·L2",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -87.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L2·3",
+   "building": "bld:-3_1·L2",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -87.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L2·4",
+   "building": "bld:-3_1·L2",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -87.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L3·1",
+   "building": "bld:-3_1·L3",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -69.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L3·2",
+   "building": "bld:-3_1·L3",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -69.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L3·3",
+   "building": "bld:-3_1·L3",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -69.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L3·4",
+   "building": "bld:-3_1·L3",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -69.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L4·1",
+   "building": "bld:-3_1·L4",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -81.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L4·2",
+   "building": "bld:-3_1·L4",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -81.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L4·3",
+   "building": "bld:-3_1·L4",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -81.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L4·4",
+   "building": "bld:-3_1·L4",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -81.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L4·5",
+   "building": "bld:-3_1·L4",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -81.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_1·L5·2",
+   "building": "bld:-3_1·L5",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -84.35,
+   "z": 58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_1·L5·3",
+   "building": "bld:-3_1·L5",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -84.35,
+   "z": 58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_1·L5·4",
+   "building": "bld:-3_1·L5",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -84.35,
+   "z": 58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_1·L5·5",
+   "building": "bld:-3_1·L5",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -84.35,
+   "z": 58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_1·L5·6",
+   "building": "bld:-3_1·L5",
+   "block": [
+    -3,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 6,
+   "x": -84.35,
+   "z": 58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_2·L0·1",
+   "building": "bld:-3_2·L0",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -90.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_2·L0·2",
+   "building": "bld:-3_2·L0",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -90.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_2·L0·3",
+   "building": "bld:-3_2·L0",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -90.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_2·L0·4",
+   "building": "bld:-3_2·L0",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -90.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_2·L10·2",
+   "building": "bld:-3_2·L10",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -69.25,
+   "z": 78.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_2·L10·3",
+   "building": "bld:-3_2·L10",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -69.25,
+   "z": 78.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_2·L10·4",
+   "building": "bld:-3_2·L10",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -69.25,
+   "z": 78.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_2·L1·1",
+   "building": "bld:-3_2·L1",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -72.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_2·L1·2",
+   "building": "bld:-3_2·L1",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -72.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_2·L2·1",
+   "building": "bld:-3_2·L2",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -88.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_2·L2·2",
+   "building": "bld:-3_2·L2",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -88.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_2·L3·1",
+   "building": "bld:-3_2·L3",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -69.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_2·L3·2",
+   "building": "bld:-3_2·L3",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -69.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_2·L3·3",
+   "building": "bld:-3_2·L3",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -69.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_2·L3·4",
+   "building": "bld:-3_2·L3",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -69.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-3_2·L4·2",
+   "building": "bld:-3_2·L4",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -81.65,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_2·L4·3",
+   "building": "bld:-3_2·L4",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -81.65,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_2·L5·2",
+   "building": "bld:-3_2·L5",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -75.75,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_2·L5·3",
+   "building": "bld:-3_2·L5",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -75.75,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_2·L5·4",
+   "building": "bld:-3_2·L5",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -75.75,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_2·L7·2",
+   "building": "bld:-3_2·L7",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -77.55,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-3_2·L7·3",
+   "building": "bld:-3_2·L7",
+   "block": [
+    -3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -77.55,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_-2·L0·1",
+   "building": "bld:-4_-2·L0",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -116.85,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L0·2",
+   "building": "bld:-4_-2·L0",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -116.85,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L0·3",
+   "building": "bld:-4_-2·L0",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -116.85,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L0·4",
+   "building": "bld:-4_-2·L0",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -116.85,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L0·5",
+   "building": "bld:-4_-2·L0",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -116.85,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L10·2",
+   "building": "bld:-4_-2·L10",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -99.55,
+   "z": -50.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L10·3",
+   "building": "bld:-4_-2·L10",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -99.55,
+   "z": -50.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L10·4",
+   "building": "bld:-4_-2·L10",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -99.55,
+   "z": -50.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L10·5",
+   "building": "bld:-4_-2·L10",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -99.55,
+   "z": -50.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L11·1",
+   "building": "bld:-4_-2·L11",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -99.55,
+   "z": -46.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L11·2",
+   "building": "bld:-4_-2·L11",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -99.55,
+   "z": -46.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L11·3",
+   "building": "bld:-4_-2·L11",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -99.55,
+   "z": -46.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L11·4",
+   "building": "bld:-4_-2·L11",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -99.55,
+   "z": -46.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L1·1",
+   "building": "bld:-4_-2·L1",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -104.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L1·2",
+   "building": "bld:-4_-2·L1",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -104.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L1·3",
+   "building": "bld:-4_-2·L1",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -104.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L1·4",
+   "building": "bld:-4_-2·L1",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -104.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L2·1",
+   "building": "bld:-4_-2·L2",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -117.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L2·2",
+   "building": "bld:-4_-2·L2",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -117.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L2·3",
+   "building": "bld:-4_-2·L2",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -117.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L2·4",
+   "building": "bld:-4_-2·L2",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -117.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L3·1",
+   "building": "bld:-4_-2·L3",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -101.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L3·2",
+   "building": "bld:-4_-2·L3",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -101.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L3·3",
+   "building": "bld:-4_-2·L3",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -101.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L3·4",
+   "building": "bld:-4_-2·L3",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -101.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L3·5",
+   "building": "bld:-4_-2·L3",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -101.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L6·1",
+   "building": "bld:-4_-2·L6",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -112.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L6·2",
+   "building": "bld:-4_-2·L6",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -112.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L6·3",
+   "building": "bld:-4_-2·L6",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -112.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L6·4",
+   "building": "bld:-4_-2·L6",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -112.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L6·5",
+   "building": "bld:-4_-2·L6",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -112.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L7·1",
+   "building": "bld:-4_-2·L7",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -108.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L7·2",
+   "building": "bld:-4_-2·L7",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -108.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L7·3",
+   "building": "bld:-4_-2·L7",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -108.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L7·4",
+   "building": "bld:-4_-2·L7",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -108.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L8·1",
+   "building": "bld:-4_-2·L8",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -122.45,
+   "z": -49.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L8·2",
+   "building": "bld:-4_-2·L8",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -122.45,
+   "z": -49.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L8·3",
+   "building": "bld:-4_-2·L8",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -122.45,
+   "z": -49.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L8·4",
+   "building": "bld:-4_-2·L8",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -122.45,
+   "z": -49.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L9·1",
+   "building": "bld:-4_-2·L9",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -122.45,
+   "z": -45.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L9·2",
+   "building": "bld:-4_-2·L9",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -122.45,
+   "z": -45.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L9·3",
+   "building": "bld:-4_-2·L9",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -122.45,
+   "z": -45.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L9·4",
+   "building": "bld:-4_-2·L9",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -122.45,
+   "z": -45.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-2·L9·5",
+   "building": "bld:-4_-2·L9",
+   "block": [
+    -4,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -122.45,
+   "z": -45.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L1·1",
+   "building": "bld:-4_-3·L1",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -104.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L1·2",
+   "building": "bld:-4_-3·L1",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -104.95,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L2·1",
+   "building": "bld:-4_-3·L2",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -118.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L2·2",
+   "building": "bld:-4_-3·L2",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -118.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L2·3",
+   "building": "bld:-4_-3·L2",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -118.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L2·4",
+   "building": "bld:-4_-3·L2",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -118.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L3·1",
+   "building": "bld:-4_-3·L3",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -101.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L3·2",
+   "building": "bld:-4_-3·L3",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -101.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L3·3",
+   "building": "bld:-4_-3·L3",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -101.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L3·4",
+   "building": "bld:-4_-3·L3",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -101.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L3·5",
+   "building": "bld:-4_-3·L3",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -101.05,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L7·1",
+   "building": "bld:-4_-3·L7",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -122.45,
+   "z": -75.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L7·2",
+   "building": "bld:-4_-3·L7",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -122.45,
+   "z": -75.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L7·3",
+   "building": "bld:-4_-3·L7",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -122.45,
+   "z": -75.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L7·4",
+   "building": "bld:-4_-3·L7",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -122.45,
+   "z": -75.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L7·5",
+   "building": "bld:-4_-3·L7",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -122.45,
+   "z": -75.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L8·2",
+   "building": "bld:-4_-3·L8",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -101.25,
+   "z": -82.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_-3·L8·3",
+   "building": "bld:-4_-3·L8",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -101.25,
+   "z": -82.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_-3·L8·4",
+   "building": "bld:-4_-3·L8",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -101.25,
+   "z": -82.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_-3·L8·5",
+   "building": "bld:-4_-3·L8",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -101.25,
+   "z": -82.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_-3·L8·6",
+   "building": "bld:-4_-3·L8",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 6,
+   "x": -101.25,
+   "z": -82.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_-3·L9·1",
+   "building": "bld:-4_-3·L9",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -99.55,
+   "z": -79.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L9·2",
+   "building": "bld:-4_-3·L9",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -99.55,
+   "z": -79.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_-3·L9·4",
+   "building": "bld:-4_-3·L9",
+   "block": [
+    -4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -99.55,
+   "z": -79.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_0·L0·1",
+   "building": "bld:-4_0·L0",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -116.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_0·L0·2",
+   "building": "bld:-4_0·L0",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -116.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_0·L0·3",
+   "building": "bld:-4_0·L0",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -116.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_0·L0·4",
+   "building": "bld:-4_0·L0",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -116.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_0·L1·1",
+   "building": "bld:-4_0·L1",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -113.15,
+   "z": 26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_0·L1·2",
+   "building": "bld:-4_0·L1",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -113.15,
+   "z": 26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_0·L1·3",
+   "building": "bld:-4_0·L1",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -113.15,
+   "z": 26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_0·L1·4",
+   "building": "bld:-4_0·L1",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -113.15,
+   "z": 26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_0·L1·5",
+   "building": "bld:-4_0·L1",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -113.15,
+   "z": 26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_0·L1·6",
+   "building": "bld:-4_0·L1",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 6,
+   "x": -113.15,
+   "z": 26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_0·L2·1",
+   "building": "bld:-4_0·L2",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -104.45,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_0·L2·2",
+   "building": "bld:-4_0·L2",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -104.45,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_0·L2·3",
+   "building": "bld:-4_0·L2",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -104.45,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_0·L2·4",
+   "building": "bld:-4_0·L2",
+   "block": [
+    -4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -104.45,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L0·1",
+   "building": "bld:-4_1·L0",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -120.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L0·2",
+   "building": "bld:-4_1·L0",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -120.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L0·3",
+   "building": "bld:-4_1·L0",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -120.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L0·4",
+   "building": "bld:-4_1·L0",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -120.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L0·5",
+   "building": "bld:-4_1·L0",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -120.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L1·1",
+   "building": "bld:-4_1·L1",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -107.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L1·2",
+   "building": "bld:-4_1·L1",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -107.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L1·3",
+   "building": "bld:-4_1·L1",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -107.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L1·4",
+   "building": "bld:-4_1·L1",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -107.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L2·1",
+   "building": "bld:-4_1·L2",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -117.05,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L6·1",
+   "building": "bld:-4_1·L6",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -109.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L6·2",
+   "building": "bld:-4_1·L6",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -109.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L6·3",
+   "building": "bld:-4_1·L6",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -109.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L6·4",
+   "building": "bld:-4_1·L6",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -109.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_1·L7·2",
+   "building": "bld:-4_1·L7",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -120.75,
+   "z": 46.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_1·L7·3",
+   "building": "bld:-4_1·L7",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -120.75,
+   "z": 46.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_1·L9·2",
+   "building": "bld:-4_1·L9",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -101.25,
+   "z": 50.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_1·L9·3",
+   "building": "bld:-4_1·L9",
+   "block": [
+    -4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -101.25,
+   "z": 50.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_2·L0·1",
+   "building": "bld:-4_2·L0",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -120.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L0·2",
+   "building": "bld:-4_2·L0",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -120.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L0·3",
+   "building": "bld:-4_2·L0",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -120.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L0·4",
+   "building": "bld:-4_2·L0",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -120.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L10·2",
+   "building": "bld:-4_2·L10",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -101.25,
+   "z": 81.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_2·L10·3",
+   "building": "bld:-4_2·L10",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -101.25,
+   "z": 81.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_2·L10·4",
+   "building": "bld:-4_2·L10",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -101.25,
+   "z": 81.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_2·L2·1",
+   "building": "bld:-4_2·L2",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -118.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L2·2",
+   "building": "bld:-4_2·L2",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -118.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L2·3",
+   "building": "bld:-4_2·L2",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -118.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L2·4",
+   "building": "bld:-4_2·L2",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -118.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L3·1",
+   "building": "bld:-4_2·L3",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -101.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L3·2",
+   "building": "bld:-4_2·L3",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -101.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L4·2",
+   "building": "bld:-4_2·L4",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -110.75,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_2·L4·3",
+   "building": "bld:-4_2·L4",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -110.75,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_2·L5·2",
+   "building": "bld:-4_2·L5",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -112.55,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_2·L5·3",
+   "building": "bld:-4_2·L5",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -112.55,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_2·L6·2",
+   "building": "bld:-4_2·L6",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -108.55,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_2·L6·3",
+   "building": "bld:-4_2·L6",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -108.55,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-4_2·L7·1",
+   "building": "bld:-4_2·L7",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -122.45,
+   "z": 80.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L7·2",
+   "building": "bld:-4_2·L7",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -122.45,
+   "z": 80.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L7·3",
+   "building": "bld:-4_2·L7",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -122.45,
+   "z": 80.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L7·4",
+   "building": "bld:-4_2·L7",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -122.45,
+   "z": 80.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L7·5",
+   "building": "bld:-4_2·L7",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -122.45,
+   "z": 80.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L8·1",
+   "building": "bld:-4_2·L8",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -122.45,
+   "z": 84.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L8·2",
+   "building": "bld:-4_2·L8",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -122.45,
+   "z": 84.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L8·4",
+   "building": "bld:-4_2·L8",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -122.45,
+   "z": 84.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L8·5",
+   "building": "bld:-4_2·L8",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -122.45,
+   "z": 84.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L9·1",
+   "building": "bld:-4_2·L9",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -99.55,
+   "z": 76.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L9·2",
+   "building": "bld:-4_2·L9",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -99.55,
+   "z": 76.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L9·3",
+   "building": "bld:-4_2·L9",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -99.55,
+   "z": 76.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-4_2·L9·4",
+   "building": "bld:-4_2·L9",
+   "block": [
+    -4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -99.55,
+   "z": 76.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L0·1",
+   "building": "bld:-5_-1·L0",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -149.55,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L0·2",
+   "building": "bld:-5_-1·L0",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -149.55,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L0·3",
+   "building": "bld:-5_-1·L0",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -149.55,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L0·4",
+   "building": "bld:-5_-1·L0",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -149.55,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L0·5",
+   "building": "bld:-5_-1·L0",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -149.55,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L1·1",
+   "building": "bld:-5_-1·L1",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -144.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L1·2",
+   "building": "bld:-5_-1·L1",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -144.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L1·3",
+   "building": "bld:-5_-1·L1",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -144.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L1·4",
+   "building": "bld:-5_-1·L1",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -144.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L1·5",
+   "building": "bld:-5_-1·L1",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -144.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L2·1",
+   "building": "bld:-5_-1·L2",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -138.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L2·2",
+   "building": "bld:-5_-1·L2",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -138.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L2·3",
+   "building": "bld:-5_-1·L2",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -138.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L2·4",
+   "building": "bld:-5_-1·L2",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -138.95,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L3·1",
+   "building": "bld:-5_-1·L3",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -133.55,
+   "z": -18.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L3·2",
+   "building": "bld:-5_-1·L3",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -133.55,
+   "z": -18.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L3·3",
+   "building": "bld:-5_-1·L3",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -133.55,
+   "z": -18.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L3·4",
+   "building": "bld:-5_-1·L3",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -133.55,
+   "z": -18.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L3·5",
+   "building": "bld:-5_-1·L3",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -133.55,
+   "z": -18.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L4·1",
+   "building": "bld:-5_-1·L4",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -135.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L4·2",
+   "building": "bld:-5_-1·L4",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -135.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L4·3",
+   "building": "bld:-5_-1·L4",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -135.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L4·4",
+   "building": "bld:-5_-1·L4",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -135.05,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L5·1",
+   "building": "bld:-5_-1·L5",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -145.85,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L5·2",
+   "building": "bld:-5_-1·L5",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -145.85,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L5·3",
+   "building": "bld:-5_-1·L5",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -145.85,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L5·4",
+   "building": "bld:-5_-1·L5",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -145.85,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L5·5",
+   "building": "bld:-5_-1·L5",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -145.85,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-1·L7·2",
+   "building": "bld:-5_-1·L7",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -154.75,
+   "z": -16.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:-5_-1·L7·3",
+   "building": "bld:-5_-1·L7",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -154.75,
+   "z": -16.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:-5_-1·L7·4",
+   "building": "bld:-5_-1·L7",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -154.75,
+   "z": -16.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:-5_-1·L7·5",
+   "building": "bld:-5_-1·L7",
+   "block": [
+    -5,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -154.75,
+   "z": -16.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:-5_-2·L0·1",
+   "building": "bld:-5_-2·L0",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -153.75,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L0·2",
+   "building": "bld:-5_-2·L0",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -153.75,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L0·3",
+   "building": "bld:-5_-2·L0",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -153.75,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L1·1",
+   "building": "bld:-5_-2·L1",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -147.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L1·2",
+   "building": "bld:-5_-2·L1",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -147.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L1·3",
+   "building": "bld:-5_-2·L1",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -147.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L1·4",
+   "building": "bld:-5_-2·L1",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 4,
+   "x": -147.95,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L2·1",
+   "building": "bld:-5_-2·L2",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -137.55,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L2·2",
+   "building": "bld:-5_-2·L2",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -137.55,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L2·3",
+   "building": "bld:-5_-2·L2",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -137.55,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L3·1",
+   "building": "bld:-5_-2·L3",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -133.55,
+   "z": -51.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L3·2",
+   "building": "bld:-5_-2·L3",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -133.55,
+   "z": -51.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L3·3",
+   "building": "bld:-5_-2·L3",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -133.55,
+   "z": -51.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L3·4",
+   "building": "bld:-5_-2·L3",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 4,
+   "x": -133.55,
+   "z": -51.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L3·5",
+   "building": "bld:-5_-2·L3",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 5,
+   "x": -133.55,
+   "z": -51.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L4·1",
+   "building": "bld:-5_-2·L4",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -144.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L4·2",
+   "building": "bld:-5_-2·L4",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -144.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L4·3",
+   "building": "bld:-5_-2·L4",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -144.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L4·4",
+   "building": "bld:-5_-2·L4",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 4,
+   "x": -144.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L5·1",
+   "building": "bld:-5_-2·L5",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -150.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L5·2",
+   "building": "bld:-5_-2·L5",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -150.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L5·3",
+   "building": "bld:-5_-2·L5",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -150.05,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L7·1",
+   "building": "bld:-5_-2·L7",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": -156.45,
+   "z": -44.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L7·2",
+   "building": "bld:-5_-2·L7",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -156.45,
+   "z": -44.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L7·3",
+   "building": "bld:-5_-2·L7",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -156.45,
+   "z": -44.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·L7·4",
+   "building": "bld:-5_-2·L7",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 4,
+   "x": -156.45,
+   "z": -44.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·pawn·1",
+   "building": "bld:-5_-2·pawn",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": -142.05,
+   "z": -35.5,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_-2·pawn·2",
+   "building": "bld:-5_-2·pawn",
+   "block": [
+    -5,
+    -2
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": -142.05,
+   "z": -35.5,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L0·1",
+   "building": "bld:-5_0·L0",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -154.95,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L0·2",
+   "building": "bld:-5_0·L0",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -154.95,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L10·1",
+   "building": "bld:-5_0·L10",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -133.55,
+   "z": 18.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L10·2",
+   "building": "bld:-5_0·L10",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -133.55,
+   "z": 18.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L10·3",
+   "building": "bld:-5_0·L10",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -133.55,
+   "z": 18.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L10·4",
+   "building": "bld:-5_0·L10",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -133.55,
+   "z": 18.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L1·1",
+   "building": "bld:-5_0·L1",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -138.95,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L1·2",
+   "building": "bld:-5_0·L1",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -138.95,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L1·3",
+   "building": "bld:-5_0·L1",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -138.95,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L1·4",
+   "building": "bld:-5_0·L1",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -138.95,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L2·1",
+   "building": "bld:-5_0·L2",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -150.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L2·2",
+   "building": "bld:-5_0·L2",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -150.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L2·3",
+   "building": "bld:-5_0·L2",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -150.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L2·4",
+   "building": "bld:-5_0·L2",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -150.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L3·1",
+   "building": "bld:-5_0·L3",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -135.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L3·2",
+   "building": "bld:-5_0·L3",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -135.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L3·3",
+   "building": "bld:-5_0·L3",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -135.05,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L4·1",
+   "building": "bld:-5_0·L4",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -141.85,
+   "z": 7.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:-5_0·L5·1",
+   "building": "bld:-5_0·L5",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -147.85,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L5·2",
+   "building": "bld:-5_0·L5",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -147.85,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L5·3",
+   "building": "bld:-5_0·L5",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -147.85,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L5·4",
+   "building": "bld:-5_0·L5",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -147.85,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L5·5",
+   "building": "bld:-5_0·L5",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -147.85,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L7·1",
+   "building": "bld:-5_0·L7",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -156.45,
+   "z": 16.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L7·2",
+   "building": "bld:-5_0·L7",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -156.45,
+   "z": 16.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L7·3",
+   "building": "bld:-5_0·L7",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -156.45,
+   "z": 16.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L7·4",
+   "building": "bld:-5_0·L7",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -156.45,
+   "z": 16.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L7·5",
+   "building": "bld:-5_0·L7",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -156.45,
+   "z": 16.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L9·1",
+   "building": "bld:-5_0·L9",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -133.55,
+   "z": 14.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L9·2",
+   "building": "bld:-5_0·L9",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -133.55,
+   "z": 14.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L9·3",
+   "building": "bld:-5_0·L9",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -133.55,
+   "z": 14.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L9·4",
+   "building": "bld:-5_0·L9",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -133.55,
+   "z": 14.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_0·L9·5",
+   "building": "bld:-5_0·L9",
+   "block": [
+    -5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -133.55,
+   "z": 14.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L0·1",
+   "building": "bld:-5_1·L0",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -154.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L0·2",
+   "building": "bld:-5_1·L0",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -154.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L1·1",
+   "building": "bld:-5_1·L1",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -137.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L1·2",
+   "building": "bld:-5_1·L1",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -137.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L1·3",
+   "building": "bld:-5_1·L1",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -137.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L1·4",
+   "building": "bld:-5_1·L1",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -137.95,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L7·1",
+   "building": "bld:-5_1·L7",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -156.45,
+   "z": 49.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L7·2",
+   "building": "bld:-5_1·L7",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -156.45,
+   "z": 49.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L7·3",
+   "building": "bld:-5_1·L7",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -156.45,
+   "z": 49.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L7·4",
+   "building": "bld:-5_1·L7",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -156.45,
+   "z": 49.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L8·1",
+   "building": "bld:-5_1·L8",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -133.55,
+   "z": 46.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L8·2",
+   "building": "bld:-5_1·L8",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -133.55,
+   "z": 46.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L8·3",
+   "building": "bld:-5_1·L8",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -133.55,
+   "z": 46.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L8·4",
+   "building": "bld:-5_1·L8",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -133.55,
+   "z": 46.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_1·L8·5",
+   "building": "bld:-5_1·L8",
+   "block": [
+    -5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": -133.55,
+   "z": 46.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_2·L0·1",
+   "building": "bld:-5_2·L0",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -154.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_2·L0·2",
+   "building": "bld:-5_2·L0",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -154.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_2·L0·3",
+   "building": "bld:-5_2·L0",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -154.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_2·L1·1",
+   "building": "bld:-5_2·L1",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -141.95,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_2·L2·1",
+   "building": "bld:-5_2·L2",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -151.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_2·L2·2",
+   "building": "bld:-5_2·L2",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -151.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_2·L2·3",
+   "building": "bld:-5_2·L2",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -151.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_2·L2·4",
+   "building": "bld:-5_2·L2",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -151.05,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_2·L6·2",
+   "building": "bld:-5_2·L6",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -143.55,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-5_2·L6·3",
+   "building": "bld:-5_2·L6",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -143.55,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-5_2·L6·4",
+   "building": "bld:-5_2·L6",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -143.55,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:-5_2·L7·1",
+   "building": "bld:-5_2·L7",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": -156.45,
+   "z": 80.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_2·L7·2",
+   "building": "bld:-5_2·L7",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": -156.45,
+   "z": 80.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_2·L7·3",
+   "building": "bld:-5_2·L7",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": -156.45,
+   "z": 80.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:-5_2·L7·4",
+   "building": "bld:-5_2·L7",
+   "block": [
+    -5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": -156.45,
+   "z": 80.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L0·1",
+   "building": "bld:0_-3·L0",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 7.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L0·2",
+   "building": "bld:0_-3·L0",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 7.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L1·1",
+   "building": "bld:0_-3·L1",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 22.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L1·2",
+   "building": "bld:0_-3·L1",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 22.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L2·1",
+   "building": "bld:0_-3·L2",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 9.55,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L2·2",
+   "building": "bld:0_-3·L2",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 9.55,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L2·3",
+   "building": "bld:0_-3·L2",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 9.55,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L2·4",
+   "building": "bld:0_-3·L2",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 9.55,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L3·1",
+   "building": "bld:0_-3·L3",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 26.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L3·2",
+   "building": "bld:0_-3·L3",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 26.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L3·3",
+   "building": "bld:0_-3·L3",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 26.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L4·2",
+   "building": "bld:0_-3·L4",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 19.25,
+   "z": -90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_-3·L4·3",
+   "building": "bld:0_-3·L4",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 19.25,
+   "z": -90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_-3·L4·4",
+   "building": "bld:0_-3·L4",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 19.25,
+   "z": -90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_-3·L6·1",
+   "building": "bld:0_-3·L6",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 5.55,
+   "z": -78.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L6·2",
+   "building": "bld:0_-3·L6",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 5.55,
+   "z": -78.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L6·3",
+   "building": "bld:0_-3·L6",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 5.55,
+   "z": -78.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_-3·L7·2",
+   "building": "bld:0_-3·L7",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 26.75,
+   "z": -83.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_-3·L7·3",
+   "building": "bld:0_-3·L7",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 26.75,
+   "z": -83.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_-3·L7·4",
+   "building": "bld:0_-3·L7",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 26.75,
+   "z": -83.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_-3·L8·1",
+   "building": "bld:0_-3·L8",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 26.75,
+   "z": -76.85,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_-3·L8·2",
+   "building": "bld:0_-3·L8",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 26.75,
+   "z": -76.85,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_-3·L8·3",
+   "building": "bld:0_-3·L8",
+   "block": [
+    0,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 26.75,
+   "z": -76.85,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_1·L0·1",
+   "building": "bld:0_1·L0",
+   "block": [
+    0,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 7.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_1·L0·2",
+   "building": "bld:0_1·L0",
+   "block": [
+    0,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 7.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_1·L3·1",
+   "building": "bld:0_1·L3",
+   "block": [
+    0,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 26.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_1·L3·2",
+   "building": "bld:0_1·L3",
+   "block": [
+    0,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 26.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_1·L3·3",
+   "building": "bld:0_1·L3",
+   "block": [
+    0,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 26.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_1·L5·1",
+   "building": "bld:0_1·L5",
+   "block": [
+    0,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 19.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_1·L5·2",
+   "building": "bld:0_1·L5",
+   "block": [
+    0,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 19.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_1·L6·1",
+   "building": "bld:0_1·L6",
+   "block": [
+    0,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 7.25,
+   "z": 45.85,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_1·L6·2",
+   "building": "bld:0_1·L6",
+   "block": [
+    0,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 7.25,
+   "z": 45.85,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_1·L6·3",
+   "building": "bld:0_1·L6",
+   "block": [
+    0,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 7.25,
+   "z": 45.85,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_1·L6·4",
+   "building": "bld:0_1·L6",
+   "block": [
+    0,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 7.25,
+   "z": 45.85,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_2·L0·1",
+   "building": "bld:0_2·L0",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 5.55,
+   "z": 75.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_2·L0·2",
+   "building": "bld:0_2·L0",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 5.55,
+   "z": 75.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_2·L1·2",
+   "building": "bld:0_2·L1",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 18.25,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_2·L1·3",
+   "building": "bld:0_2·L1",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 18.25,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_2·L1·4",
+   "building": "bld:0_2·L1",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 18.25,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_2·L2·1",
+   "building": "bld:0_2·L2",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 21.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_2·L2·2",
+   "building": "bld:0_2·L2",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 21.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_2·L3·1",
+   "building": "bld:0_2·L3",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 26.75,
+   "z": 82.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_2·L3·2",
+   "building": "bld:0_2·L3",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 26.75,
+   "z": 82.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_2·L3·3",
+   "building": "bld:0_2·L3",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 26.75,
+   "z": 82.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_2·L3·4",
+   "building": "bld:0_2·L3",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 26.75,
+   "z": 82.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_2·L4·1",
+   "building": "bld:0_2·L4",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 26.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_2·L4·2",
+   "building": "bld:0_2·L4",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 26.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_2·L4·3",
+   "building": "bld:0_2·L4",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 26.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_2·L4·4",
+   "building": "bld:0_2·L4",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 26.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_2·L5·1",
+   "building": "bld:0_2·L5",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 14.85,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_2·L5·2",
+   "building": "bld:0_2·L5",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 14.85,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_2·L5·3",
+   "building": "bld:0_2·L5",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 14.85,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_2·L5·4",
+   "building": "bld:0_2·L5",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 14.85,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:0_2·L6·1",
+   "building": "bld:0_2·L6",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 11.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:0_2·L7·1",
+   "building": "bld:0_2·L7",
+   "block": [
+    0,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 7.25,
+   "z": 78.85,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_-3·L0·1",
+   "building": "bld:1_-3·L0",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 37.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_-3·L10·2",
+   "building": "bld:1_-3·L10",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 58.75,
+   "z": -77.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_-3·L10·3",
+   "building": "bld:1_-3·L10",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 58.75,
+   "z": -77.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_-3·L1·1",
+   "building": "bld:1_-3·L1",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 54.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_-3·L1·2",
+   "building": "bld:1_-3·L1",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 54.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_-3·L1·3",
+   "building": "bld:1_-3·L1",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 54.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_-3·L1·4",
+   "building": "bld:1_-3·L1",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 54.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_-3·L1·5",
+   "building": "bld:1_-3·L1",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": 54.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_-3·L2·1",
+   "building": "bld:1_-3·L2",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 42.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_-3·L2·2",
+   "building": "bld:1_-3·L2",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 42.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_-3·L2·3",
+   "building": "bld:1_-3·L2",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 42.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_-3·L4·1",
+   "building": "bld:1_-3·L4",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 47.15,
+   "z": -90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_-3·L8·1",
+   "building": "bld:1_-3·L8",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 37.25,
+   "z": -82.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_-3·L8·2",
+   "building": "bld:1_-3·L8",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 37.25,
+   "z": -82.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_-3·L8·3",
+   "building": "bld:1_-3·L8",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 37.25,
+   "z": -82.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_-3·L8·4",
+   "building": "bld:1_-3·L8",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 37.25,
+   "z": -82.15,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_-3·L9·2",
+   "building": "bld:1_-3·L9",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 58.75,
+   "z": -81.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_-3·L9·3",
+   "building": "bld:1_-3·L9",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 58.75,
+   "z": -81.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_-3·L9·4",
+   "building": "bld:1_-3·L9",
+   "block": [
+    1,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 58.75,
+   "z": -81.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_0·L0·1",
+   "building": "bld:1_0·L0",
+   "block": [
+    1,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 37.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_0·L0·2",
+   "building": "bld:1_0·L0",
+   "block": [
+    1,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 37.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_0·L1·1",
+   "building": "bld:1_0·L1",
+   "block": [
+    1,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 55.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_0·L1·2",
+   "building": "bld:1_0·L1",
+   "block": [
+    1,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 55.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_0·L1·4",
+   "building": "bld:1_0·L1",
+   "block": [
+    1,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 55.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_0·L1·5",
+   "building": "bld:1_0·L1",
+   "block": [
+    1,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": 55.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_1·L1·1",
+   "building": "bld:1_1·L1",
+   "block": [
+    1,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 50.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_1·L1·2",
+   "building": "bld:1_1·L1",
+   "block": [
+    1,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 50.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_1·L1·3",
+   "building": "bld:1_1·L1",
+   "block": [
+    1,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 50.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_1·L2·1",
+   "building": "bld:1_1·L2",
+   "block": [
+    1,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 58.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_1·L2·2",
+   "building": "bld:1_1·L2",
+   "block": [
+    1,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 58.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_2·L0·1",
+   "building": "bld:1_2·L0",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 37.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_2·L0·2",
+   "building": "bld:1_2·L0",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 37.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_2·L1·1",
+   "building": "bld:1_2·L1",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 52.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_2·L2·1",
+   "building": "bld:1_2·L2",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 41.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_2·L2·2",
+   "building": "bld:1_2·L2",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 41.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_2·L3·1",
+   "building": "bld:1_2·L3",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 58.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_2·L3·2",
+   "building": "bld:1_2·L3",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 58.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_2·L4·1",
+   "building": "bld:1_2·L4",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 46.75,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_2·L4·2",
+   "building": "bld:1_2·L4",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 46.75,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_2·L4·3",
+   "building": "bld:1_2·L4",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 46.75,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:1_2·L5·2",
+   "building": "bld:1_2·L5",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 44.65,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_2·L5·3",
+   "building": "bld:1_2·L5",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 44.65,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_2·L5·4",
+   "building": "bld:1_2·L5",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 44.65,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_2·L5·5",
+   "building": "bld:1_2·L5",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": 44.65,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_2·L7·1",
+   "building": "bld:1_2·L7",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 37.25,
+   "z": 77.85,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_2·L8·2",
+   "building": "bld:1_2·L8",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 58.75,
+   "z": 79.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_2·L8·3",
+   "building": "bld:1_2·L8",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 58.75,
+   "z": 79.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_2·L8·4",
+   "building": "bld:1_2·L8",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 58.75,
+   "z": 79.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:1_2·L8·5",
+   "building": "bld:1_2·L8",
+   "block": [
+    1,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": 58.75,
+   "z": 79.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-1·L0·1",
+   "building": "bld:2_-1·L0",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 69.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L0·2",
+   "building": "bld:2_-1·L0",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 69.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L0·3",
+   "building": "bld:2_-1·L0",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 69.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L0·4",
+   "building": "bld:2_-1·L0",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 69.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L0·5",
+   "building": "bld:2_-1·L0",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": 69.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L3·1",
+   "building": "bld:2_-1·L3",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 90.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L3·2",
+   "building": "bld:2_-1·L3",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 90.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L3·3",
+   "building": "bld:2_-1·L3",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 90.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L5·1",
+   "building": "bld:2_-1·L5",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 81.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L5·2",
+   "building": "bld:2_-1·L5",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 81.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L5·3",
+   "building": "bld:2_-1·L5",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 81.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L5·4",
+   "building": "bld:2_-1·L5",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 81.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L6·1",
+   "building": "bld:2_-1·L6",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 82.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L6·2",
+   "building": "bld:2_-1·L6",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 82.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L6·3",
+   "building": "bld:2_-1·L6",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 82.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L6·4",
+   "building": "bld:2_-1·L6",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 82.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L6·5",
+   "building": "bld:2_-1·L6",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": 82.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L7·1",
+   "building": "bld:2_-1·L7",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 67.55,
+   "z": -17.25,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L7·2",
+   "building": "bld:2_-1·L7",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 67.55,
+   "z": -17.25,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L7·3",
+   "building": "bld:2_-1·L7",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 67.55,
+   "z": -17.25,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-1·L8·2",
+   "building": "bld:2_-1·L8",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 90.75,
+   "z": -16.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-1·L8·3",
+   "building": "bld:2_-1·L8",
+   "block": [
+    2,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 90.75,
+   "z": -16.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L0·1",
+   "building": "bld:2_-2·L0",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 69.05,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-2·L0·2",
+   "building": "bld:2_-2·L0",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 69.05,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-2·L0·3",
+   "building": "bld:2_-2·L0",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 69.05,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-2·L0·4",
+   "building": "bld:2_-2·L0",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 69.05,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-2·L10·2",
+   "building": "bld:2_-2·L10",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 90.75,
+   "z": -48.65,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L10·3",
+   "building": "bld:2_-2·L10",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 90.75,
+   "z": -48.65,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L10·4",
+   "building": "bld:2_-2·L10",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 90.75,
+   "z": -48.65,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L1·1",
+   "building": "bld:2_-2·L1",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 86.05,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-2·L2·1",
+   "building": "bld:2_-2·L2",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 73.95,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-2·L3·1",
+   "building": "bld:2_-2·L3",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 90.95,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-2·L3·2",
+   "building": "bld:2_-2·L3",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 90.95,
+   "z": -35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_-2·L4·2",
+   "building": "bld:2_-2·L4",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 78.55,
+   "z": -58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L4·3",
+   "building": "bld:2_-2·L4",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 78.55,
+   "z": -58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L5·2",
+   "building": "bld:2_-2·L5",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 83.35,
+   "z": -58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L5·3",
+   "building": "bld:2_-2·L5",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 83.35,
+   "z": -58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L5·4",
+   "building": "bld:2_-2·L5",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 83.35,
+   "z": -58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L6·2",
+   "building": "bld:2_-2·L6",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 76.45,
+   "z": -37.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L8·2",
+   "building": "bld:2_-2·L8",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 69.25,
+   "z": -52.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L8·3",
+   "building": "bld:2_-2·L8",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 69.25,
+   "z": -52.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L8·4",
+   "building": "bld:2_-2·L8",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 69.25,
+   "z": -52.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_-2·L9·2",
+   "building": "bld:2_-2·L9",
+   "block": [
+    2,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 69.25,
+   "z": -47.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_0·L0·1",
+   "building": "bld:2_0·L0",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 69.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L0·2",
+   "building": "bld:2_0·L0",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 69.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L0·3",
+   "building": "bld:2_0·L0",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 69.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L0·4",
+   "building": "bld:2_0·L0",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 69.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L11·2",
+   "building": "bld:2_0·L11",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 90.75,
+   "z": 17.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_0·L11·3",
+   "building": "bld:2_0·L11",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 90.75,
+   "z": 17.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_0·L11·4",
+   "building": "bld:2_0·L11",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 90.75,
+   "z": 17.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_0·L11·5",
+   "building": "bld:2_0·L11",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": 90.75,
+   "z": 17.35,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_0·L1·1",
+   "building": "bld:2_0·L1",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 87.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L1·2",
+   "building": "bld:2_0·L1",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 87.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L1·3",
+   "building": "bld:2_0·L1",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 87.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L1·4",
+   "building": "bld:2_0·L1",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 87.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L1·5",
+   "building": "bld:2_0·L1",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": 87.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L2·1",
+   "building": "bld:2_0·L2",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 72.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L2·2",
+   "building": "bld:2_0·L2",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 72.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L3·1",
+   "building": "bld:2_0·L3",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 90.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L3·2",
+   "building": "bld:2_0·L3",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 90.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L3·3",
+   "building": "bld:2_0·L3",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 90.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L4·1",
+   "building": "bld:2_0·L4",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 75.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L4·2",
+   "building": "bld:2_0·L4",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 75.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L4·3",
+   "building": "bld:2_0·L4",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 75.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L4·4",
+   "building": "bld:2_0·L4",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 75.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L4·5",
+   "building": "bld:2_0·L4",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": 75.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L6·1",
+   "building": "bld:2_0·L6",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 83.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L6·2",
+   "building": "bld:2_0·L6",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 83.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L6·3",
+   "building": "bld:2_0·L6",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 83.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L7·1",
+   "building": "bld:2_0·L7",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 75.15,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L7·2",
+   "building": "bld:2_0·L7",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 75.15,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L7·3",
+   "building": "bld:2_0·L7",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 75.15,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L7·4",
+   "building": "bld:2_0·L7",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 75.15,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L7·5",
+   "building": "bld:2_0·L7",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": 75.15,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_0·L8·1",
+   "building": "bld:2_0·L8",
+   "block": [
+    2,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 79.85,
+   "z": 26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_1·L0·1",
+   "building": "bld:2_1·L0",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 69.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L0·2",
+   "building": "bld:2_1·L0",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 69.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L0·3",
+   "building": "bld:2_1·L0",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 69.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L0·4",
+   "building": "bld:2_1·L0",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 69.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L11·1",
+   "building": "bld:2_1·L11",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 92.45,
+   "z": 51.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L11·2",
+   "building": "bld:2_1·L11",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 92.45,
+   "z": 51.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L11·3",
+   "building": "bld:2_1·L11",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 92.45,
+   "z": 51.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L2·1",
+   "building": "bld:2_1·L2",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 72.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L2·2",
+   "building": "bld:2_1·L2",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 72.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L4·1",
+   "building": "bld:2_1·L4",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 78.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L4·3",
+   "building": "bld:2_1·L4",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 78.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L5·2",
+   "building": "bld:2_1·L5",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 83.55,
+   "z": 37.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_1·L5·3",
+   "building": "bld:2_1·L5",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 83.55,
+   "z": 37.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_1·L5·4",
+   "building": "bld:2_1·L5",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 83.55,
+   "z": 37.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_1·L5·5",
+   "building": "bld:2_1·L5",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": 83.55,
+   "z": 37.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:2_1·L9·1",
+   "building": "bld:2_1·L9",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 67.55,
+   "z": 52.25,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L9·2",
+   "building": "bld:2_1·L9",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 67.55,
+   "z": 52.25,
+   "stoop": false
+  },
+  {
+   "id": "apt:2_1·L9·3",
+   "building": "bld:2_1·L9",
+   "block": [
+    2,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 67.55,
+   "z": 52.25,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-1·L4·2",
+   "building": "bld:3_-1·L4",
+   "block": [
+    3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 111.55,
+   "z": -26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_-1·L4·3",
+   "building": "bld:3_-1·L4",
+   "block": [
+    3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 111.55,
+   "z": -26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_-1·L4·4",
+   "building": "bld:3_-1·L4",
+   "block": [
+    3,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 111.55,
+   "z": -26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_-2·L0·1",
+   "building": "bld:3_-2·L0",
+   "block": [
+    3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 101.05,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-2·L0·2",
+   "building": "bld:3_-2·L0",
+   "block": [
+    3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 101.05,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-2·L0·3",
+   "building": "bld:3_-2·L0",
+   "block": [
+    3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 101.05,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-2·L0·4",
+   "building": "bld:3_-2·L0",
+   "block": [
+    3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 101.05,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-2·L1·1",
+   "building": "bld:3_-2·L1",
+   "block": [
+    3,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 116.05,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L0·1",
+   "building": "bld:3_-3·L0",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 101.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L0·2",
+   "building": "bld:3_-3·L0",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 101.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L0·3",
+   "building": "bld:3_-3·L0",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 101.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L11·1",
+   "building": "bld:3_-3·L11",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 122.45,
+   "z": -77.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L11·2",
+   "building": "bld:3_-3·L11",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 122.45,
+   "z": -77.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L11·3",
+   "building": "bld:3_-3·L11",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 122.45,
+   "z": -77.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L11·4",
+   "building": "bld:3_-3·L11",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 122.45,
+   "z": -77.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L1·2",
+   "building": "bld:3_-3·L1",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 117.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L2·1",
+   "building": "bld:3_-3·L2",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 105.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L2·2",
+   "building": "bld:3_-3·L2",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 105.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L2·3",
+   "building": "bld:3_-3·L2",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 105.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L4·1",
+   "building": "bld:3_-3·L4",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 109.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L4·2",
+   "building": "bld:3_-3·L4",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 109.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L4·3",
+   "building": "bld:3_-3·L4",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 109.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L4·4",
+   "building": "bld:3_-3·L4",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 109.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L6·1",
+   "building": "bld:3_-3·L6",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 109.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L6·2",
+   "building": "bld:3_-3·L6",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 109.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L6·3",
+   "building": "bld:3_-3·L6",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 109.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L7·1",
+   "building": "bld:3_-3·L7",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 113.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L7·2",
+   "building": "bld:3_-3·L7",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 113.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L7·3",
+   "building": "bld:3_-3·L7",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 113.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L8·1",
+   "building": "bld:3_-3·L8",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 99.55,
+   "z": -82.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L8·2",
+   "building": "bld:3_-3·L8",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 99.55,
+   "z": -82.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_-3·L8·4",
+   "building": "bld:3_-3·L8",
+   "block": [
+    3,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 99.55,
+   "z": -82.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_0·L0·1",
+   "building": "bld:3_0·L0",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 101.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_0·L0·2",
+   "building": "bld:3_0·L0",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 101.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_0·L1·1",
+   "building": "bld:3_0·L1",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 117.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_0·L3·1",
+   "building": "bld:3_0·L3",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 120.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_0·L3·2",
+   "building": "bld:3_0·L3",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 120.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_0·L3·3",
+   "building": "bld:3_0·L3",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 120.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_0·L6·2",
+   "building": "bld:3_0·L6",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 107.45,
+   "z": 26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_0·L6·4",
+   "building": "bld:3_0·L6",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 107.45,
+   "z": 26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_0·L7·2",
+   "building": "bld:3_0·L7",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 111.45,
+   "z": 26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_0·L7·3",
+   "building": "bld:3_0·L7",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 111.45,
+   "z": 26.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_0·L8·2",
+   "building": "bld:3_0·L8",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 101.25,
+   "z": 15.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_0·L8·3",
+   "building": "bld:3_0·L8",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 101.25,
+   "z": 15.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_0·L8·4",
+   "building": "bld:3_0·L8",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 101.25,
+   "z": 15.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_0·L8·5",
+   "building": "bld:3_0·L8",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 5,
+   "x": 101.25,
+   "z": 15.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_0·L9·1",
+   "building": "bld:3_0·L9",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 99.55,
+   "z": 20.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_0·L9·2",
+   "building": "bld:3_0·L9",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 99.55,
+   "z": 20.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_0·L9·3",
+   "building": "bld:3_0·L9",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 99.55,
+   "z": 20.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_0·L9·4",
+   "building": "bld:3_0·L9",
+   "block": [
+    3,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 99.55,
+   "z": 20.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L0·2",
+   "building": "bld:3_1·L0",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": 113.35,
+   "z": 37.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_1·L0·3",
+   "building": "bld:3_1·L0",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": 113.35,
+   "z": 37.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_1·L4·1",
+   "building": "bld:3_1·L4",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": 120.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L4·2",
+   "building": "bld:3_1·L4",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": 120.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L4·3",
+   "building": "bld:3_1·L4",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": 120.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L4·4",
+   "building": "bld:3_1·L4",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 4,
+   "x": 120.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L5·1",
+   "building": "bld:3_1·L5",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": 113.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L5·2",
+   "building": "bld:3_1·L5",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": 113.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L5·3",
+   "building": "bld:3_1·L5",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": 113.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L6·1",
+   "building": "bld:3_1·L6",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": 106.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L6·2",
+   "building": "bld:3_1·L6",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": 106.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L6·3",
+   "building": "bld:3_1·L6",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": 106.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L6·4",
+   "building": "bld:3_1·L6",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 4,
+   "x": 106.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L7·1",
+   "building": "bld:3_1·L7",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 1,
+   "x": 99.55,
+   "z": 47.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L7·3",
+   "building": "bld:3_1·L7",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": 99.55,
+   "z": 47.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L8·2",
+   "building": "bld:3_1·L8",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 2,
+   "x": 99.55,
+   "z": 51.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_1·L8·3",
+   "building": "bld:3_1·L8",
+   "block": [
+    3,
+    1
+   ],
+   "dist": "strip",
+   "floor": 3,
+   "x": 99.55,
+   "z": 51.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_2·L0·1",
+   "building": "bld:3_2·L0",
+   "block": [
+    3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 101.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_2·L0·2",
+   "building": "bld:3_2·L0",
+   "block": [
+    3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 101.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_2·L3·1",
+   "building": "bld:3_2·L3",
+   "block": [
+    3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 120.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_2·L3·2",
+   "building": "bld:3_2·L3",
+   "block": [
+    3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 120.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:3_2·L5·1",
+   "building": "bld:3_2·L5",
+   "block": [
+    3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 108.85,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_2·L5·2",
+   "building": "bld:3_2·L5",
+   "block": [
+    3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 108.85,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_2·L5·3",
+   "building": "bld:3_2·L5",
+   "block": [
+    3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 108.85,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:3_2·L5·4",
+   "building": "bld:3_2·L5",
+   "block": [
+    3,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 108.85,
+   "z": 90.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:4_-3·L10·1",
+   "building": "bld:4_-3·L10",
+   "block": [
+    4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 156.45,
+   "z": -79.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_-3·L10·2",
+   "building": "bld:4_-3·L10",
+   "block": [
+    4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 156.45,
+   "z": -79.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_-3·L10·3",
+   "building": "bld:4_-3·L10",
+   "block": [
+    4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 156.45,
+   "z": -79.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_-3·L1·1",
+   "building": "bld:4_-3·L1",
+   "block": [
+    4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 151.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_-3·L1·2",
+   "building": "bld:4_-3·L1",
+   "block": [
+    4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 151.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_-3·L1·3",
+   "building": "bld:4_-3·L1",
+   "block": [
+    4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 151.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_-3·L2·1",
+   "building": "bld:4_-3·L2",
+   "block": [
+    4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 139.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_-3·L2·2",
+   "building": "bld:4_-3·L2",
+   "block": [
+    4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 139.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_-3·L8·1",
+   "building": "bld:4_-3·L8",
+   "block": [
+    4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 133.55,
+   "z": -76.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_-3·L8·2",
+   "building": "bld:4_-3·L8",
+   "block": [
+    4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 133.55,
+   "z": -76.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_-3·L8·3",
+   "building": "bld:4_-3·L8",
+   "block": [
+    4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 133.55,
+   "z": -76.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_-3·L8·4",
+   "building": "bld:4_-3·L8",
+   "block": [
+    4,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 133.55,
+   "z": -76.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L0·1",
+   "building": "bld:4_0·L0",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 135.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L0·2",
+   "building": "bld:4_0·L0",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 135.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L0·3",
+   "building": "bld:4_0·L0",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 135.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L0·4",
+   "building": "bld:4_0·L0",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 135.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L2·1",
+   "building": "bld:4_0·L2",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 140.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L2·2",
+   "building": "bld:4_0·L2",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 140.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L2·3",
+   "building": "bld:4_0·L2",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 140.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L2·4",
+   "building": "bld:4_0·L2",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 140.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L3·1",
+   "building": "bld:4_0·L3",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 150.15,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L3·2",
+   "building": "bld:4_0·L3",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 150.15,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L3·3",
+   "building": "bld:4_0·L3",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 150.15,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L3·4",
+   "building": "bld:4_0·L3",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 150.15,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L7·1",
+   "building": "bld:4_0·L7",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 133.55,
+   "z": 18.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L7·2",
+   "building": "bld:4_0·L7",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 133.55,
+   "z": 18.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L7·3",
+   "building": "bld:4_0·L7",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 133.55,
+   "z": 18.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L8·1",
+   "building": "bld:4_0·L8",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 156.45,
+   "z": 16.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L8·2",
+   "building": "bld:4_0·L8",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 156.45,
+   "z": 16.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_0·L8·3",
+   "building": "bld:4_0·L8",
+   "block": [
+    4,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 156.45,
+   "z": 16.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_1·L0·1",
+   "building": "bld:4_1·L0",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 135.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_1·L0·2",
+   "building": "bld:4_1·L0",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 135.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_1·L0·3",
+   "building": "bld:4_1·L0",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 135.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_1·L2·1",
+   "building": "bld:4_1·L2",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 140.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_1·L2·2",
+   "building": "bld:4_1·L2",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 140.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_1·L2·3",
+   "building": "bld:4_1·L2",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 140.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_1·L4·1",
+   "building": "bld:4_1·L4",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 143.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_1·L4·2",
+   "building": "bld:4_1·L4",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 143.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_1·L4·3",
+   "building": "bld:4_1·L4",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 143.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_1·L4·4",
+   "building": "bld:4_1·L4",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 143.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_1·L5·1",
+   "building": "bld:4_1·L5",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 143.85,
+   "z": 58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:4_1·L5·2",
+   "building": "bld:4_1·L5",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 143.85,
+   "z": 58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:4_1·L5·3",
+   "building": "bld:4_1·L5",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 143.85,
+   "z": 58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:4_1·L6·2",
+   "building": "bld:4_1·L6",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 135.25,
+   "z": 46.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:4_1·L6·3",
+   "building": "bld:4_1·L6",
+   "block": [
+    4,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 135.25,
+   "z": 46.45,
+   "stoop": true
+  },
+  {
+   "id": "apt:4_2·L0·1",
+   "building": "bld:4_2·L0",
+   "block": [
+    4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 135.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_2·L1·1",
+   "building": "bld:4_2·L1",
+   "block": [
+    4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 151.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_2·L1·2",
+   "building": "bld:4_2·L1",
+   "block": [
+    4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 151.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_2·L1·3",
+   "building": "bld:4_2·L1",
+   "block": [
+    4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 151.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_2·L1·4",
+   "building": "bld:4_2·L1",
+   "block": [
+    4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 151.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_2·L2·1",
+   "building": "bld:4_2·L2",
+   "block": [
+    4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 140.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_2·L2·2",
+   "building": "bld:4_2·L2",
+   "block": [
+    4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 140.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_2·L2·3",
+   "building": "bld:4_2·L2",
+   "block": [
+    4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 140.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:4_2·L5·2",
+   "building": "bld:4_2·L5",
+   "block": [
+    4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 148.55,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:4_2·L5·3",
+   "building": "bld:4_2·L5",
+   "block": [
+    4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 148.55,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:4_2·L5·4",
+   "building": "bld:4_2·L5",
+   "block": [
+    4,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 148.55,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:5_-3·L0·1",
+   "building": "bld:5_-3·L0",
+   "block": [
+    5,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 165.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_-3·L0·2",
+   "building": "bld:5_-3·L0",
+   "block": [
+    5,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 165.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_-3·L0·3",
+   "building": "bld:5_-3·L0",
+   "block": [
+    5,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 165.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_-3·L0·4",
+   "building": "bld:5_-3·L0",
+   "block": [
+    5,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 165.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_-3·L10·1",
+   "building": "bld:5_-3·L10",
+   "block": [
+    5,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 188.45,
+   "z": -83.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_-3·L10·2",
+   "building": "bld:5_-3·L10",
+   "block": [
+    5,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 188.45,
+   "z": -83.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_-3·L10·3",
+   "building": "bld:5_-3·L10",
+   "block": [
+    5,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 188.45,
+   "z": -83.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_-3·L10·4",
+   "building": "bld:5_-3·L10",
+   "block": [
+    5,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 188.45,
+   "z": -83.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_-3·L1·1",
+   "building": "bld:5_-3·L1",
+   "block": [
+    5,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 180.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_0·L8·2",
+   "building": "bld:5_0·L8",
+   "block": [
+    5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 186.75,
+   "z": 17.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:5_0·L8·3",
+   "building": "bld:5_0·L8",
+   "block": [
+    5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 186.75,
+   "z": 17.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:5_0·L8·4",
+   "building": "bld:5_0·L8",
+   "block": [
+    5,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 186.75,
+   "z": 17.55,
+   "stoop": true
+  },
+  {
+   "id": "apt:5_1·L0·1",
+   "building": "bld:5_1·L0",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 165.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L0·2",
+   "building": "bld:5_1·L0",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 165.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L0·3",
+   "building": "bld:5_1·L0",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 165.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L0·4",
+   "building": "bld:5_1·L0",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 165.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L1·1",
+   "building": "bld:5_1·L1",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 181.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L2·1",
+   "building": "bld:5_1·L2",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 168.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L2·2",
+   "building": "bld:5_1·L2",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 168.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L2·3",
+   "building": "bld:5_1·L2",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 168.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L4·1",
+   "building": "bld:5_1·L4",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 172.75,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L4·2",
+   "building": "bld:5_1·L4",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 172.75,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L4·3",
+   "building": "bld:5_1·L4",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 172.75,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L5·1",
+   "building": "bld:5_1·L5",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 177.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L5·2",
+   "building": "bld:5_1·L5",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 177.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L5·3",
+   "building": "bld:5_1·L5",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 177.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L5·4",
+   "building": "bld:5_1·L5",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 177.05,
+   "z": 35.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_1·L7·2",
+   "building": "bld:5_1·L7",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 176.75,
+   "z": 58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:5_1·L7·3",
+   "building": "bld:5_1·L7",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 176.75,
+   "z": 58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:5_1·L7·4",
+   "building": "bld:5_1·L7",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 176.75,
+   "z": 58.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:5_1·L9·2",
+   "building": "bld:5_1·L9",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 165.25,
+   "z": 49.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:5_1·L9·3",
+   "building": "bld:5_1·L9",
+   "block": [
+    5,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 165.25,
+   "z": 49.75,
+   "stoop": true
+  },
+  {
+   "id": "apt:5_2·L3·1",
+   "building": "bld:5_2·L3",
+   "block": [
+    5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 186.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_2·L3·2",
+   "building": "bld:5_2·L3",
+   "block": [
+    5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 186.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_2·L3·3",
+   "building": "bld:5_2·L3",
+   "block": [
+    5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 186.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_2·L3·4",
+   "building": "bld:5_2·L3",
+   "block": [
+    5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 186.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_2·L5·1",
+   "building": "bld:5_2·L5",
+   "block": [
+    5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 173.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_2·L5·2",
+   "building": "bld:5_2·L5",
+   "block": [
+    5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 173.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:5_2·L5·3",
+   "building": "bld:5_2·L5",
+   "block": [
+    5,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 173.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L0·1",
+   "building": "bld:6_-1·L0",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 197.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L0·2",
+   "building": "bld:6_-1·L0",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 197.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L0·3",
+   "building": "bld:6_-1·L0",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 197.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L0·4",
+   "building": "bld:6_-1·L0",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 197.05,
+   "z": -28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L3·1",
+   "building": "bld:6_-1·L3",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 213.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L3·2",
+   "building": "bld:6_-1·L3",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 213.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L3·3",
+   "building": "bld:6_-1·L3",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 213.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L3·4",
+   "building": "bld:6_-1·L3",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 213.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L5·1",
+   "building": "bld:6_-1·L5",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 206.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L5·2",
+   "building": "bld:6_-1·L5",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 206.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L5·3",
+   "building": "bld:6_-1·L5",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 206.95,
+   "z": -5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L6·1",
+   "building": "bld:6_-1·L6",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 195.55,
+   "z": -18.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L6·2",
+   "building": "bld:6_-1·L6",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 195.55,
+   "z": -18.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L6·3",
+   "building": "bld:6_-1·L6",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 195.55,
+   "z": -18.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L8·1",
+   "building": "bld:6_-1·L8",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 215.45,
+   "z": -19.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L8·2",
+   "building": "bld:6_-1·L8",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 215.45,
+   "z": -19.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L8·3",
+   "building": "bld:6_-1·L8",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 215.45,
+   "z": -19.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L8·4",
+   "building": "bld:6_-1·L8",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 215.45,
+   "z": -19.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L9·1",
+   "building": "bld:6_-1·L9",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 215.45,
+   "z": -15.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L9·2",
+   "building": "bld:6_-1·L9",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 215.45,
+   "z": -15.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-1·L9·3",
+   "building": "bld:6_-1·L9",
+   "block": [
+    6,
+    -1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 215.45,
+   "z": -15.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-2·L0·1",
+   "building": "bld:6_-2·L0",
+   "block": [
+    6,
+    -2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 197.05,
+   "z": -60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-3·L0·1",
+   "building": "bld:6_-3·L0",
+   "block": [
+    6,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 197.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-3·L1·1",
+   "building": "bld:6_-3·L1",
+   "block": [
+    6,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 207.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-3·L1·2",
+   "building": "bld:6_-3·L1",
+   "block": [
+    6,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 207.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-3·L1·3",
+   "building": "bld:6_-3·L1",
+   "block": [
+    6,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 207.05,
+   "z": -92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-3·L2·1",
+   "building": "bld:6_-3·L2",
+   "block": [
+    6,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 203.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-3·L3·1",
+   "building": "bld:6_-3·L3",
+   "block": [
+    6,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 213.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-3·L3·2",
+   "building": "bld:6_-3·L3",
+   "block": [
+    6,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 213.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-3·L3·3",
+   "building": "bld:6_-3·L3",
+   "block": [
+    6,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 213.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-3·L3·4",
+   "building": "bld:6_-3·L3",
+   "block": [
+    6,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 213.95,
+   "z": -67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-3·L7·1",
+   "building": "bld:6_-3·L7",
+   "block": [
+    6,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 215.45,
+   "z": -79.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-3·L7·2",
+   "building": "bld:6_-3·L7",
+   "block": [
+    6,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 215.45,
+   "z": -79.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_-3·L7·3",
+   "building": "bld:6_-3·L7",
+   "block": [
+    6,
+    -3
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 215.45,
+   "z": -79.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L2·1",
+   "building": "bld:6_0·L2",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 201.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L2·2",
+   "building": "bld:6_0·L2",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 201.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L2·3",
+   "building": "bld:6_0·L2",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 201.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L2·4",
+   "building": "bld:6_0·L2",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 201.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L3·1",
+   "building": "bld:6_0·L3",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 213.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L3·2",
+   "building": "bld:6_0·L3",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 213.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L3·3",
+   "building": "bld:6_0·L3",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 213.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L3·4",
+   "building": "bld:6_0·L3",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 213.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L4·1",
+   "building": "bld:6_0·L4",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 205.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L4·2",
+   "building": "bld:6_0·L4",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 205.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L4·3",
+   "building": "bld:6_0·L4",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 205.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L4·4",
+   "building": "bld:6_0·L4",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 205.05,
+   "z": 5.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L5·1",
+   "building": "bld:6_0·L5",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 207.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L5·2",
+   "building": "bld:6_0·L5",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 207.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L5·3",
+   "building": "bld:6_0·L5",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 207.95,
+   "z": 28.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L6·1",
+   "building": "bld:6_0·L6",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 195.55,
+   "z": 14.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L6·2",
+   "building": "bld:6_0·L6",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 195.55,
+   "z": 14.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_0·L6·3",
+   "building": "bld:6_0·L6",
+   "block": [
+    6,
+    0
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 195.55,
+   "z": 14.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_1·L2·1",
+   "building": "bld:6_1·L2",
+   "block": [
+    6,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 203.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_1·L2·2",
+   "building": "bld:6_1·L2",
+   "block": [
+    6,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 203.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_1·L2·3",
+   "building": "bld:6_1·L2",
+   "block": [
+    6,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 203.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_1·L2·4",
+   "building": "bld:6_1·L2",
+   "block": [
+    6,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 203.95,
+   "z": 60.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_1·L7·1",
+   "building": "bld:6_1·L7",
+   "block": [
+    6,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 215.45,
+   "z": 50.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_1·L7·2",
+   "building": "bld:6_1·L7",
+   "block": [
+    6,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 215.45,
+   "z": 50.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_1·L7·3",
+   "building": "bld:6_1·L7",
+   "block": [
+    6,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 215.45,
+   "z": 50.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_1·L7·4",
+   "building": "bld:6_1·L7",
+   "block": [
+    6,
+    1
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 215.45,
+   "z": 50.05,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_2·L0·1",
+   "building": "bld:6_2·L0",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 197.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_2·L0·2",
+   "building": "bld:6_2·L0",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 197.05,
+   "z": 67.55,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_2·L2·1",
+   "building": "bld:6_2·L2",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 200.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_2·L2·2",
+   "building": "bld:6_2·L2",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 200.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_2·L2·3",
+   "building": "bld:6_2·L2",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 200.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_2·L2·4",
+   "building": "bld:6_2·L2",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 200.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_2·L3·1",
+   "building": "bld:6_2·L3",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 213.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_2·L3·2",
+   "building": "bld:6_2·L3",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 213.95,
+   "z": 92.45,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_2·L4·2",
+   "building": "bld:6_2·L4",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 206.25,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:6_2·L4·3",
+   "building": "bld:6_2·L4",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 206.25,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:6_2·L4·4",
+   "building": "bld:6_2·L4",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 4,
+   "x": 206.25,
+   "z": 69.25,
+   "stoop": true
+  },
+  {
+   "id": "apt:6_2·L7·1",
+   "building": "bld:6_2·L7",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 1,
+   "x": 195.55,
+   "z": 83.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_2·L7·2",
+   "building": "bld:6_2·L7",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 2,
+   "x": 195.55,
+   "z": 83.95,
+   "stoop": false
+  },
+  {
+   "id": "apt:6_2·L7·3",
+   "building": "bld:6_2·L7",
+   "block": [
+    6,
+    2
+   ],
+   "dist": "downtown",
+   "floor": 3,
+   "x": 195.55,
+   "z": 83.95,
+   "stoop": false
+  }
+ ]
+}

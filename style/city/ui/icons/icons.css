@@ -1,0 +1,49 @@
+/* HUMAN LAYER · ITEM ICONS · the sprite and the inventory slot. The art is the atlas (atlas/icons.png, icons@2x.png; ui/icons/tools/bake-icons.mjs);
+   everything else reads the kit's tokens (ui/kit.css), so the three skins frame the same markup. No colour is named here. */
+.k-ico { --s: 32px; --ix: 0; --iy: 0; --cols: 12; --rows: 7; display: inline-block; flex: none; width: var(--s); height: var(--s); vertical-align: middle;
+  background-image: url("atlas/icons.png"); background-image: image-set(url("atlas/icons.png") 1x, url("atlas/icons@2x.png") 2x);
+  background-repeat: no-repeat; background-size: calc(var(--cols) * var(--s)) calc(var(--rows) * var(--s));
+  background-position: calc(var(--ix) * var(--s) * -1) calc(var(--iy) * var(--s) * -1); }
+
+/* ── the slot grid (dossier Pockets, the stash, the house) */
+#k .k-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 6px; margin-top: 8px; }
+#k .k-slots.is-small { grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 5px; }
+#k .k-slot { position: relative; aspect-ratio: 1; display: grid; place-items: center; border-radius: var(--k-r1); background: var(--k-bg-3); box-shadow: inset 0 0 0 1px var(--k-line);
+  outline: none; transition: background var(--k-dur-s) var(--k-ease), transform var(--k-dur-s) var(--k-ease); cursor: default; }
+#k .k-slot:hover, #k .k-slot:focus-visible { background: var(--k-bg-2); box-shadow: inset 0 0 0 1px var(--k-ink-3); }
+#k .k-slot:focus-visible { outline: 2px solid var(--k-focus); outline-offset: 1px; }
+#k .k-slot .k-ico { transition: transform var(--k-dur-s) var(--k-ease); }
+#k .k-slot:hover .k-ico { transform: translateY(-1px) scale(1.06); }
+#k .k-slot-n { position: absolute; right: 2px; bottom: 2px; min-width: 16px; height: 15px; padding: 0 3px; border-radius: 8px; background: var(--k-ink); color: var(--k-bg-solid);
+  font: 600 10px/15px var(--k-font-mono); text-align: center; font-variant-numeric: tabular-nums; letter-spacing: 0; pointer-events: none; }
+#k .k-slot-q { position: absolute; left: 3px; top: 2px; font: 600 9px/1 var(--k-font-mono); font-style: normal; color: var(--k-ink-2); letter-spacing: 0; pointer-events: none; padding-bottom: 2px;
+  background: linear-gradient(var(--k-accent), var(--k-accent)) left bottom / calc(var(--q) * 100%) 2px no-repeat, linear-gradient(var(--k-line), var(--k-line)) left bottom / 100% 2px no-repeat; }
+#k .k-slot-flag { position: absolute; left: 2px; bottom: 2px; padding: 1px 3px; border-radius: 3px; background: var(--k-ink-2); color: var(--k-bg-solid); font: 700 8px/1.1 var(--k-font); font-style: normal;
+  text-transform: uppercase; letter-spacing: .04em; pointer-events: none; }
+#k .k-slot[data-flag="fake"] .k-slot-flag { background: var(--k-wanted); color: var(--k-wanted-ink); }
+#k .k-slot[data-flag="fake"] .k-ico { filter: saturate(.55); }
+#k .k-slot[data-group="mark"] { background: none; box-shadow: none; }
+
+/* a sub-heading with its own lens badge (the public part of a private tab) */
+#k .k-icohead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+/* the head's marks and worn traits: bare icons, no frame */
+#k .k-icorow { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; }
+#k .k-icorow .k-ico { cursor: default; }
+
+/* ── skin: 98 (a late-90s OS on a camcorder OSD): bevelled wells */
+#k[data-skin="98"] .k-slot { border-radius: 0; background: var(--k-bg-2); box-shadow: inset 1px 1px 0 var(--k-lo), inset -1px -1px 0 var(--k-lo2), inset 2px 2px 0 rgba(0, 0, 0, .5); }
+#k[data-skin="98"] .k-slot:hover, #k[data-skin="98"] .k-slot:focus-visible { background: var(--k-bg-3); box-shadow: inset 1px 1px 0 var(--k-lo), inset -1px -1px 0 var(--k-lo2), inset 0 0 0 2px var(--k-ink-3); }
+#k[data-skin="98"] .k-slot-n { border-radius: 0; background: var(--k-ink); color: var(--k-bg-solid); font: 400 14px/15px var(--k-font-mono); }
+#k[data-skin="98"] .k-slot-q { font: 400 13px/1 var(--k-font-mono); color: var(--k-ink); }
+#k[data-skin="98"] .k-slot-flag { border-radius: 0; }
+
+/* ── skin: zine (cut paper, tape): paper swatches, a dashed cut line, the count stamped */
+#k[data-skin="zine"] .k-slot { border-radius: var(--k-r1); background: var(--k-bg-2); box-shadow: 0 0 0 1px var(--k-line), 2px 2px 0 var(--k-line); }
+#k[data-skin="zine"] .k-slot::before { content: ""; position: absolute; inset: 3px; border: 1px dashed var(--k-line); pointer-events: none; }
+#k[data-skin="zine"] .k-slot:nth-child(3n+1) { transform: rotate(-1.2deg); } #k[data-skin="zine"] .k-slot:nth-child(3n+2) { transform: rotate(.8deg); }
+#k[data-skin="zine"] .k-slot:hover { box-shadow: 0 0 0 1px var(--k-ink), 3px 3px 0 var(--k-ink); }
+#k[data-skin="zine"] .k-slot-n { border-radius: 1px; background: var(--k-accent); color: var(--k-accent-ink); font: 400 12px/15px var(--k-font-display); transform: rotate(-4deg); }
+#k[data-skin="zine"] .k-slot-q { font-weight: 700; color: var(--k-ink); }
+#k[data-skin="zine"] .k-slot-flag { border-radius: 0; font-family: var(--k-font-stamp); font-weight: 400; font-size: 9px; transform: rotate(-6deg); }
+#k[data-skin="zine"] .k-slot[data-group="mark"]::before { display: none; }

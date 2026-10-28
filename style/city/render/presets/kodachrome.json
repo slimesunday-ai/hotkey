@@ -1,0 +1,11 @@
+{
+  "_about": "Kodachrome Punch · deep saturated slide film: a hard bright sun, dense blacks, rich reds and cobalt skies, contrast doing the work.",
+  "_tweak": "grade.contrast, grade.saturation, light.fill (shadow density).",
+  "light": { "sunColor": "#fff0d6", "sun": 3.7, "elevation": 38, "skyFill": "#8aa2ff", "fill": 0.6, "env": 0.3, "shadowRadius": 1.4 },
+  "sky": { "top": "#1560f0", "horizon": "#86ccff", "ground": "#86ccff", "curve": 0.7 },
+  "clouds": { "on": true, "coverage": 0.3, "style": "chunky", "shading": 0.75 },
+  "contact": { "on": true, "strength": 0.5 },
+  "grade": { "on": true, "temperature": 0.1, "contrast": 1.22, "saturation": 1.28, "gamma": 0.96, "lift": -0.02, "split": 0.08, "shadows": "#15307a", "highlights": "#ffc070" },
+  "vignette": { "on": true, "amount": 0.28, "radius": 0.65 },
+  "grain": { "amount": 0.08 }
+}
