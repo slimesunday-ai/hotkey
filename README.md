@@ -138,3 +138,7 @@ The routine scenario has a measured baseline fixture for fresh clones, pinned to
 | `docs/` | Full game design and developer tour. |
 | `style/` | Static server and city: districts, animation, travel, camera, viewer, UI, tools, Mainland, home builder and character studio. |
 | `world/` | City and cast data, traits, geometry and world exports. |
+
+## License
+
+All rights reserved. hotkey is published to be read; it is not open source, and no permission is granted to use, copy, modify or distribute any part of it. See [LICENSE](LICENSE).
