@@ -89,3 +89,31 @@ body.r-ui:not(.dev) > .ui, body.r-ui:not(.dev) > .hint { display: none !importan
 #k .r-tv-who { font: 700 var(--k-fs-l, 16px)/1.2 var(--k-font-display); overflow-wrap: anywhere; }
 #k .r-tv-what { margin-top: 2px; color: var(--k-ink-2); text-transform: var(--k-case-label); letter-spacing: var(--k-track-label); }
 #k .r-tv-btn.is-on { background: var(--k-accent); color: var(--k-accent-ink, var(--k-ink)); }
+/* C2 · the card's head (ui/record/dossier.js): the portrait (kit.css .d-portrait), the name, what they wear; Follow and Go there */
+#k .r-head-card { align-items: flex-start; gap: var(--k-s3); }
+#k .r-face.d-portrait { flex: none; width: calc(84 * var(--k-px)); height: calc(104 * var(--k-px)); }
+#k .r-wearing { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+#k .r-wear { --tier: var(--k-ink-3); display: inline-flex; gap: 5px; align-items: baseline; padding: 2px 7px 2px 5px; border-radius: var(--k-r1); background: var(--k-bg-3);
+  box-shadow: inset 3px 0 0 var(--tier); font: 600 var(--k-fs-s)/1.3 var(--k-font); }
+#k .r-wear small, #k .r-piece-slot { color: var(--k-ink-3); font: 600 calc(10 * var(--k-px))/1 var(--k-font-mono); text-transform: uppercase; letter-spacing: .04em; }
+#k .r-wear-none { color: var(--k-ink-3); font-size: var(--k-fs-s); }
+#k .r-actions { padding: var(--k-s2) var(--k-s3); border-bottom: 1px solid var(--k-line); }
+#k .r-actions .k-btn[aria-disabled="true"] { opacity: .55; }
+/* Pockets: the last disclosed holdings receipt (ui/record/pockets.js), under the TAPE badge */
+#k .r-pk-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+#k .r-pk-head .r-h { margin: 0; }
+#k .r-pk-cash { align-items: baseline; padding: 6px 0 2px; }
+#k .r-pk-cash b { font: 700 var(--k-fs-xl)/1 var(--k-font-display); }
+#k .r-pk-sub { margin-top: 8px; }
+#k .r-pk-sub .r-pk-cash b { font-size: var(--k-fs-l); }
+#k .r-pk-h { margin: 0; color: var(--k-ink-2); font: 700 var(--k-fs-xs)/1.2 var(--k-font-mono); text-transform: uppercase; letter-spacing: .06em; }
+#k .r-pk-goods { margin-top: 6px; }
+#k .r-pk-slot .r-pk-word { position: absolute; left: 3px; top: 2px; font: 600 9px/1 var(--k-font-mono); font-style: normal; color: var(--k-ink-2); pointer-events: none; }
+#k .r-pieces { display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(112 * var(--k-px)), 1fr)); gap: 6px; margin-top: 6px; }
+#k .r-piece { --tier: var(--k-ink-3); display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 6px 8px; border-radius: var(--k-r1); background: var(--k-bg-3);
+  box-shadow: inset 4px 0 0 var(--tier), inset 0 0 0 1px var(--k-line); }
+#k .r-piece-name { font: 700 var(--k-fs-s)/1.2 var(--k-font); overflow-wrap: anywhere; }
+#k .r-piece-tier { color: var(--tier); font: 700 calc(10 * var(--k-px))/1 var(--k-font-mono); text-transform: uppercase; }
+#k .r-wear[data-tier="rare"], #k .r-piece[data-tier="rare"] { --tier: #3b82f6; }
+#k .r-wear[data-tier="epic"], #k .r-piece[data-tier="epic"] { --tier: #a855f7; }
+#k .r-wear[data-tier="grail"], #k .r-piece[data-tier="grail"] { --tier: #d99a00; }

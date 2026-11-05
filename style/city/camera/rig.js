@@ -41,7 +41,10 @@ export function createCameraRig(api, { Q } = {}) {
   const { camera, controls, renderer, nav } = api, el = renderer.domElement;
   const people = createPeople(() => api.peds), world = createWorld(api);   // (world.js: the collision world — fly, follow, the picker and the autofocus on it)
   const LATE = Q?.get?.('camlate') !== '0'; let deferred = null;   // (camera build: follow poses in the LATE step, after the walkers moved; ?camlate=0 = the old order)
-  const fly = createFly(world), free = createFly(world, { photo: true }), follow = createFollow(world, people), extra = new Map();
+  // (C2-camera: the record's homes, once loaded, say whether a followed agent is inside and frame its open room: interiors/city/record.js
+  // cutaway; follow.js rises to that view while it is inside)
+  const rooms = { of: aid => api.recordHomes?.cutaway?.(aid) ?? null };
+  const fly = createFly(world), free = createFly(world, { photo: true }), follow = createFollow(world, people, rooms), extra = new Map();
   let mode = 'orbit', ctrl = null, blend = null, photoSub = 'free', photoFrom = 'orbit', perf = { ms: 0, max: 0, n: 0 }, frame = 0, focusD = null;
   const from = { p: new THREE.Vector3(), q: new THREE.Quaternion(), fov: 50 }, fromFocus = new THREE.Vector3(), dest = { p: new THREE.Vector3(), q: new THREE.Quaternion(), fov: 50, tgt: new THREE.Vector3() };
   const fixed = { name: 'orbit', pose: { p: dest.p, q: dest.q, fov: 50 }, focus: dest.tgt, update() { this.pose.fov = dest.fov; return this.pose; } };

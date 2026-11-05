@@ -33,7 +33,8 @@
 //               path (D9). Nothing sprung on the position (D4: no teleports); the view's auto-motion ≤ 2.5 rad/s, 12 rad/s² (input: free).
 //   drag / two-finger swipe / A D ← → / Q E orbit (it stays where it is left) · W S ↑ ↓ pitch · wheel / pinch / R F distance (kept) ·
 //   Tab / Shift-Tab next / previous person nearby · G next sim agent
-//   a person who vanishes (indoors, out of range) is waited for (an agent comes back under the same id), then the nearest one is followed
+//   a person who vanishes (indoors, out of range) is waited for (an agent comes back under the same id), then the nearest one is followed;
+//   an agent is waited for as long as it takes (C2): the camera holds where it was last
 import * as THREE from 'three';
 import { CAM, savePrefs } from './config.js';
 import { damp, dampAngle, wrap, clamp, smootherstep, spring, decay } from './damp.js';
@@ -49,7 +50,8 @@ export function createPeople(getPeds) {
   return {
     all, label: w => !w ? '' : w.agent ? `agent ${w.aid}` : `walker #${w.id}`,
     heightOf: w => (w && getPeds()?.heightOf?.(w)) || 1.75,   // (peds.heightOf when it exists: the look's real height)
-    byAid: aid => all().find(w => w.agent && w.aid === aid && !w.gone) || null,
+    // (C2: an agent riding out of view, in a cab or underground, is found by its ride's stand-in under its id: simstate/movement.js)
+    byAid: aid => all().find(w => w.agent && w.aid === aid && !w.gone) || getPeds()?.sim?.rideOf?.(aid) || null,
     nearest(x, z, skip = null, r = 1e9) { let best = null, bd = r * r; for (const w of all()) { if (w === skip || w.gone) continue; const d = (w.p[0] - x) ** 2 + (w.p[2] - z) ** 2; if (d < bd) { bd = d; best = w; } } return best; },
     // the person under a screen point (NDC): nearest to the camera among those whose body is within the pick radius, unhidden first
     pick(camera, nx, ny, px, world, maxD = 400) { let best = null, bd = 1e9; const W = innerWidth, Hh = innerHeight;
@@ -71,7 +73,35 @@ function chase(s, target, hl, maxV, maxA, dt) {
   if ((target - nx) * gap < 0 && Math.abs(v1) <= maxA * dt) { s.x = target; s.v = 0; } else { s.x = nx; s.v = v1; } return s.x; }   // (onto the target when it can stop there within maxA; else it passes and turns back — camera build 2c: a target that moves onto x no longer zeroes the speed in one frame)
 const cs = () => ({ x: 0, v: 0 }), zero = (...l) => { for (const s of l) s.x = s.v = 0; };
 
-export function createFollow(world, people) {
+// ── INDOORS (C2-camera, GAME.md §41, slime 10-31: "Rise to the cutaway"): while the agent followed is inside its home, the camera rises
+// to its room's own three-quarter view from the street side (interiors/city/index.js frameOf, through rooms.of(aid): interiors/city/
+// record.js cutaway — whether it is inside is draw.js's indoor plan, the frame is interiors') and eases back down at the door.
+//   at the door     the agent crossing its front wall (inside flips while its door is open): an ease in PARAMETER space from the
+//                   follow pose (live) to the room's: the look point slides from the person to the room, the bearing turns, the camera
+//                   rises and draws back (a rise, not a straight line through the house), the view slerps; out, the same back onto a
+//                   follow re-entered at the person (cut(): the viewer's angle and distance, which nothing inside touched)
+//   a time jump     a seek or a reload into a stay (inside with its door shut) opens straight onto the room's view; out of one, straight
+//                   onto the follow pose. A room not open yet is waited for holding still (≤ room.holdMax s), never flown in from
+//                   elsewhere
+//   a switch        Tab / G / a click onto someone at home: an ease from where the camera is (or at once past room.snapFar m)
+//   input inside    orbits and zooms the room's view (its own offsets, kept this session, clamped to the street side); the follow's
+//                   angle, pitch and distance are not touched, so they come back exactly
+const M4 = new THREE.Matrix4(), QL = new THREE.Quaternion(), UP3 = new THREE.Vector3(0, 1, 0), FW = new THREE.Vector3(), DV = new THREE.Vector3();
+const poseOf = () => ({ p: new THREE.Vector3(), q: new THREE.Quaternion(), piv: new THREE.Vector3() });
+// a pose's offset from its look point as bearing, elevation and log distance (the blend's parameters)
+function sph(P) { DV.subVectors(P.p, P.piv); const d = Math.max(1e-3, DV.length()); return { az: Math.atan2(DV.x, DV.z), el: Math.asin(clamp(DV.y / d, -1, 1)), ld: Math.log(d) }; }
+// k: the path's shape { e, p } — how early the elevation and the distance move (e > 1: up early on the way up, down late on the way
+// down; e < -1 the other way round: low first) and the look point (p > 1 early, p < -1 late), so the camera passes over (or under)
+// what stands between the street and the room (a tree's crown, a porch) instead of through it, with the person in sight
+const ease = (s, k, rise) => { const q = Math.abs(k); return (rise === (k > 0)) ? 1 - (1 - s) ** q : s ** q; };
+function blendPose(A, B, s, out, k = { e: 1, p: 1 }) {
+  const a = sph(A), b = sph(B), se = ease(s, k.e, b.el > a.el), sp = ease(s, k.p, true);
+  const az = a.az + wrap(b.az - a.az) * s, el = a.el + (b.el - a.el) * se, d = Math.exp(a.ld + (b.ld - a.ld) * se), ce = Math.cos(el);
+  out.piv.lerpVectors(A.piv, B.piv, sp); out.p.set(out.piv.x + Math.sin(az) * ce * d, out.piv.y + Math.sin(el) * d, out.piv.z + Math.cos(az) * ce * d);
+  // (the view: from one end's to the other's, drawn toward the look point between them — the person, then the room — most at the middle)
+  out.q.slerpQuaternions(A.q, B.q, s); M4.lookAt(out.p, out.piv, UP3); QL.setFromRotationMatrix(M4); out.q.slerp(QL, 4 * s * (1 - s)); return out; }
+
+export function createFollow(world, people, rooms = null) {
   const F = () => CAM.follow;
   const pose = { p: new THREE.Vector3(), q: new THREE.Quaternion(), fov: CAM.follow.fov }, focus = new THREE.Vector3(), last = new THREE.Vector3();
   const Pv = vec(), PvV = vec(), Pc = vec(), PcV = vec(), Hp = vec(), Pg = vec(), Bo = vec(), Cp = vec(), A = vec(), La = vec(), LaV = vec(), Lk = vec(), C = vec(), T = vec(), T2 = vec(), PT = [vec(), vec(), vec(), vec(), vec()], PT2 = [vec(), vec(), vec(), vec(), vec()];
@@ -86,8 +116,83 @@ export function createFollow(world, people) {
   const ownPitch = () => { const v = F().viewerPitch; return clamp(v !== null && Number.isFinite(+v) ? +v : F().pitch, F().pitchRange[0], F().pitchRange[1]); };
   let saveAt = 0; const keepView = () => { F().viewerDist = +dist.toFixed(3); F().viewerPitch = +pt.toFixed(4); clearTimeout(saveAt); saveAt = setTimeout(savePrefs, 300); };
   let az = 0, pt = ownPitch(), dist = ownDist(), Ls = dist, armColl = dist;
+  let gL = dist;   // (C2-camera2: last frame's arm length, for the enter glide's pace)
   let pullN = 0, brake = false, occT = 0, clrT = 0, searchAt = -1, vis = 1, thinN = 0, flip = 0, dodgeT = 0, dodgeAt = -1, liftT = 0, glide = 1e9, safety = 0, cuts = 0, snaps = 0, nanSeen = 0, slides = 0, searches = 0, dodges = 0;
   sArm.x = dist;
+
+  // ── INDOORS state: src (what the camera is on: 'follow' or 'room'), the ease onto it (t of dur s, from the live follow pose or a still),
+  // the room's frame, the viewer's own offsets inside (yaw, pitch, zoom), a hold for a room not open yet
+  const CW = { src: 'follow', t: 1e9, dur: 1, from: 'still', still: poseOf(), room: null, fr: null, yaw: 0, pitch: 0, zoom: 1, holdT: -1, aid: null, walkIn: false,
+    k: null, gaveUp: null, n: { in: 0, out: 0, snapIn: 0, snapOut: 0, switches: 0, holds: 0, holdMax: 0, blocked: 0, blind: 0, gaveUp: 0 } };
+  const FP = poseOf(), RP = poseOf(), OUT = poseOf();
+  const R = () => F().room;
+  function roomPose(out) { const f = CW.fr, r = R(); DV.subVectors(f.pos, f.tgt); const d0 = Math.max(.5, DV.length()), az = Math.atan2(DV.x, DV.z) + CW.yaw, el0 = Math.asin(clamp(DV.y / d0, -1, 1));
+    const el = clamp(el0 + CW.pitch, r.el[0], r.el[1]), d = d0 * CW.zoom, ce = Math.cos(el);
+    out.piv.copy(f.tgt); out.p.set(f.tgt.x + Math.sin(az) * ce * d, f.tgt.y + Math.sin(el) * d, f.tgt.z + Math.cos(az) * ce * d);
+    M4.lookAt(out.p, out.piv, UP3); out.q.setFromRotationMatrix(M4); return out; }
+  // the camera's pose this frame (what the last frame put out) as a still to ease from: its look point the distance to `toward` ahead
+  // (its look point: the one it was put out with — the person's, the room's, or between — else, from another mode, its view ahead)
+  function takeStill(src, toward) { CW.still.p.copy(src.p); CW.still.q.copy(src.q); FW.set(0, 0, -1).applyQuaternion(src.q);
+    if (src.pivOk) CW.still.piv.copy(src.piv); else CW.still.piv.copy(src.p).addScaledVector(FW, Math.max(1, toward ? src.p.distanceTo(toward) : 5)); }
+  // the ease's path: of the shapes (room.ks × room.kp), one along which the camera's body meets nothing solid (walls, crowns, signs:
+  // STATIC_WIDE), the fewest frames with a solid on its sight line to the person (where it will be: posts and trunks too, STATIC);
+  // none clear → at once (a cut, never a frame inside a tree or on a wall). The open house's cut-away (its roof, front slab and storey)
+  // is not solid to the world while its room is open (camera/world.js THE CUT), so the camera passes over it and sees in
+  const PB = poseOf(), SA = vec(), SB = vec();
+  function pathK(A, B, dur) {
+    const hd = w ? heading(w) : 0, v = w && (w.vc ?? 0) > .1 ? w.vc : 0, h = hgt; let best = null;
+    for (const e of R().ks) for (const p of R().kp) { const k = { e, p }; let hit = false, blind = 0;
+      for (let i = 1; i < 12 && !hit; i++) { const s = i / 12; blendPose(A, B, s, PB, k); if (world.overlap(PB.p, F().body.rWide + .02, STATIC_WIDE)) { hit = true; break; }
+        if (!w) continue; const ah = s * dur * v; put(SA, w.p[0] + Math.sin(hd) * ah, w.p[1] + .6 * h, w.p[2] + Math.cos(hd) * ah); put(SB, PB.p.x, PB.p.y, PB.p.z);
+        if (world.ray(SB, SA, STATIC)) blind++; }
+      if (!hit && (!best || blind < best.blind)) best = { k, blind }; if (best && !best.blind) break; }
+    if (best) CW.n.blind += best.blind; return best && (best.blind === 0 || R().blindOk) ? best.k : null; }
+  function goTo(src, how, dur) { const prev = CW.src; CW.src = src; CW.holdT = -1; CW.walkIn = false;
+    if (src === 'follow' && prev === 'room') wantCut = true;   // (back at the person at the viewer's own angle and distance)
+    if (how === 'snap') { CW.t = CW.dur = 1e-6; CW.n[src === 'room' ? 'snapIn' : 'snapOut']++; return; }
+    if (how === 'still') takeStill(OUT, src === 'room' ? CW.fr.tgt : null);
+    CW.from = how; CW.t = 0; CW.dur = dur; CW.k = null; }   // (its path is picked once this frame's follow pose is made: compose)
+  // each frame, before the follow's own step: what the camera is on (the agent's indoor state and its room's frame, read)
+  function indoors(dt) {
+    const aidNow = w?.agent ? w.aid : null, info = aidNow && rooms ? rooms.of(aidNow) : null, r = R(), switched = aidNow !== CW.aid; CW.aid = aidNow;
+    if (CW.t < CW.dur) CW.t += dt;
+    const inside = !!info?.inside, door = info?.door > 0, holding = CW.holdT >= 0;
+    if (inside && info.frame && (info.room !== CW.room || !CW.fr)) { const f = info.frame(); if (f) { CW.room = info.room; CW.fr = { pos: f.pos.clone(), tgt: f.tgt.clone() }; } }
+    if (inside && info.frame && CW.room === info.room) {
+      CW.gaveUp = null;
+      if (CW.src === 'room' && !switched && !holding) return;
+      // into the room: across its door (played) eases from the follow pose; a switch eases from where the camera is (or at once past
+      // snapFar); a seek or a reload (inside with its door shut, or held for the room) at once
+      const near = OUT.ok && OUT.p.distanceTo(roomPose(RP).p) <= r.snapFar;
+      if (CW.src === 'follow' && (door || CW.walkIn) && !switched && !holding) { CW.n.in++; goTo('room', CW.t >= CW.dur ? 'follow' : 'still', r.inT); }
+      else if (switched && near) { CW.n.switches++; goTo('room', 'still', r.switchT); }
+      else goTo('room', 'snap');
+      return; }
+    if (inside) {
+      // its room isn't open yet: a walk in through its door keeps following until it is; a jump into a stay (a seek, a reload, a switch
+      // to someone at home, another room) holds the camera still a moment rather than fly in from elsewhere or look at a wall
+      if (holding) { CW.holdT += dt; CW.n.holdMax = Math.max(CW.n.holdMax, CW.holdT); if (CW.holdT >= r.holdMax) { CW.holdT = -1; CW.gaveUp = info.room; CW.n.gaveUp++; if (CW.src === 'room') goTo('follow', 'snap'); } return; }
+      if (CW.gaveUp === info.room) return;   // (held as long as it may: the follow's own view until the room opens)
+      if (CW.src === 'follow' && door && !switched) { CW.walkIn = true; return; }
+      if (OUT.ok && !CW.walkIn) { takeStill(OUT, null); CW.holdT = 0; CW.n.holds++; }
+      return; }
+    CW.holdT = -1; CW.walkIn = false; CW.gaveUp = null;
+    if (CW.src === 'room') {
+      // out: through its door eases back down; a switch to someone outside nearby eases from where the camera is; a seek out at once
+      if (door && !switched) { CW.n.out++; goTo('follow', 'still', r.outT); }
+      else if (switched && OUT.ok && Math.hypot(OUT.p.x - last.x, OUT.p.z - last.z) < r.snapFar) { CW.n.switches++; goTo('follow', 'still', r.switchT); }
+      else goTo('follow', 'snap'); }
+  }
+  // the pose put out: the follow's (FP), the room's (RP), the ease between, or the still held
+  function compose() {
+    let out;
+    if (CW.holdT >= 0) out = CW.still;
+    else { const to = CW.src === 'room' && CW.fr ? roomPose(RP) : FP;
+      if (CW.k === null && CW.t < CW.dur) { CW.k = pathK(CW.from === 'follow' ? FP : CW.still, to, CW.dur); if (!CW.k) { CW.k = 0; CW.t = CW.dur; CW.n.blocked++; CW.n[CW.src === 'room' ? 'snapIn' : 'snapOut']++; } }
+      if (CW.t >= CW.dur) out = to;
+      else out = blendPose(CW.from === 'follow' ? FP : CW.still, to, smootherstep(clamp(CW.t / CW.dur, 0, 1)), OUT, CW.k || undefined); }
+    if (out !== OUT) { OUT.p.copy(out.p); OUT.q.copy(out.q); OUT.piv.copy(out.piv); }
+    OUT.ok = OUT.pivOk = true; pose.p.copy(OUT.p); pose.q.copy(OUT.q); }
 
   const heading = x => x.yawS ?? x.p[3];
   // FOLLOW WOBBLE (10-09) · the heading the camera looks ahead along: the subject's, eased (headHL); a turn of more than
@@ -97,7 +202,10 @@ export function createFollow(world, people) {
   function headingC(x, dt) { const h = heading(x); if (hdC === null || !(dt > 0)) { hdC = h; flipT = 0; return hdC; }
     if (Math.abs(wrap(h - hdC)) > F().flipTurn) { flipT += dt; if (flipT < F().flipHold) return hdC; } else flipT = 0;
     return hdC = dampAngle(hdC, h, F().headHL, dt); }
-  function anchor(x, out) { if (x) hgt = people.heightOf(x); const b = x ? x.p : [last.x, last.y, last.z]; return put(out, b[0], b[1] + F().anchorH * hgt, b[2]); }
+  // (C2: the pivot never goes under the street: on a station's stairs the subject goes down into the ground and the camera, following
+  // it down, was in the stairwell's walls — a dark frame. It stays at street level and looks down the flight; the angle and the distance
+  // are the viewer's as ever)
+  function anchor(x, out) { if (x) hgt = people.heightOf(x); const b = x ? x.p : [last.x, last.y, last.z]; return put(out, b[0], Math.max(b[1], F().floorY) + F().anchorH * hgt, b[2]); }
   // the camera point: arm direction (a azimuth, p pitch), length len, lat m to the view's right, up m lifted — at the arm's full length
   // L; a shorter arm (len < L) sits on the same straight segment, scaled (so the swept segment is exactly where it can be)
   function camAt(a, p, len, lat, up, out, L = len, O = Pc) { const cp = Math.cos(p), s = Math.sin(a), c = Math.cos(a), k = L > 1e-6 ? len / L : 0;
@@ -206,8 +314,13 @@ export function createFollow(world, people) {
     const f = F(); now += dt; const live = dt > 0;
     // ── the subject: one who vanished is waited for (an agent comes back under the same id), then the nearest is followed
     if (w && w.gone) { const x = aid ? people.byAid(aid) : null; if (x) w = x; else { last.set(w.p[0], w.p[1], w.p[2]); w = null; lost = 1e-6; } }
-    if (!w && live) { lost += dt; let x = aid ? people.byAid(aid) : null; if (!x && lost > f.lostWait) x = people.nearest(last.x, last.z, null, 120); if (x) switchTo(x, false); }
+    // (C2, GAME.md §41, slime 10-30: "you lost the continuity of following an agent": an AGENT is never swapped for the nearest
+    // stranger. Out of view (indoors, out of range) the camera holds where it was last, at the viewer's angle and distance, until it is
+    // drawn again or the viewer picks someone else. A city walker that vanishes is still followed on by the nearest after lostWait)
+    if (!w && live) { lost += dt; let x = aid ? people.byAid(aid) : null; if (!x && !aid && lost > f.lostWait) x = people.nearest(last.x, last.z, null, 120); if (x) switchTo(x, false); }
     if (w) last.set(w.p[0], w.p[1], w.p[2]);
+    // ── indoors: the room's view or the follow's (C2-camera)
+    indoors(dt);
     // ── orbit input: straight onto the angles and the distance (no lag, D6)
     let dYaw = 0, dPitch = 0, dDist = 0;
     if (I) { const s = CAM.look.base * CAM.look.sens * 1.4, inv = CAM.look.invertY ? -1 : 1;
@@ -216,6 +329,9 @@ export function createFollow(world, people) {
       dYaw += ((I.any('KeyA', 'ArrowLeft', 'KeyQ') ? 1 : 0) - (I.any('KeyD', 'ArrowRight', 'KeyE') ? 1 : 0)) * f.orbitRate * dt - I.rate.x * f.orbitRate * dt;
       dPitch += ((I.any('KeyW', 'ArrowUp') ? 1 : 0) - (I.any('KeyS', 'ArrowDown') ? 1 : 0)) * f.orbitRate * .6 * dt + I.rate.y * inv * f.orbitRate * .6 * dt;
       dDist = I.wheel * .0011 + ((I.key('KeyF') ? 1 : 0) - (I.key('KeyR') ? 1 : 0)) * 1.1 * dt - (I.pad ? I.move.z * 1.1 * dt : 0); }
+    // (inside, the viewer's input orbits and zooms the room's view: its own offsets; the follow's angle, pitch and distance stay as left)
+    if (CW.src === 'room' && (dYaw || dPitch || dDist)) { const r = R(); CW.yaw = clamp(CW.yaw + dYaw, -r.yaw, r.yaw); CW.pitch = clamp(CW.pitch + dPitch, r.pitch[0], r.pitch[1]);
+      CW.zoom = clamp(CW.zoom * Math.exp(dDist), r.zoom[0], r.zoom[1]); dYaw = dPitch = dDist = 0; }
     const input = !!(dYaw || dPitch || dDist);
     az = wrap(az + dYaw); pt = clamp(pt + dPitch, f.pitchRange[0], f.pitchRange[1]);
     if (dDist) dist = clamp(dist * Math.exp(dDist), f.distRange[0], f.distRange[1]);
@@ -272,10 +388,18 @@ export function createFollow(world, people) {
     rN = 1e9; if (live && w && ek === 0) { const m0 = f.distRange[0], sp = Math.hypot(PvV.x, PvV.z) > .25, LP = Math.max(Ls, m0 + .25); rN = armMax(aE, pE, LP, lat, sLift.x, Pv); const
         rA = sp ? armMax(aE, pE, LP, lat, sLift.x, put(T2, Pv.x + PvV.x * hd2.ahead, Pv.y, Pv.z + PvV.z * hd2.ahead)) : rN;
       if (!hold) { if (rN < m0 + .05 || rA < m0 + .05) { hold = true; coupled = false; relT = 0; holds++; const g = rN < m0 + .05 && Math.hypot(Pg.x - Pc.x, Pg.y - Pc.y, Pg.z - Pc.z) < 4 ? Pg : Pc; put(Hp, g.x, g.y, g.z); }   // (the last spot with room: here, or where the person last had it)
-        else put(Pg, Pv.x, Pv.y, Pv.z); }
+        else put(Pg, Pv.x, Pv.y, Pv.z);
+        // (C2-camera3, docs/redesign/camera-20261104.md A) the glide back from a hold keeps the hold's reach: a pivot more than
+        // hold.max from the person has lost them (at 10x a walker gets 6 m ahead of the glide round a corner, the camera then
+        // looking at them through a wall), so it cuts
+        if (!hold && !coupled && Math.hypot(Pv.x - Pc.x, Pv.z - Pc.z) > hd2.max) wantCut = true; }
       else { relT = rN >= m0 + .2 && rA >= m0 + .1 ? relT + dt : 0; hOcc = visW < f.occl.vis ? hOcc + dt : 0;
         if (relT >= hd2.release) { hold = false; if (world.ray(Pc, Pv, STATIC_WIDE)) wantCut = true; }   // (back to them — through open air only)
-        else if (now - cutAt > hd2.cool && ((hOcc >= hd2.cutOcc && ((roomAny(Pv, pE, Ls, m0) && (!sp || roomAny(put(T2, Pv.x + PvV.x * hd2.ahead, Pv.y, Pv.z + PvV.z * hd2.ahead), pE, Ls, m0))) || hOcc >= hd2.cutStuck)) || Math.hypot(Pv.x - Pc.x, Pv.z - Pc.z) > hd2.max || Math.hypot(C.x - Pv.x, C.y - Pv.y, C.z - Pv.z) < m0 - .1)) wantCut = true; } }   // (hidden once through it, where they have room: cut; … or they came back past it)   // (they went through a wall, or on out of reach: cut to them)
+        // (C2-camera3, docs/redesign/camera-20261104.md A) lost them — out of the hold's reach, or hidden where they have room — cuts
+        // whatever the cool: at 10x the hold trips again right after each cut, and the cool kept a held camera looking through a wall
+        // at someone 12 m off for a second. The cool still limits the cuts that trade one held view for another (stuck; came back past)
+        else if (Math.hypot(Pv.x - Pc.x, Pv.z - Pc.z) > hd2.max || (hOcc >= hd2.cutOcc && roomAny(Pv, pE, Ls, m0) && (!sp || roomAny(put(T2, Pv.x + PvV.x * hd2.ahead, Pv.y, Pv.z + PvV.z * hd2.ahead), pE, Ls, m0)))
+          || (now - cutAt > hd2.cool && (hOcc >= hd2.cutStuck || Math.hypot(C.x - Pv.x, C.y - Pv.y, C.z - Pv.z) < m0 - .1))) wantCut = true; } }   // (hidden once through it, where they have room: cut; … or they came back past it)   // (they went through a wall, or on out of reach: cut to them)
     // auto-motion slides along a wall rather than cutting the arm: when this frame's auto-motion alone would snap the arm in, it is undone
     // (camera build 2c: OFF by default — the undo zeroed every auto velocity in one frame, a 100–300 m/s² step (F3); the arm's rate-limited
     // chase and the hold now carry it)
@@ -288,10 +412,16 @@ export function createFollow(world, people) {
     // job). Only the viewer's own orbit input may put the arm straight at a wall it swung into (the move is theirs).
     const ta = Math.min(Ls, armColl), tb = Math.min(ta, Math.max(soft + .3, f.distRange[0]));
     if (!live || fresh) { sArm.x = ta; sArm.v = 0; fresh = false; }   // (a cut: the new pose at once)
+    // (C2-camera2) the ENTER GLIDE owns the arm: down the line of sight in parameter space, the arm on its length (eased: smootherstep, so
+    // no velocity step at either end). The rate-limited chase below crawled in at 3 m/s behind the glide (an 85 m glide after a reload:
+    // ~27 s of the camera far off, behind the walls of the room the agent was in). A wall that caps the arm mid-glide (the person moved
+    // off the glide's line: at 60x a skater does in a frame) brings it in no faster than the glide's own pace this frame plus the wall
+    // chase's rate (cutRate): taken at once it was a 58 m step in one frame (glideprobe)
+    else if (ek > 0) { const gd = Math.max(0, gL - Ls) + f.cutRate[0] * dt, gu = Math.max(0, Ls - gL) + f.armRate[0] * dt, to = clamp(ta, sArm.x - gd, sArm.x + gu); sArm.v = (to - sArm.x) / dt; sArm.x = to; }
     else if (input && ta < sArm.x && armColl < Ls - 1e-4 && world.overlap(camAt(aE, pE, sArm.x, lat, sLift.x, T, Ls), f.radius, STATIC_WIDE | CARS)) { sArm.x = ta; sArm.v = 0; snaps++; }   // (input swung the body into a wall)
     else if (ta < sArm.x - f.armRate[0] * dt && armColl < Ls - 1e-4) chase(sArm, ta, .02, f.cutRate[0], f.cutRate[1], dt);   // (a wall onto the arm: in fast, still continuous)
     else chase(sArm, tb, tb < sArm.x ? f.armInHL : f.armOutHL, tb < sArm.x || !moving ? f.armRate[0] : Math.min(f.armRate[0], .45 * vc), f.armRate[1], dt);   // (out behind a walker: slower than half their pace — never a stall)
-    camAt(aE, pE, sArm.x, lat, sLift.x, C, Ls);
+    gL = Ls; camAt(aE, pE, sArm.x, lat, sLift.x, C, Ls);
     // ── the BODY round posts (camera build 2c): THIN spans never shorten the arm, so the step round a post (below) is the plan and this the
     // guarantee — the camera's own motion into a thin span's cushion (body.r + body.cushion) loses its approaching part smoothly (none left
     // at body.r: it slides round), and an offset so made decays back (body.hl). A cushion, not a clamp: no jump where a face flips (D4)
@@ -350,13 +480,16 @@ export function createFollow(world, people) {
     if (!view.ok || !live || input || ek > 0) { const on = view.ok && live; onTarget(view.Y, on ? wrap(ty - view.ty) / dt : 0); onTarget(view.P, on ? (tp - view.tp) / dt : 0); view.yaw = ty; view.pitch = tp; view.ok = true; }
     else { view.yaw = track(view.Y, ty, view.ty, dt, f.autoRate, f.autoAcc, f.autoJerk, f.viewHL); view.pitch = track(view.P, tp, view.tp, dt, f.autoRate, f.autoAcc, f.autoJerk, f.viewHL); }
     view.ty = ty; view.tp = tp; E3.set(view.pitch, view.yaw, 0, 'YXZ'); pose.q.setFromEuler(E3);
+    // (C2-camera: the follow's pose, then what is put out: it, the room's view, or the ease between)
+    FP.p.copy(pose.p); FP.q.copy(pose.q); FP.piv.set(Lk.x, Lk.y, Lk.z); compose();
     if (live) pose.fov = damp(pose.fov, f.fov, .2, dt);
     focus.copy(last); return pose;
   }
 
   return {
     name: 'follow', pose, focus,
-    get dbg() { return { vpitch: pt, ty: view.ty, vyaw: view.yaw, viewOff: view.Y.o, hd: hdC, az, allowed: hold || !coupled ? Math.min(sArm.x, Math.hypot(C.x - Pv.x, C.y - Pv.y, C.z - Pv.z)) : sArm.x, arm: sArm.x, brakes, hold, held: Math.hypot(Pc.x - Pv.x, Pc.y - Pv.y, Pc.z - Pv.z), holds, body: bodyN, dist: Ls, want: dist, armColl, L: [Pc.x, Pc.y, Pc.z], pitch: clamp(pt + sPt.x, -1.4, 1.45), vis, thin: thinN, dodge: sDodge.x, lift: sLift.x, assist: { az: sAz.x, pt: sPt.x, len: sLen.x }, glide, enter: ent.t < ent.dur, safety, cuts, snaps, slides, searches, dodges, pulled: pullN, aim: { az: asT.az, pt: asT.pt, len: asT.len }, brake }; },
+    get dbg() { return { vpitch: pt, ty: view.ty, vyaw: view.yaw, viewOff: view.Y.o, hd: hdC, az, allowed: hold || !coupled ? Math.min(sArm.x, Math.hypot(C.x - Pv.x, C.y - Pv.y, C.z - Pv.z)) : sArm.x, arm: sArm.x, brakes, hold, held: Math.hypot(Pc.x - Pv.x, Pc.y - Pv.y, Pc.z - Pv.z), holds, body: bodyN, dist: Ls, want: dist, armColl, L: [Pc.x, Pc.y, Pc.z], pitch: clamp(pt + sPt.x, -1.4, 1.45), vis, thin: thinN, dodge: sDodge.x, lift: sLift.x, assist: { az: sAz.x, pt: sPt.x, len: sLen.x }, glide, enter: ent.t < ent.dur, safety, cuts, snaps, slides, searches, dodges, pulled: pullN, aim: { az: asT.az, pt: asT.pt, len: asT.len }, brake,
+      room: { src: CW.src, ease: CW.t < CW.dur ? +(CW.t / CW.dur).toFixed(3) : 1, hold: CW.holdT >= 0, room: CW.room, yaw: CW.yaw, pitch: CW.pitch, zoom: CW.zoom, frame: CW.fr && { pos: CW.fr.pos.toArray(), tgt: CW.fr.tgt.toArray() }, k: CW.k, ...CW.n }, pivot: [Lk.x, Lk.y, Lk.z] }; },
     get subject() { return w; }, get lost() { return lost > 0; }, get distance() { return dist; }, get entering() { return ent.t < ent.dur; },
     set(subject) { if (!subject) return false; switchTo(subject); return true; },
     back() { while (history.length) { const h = history.pop(); const x = h.gone && h.agent ? people.byAid(h.aid) : h.gone ? null : h; if (x) return switchTo(x, false); } return null; },
@@ -364,7 +497,9 @@ export function createFollow(world, people) {
     // (that line is blocked or too long, or no `from`), false (nobody to follow). The rig blends the view only on a glide.
     enter(from, subject) {
       if (subject && subject !== w) { if (w) pushHistory(w); w = subject; aid = subject.agent ? subject.aid : null; lost = 0; }
-      if (!w) return false; const f = F(); entered = true; last.set(w.p[0], w.p[1], w.p[2]); anchor(w, A);
+      if (!w) return false; const f = F(); entered = true;
+      // (C2-camera: into follow onto someone at home → the room's view; a room not open yet holds the camera where it was)
+      CW.src = 'follow'; CW.t = CW.dur = 1e-6; CW.holdT = -1; CW.aid = null; CW.walkIn = false; OUT.ok = !!from; OUT.pivOk = false; if (from) { OUT.p.copy(from.p); OUT.q.copy(from.q); } last.set(w.p[0], w.p[1], w.p[2]); anchor(w, A);
       put(Pv, A.x, A.y, A.z); put(PvV, 0, 0, 0); put(Pc, A.x, A.y, A.z); put(PcV, 0, 0, 0); put(Pg, A.x, A.y, A.z); put(Bo, 0, 0, 0); hold = false; coupled = true; relT = 0; cpOk = false; put(La, 0, 0, 0); put(LaV, 0, 0, 0); resetAssists(); glide = 1e9; view.ok = false; pt = ownPitch(); pose.fov = f.fov; hdC = null;   // (dist and pitch: the viewer's, kept — 10-09: a shot handing back, Esc and 3 again)
       const dx = from ? from.p.x - A.x : 0, dy = from ? from.p.y - A.y : 0, dz = from ? from.p.z - A.z : 0, len = Math.hypot(dx, dy, dz);
       let how = 'cut'; if (from && len > 1 && len < f.enterMax && !world.sweep(A, from.p, f.radius, STATIC_WIDE | CARS)) how = 'glide';
@@ -380,6 +515,6 @@ export function createFollow(world, people) {
       list.sort((a, b) => a[0] - b[0]); const pick = (list.find(([, x]) => !seen.has(x)) || list[0])?.[1]; if (pick) switchTo(pick); return pick || null; },
     nextAgent() { const L = people.all().filter(x => x.agent && !x.npc && !x.gone).sort((a, b) => String(a.aid).localeCompare(String(b.aid))); if (!L.length) return null;
       const k = w?.agent ? L.findIndex(x => x.aid === w.aid) : -1, x = L[(k + 1) % L.length]; switchTo(x); return x; },
-    drop() { w = null; aid = null; history = []; lost = 0; entered = false; },
+    drop() { w = null; aid = null; history = []; lost = 0; entered = false; CW.src = 'follow'; CW.t = CW.dur = 1e-6; CW.holdT = -1; CW.aid = null; OUT.ok = false; },
   };
 }

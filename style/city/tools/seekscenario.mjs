@@ -92,11 +92,17 @@ async function playTo(B, to, lead, speed) {
   if (await B.ev('window.__record.player.speed') !== speed) await choose(B, SPEED, speed);
   await frames(B, 8);
   // (the pause is a real click, sent from the page's own frame once the playhead is there: the minute it lands on is then read)
-  await B.ev(`window.__pauseAt = ${to}; (function f() { const P = window.__record.player; if (P.running && P.minute >= window.__pauseAt) { P.pause(); window.__pausedAt = P.minute; return; } requestAnimationFrame(f); })()`, false);
+  await B.ev(`window.__pauseAt = ${to}; window.__pausedAt = null; (function f() { const P = window.__record.player; if (P.running && P.minute >= window.__pauseAt) { P.pause(); window.__pausedAt = P.minute; return; } requestAnimationFrame(f); })()`, false);
   await click(B, PLAY);
-  for (let k = 0; k < 400 && await B.ev('window.__record.player.running'); k++) await sleep(25);
+  // (slime, 10-31, GAME.md §41: "Fix the check". The play leg waits until the record has paused, up to 2 min, and the minute it then
+  // shows is the one the page paused at, at or past `to`: polled 400 × 25 ms, a 10x leg of over ~1.4 island minutes was still running
+  // when the wait gave up, and both pictures were taken while the record ran, ~0.06 island minutes apart)
+  for (let k = 0; k < 4800 && await B.ev('window.__record.player.running'); k++) await sleep(25);
+  if (await B.ev('window.__record.player.running')) throw new Error(`the play to ${to} had not paused after 2 min`);
   await frames(B, 6);
-  return B.ev('window.__record.player.minute');
+  const [m, at] = await B.ev('[window.__record.player.minute, window.__pausedAt]');
+  if (m !== at || !(m >= to)) throw new Error(`the play to ${to} paused at ${at}, the picture is at ${m}`);
+  return m;
 }
 async function seekTo(B, m) { await typeMinute(B, m); await frames(B, 12); await sleep(150); return B.ev('window.__record.player.minute'); }
 

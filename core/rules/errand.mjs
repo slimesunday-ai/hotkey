@@ -81,6 +81,7 @@ export function applyErrand(s0, e, context = {}) {
       speechSent: out.some(v => v.type === 'say' || (v.type === 'decline' && !!v.line)),
     } } : {};
     if (fromOrders(context)) markOrders(s, e, true, out);
+    liveAct(s, e, out);
     return { state: s, events: out, ok: true, ...quote, ...receipt, actions: actionState(s, e.by), legal: legalPlays(s, e.by) };
   }
   // A failed errand changes nothing; it only goes on the owner's record (§33: typed, written back to the agent). One
@@ -89,8 +90,50 @@ export function applyErrand(s0, e, context = {}) {
   const f = clone(s0);
   const fo = [];
   emit(f, fo, 'invalid', { agent: e.by, errand: ERRANDS.includes(e.kind) ? e.kind : 'unknown', why: reason, kind }, until ? toFewUntil([e.by], until) : toFew(f, [e.by]));
+  // An unsuccessful attempt has no public outcome, target or refusal reason.
+  if (f.clock % 2 === 0 && !f.over) fo[0].live = { agent: e.by, kind: 'attempt', place: 'current' };
   if (fromOrders(context)) markOrders(f, e, false, fo);
   return { state: f, events: fo, ok: false, why: reason, ...quote, actions: actionState(f, e.by), legal: legalPlays(f, e.by) };
+}
+
+// GAME §41, 10-31: "Who and where show". An annotation on the executed
+// receipt, not another rules event: sequence, receipts and all seats stay exact.
+// The record audience alone projects it as an act. No input/free text is copied.
+function liveAct(s, e, out) {
+  // A silent acceptance of yesterday’s invitation changes the sit-down but
+  // emits no game receipt. Carry its viewer act without advancing the game
+  // sequence or ever entering a seat’s news/history (including after day 15).
+  if (!out.length) out.push({ n: `viewer:${s.day}:${e.kind}:${e.sitdown}:${e.by}`,
+    t: s.clock, day: s.day, type: 'viewer-act', vis: { to: [], pub: Number.MAX_SAFE_INTEGER } });
+  if (out.some(v => ['meet', 'outloud', 'high', 'release', 'evicted'].includes(v.type)
+    || v.type === 'crew' && ['form', 'join', 'leave'].includes(v.act))) return;
+  const receipt = out[0], agent = e.by;
+  let kind = e.kind, place = 'current', counterpart;
+  const pair = id => { if (id && id !== agent) counterpart = { kind: 'agent', id }; };
+  if (['dress', 'take'].includes(kind)) place = 'home';
+  if (['offer', 'shop', 'sell'].includes(kind)) place = 'home';
+  if (['give', 'pay'].includes(kind)) { pair(receipt.to); place = 'meeting'; }
+  if (kind.startsWith('fence_')) {
+    place = 'fence';
+    counterpart = { kind: 'fence' };
+    if (['fence_swap', 'fence_accept'].includes(kind)) pair(receipt.a === agent ? receipt.b : receipt.a);
+  }
+  if (['bribe', 'bail'].includes(kind)) { place = 'precinct'; counterpart = { kind: 'cops' }; }
+  if (kind === 'tip') counterpart = { kind: 'cops' };
+  if (kind === 'lookout') counterpart = { kind: 'lookout' };
+  if (kind === 'bounty') { place = 'fence'; counterpart = { kind: 'fence' }; }
+  if (['stash_put', 'stash_take'].includes(kind)) {
+    place = 'keeper-home';
+    counterpart = { kind: 'keeper', id: s.crews[receipt.crew].keeper };
+  }
+  if (['ask', 'answer', 'say', 'close'].includes(kind)) {
+    const sd = s.sitdowns[e.sitdown ?? receipt.sitdown] ?? receipt;
+    pair(sd.a === agent ? sd.b : sd.a); place = 'current';
+  }
+  if (kind === 'crew_invite') { pair(receipt.agent); place = 'current'; }
+  if (kind === 'chat') counterpart = { kind: 'crew', id: receipt.crew };
+  if (kind === 'listen') counterpart = { kind: 'earpiece' };
+  receipt.live = { agent, kind, ...(counterpart ? { counterpart } : {}), place };
 }
 
 const isCash = (v, max) => Number.isInteger(v) && v > 0 && v <= max;

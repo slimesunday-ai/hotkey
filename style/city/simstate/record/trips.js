@@ -39,5 +39,16 @@ export function createTrips() {
     cache.set(key, out);
     return out;
   }
-  return { plan, has: id => T.has(id), stats: () => ({ ...stat, cached: cache.size }) };
+  // (C2-seek: the length of the walk the export plans from point p to point q, [x, z] each — the walkers' own graph, a function of the
+  // world alone: the stand plan's cost from a trip's end to a spot. null: no walk)
+  // (walkPath: the walk itself, [p, …its points, q], each [x, z]; null: no walk)
+  const walks = new Map();
+  function walkPath(p, q) {
+    const key = `${p[0]},${p[1]}>${q[0]},${q[1]}`; if (walks.has(key)) return walks.get(key);
+    let P = null; try { const tr = T.trip(p, q, 'walk', { dep: 0 }), pts = tr?.legs?.flatMap(l => l.path || []) ?? []; if (pts.length) { P = [[p[0], p[1]]]; for (const r of [...pts, q]) { const l = P[P.length - 1]; if (Math.hypot(r[0] - l[0], r[1] - l[1]) > .05) P.push([r[0], r[1]]); } } } catch { P = null; }
+    walks.set(key, P); if (walks.size > 20000) walks.delete(walks.keys().next().value); return P;
+  }
+  const lenOf = P => { let L = 0; for (let k = 1; k < P.length; k++) L += Math.hypot(P[k][0] - P[k - 1][0], P[k][1] - P[k - 1][1]); return L; };
+  const walkLen = (p, q) => { const P = walkPath(p, q); return P ? lenOf(P) : null; };
+  return { plan, walkLen, walkPath, has: id => T.has(id), stats: () => ({ ...stat, cached: cache.size }) };
 }

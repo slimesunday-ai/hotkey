@@ -98,7 +98,10 @@ const kills = Object.entries(C.traits).filter(([, e]) => e.status === 'kill').ma
 const isNpcKey = k => k.split('/')[1]?.startsWith(R.NPC_PREFIX), npcKills = kills.filter(isNpcKey), npcRanks = Object.entries(C.traits).filter(([k, e]) => e.rank && isNpcKey(k)).length;
 for (const k of Object.keys(C.traits).filter(isNpcKey)) { const [slot, id] = k.split('/'); if (!R.NPC_REG[slot]?.[id]) die(`curation: ${k} names no NPC trait in the source registry`); }
 const npcCount = Object.values(R.NPC_REG).reduce((n, o) => n + Object.keys(o).length, 0);
-text.set(path.join(W_OUT, 'SOURCE.json'), JSON.stringify({ from: SRC, commit, dirty, at: new Date().toISOString(), kills: kills.length, ranks, npc: { traits: npcCount, kills: npcKills, ranks: npcRanks }, files: [...text.keys()].map(rel).sort() }, null, 1) + '\n');
+// (from: the source checkout's folder name only — the record ships with the public export, and a path names this machine's folders and
+// user; the commit is the provenance)
+const fromRec = path.basename(SRC);
+text.set(path.join(W_OUT, 'SOURCE.json'), JSON.stringify({ from: fromRec, commit, dirty, at: new Date().toISOString(), kills: kills.length, ranks, npc: { traits: npcCount, kills: npcKills, ranks: npcRanks }, files: [...text.keys()].map(rel).sort() }, null, 1) + '\n');
 
 // ── write (the copied trees are replaced whole, so a trait file removed upstream goes here too)
 const npcLine = `NPC pool: ${npcCount} traits, ${npcKills.length} kills${npcKills.length ? ' (' + npcKills.join(', ') + ')' : ''}, ${npcRanks} ranks`;

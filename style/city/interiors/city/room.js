@@ -38,6 +38,20 @@ function wallFn(m = '') { if (m.startsWith('paint:')) return plain(parseInt(m.sl
 const charred = (fn, k = 0) => (a, y, t) => { const h = hash(a >> 3, y >> 3, 31 + k); return hash(a, y, 5 + k) > .996 ? 0xff6a1a : mixHex(0x16130f, shade2(fn(a, y, t), .35), Math.min(1, ((h * 4) | 0) * .15 + (y < 20 ? 0 : .1))); };   // (8-voxel patches: the greedy mesher merges them)
 const charBank = (b, keep = .18) => { for (const O of b.L) for (let k = 0; k < O.C.n; k += 3) { const g = (O.C.a[k] + O.C.a[k + 1] + O.C.a[k + 2]) / 3; O.C.a[k] = g * keep + .012; O.C.a[k + 1] = g * keep * .85 + .008; O.C.a[k + 2] = g * keep * .7 + .006; } return b; };
 
+// ── a home wider than its layout (ox ≥ 1.4 m: the room's width past the layout's, on the left): a partition wall (a doorway at the
+// front) and a side room with the bed (when the layout has none) and the bath, from the tier's own pieces, so a long trailer or a wide
+// house isn't half empty. Pure (C2-indoors: interiors/city/plan.js walks the same room without building it) → null | { px, gap: [z0, z1]
+// (the doorway), pieces: [{ id, X, Z, r, variant? }] } in room metres
+export function sideRoom(A, S, D, ox) {
+  if (ox < 1.4) return null;
+  const scars = new Set(S.scars || []), burned = scars.has('burned'), foreclosed = scars.has('foreclosed'), seedOf = k => (S.seed ?? 1) * 31 + k;
+  const px = ox - .1, gap = [Math.max(.2, D - 1.7), D - .7], pieces = [], side = (id, X, Z, r = 0, opt = {}) => { if (HO.byId.get(id)) pieces.push({ id, X, Z, r, ...opt }); };
+  let z0 = .1; const tierBed = S.tier === 'penthouse' || S.tier === 'mainland' ? 'bed-platform' : S.tier === 'trailer' ? 'mattress-floor' : 'bed-double';
+  if (!foreclosed && !(burned && hash(S.seed, 4, 4) < .5) && !S.bare && !A.items.some(it => HO.byId.get(it.id)?.cat === 'beds')) { const o = HO.byId.get(tierBed), w = o.foot[0] * C4; if (px - .2 >= w) { side(tierBed, (px - w) / 2, z0, 0, { variant: seedOf(1) % o.variants }); z0 += o.foot[1] * C4 + .3; } }
+  if (!foreclosed && !burned && D - z0 >= 1.2 && px >= 1.2) { side('toilet', .1, D - 1.1 - .75 > z0 ? D - 1.9 : z0, 1); if (px >= 1.9) side('sink-bath', px - .6, Math.max(z0, D - 1.9)); }
+  return { px, gap, pieces };
+}
+
 export function buildRoom(A, S) {
   const ART = S.art || null;   // (interior art pass, 2026-10-06: the Mainland's cutaway shell; city homes leave it off and draw as before)
   const t0 = Date.now(), bank = new Bank(true), Wr = A.room.w * C4, Dr = A.room.d * C4, W = Math.max(S.W, Wr), D = Math.max(S.D, Dr), H = S.H ?? A.room.h ?? 2.8;
@@ -176,13 +190,11 @@ export function buildRoom(A, S) {
     put(it, it.id, { variant, seed: it.seed ?? seedOf(it.x ?? 0), state: st }, burned && it.id !== 'door-front'); }   // (it.seed: the home builder keeps a moved piece's look)
   // ── a home wider than its layout: a partition wall (a doorway at the front) and a side room with the bed (when the layout has none)
   // and the bath, from the tier's own pieces, so a long trailer or a wide house isn't half empty
-  if (ox >= 1.4) { const pc = (A.room.walls?.E || '').startsWith('paint:') ? parseInt(A.room.walls.E.slice(7), 16) : 0xe6e1d6, px = ox - .1, gap = [Math.max(.2, D - 1.7), D - .7];
+  const SR = sideRoom(A, S, D, ox);
+  if (SR) { const pc = (A.room.walls?.E || '').startsWith('paint:') ? parseInt(A.room.walls.E.slice(7), 16) : 0xe6e1d6, { px, gap } = SR;
     boxInto(bank, 0, px, 0, 0, ox, H, gap[0], burned ? 0x1a1714 : pc); boxInto(bank, 0, px, 0, gap[1], ox, H, D, burned ? 0x1a1714 : pc); boxInto(bank, 0, px, 2.2, gap[0], ox, H, gap[1], burned ? 0x1a1714 : pc);
     boxInto(bank, 0, px - .02, H, 0, ox + .02, H + .06, D, 0xf7f7f2);
-    const side = (id, X, Z, r = 0, opt = {}) => { const o = HO.byId.get(id); if (!o) return; place(o, { variant: 0, seed: seedOf(X * 10 | 0), ...opt }, X, Z, r, 0, burned); items.push({ it: { x: -1, z: -1 }, o, r, y: 0, x: X, z: Z }); };
-    let z0 = .1; const tierBed = S.tier === 'penthouse' || S.tier === 'mainland' ? 'bed-platform' : S.tier === 'trailer' ? 'mattress-floor' : 'bed-double';
-    if (!foreclosed && !(burned && hash(S.seed, 4, 4) < .5) && !S.bare && !A.items.some(it => HO.byId.get(it.id)?.cat === 'beds')) { const o = HO.byId.get(tierBed), w = o.foot[0] * C4; if (px - .2 >= w) { side(tierBed, (px - w) / 2, z0, 0, { variant: seedOf(1) % o.variants }); z0 += o.foot[1] * C4 + .3; } }
-    if (!foreclosed && !burned && D - z0 >= 1.2 && px >= 1.2) { side('toilet', .1, D - 1.1 - .75 > z0 ? D - 1.9 : z0, 1); if (px >= 1.9) side('sink-bath', px - .6, Math.max(z0, D - 1.9)); } }
+    for (const q of SR.pieces) { const o = HO.byId.get(q.id); place(o, { variant: 0, seed: seedOf(q.X * 10 | 0), ...(q.variant !== undefined ? { variant: q.variant } : {}) }, q.X, q.Z, q.r, 0, burned); items.push({ it: { x: -1, z: -1 }, o, r: q.r, y: 0, x: q.X, z: q.Z }); } }
   // ── the owner's slots: their gear, collectibles and trophies (fills), else empty; a slot built for a sim piece takes that piece
   const slotPieces = [];
   A.slots.forEach((s, i) => { const f = S.fills?.[i]; if (!f || burned || foreclosed) return; const o = HO.byId.get(f.id); if (!o) return;

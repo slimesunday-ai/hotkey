@@ -118,7 +118,19 @@ test('without the flag nothing changes: no dawn call, no stored entry, no option
   assert.ok(!events(off.dir).some(e => e.type === 'memory'), 'no memory written at all');
   assert.ok(!('journal' in ck.bench.options) && !('journal' in ck.bench.provenance.config.options));
   // The same season, event for event, once the stored entries are set aside (and the event numbers they took).
-  const strip = log => log.filter(e => !(e.type === 'memory' && e.part === 'dawn')).map(({ n, vis, ...e }) => JSON.stringify(e));
+  // §41, 10-31: "Who and where show" adds a typed fight reference; remap it alongside the removed dawn event numbers.
+  const strip = log => {
+    const kept = log.filter(e => !(e.type === 'memory' && e.part === 'dawn'));
+    const ids = new Map(kept.map((e, i) => [e.n, i]));
+    return kept.map(source => {
+      const { n, vis, ...e } = structuredClone(source);
+      if (e.type === 'show') for (const at of Object.values(e.masked ?? {})) if (at.fight !== undefined) {
+        assert.ok(ids.has(at.fight), 'masked fight references a retained fight event');
+        at.fight = ids.get(at.fight);
+      }
+      return JSON.stringify(e);
+    });
+  };
   assert.deepEqual(strip(events(on.dir)), strip(events(off.dir)));
   assert.deepEqual(on.metrics.haul, off.metrics.haul);
 });

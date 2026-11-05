@@ -52,9 +52,17 @@ export function viewFor(s, log, who = null, audience = 'agent') {
   const events = log.filter(e => recent(e) && (sees(e) || cards.has(e.n))).map(e => {
     const copy = sees(e) ? copyEvent(e, audience === 'ownerAI', e.vis.to === 'all' && e.agent !== me && T < Math.min(e.t + 2, DAY15), sold(e))
       : { n: e.n, t: e.t, day: e.day, type: 'card' };
-    if (e.type === 'show') copy.plays = showPlays(e, log);
+    if (e.type === 'show') {
+      copy.plays = showPlays(e, log);
+      if (audience === 'record' && e.masked) copy.masked = jsonCopy(e.masked);
+    }
     if (cards.has(e.n)) copy.card = cards.get(e.n);
     return copy;
+  });
+  // §41, 10-31: "Who and where show" belongs only to the follower. Keep
+  // separate publication identities so tomorrow's original receipt is unchanged.
+  if (audience === 'record') for (const e of log) if (e.live && e.t <= T) events.push({
+    n: `act:${e.n}`, t: e.t, day: e.day, type: 'act', ...jsonCopy(e.live),
   });
   const v = {
     audience, day: s.day, clock: T, over: s.over, rule: s.rule, midseason: s.midseason,
@@ -421,6 +429,10 @@ const promiseOf = p => {
 // only as doses. `sold`: SUDO shows as the TEMP it was sold as, and its writer not at all.
 function copyEvent(e, typedOnly, live, sold) {
   const copy = jsonCopy(e, 'vis');
+  // The following viewer can recognise a hooded walker (§41, 10-30).
+  // Neither a seat's events nor its history/briefing gains that knowledge.
+  delete copy.live;
+  if (copy.type === 'show') delete copy.masked;
   if (copy.type === 'buy') delete copy.copy;
   if (typedOnly) stripText(copy);
   if (sold && copy.type === 'take') copy.drug = 'temp';

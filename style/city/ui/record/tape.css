@@ -4,25 +4,76 @@
 #record-player.has-tape { flex-wrap: wrap; row-gap: 6px; padding-top: 8px !important; }
 #record-player.has-tape > input[type=range] { display: none; }
 #record-player .r-tape { flex: 1 0 100%; display: flex; align-items: center; gap: 8px; min-width: 0; }
-#record-player .r-tape-track { position: relative; flex: 1; min-width: 0; height: 30px; border-radius: 5px; background: #232a35; overflow: hidden; cursor: pointer; touch-action: none; outline: none; }
+#record-player .r-tape-track { position: relative; flex: 1; min-width: 0; height: 46px; border-radius: 5px; background: #232a35; overflow: hidden; cursor: pointer; touch-action: none; outline: none; }
 #record-player .r-tape-track:focus-visible { box-shadow: 0 0 0 2px #7cc4ff; }
-#record-player .r-tape-in, #record-player .r-tape-pips { position: absolute; left: 0; top: 0; bottom: 0; pointer-events: none; }
+#record-player .r-tape-in, #record-player .r-tape-pips, #record-player .r-tape-bpips { position: absolute; left: 0; top: 0; bottom: 0; pointer-events: none; }
 #record-player .r-tape-night { position: absolute; top: 0; bottom: 0; background: #151a22; }
 #record-player .r-tape-day { position: absolute; top: 0; bottom: 0; width: 1px; background: #3b4554; }
-#record-player .r-tape-day span { position: absolute; left: 3px; top: 1px; font: 600 9px/1 system-ui; color: #7d8897; white-space: nowrap; }
-#record-player .r-tape-head { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 4px #000; pointer-events: none; z-index: 2; }
-#record-player .r-tape-mk { position: absolute; bottom: 4px; width: 16px; height: 16px; margin-left: -8px; padding: 0; border: 2px solid #0e1116; border-radius: 50%;
-  background: #c9d1dc; color: #0e1116; font: 800 9px/12px system-ui; text-align: center; cursor: pointer; pointer-events: auto; z-index: 1; }
-#record-player .r-tape-mk:hover, #record-player .r-tape-mk:focus-visible { transform: scale(1.25); outline: none; z-index: 3; }
-#record-player .r-tape-mk.is-show { background: #f2f2f2; border-radius: 3px; }
-#record-player .r-tape-mk.is-fight { background: #ff5a5f; }
-#record-player .r-tape-mk.is-arrest { background: #5aa9ff; }
-#record-player .r-tape-mk.is-turf { background: #ffd23f; }
-#record-player .r-tape-mk.is-sale { background: #4fd18b; }
-#record-player .r-tape-mk.is-ferry { background: #4fe3e3; }
-#record-player .r-tape-span { flex: none; min-width: 52px; font: 12px/1.2 system-ui; color: #aab4c2; text-align: right; white-space: nowrap; }
-#record-player .r-tape-now { flex: none; }
-#record-player .r-tape-now[hidden] { display: none; }
+#record-player .r-tape-day span { position: absolute; left: 3px; bottom: 2px; font: 600 9px/1 system-ui; color: #7d8897; white-space: nowrap; }
+#record-player .r-tape-lane { position: absolute; left: 0; right: 0; top: 0; height: 15px; border-bottom: 1px dashed #3a3150; background: rgba(224, 90, 214, .06);
+  font: 700 8px/15px system-ui; letter-spacing: .1em; text-transform: uppercase; color: #8a6f95; padding-left: 4px; pointer-events: none; font-style: normal; }
+#record-player .r-tape-lane[hidden] { display: none; }
+#record-player .r-tape-head { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 4px #000; pointer-events: none; z-index: 4; }
+#record-player .r-tape-head.is-away { background: #ffb02e; box-shadow: 0 0 6px #ffb02e; }
+#record-player .r-tape-depart { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px dashed #7ee08f; margin-left: -1px; pointer-events: none; z-index: 3; font-style: normal; }
+#record-player .r-tape-depart::after { content: '↩'; position: absolute; top: 14px; left: 2px; font: 800 11px/1 system-ui; color: #7ee08f; }
+#record-player .r-tape-depart[hidden] { display: none; }
+/* the dots: each kind its colour and glyph; a folded pip a stack of its kinds with their counts */
+#record-player .r-tape-mk, #record-player .r-tape-bt { --c: #c9d1dc; --ink: #0e1116; position: absolute; width: 20px; height: 20px; margin-left: -10px; padding: 0; border: 2px solid #0e1116;
+  border-radius: 50%; background: var(--c); color: var(--ink); display: flex; flex-direction: column-reverse; align-items: center; justify-content: center; gap: 1px;
+  cursor: pointer; pointer-events: auto; z-index: 1; box-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
+#record-player .r-tape-mk { bottom: 4px; }
+#record-player .r-tape-mk .r-tape-g, #record-player .r-tape-bt .r-tape-g { width: 12px; height: 12px; flex: none; }
+#record-player .r-tape-mk:hover, #record-player .r-tape-mk:focus-visible, #record-player .r-tape-bt:hover, #record-player .r-tape-bt:focus-visible { transform: scale(1.22); outline: none; z-index: 5; }
+#record-player .is-show { --c: #f2f2f2; }
+#record-player .r-tape-mk.is-show { border-radius: 4px; }
+#record-player .is-fight { --c: #ff5a5f; }
+#record-player .is-arrest { --c: #5aa9ff; }
+#record-player .is-turf { --c: #ffd23f; }
+#record-player .is-sale { --c: #4fd18b; }
+#record-player .is-ferry { --c: #4fe3e3; }
+#record-player .is-betray { --c: #e05ad6; }
+#record-player .r-tape-mk.is-fold { width: 18px; height: auto; margin-left: -9px; padding: 1px; border-radius: 5px; background: #0e1116; border-width: 1px; border-color: #5b6575; }
+#record-player .r-tape-in-k { display: block; width: 14px; height: 10px; border-radius: 3px; background: var(--c, #c9d1dc); color: #0e1116; font: 800 8px/10px system-ui; text-align: center; font-style: normal; }
+#record-player .r-tape-mk.is-fold.is-wide { width: 32px; margin-left: -16px; flex-direction: row-reverse; flex-wrap: wrap-reverse; align-content: flex-start; justify-content: center; }
+/* betrayals: diamonds on the record's own lane, along the top of the track */
+#record-player .r-tape-bt { top: 1px; width: 13px; height: 13px; margin-left: -6.5px; border-radius: 2px; border-width: 1px; transform: rotate(45deg); }
+#record-player .r-tape-bt .r-tape-g { width: 9px; height: 9px; transform: rotate(-45deg); }
+#record-player .r-tape-bt:hover, #record-player .r-tape-bt:focus-visible { transform: rotate(45deg) scale(1.3); }
+#record-player .r-tape-bt .r-tape-n { position: absolute; right: -9px; top: -7px; transform: rotate(-45deg); min-width: 11px; height: 11px; padding: 0 2px; border-radius: 6px; background: #fff; color: #0e1116; font: 800 8px/11px system-ui; }
+/* the state (left) and the way back (right) */
+#record-player .r-tape-state { flex: none; display: flex; align-items: center; gap: 7px; min-width: 150px; padding: 0 10px 0 8px; height: 46px; border-radius: 5px; background: #12301d; color: #c6f5d1; }
+#record-player .r-tape-dot { width: 9px; height: 9px; border-radius: 50%; background: #4ee07a; box-shadow: 0 0 0 3px rgba(78, 224, 122, .25); font-style: normal; flex: none; }
+#record-player .r-tape-st { display: flex; flex-direction: column; line-height: 1.15; }
+#record-player .r-tape-word { font: 800 13px/1.1 system-ui; letter-spacing: .08em; }
+#record-player .r-tape-at { font: 12px/1.2 system-ui; opacity: .85; white-space: nowrap; }
+#record-player .r-tape-state[data-state="jumped"] { background: #3a2a0a; color: #ffd99a; }
+#record-player .r-tape-state[data-state="jumped"] .r-tape-dot { background: #ffb02e; box-shadow: 0 0 0 3px rgba(255, 176, 46, .25); border-radius: 2px; }
+#record-player .r-tape-state[data-state="replay"] { background: #2a1838; color: #f0c8ff; }
+#record-player .r-tape-state[data-state="replay"] .r-tape-dot { background: #e05ad6; box-shadow: 0 0 0 3px rgba(224, 90, 214, .25); }
+#record-player .r-tape-back { flex: none; display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 12px; border: 0; border-radius: 5px; background: #4ee07a; color: #08210f;
+  font: 800 14px/1.1 system-ui; cursor: pointer; }
+#record-player .r-tape-back:hover, #record-player .r-tape-back:focus-visible { background: #7ef0a0; outline: none; }
+#record-player .r-tape-back[hidden] { display: none; }
+#record-player .r-tape-back-arrow { font-size: 18px; }
+#record-player .r-tape-back kbd { padding: 1px 5px; border: 1px solid currentColor; border-radius: 3px; font: 700 11px/1.2 system-ui; opacity: .75; }
+#record-player .r-tape-span:empty { display: none; }
+#record-player.has-tape[data-state="jumped"] { box-shadow: 0 0 0 2px #ffb02e; }
+#record-player.has-tape[data-state="replay"] { box-shadow: 0 0 0 2px #e05ad6; }
+/* the hover card over a dot */
+#record-player .r-tape-tip { position: absolute; bottom: calc(100% + 6px); left: 0; z-index: 71; max-width: min(360px, calc(100vw - 48px)); padding: 8px 10px; background: #0e1116; color: #fff;
+  border-radius: 8px; box-shadow: 0 6px 24px rgba(0, 0, 0, .45); pointer-events: none; font: 13px/1.3 system-ui; }
+#record-player .r-tape-tip[hidden] { display: none; }
+#record-player .r-tape-tip-row { display: grid; grid-template-columns: 18px 1fr; column-gap: 6px; align-items: center; padding: 2px 0; }
+#record-player .r-tape-tip-row span { grid-column: 2; color: #aab4c2; font-size: 12px; }
+#record-player .r-tape-tip-k { --c: #c9d1dc; grid-row: span 2; width: 18px; height: 18px; border-radius: 50%; background: var(--c); color: #0e1116; display: grid; place-items: center; font-style: normal; }
+#record-player .r-tape-tip-k .r-tape-g { width: 11px; height: 11px; }
+#record-player .r-tape-tip-row.is-fight .r-tape-tip-k { --c: #ff5a5f; } #record-player .r-tape-tip-row.is-arrest .r-tape-tip-k { --c: #5aa9ff; }
+#record-player .r-tape-tip-row.is-turf .r-tape-tip-k { --c: #ffd23f; } #record-player .r-tape-tip-row.is-sale .r-tape-tip-k { --c: #4fd18b; }
+#record-player .r-tape-tip-row.is-ferry .r-tape-tip-k { --c: #4fe3e3; } #record-player .r-tape-tip-row.is-betray .r-tape-tip-k { --c: #e05ad6; }
+#record-player .r-tape-tip-row.is-show .r-tape-tip-k { --c: #f2f2f2; border-radius: 4px; }
+#record-player .r-tape-tip-do, #record-player .r-tape-tip-more { margin-top: 4px; color: #7ee08f; font-size: 11px; font-weight: 700; }
+#record-player .r-tape-tip-more { color: #aab4c2; }
 #record-player .r-tape-pop { position: absolute; bottom: calc(100% + 6px); left: 0; z-index: 70; width: min(340px, calc(100vw - 48px)); max-height: 46vh; overflow: auto; padding: 6px;
   background: #171b22; border-radius: 8px; box-shadow: 0 6px 24px rgba(0, 0, 0, .45); }
 #record-player .r-tape-pop[hidden] { display: none; }
@@ -35,6 +86,7 @@
 #record-player .r-tape-item.is-turf::before { background: #ffd23f; }
 #record-player .r-tape-item.is-sale::before { background: #4fd18b; }
 #record-player .r-tape-item.is-ferry::before { background: #4fe3e3; }
+#record-player .r-tape-item.is-betray::before { background: #e05ad6; border-radius: 1px; transform: rotate(45deg); }
 #record-player .r-tape-item span { color: #aab4c2; font-size: 12px; }
 #record-player .r-tape-item:hover, #record-player .r-tape-item:focus-visible { background: #263040; outline: none; }
 /* the missed card: top right, in the band above the docked panels (--r-top); never over a panel */
@@ -51,3 +103,14 @@
 #k .r-paper { flex: 0 1 auto; min-width: 0; }
 /* the replay's lower third: the director's caption's place and look (TV mode is off while a replay plays) */
 #k .r-tape-cap { pointer-events: none; }
+#record-player .r-tape-mk.is-start, #record-player .r-tape-mk.is-fold.is-start { margin-left: 0; }
+#record-player .r-tape-mk.is-end { margin-left: -20px; } #record-player .r-tape-mk.is-fold.is-end { margin-left: -18px; } #record-player .r-tape-mk.is-fold.is-wide.is-end { margin-left: -32px; }
+#record-player .r-tape-bt.is-start { margin-left: 1px; } #record-player .r-tape-bt.is-end { margin-left: -14px; }
+/* the player's own controls (record/page.js), dressed to match the bar */
+#record-player.has-tape > button, #record-player.has-tape > select, #record-player.has-tape > input { height: 28px; padding: 0 10px; border: 1px solid #323c4b; border-radius: 5px;
+  background: #222a36; color: #e8edf3; font: 600 13px/1 system-ui; cursor: pointer; }
+#record-player.has-tape > input[type=number] { width: 96px !important; padding: 0 6px; font-weight: 500; cursor: text; }
+#record-player.has-tape > button:hover, #record-player.has-tape > select:hover { background: #2c3646; border-color: #4a5668; }
+#record-player.has-tape > button:focus-visible, #record-player.has-tape > select:focus-visible, #record-player.has-tape > input:focus-visible { outline: 2px solid #7cc4ff; outline-offset: 1px; }
+#record-player.has-tape > button[aria-label="Play or pause"] { min-width: 64px; background: #e8edf3; color: #0e1116; border-color: #e8edf3; }
+#record-player.has-tape > output { min-width: 110px; font: 600 13px/1 system-ui; color: #aab4c2; font-variant-numeric: tabular-nums; }

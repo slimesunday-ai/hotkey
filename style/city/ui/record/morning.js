@@ -20,7 +20,7 @@ const h = (tag, attrs, ...kids) => h0(tag, attrs, ...kids.flat(Infinity));
 const fill = (el, ...kids) => el.replaceChildren(...kids.flat(Infinity).filter(k => k !== null && k !== undefined && k !== false));
 const WORDS = { Took: 'took', Turned: 'turned on', Booked: 'booked', Bought: 'bought', Outbid: 'outbid on' };
 
-export function createCards({ sim, root, sceneOf, onReplay, onOpen = () => {}, seen = null, onSeen = () => {} }) {
+export function createCards({ sim, root, sceneOf, onReplay, onOpen = () => {}, seen = null, onSeen = () => {}, portraits: shared = null }) {
   const el = h('section', { id: 'r-cards', class: 'r-panel r-cards', role: 'dialog', 'aria-label': 'The morning cards', 'aria-hidden': 'true', hidden: true });
   const title = h('h2', { class: 'r-title' }), list = h('div', { class: 'm-cards' });
   el.append(h('header', { class: 'r-head' }, h('div', { class: 'r-id' }, title, h('div', { class: 'r-sub' }, h('span', { class: 'r-live' }, 'PUBLIC'), ' · the night’s top 5')),
@@ -28,7 +28,7 @@ export function createCards({ sim, root, sceneOf, onReplay, onOpen = () => {}, s
   root.append(el);
   const drawing = watchDrawing(root, el, [title, list]);
   let open = false, sig = '', lastNight = seen, based = seen !== null, portraits = null;
-  const faces = () => portraits ??= createPortraits({ THREE });
+  const faces = () => portraits ??= shared ?? createPortraits({ THREE });
   // a face: the agent's look for its id (a mugshot for Booked); its img fills in when the thumbnail is ready
   function face(s, B, path, id, { jailed = false, lost = false } = {}) {
     const name = s.board?.agents?.find(a => a.id === id)?.name ?? null;

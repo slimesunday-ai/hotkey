@@ -41,11 +41,16 @@ test('a season publishes exactly the final record events by identity, preserving
   const record = viewFor(ck.state, log, null, 'record');
   const ids = new Map(ck.feed.exporter.ids);
   const actual = new Map(frames.flatMap(f => f.events).map(e => [e.id, e]));
-  assert.deepEqual([...ids.keys()].sort((a, b) => a - b), record.events.map(e => e.n).sort((a, b) => a - b));
+  // §41, 10-31: "Who and where show" adds viewer-only act identities beside the unchanged receipt ids.
+  const order = (a, b) => String(a).localeCompare(String(b));
+  assert.deepEqual([...ids.keys()].sort(order), record.events.map(e => e.n).sort(order));
   assert.equal(actual.size, record.events.length);
   assert.deepEqual([...actual.keys()].sort((a, b) => a - b), Array.from({ length: actual.size }, (_, i) => i));
   for (const { n, ...source } of record.events) {
     if (source.type === 'orders') source.of = source.of.map(ref => ids.get(ref));
+    if (source.type === 'show' && source.masked) for (const at of Object.values(source.masked)) {
+      if (at.fight !== undefined) at.fight = ids.get(at.fight);
+    }
     const { id, minute, ...published } = actual.get(ids.get(n));
     assert.equal(id, ids.get(n));
     assert.ok(Number.isInteger(minute));
@@ -54,7 +59,7 @@ test('a season publishes exactly the final record events by identity, preserving
 });
 
 test('frames are public changes only, boards are deltas, ids never expose a private count, event minutes are publication minutes', () => {
-  let board = null, rest = null, lastMinute = -1;
+  let board = null, sightings = null, rest = null, lastMinute = -1;
   const events = new Map();
   for (const [i, f] of frames.entries()) {
     assert.equal(f.i, i);
@@ -73,11 +78,16 @@ test('frames are public changes only, boards are deltas, ids never expose a priv
       events.set(id, event);
       changed = true;
     }
-    const next = [f.day, f.nightsLeft, f.midseason, f.over, f.sightings];
+    // slime, 10-31, on the slimmer feed (readers carry unchanged sightings forward): "Slim"; unchanged sightings are wire deltas, like boards.
+    if ('sightings' in f) {
+      assert.notDeepEqual(f.sightings, sightings, 'only changed sightings are included');
+      sightings = f.sightings; changed = true;
+    }
+    const next = [f.day, f.nightsLeft, f.midseason, f.over, sightings];
     if (JSON.stringify(next) !== JSON.stringify(rest)) changed = true;
     rest = next;
     assert.ok(changed, 'no empty public step');
-    assert.deepEqual(Object.keys(f).sort(), ['i', 't', 'step', 'minute', 'events', 'sightings', 'day', 'nightsLeft', 'midseason', 'over', ...('board' in f ? ['board'] : [])].sort());
+    assert.deepEqual(Object.keys(f).sort(), ['i', 't', 'step', 'minute', 'events', 'day', 'nightsLeft', 'midseason', 'over', ...('sightings' in f ? ['sightings'] : []), ...('board' in f ? ['board'] : [])].sort());
     const minute = f.day * 1440 + (f.step.kind === 'night' ? 1260
       : f.step.kind === 'errand' && f.step.round > 0 ? 360 + Math.floor(900 * f.step.round / 4) : 360);
     assert.equal(f.minute, minute);

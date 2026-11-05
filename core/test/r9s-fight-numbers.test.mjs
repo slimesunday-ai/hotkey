@@ -1,3 +1,5 @@
+// §41, 10-31: "Who and where show" adds follower metadata; original outcome pins below still compare every game fact.
+import { withoutFollowerActs } from './viewer-outcome.mjs';
 // 2026-10-27: re-pin bot reason prose for slime's call, "the first 2 we should do" (rent is now compute); plays and rules unchanged.
 // R9c (slime, 10-19: "Show hit strength numbers"; docs/briefs/R9c-fight-numbers.md): when tonight's menu has a hit or a
 // break-in, the menu carries one short block of fight numbers, rendered from a typed field of the seat's view
@@ -448,7 +450,8 @@ test("the field is typed: the owner AI audience (typedOnly) keeps it as the seat
 // Re-pinned by R11, hustles replace the shift (slime, 10-21: "they should be robbing npcs, doing crime", and on the
 // build: "let's just do that"; core/reports/R9/REPINS.md): every bot-only season plays differently by design.
 // It was b7da3c8627adb884af5deb7f66f913e2729cc1b6ab419b07053c0ce019ffb4fe.
-const OUTCOME_404 = '3a9db08c9409fdaa4cebf133659ce84ce9857d9986a415395f5fc684dd55e548';
+// §41, 10-30: "you watch X mask up and do it"; only show.masked changes the log shape.
+const OUTCOME_404 = '70e3411f2e36c33e66c08f7568b2c8e8d617d66040f1bdec0118588da9772742';
 test('outcomes unchanged: a bot-only season hashes as it did before the count was exported', () => {
   const seed = 404;
   const cast = makeCast(seed, CASTS.layer4);
@@ -479,5 +482,5 @@ test('outcomes unchanged: a bot-only season hashes as it did before the count wa
     log.push(...night.events);
   }
   assert.ok(log.filter(e => e.type === 'fight').length > 0, 'control: fights were fought');
-  assert.equal(crypto.createHash('sha256').update(JSON.stringify([s, log])).digest('hex'), OUTCOME_404);
+  assert.equal(crypto.createHash('sha256').update(JSON.stringify([s, withoutFollowerActs(log)])).digest('hex'), OUTCOME_404);
 });

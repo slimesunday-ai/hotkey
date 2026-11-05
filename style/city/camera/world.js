@@ -24,8 +24,14 @@
 //   floorAt(x, z, y) / ceilAt(x, z, y) → the nearest solid top ≤ y (0: the ground) / bottom ≥ y (Infinity)
 //   topAt(x, z) → the column's highest solid top · ready(x, z) → its columns are the real ones (not the far fallback) · tierAt(x, z)
 //   tick(camPos) once a frame (eviction, prefetch round the camera, one block to the worker) · invalidate() · stat · clear()
+// THE CUT (C2-tvday, docs/redesign/camera-20261031.md design A, approved by slime 10-31: "Approve it"): while a home is open, the
+// renderer discards its roof above the ceiling, its front slab and its storey inside (gpu.js CUT, set by interiors/city/index.js). The
+// world leaves out the same three boxes: a column whose footprint lies inside a box loses that box's heights from its spans, for every
+// static query (ray, sweep, overlap, distance, nearestFree, fan). A column straddling a box's edge keeps its spans whole (the side walls
+// the cut keeps stand there). floorAt / ceilAt / topAt still read the uncut columns. ?worldcut=0 turns it off.
 import { buildColumns, THIN } from './world.worker.js';
 import { P } from '../plan.js';
+import { CUT } from '../gpu.js';
 
 export const STATIC = 1, PEOPLE = 2, CARS = 4, STATIC_WIDE = 8, ALL = 7, STATIC_THIN = 16, THIN_FLAG = THIN;
 const RANK = { far: 1, mid: 2, full: 3 };
@@ -107,6 +113,36 @@ export function createWorld(api, o = {}) {
   // ── columns: CE / CC are the entry and column index of the last col() call
   let CE = null;
   function col(gx, gz) { const i = Math.floor(gx / G), j = Math.floor(gz / G), e = entryAt(i, j); if (!e) return -1; CE = e; return e.sh ? ((gz - j * G) >> e.sh) * e.gc + ((gx - i * G) >> e.sh) : (gz - j * G) * G + (gx - i * G); }
+  // ── the cut (THE CUT above): the open home's boxes in its frame (local x across its front, local z toward the street), read from
+  // gpu.js CUT as its shader reads it; per column, the heights to leave out ([y0, y1] pairs), or null
+  const CUT_ON = cfg.cut ?? (typeof location === 'undefined' || new URLSearchParams(location.search).get('worldcut') !== '0');
+  const CK = { sig: new Float32Array(16), boxes: null, cx: 0, cz: 0, c: 1, s: 0, r: 0, cols: new WeakMap(), n: 0 }, NOCUT = null;
+  function cutNow() { const v = CUT.value; if (!CUT_ON || !(v[7] > 0)) { if (CK.boxes) { CK.boxes = null; CK.sig[7] = 0; CK.cols = new WeakMap(); } return null; }
+    let same = !!CK.boxes; for (let k = 0; same && k < 16; k++) same = CK.sig[k] === v[k]; if (same) return CK.boxes; CK.sig.set(v); CK.cols = new WeakMap(); CK.n++;
+    // (gpu.js CUTOUT: A spans |x| < hxW, yA0 < y < yA1, zA0 < z < z1 · F spans |x| < hxW, the storey, zF0 < z < z1 · B spans |x| < hxB, the storey, zB0 < z < z1)
+    const [cx, cz, c, sn, hxW, yA0, yA1, , zA0, zF0, z1, hxB, yS0, yS1, zB0] = v;
+    CK.cx = cx; CK.cz = cz; CK.c = c; CK.s = sn;
+    CK.boxes = [[hxW, yA0, yA1, zA0, z1], [hxW, yS0, yS1, zF0, z1], [hxB, yS0, yS1, zB0, z1]].filter(b => b[1] < b[2] && b[3] < b[4]);
+    CK.r = Math.max(...CK.boxes.map(b => Math.hypot(b[0], Math.max(Math.abs(b[3]), Math.abs(b[4])))), 0) + 1; return CK.boxes; }
+  // Validate the uniform and reject an unrelated query once, before visiting any columns. The circle encloses every cut box;
+  // only whole column footprints are cut, so a query outside it cannot reach a removed span (including a far cell's footprint).
+  function cutFor(x0, z0, x1, z1) { const B = cutNow(); if (!B?.length) return NOCUT;
+    const dx = Math.max(x0 - CK.cx, 0, CK.cx - x1), dz = Math.max(z0 - CK.cz, 0, CK.cz - z1);
+    return dx * dx + dz * dz > CK.r * CK.r ? NOCUT : B; }
+  // (call right after col(gx, gz): the column's footprint is its entry's cell, 1 m on a far fallback)
+  // Entry identity plus its integer column index is exact at every tier. Refinement/rebuild installs a new entry; eviction can release it.
+  function cutCol(gx, gz, c, B) { let cols = CK.cols.get(CE); if (!cols) CK.cols.set(CE, cols = new Map()); if (cols.has(c)) return cols.get(c);
+    const n = CE.sh ? 1 << CE.sh : 1, x0 = Math.floor(gx / n) * n * CS, z0 = Math.floor(gz / n) * n * CS, w = n * CS; let out = null;
+    for (const [hx, y0, y1, za, zb] of B) { let inn = true;
+      for (const [px, pz] of [[x0, z0], [x0 + w, z0], [x0, z0 + w], [x0 + w, z0 + w]]) { const dx = px - CK.cx, dz = pz - CK.cz, lx = dx * CK.c - dz * CK.s, lz = dx * CK.s + dz * CK.c;
+        if (!(Math.abs(lx) < hx && lz > za && lz < zb)) { inn = false; break; } }
+      if (inn) (out ||= []).push(y0, y1); }
+    cols.set(c, out); return out; }
+  // a span [lo, hi] less the cut heights: each piece left, to fn(lo, hi); true from fn stops
+  function pieces(lo, hi, cy, fn) { if (!cy) return fn(lo, hi); let P0 = [lo, hi];
+    for (let k = 0; k < cy.length; k += 2) { const a = cy[k], b = cy[k + 1], N = []; for (let q = 0; q < P0.length; q += 2) { const l = P0[q], h = P0[q + 1];
+      if (b <= l || a >= h) { N.push(l, h); continue; } if (a > l) N.push(l, a); if (b < h) N.push(b, h); } P0 = N; }
+    for (let q = 0; q < P0.length; q += 2) if (fn(P0[q], P0[q + 1])) return true; return false; }
 
   // ── dynamic shapes, gathered once per epoch
   let dynEpoch = -1; const WK = { n: 0, a: new Float32Array(4 * 512), ref: [] }, CR = { n: 0, a: new Float32Array(9 * 128), ref: [] };
@@ -186,19 +222,23 @@ export function createWorld(api, o = {}) {
   const result = () => R.t <= 1 ? { t: R.t, n: R.n.slice(), thin: R.thin, kind: R.kind, who: R.who } : null;
   // Amanatides & Woo over the columns, each column's spans tested against the ray's y-span inside it
   function rayStatic(ax, ay, az, dx, dy, dz, wide) {
+    const B = cutFor(Math.min(ax, ax + dx), Math.min(az, az + dz), Math.max(ax, ax + dx), Math.max(az, az + dz));
     let gx = Math.floor(ax * INV), gz = Math.floor(az * INV); const sx = dx > 0 ? 1 : dx < 0 ? -1 : 0, sz = dz > 0 ? 1 : dz < 0 ? -1 : 0;
     const tdx = sx ? CS / Math.abs(dx) : Infinity, tdz = sz ? CS / Math.abs(dz) : Infinity;
     let tmx = sx > 0 ? ((gx + 1) * CS - ax) / dx : sx < 0 ? (gx * CS - ax) / dx : Infinity, tmz = sz > 0 ? ((gz + 1) * CS - az) / dz : sz < 0 ? (gz * CS - az) / dz : Infinity;
-    let tIn = 0, axis = -1;
+    let tIn = 0, axis = -1, tOut = 0, best = 2, how = 0, bt = 0;
+    // (one span, or one piece of a span the cut leaves: its entry along the ray inside this column)
+    const span = (lo, hi, th) => { let t0 = tIn, t1 = tOut, yh = 0;
+      if (dy > 1e-12) { const ta = (lo - ay) / dy, tb = (hi - ay) / dy; if (ta > t0) { t0 = ta; yh = -1; } if (tb < t1) t1 = tb; }
+      else if (dy < -1e-12) { const ta = (hi - ay) / dy, tb = (lo - ay) / dy; if (ta > t0) { t0 = ta; yh = 1; } if (tb < t1) t1 = tb; }
+      else if (ay < lo || ay > hi) return false;
+      if (t0 <= t1 && t0 < best) { best = t0; how = yh; bt = th; } return false; };
     for (let guard = 0; guard < 1e6; guard++) {
       if (R.t <= tIn) return;
-      const tOut = Math.min(tmx, tmz, 1), c = col(gx, gz);
-      if (c >= 0) { const off = CE.off, iv = CE.iv, ivf = CE.ivf; let best = 2, how = 0, bt = 0;
-        for (let k = off[c], e = off[c + 1]; k < e; k += 2) { if (wide && ivf[k >> 1]) continue; const lo = iv[k], hi = iv[k + 1]; let t0 = tIn, t1 = tOut, yh = 0;
-          if (dy > 1e-12) { const ta = (lo - ay) / dy, tb = (hi - ay) / dy; if (ta > t0) { t0 = ta; yh = -1; } if (tb < t1) t1 = tb; }
-          else if (dy < -1e-12) { const ta = (hi - ay) / dy, tb = (lo - ay) / dy; if (ta > t0) { t0 = ta; yh = 1; } if (tb < t1) t1 = tb; }
-          else if (ay < lo || ay > hi) continue;
-          if (t0 <= t1 && t0 < best) { best = t0; how = yh; bt = ivf[k >> 1]; } }
+      tOut = Math.min(tmx, tmz, 1); const c = col(gx, gz);
+      if (c >= 0) { const off = CE.off, iv = CE.iv, ivf = CE.ivf, cy = B ? cutCol(gx, gz, c, B) : NOCUT; best = 2; how = 0; bt = 0;
+        for (let k = off[c], e = off[c + 1]; k < e; k += 2) { if (wide && ivf[k >> 1]) continue;
+          if (cy) pieces(iv[k], iv[k + 1], cy, (lo, hi) => span(lo, hi, ivf[k >> 1])); else span(iv[k], iv[k + 1], ivf[k >> 1]); }
         if (best <= tOut) { NRM[0] = NRM[1] = NRM[2] = 0; if (how) NRM[1] = how; else if (axis === 0) NRM[0] = -sx; else if (axis === 1) NRM[2] = -sz; take(best, best === 0 && !how && axis < 0 ? 'inside' : 'static', !!bt); return; } }
       if (tOut >= 1) return;
       if (tmx < tmz) { gx += sx; tIn = tmx; tmx += tdx; axis = 0; } else { gz += sz; tIn = tmz; tmz += tdz; axis = 1; }
@@ -207,6 +247,7 @@ export function createWorld(api, o = {}) {
   // the sphere sweep over the columns: slabs along the major axis in the direction of motion; in each, only the columns the swept
   // sphere's footprint can reach; stops once no later slab can be met earlier than the best contact
   function sweepStatic(ax, ay, az, dx, dy, dz, r, wide) {
+    const B = cutFor(Math.min(ax, ax + dx) - r, Math.min(az, az + dz) - r, Math.max(ax, ax + dx) + r, Math.max(az, az + dz) + r);
     const X = Math.abs(dx) >= Math.abs(dz), au = X ? ax : az, du = X ? dx : dz, av = X ? az : ax, dv = X ? dz : dx;
     const ylo = Math.min(ay, ay + dy) - r, yhi = Math.max(ay, ay + dy) + r;
     const g0 = Math.floor((Math.min(au, au + du) - r) * INV), g1 = Math.floor((Math.max(au, au + du) + r) * INV), st = du >= 0 ? 1 : -1;
@@ -215,18 +256,21 @@ export function createWorld(api, o = {}) {
       if (R.t <= tA) break;
       const v0 = av + dv * tA, v1 = av + dv * tB, gv0 = Math.floor((Math.min(v0, v1) - r) * INV), gv1 = Math.floor((Math.max(v0, v1) + r) * INV);
       for (let gv = gv0; gv <= gv1; gv++) { const gx = X ? gu : gv, gz = X ? gv : gu, c = col(gx, gz); if (c < 0) continue;
-        const off = CE.off, iv = CE.iv, ivf = CE.ivf, bx = gx * CS, bz = gz * CS;
-        for (let k = off[c], e = off[c + 1]; k < e; k += 2) { const lo = iv[k], hi = iv[k + 1]; if (hi < ylo || lo > yhi) continue; const th = ivf[k >> 1]; if (wide && th) continue;
-          const t = sphereBox(ax, ay, az, dx, dy, dz, r, bx, lo, bz, bx + CS, hi, bz + CS); if (t >= 0) take(t, 'static', !!th); } } }
+        const off = CE.off, iv = CE.iv, ivf = CE.ivf, bx = gx * CS, bz = gz * CS, cy = B ? cutCol(gx, gz, c, B) : NOCUT;
+        for (let k = off[c], e = off[c + 1]; k < e; k += 2) { if (iv[k + 1] < ylo || iv[k] > yhi) continue; const th = ivf[k >> 1]; if (wide && th) continue;
+          if (!cy) { const t = sphereBox(ax, ay, az, dx, dy, dz, r, bx, iv[k], bz, bx + CS, iv[k + 1], bz + CS); if (t >= 0) take(t, 'static', !!th); continue; }
+          pieces(iv[k], iv[k + 1], cy, (lo, hi) => { const t = sphereBox(ax, ay, az, dx, dy, dz, r, bx, lo, bz, bx + CS, hi, bz + CS); if (t >= 0) take(t, 'static', !!th); return false; }); } } }
   }
   // the static boxes within reach of a point (cb(x0, lo, z0, x1, hi, z1, thin) → true stops)
-  function boxesNear(px, py, pz, R_, sm, cb) {   // (sm 1: every span · 2: not the thin ones · 3: only the thin ones)
+  function boxesNear(px, py, pz, R_, sm, B, cb) {   // (sm 1: every span · 2: not the thin ones · 3: only the thin ones)
     const gx0 = Math.floor((px - R_) * INV), gx1 = Math.floor((px + R_) * INV), gz0 = Math.floor((pz - R_) * INV), gz1 = Math.floor((pz + R_) * INV);
-    for (let gz = gz0; gz <= gz1; gz++) for (let gx = gx0; gx <= gx1; gx++) { const c = col(gx, gz); if (c < 0) continue; const off = CE.off, iv = CE.iv, ivf = CE.ivf;
-      for (let k = off[c], e = off[c + 1]; k < e; k += 2) { if (iv[k + 1] < py - R_ || iv[k] > py + R_) continue; const th = !!ivf[k >> 1]; if (sm === 2 ? th : sm === 3 && !th) continue; if (cb(gx * CS, iv[k], gz * CS, gx * CS + CS, iv[k + 1], gz * CS + CS, th)) return; } }
+    for (let gz = gz0; gz <= gz1; gz++) for (let gx = gx0; gx <= gx1; gx++) { const c = col(gx, gz); if (c < 0) continue; const off = CE.off, iv = CE.iv, ivf = CE.ivf, cy = B ? cutCol(gx, gz, c, B) : NOCUT;
+      for (let k = off[c], e = off[c + 1]; k < e; k += 2) { if (iv[k + 1] < py - R_ || iv[k] > py + R_) continue; const th = !!ivf[k >> 1]; if (sm === 2 ? th : sm === 3 && !th) continue;
+        if (!cy) { if (cb(gx * CS, iv[k], gz * CS, gx * CS + CS, iv[k + 1], gz * CS + CS, th)) return; continue; }
+        if (pieces(iv[k], iv[k + 1], cy, (lo, hi) => hi >= py - R_ && lo <= py + R_ && cb(gx * CS, lo, gz * CS, gx * CS + CS, hi, gz * CS + CS, th))) return; } }
   }
   // a point inside the column grid: which way out is shortest (up, down to a free span, or sideways to a column free at this height)
-  function freeAt(gx, gz, y) { const c = col(gx, gz); if (c < 0) return true; const off = CE.off, iv = CE.iv; for (let k = off[c]; k < off[c + 1]; k += 2) if (iv[k] <= y && y <= iv[k + 1]) return false; return true; }
+  function freeAt(gx, gz, y, B) { const c = col(gx, gz); if (c < 0) return true; const off = CE.off, iv = CE.iv, cy = B ? cutCol(gx, gz, c, B) : NOCUT; for (let k = off[c]; k < off[c + 1]; k += 2) if (iv[k] <= y && y <= iv[k + 1] && pieces(iv[k], iv[k + 1], cy, (lo, hi) => lo <= y && y <= hi)) return false; return true; }
 
   // ── dynamic primitives
   function rayPeople(ax, ay, az, dx, dy, dz, rr, skip, sweep) { dyn(); const a = WK.a, Rw = cfg.walkerR + rr, L2 = dx * dx + dz * dz;
@@ -259,13 +303,15 @@ export function createWorld(api, o = {}) {
   function overlap(p, r, mask = STATIC, skip = null) { let best = null; if (bad(p)) return null; const sm = statMask(mask);
     const keep = (depth, nx, ny, nz, kind, who = null) => { if (depth > 0 && (!best || depth > best.depth)) best = { depth, n: [nx, ny, nz], kind, who }; };
     if (sm) { if (p.y < r && sm < 3) keep(r - p.y, 0, 1, 0, 'ground');
-      boxesNear(p.x, p.y, p.z, r, sm, (x0, y0, z0, x1, y1, z1) => { const qx = Math.max(x0, Math.min(x1, p.x)), qy = Math.max(y0, Math.min(y1, p.y)), qz = Math.max(z0, Math.min(z1, p.z)), ex = p.x - qx, ey = p.y - qy, ez = p.z - qz, d = Math.hypot(ex, ey, ez);
+      // Inside a solid, freeAt probes up to eight neighbouring columns; include those in the query's cut bounds too.
+      const reach = Math.max(r, 8 * CS), B = cutFor(p.x - reach, p.z - reach, p.x + reach, p.z + reach);
+      boxesNear(p.x, p.y, p.z, r, sm, B, (x0, y0, z0, x1, y1, z1) => { const qx = Math.max(x0, Math.min(x1, p.x)), qy = Math.max(y0, Math.min(y1, p.y)), qz = Math.max(z0, Math.min(z1, p.z)), ex = p.x - qx, ey = p.y - qy, ez = p.z - qz, d = Math.hypot(ex, ey, ez);
         if (d >= r) return false; if (d > 1e-9) { keep(r - d, ex / d, ey / d, ez / d, 'static'); return false; }
         // inside the box: the shortest way out through a free neighbour (a span's top or bottom, or a column free at this height)
         const gx = Math.floor(p.x * INV), gz = Math.floor(p.z * INV); let bd = y1 - p.y, n = [0, 1, 0];
         if (y0 > .05 && p.y - y0 < bd) { bd = p.y - y0; n = [0, -1, 0]; }
         for (const [sx, sz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) for (let s = 1; s <= 8; s++) { const dd = sx > 0 ? (gx + s) * CS - p.x : sx < 0 ? p.x - (gx - s + 1) * CS : sz > 0 ? (gz + s) * CS - p.z : p.z - (gz - s + 1) * CS; if (dd >= bd) break;
-          if (freeAt(gx + sx * s, gz + sz * s, p.y)) { bd = dd; n = [sx, 0, sz]; break; } }
+          if (freeAt(gx + sx * s, gz + sz * s, p.y, B)) { bd = dd; n = [sx, 0, sz]; break; } }
         keep(r + bd, n[0], n[1], n[2], 'static'); return false; }); }
     if (mask & PEOPLE) { dyn(); const a = WK.a, Rw = cfg.walkerR + r; for (let q = 0; q < WK.n; q++) { const b = q * 4, x = a[b], z = a[b + 1]; if (Math.abs(x - p.x) > Rw || Math.abs(z - p.z) > Rw) continue; const w = WK.ref[q]; if (skipped(w, skip)) continue;
         const y0 = a[b + 2] + cfg.walkerR, y1 = Math.max(y0, a[b + 3] - cfg.walkerR), yy = Math.max(y0, Math.min(y1, p.y)), ex = p.x - x, ey = p.y - yy, ez = p.z - z, d = Math.hypot(ex, ey, ez);
@@ -277,7 +323,7 @@ export function createWorld(api, o = {}) {
     return best; }
   const inside = (p, mask = STATIC, skip = null) => !!overlap(p, 1e-4, mask, skip);
   function distance(p, R_, mask = STATIC, skip = null) { let best = R_; if (bad(p)) return R_; const sm = statMask(mask);
-    if (sm) { if (sm < 3) best = Math.min(best, Math.max(0, p.y)); boxesNear(p.x, p.y, p.z, best, sm, (x0, y0, z0, x1, y1, z1) => { const d = Math.hypot(Math.max(x0 - p.x, 0, p.x - x1), Math.max(y0 - p.y, 0, p.y - y1), Math.max(z0 - p.z, 0, p.z - z1)); if (d < best) best = d; return best === 0; }); }
+    if (sm) { if (sm < 3) best = Math.min(best, Math.max(0, p.y)); const B = cutFor(p.x - best, p.z - best, p.x + best, p.z + best); boxesNear(p.x, p.y, p.z, best, sm, B, (x0, y0, z0, x1, y1, z1) => { const d = Math.hypot(Math.max(x0 - p.x, 0, p.x - x1), Math.max(y0 - p.y, 0, p.y - y1), Math.max(z0 - p.z, 0, p.z - z1)); if (d < best) best = d; return best === 0; }); }
     if (mask & PEOPLE) { dyn(); const a = WK.a; for (let q = 0; q < WK.n; q++) { const b = q * 4, x = a[b], z = a[b + 1]; if (Math.abs(x - p.x) > best + 1 || Math.abs(z - p.z) > best + 1) continue; if (skipped(WK.ref[q], skip)) continue;
         const y0 = a[b + 2] + cfg.walkerR, y1 = Math.max(y0, a[b + 3] - cfg.walkerR), d = Math.sqrt(segDist2(p.x, p.y, p.z, x, y0, z, x, y1, z)) - cfg.walkerR; if (d < best) best = Math.max(0, d); } }
     if (mask & CARS) { dyn(); const a = CR.a; for (let q = 0; q < CR.n; q++) { const b = q * 9, x = a[b], z = a[b + 1], hl = a[b + 4], hw = a[b + 5]; if (Math.abs(x - p.x) > best + hl + hw || Math.abs(z - p.z) > best + hl + hw) continue;
@@ -318,6 +364,7 @@ export function createWorld(api, o = {}) {
     STATIC, PEOPLE, CARS, STATIC_WIDE, STATIC_THIN, ALL, THIN, cfg, stat,
     ray, sweep, overlap, inside, distance, nearestFree, fan, floorAt, ceilAt, topAt, tierAt, ready, tick,
     invalidate() { epoch++; },
+    cut: () => ({ enabled: CUT_ON, open: !!cutNow(), boxes: CK.boxes, changes: CK.n }),
     entry: (i, j) => entryAt(i, j), size: () => E.size,
     clear() { E.clear(); pend.clear(); queue.length = 0; misses.clear(); LK = NaN; },
     dispose() { worker && worker.terminate(); worker = null; },

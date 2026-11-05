@@ -5,12 +5,17 @@ export function parseFeed(text) {
     try { return JSON.parse(line); } catch { throw new Error(`feed line ${i + 1}: invalid JSON`); }
   });
   if (!frames.length) throw new Error('empty record feed');
-  let minute = -Infinity;
+  let minute = -Infinity, sightings = null;
   const ids = new Set();
   for (const [i, f] of frames.entries()) {
     if (f.i !== i || !Number.isFinite(f.minute) || f.minute < minute || !Number.isFinite(f.t)
       || !['setup', 'errand', 'night', 'dawn'].includes(f.step?.kind) || !Array.isArray(f.events)
-      || !f.sightings || !Number.isInteger(f.day) || (i === 0 && !f.board)) throw new Error(`invalid feed frame ${i}`);
+      || (f.sightings !== undefined && !f.sightings) || !Number.isInteger(f.day)
+      || (i === 0 && (!f.board || !f.sightings))) throw new Error(`invalid feed frame ${i}`);
+    // Wire frames omit unchanged sightings. Keep the established dense frame
+    // interface for every worker/tool/player reader, using only this prefix.
+    if (f.sightings === undefined) f.sightings = sightings;
+    else sightings = f.sightings;
     for (const e of f.events) {
       if (!Number.isInteger(e.id) || e.id < 0 || (!ids.has(e.id) && e.id !== ids.size)
         || e.minute !== f.minute || typeof e.type !== 'string' || 'n' in e || 'vis' in e) throw new Error(`invalid event in frame ${i}`);
@@ -32,7 +37,7 @@ export function createRecordAdapter() {
     for (const e of frame.events) events.set(e.id, e);
     state = { frame: { i: frame.i, t: frame.t, step: frame.step, minute: frame.minute },
       board: frame.board === undefined ? state.board : frame.board, events: [...events.values()],
-      sightings: frame.sightings, day: frame.day, nightsLeft: frame.nightsLeft, midseason: frame.midseason, over: frame.over };
+      sightings: frame.sightings === undefined ? state.sightings : frame.sightings, day: frame.day, nightsLeft: frame.nightsLeft, midseason: frame.midseason, over: frame.over };
     return state;
   }
   reset();

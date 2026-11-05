@@ -8,12 +8,19 @@
 // sign lettering, the kiosks' green columns), the car brakes, the doors open, riders get off and on. The car sways and clacks on the
 // rail joints; standing riders lean into the starts and stops. The agent rides among NPC riders (cast.js rollLook pool 'npc'), with its
 // handle over its head.
-//   openCarriage({ program, net, now, agent: { id, handle, look }, container, onClose, onDone, title }) → handle
-//     program  subway/net.js programOf(): the underground legs in real seconds · now() → real s into the program (live: the sim clock;
-//              demo: a local clock) · onDone: the program ran out (the leg ended: the city picks the agent up on the stairs)
+//   openCarriage({ program, net, now, agent: { id, handle, look }, container, onClose, onDone, keep, hud, title }) → handle
+//     program  subway/net.js programOf(): the underground legs in the page clock's seconds · now() → s into the program (the page's
+//              clock, subway/index.js: live and on the record alike; demo: a local clock) · onDone: the program ran out (the leg ended:
+//              the city picks the agent up on the stairs) · onClose(why): 'done', 'left' (Esc, ×), 'seek' (keep() went false, or now()
+//              null: a seek, the follow let go) · hud: px from the bottom for its bottom cards (the record's transport bar is over it) ·
+//              under: under the page's panels (the record: slime 10-31, "Panels on top"), else over everything (the live page, as before)
+//   THE PAGE'S CLOCK (C2-carclock): now() samples the drawing at the program's own second. Riders, clips, sway and camera are replayed
+//   from zero on a fixed 60 Hz island-time grid, including on opening after a seek. Hidden opening replay yields between CPU batches;
+//   GPU animation/matrices and the camera are written only for the final sample. No island seconds are discarded at faster playback.
 //   handle: { close(), get t, state(), view: { scene, camera, renderer }, ready, advance(s) (shots: step a paused clock), pause(on) }
-// Its own canvas, renderer, scene and camera over the page (interiors/city/mainland.js's pattern); everything is disposed on close, so
-// nothing runs or stays in memory while no ride is open. Esc or × leaves early.
+// Its own canvas, renderer, scene and camera over the page (interiors/city/mainland.js's pattern). C2-carriageperf: those are made on
+// the first ride and kept, shaders compiled, for the page's life (THE STAGE below: a WebGL context and a few MB of buffers while no ride is
+// open, nothing running); a ride's own riders and card paint are disposed on close. Esc or × leaves early.
 // Animation (2026-10-08): the riders are the city's own walker bodies (subway/riders.js: the near tier's bake and vertex shader), so they
 // play the SAME authored clips as the city's walkers (anim/cast/clips/transit.js): sit_ride on the benches (the seats are at the clip's
 // 0.30 m), stand_rail with the +x hand on a pole (each standing spot is placed so its pole is at the clip's body-frame x 0.52, z 0.27),
@@ -24,8 +31,12 @@ import { geoOf } from '../glue.js';
 import * as C from '../cast.js';
 import { stateAt, changesAt } from './net.js';
 import { createCrowd } from './riders.js';   // (the riders: walker bodies playing the clips)
+import { gait2State } from '../anim/cast/gait2.js';
+import { IDLE_POOL } from '../anim/cast/idle.js';
+import { CLIP, playClip, stopClip } from '../anim/cast/clips/index.js';
 
-const INK = 0x17171b, CV = .1, L = 15, DOORS = [-5, 0, 5], DOOR_W = 1.2;
+const INK = 0x17171b, CV = .1, L = 15, DOORS = [-5, 0, 5], DOOR_W = 1.2, CARDS = 12, PL = 36;
+const CAR_HZ = 60, REFILL_S = .18, EXIT_S = .45, REPLAY_MS = 6, REPLAY_TICKS = 1800;
 const BENCHES = [[-7.35, -5.75], [-4.25, -.75], [.75, 4.25], [5.75, 7.35]];
 // the seats (sit_ride: seat top ≈ 0.30 m, the hips 0.39 m): top, front edge (z), the back's top; z the seated rider's origin (its hips)
 const SEAT = { top: .3, front: -1.0, back: .95, z: -1.1, pitch: .86 };
@@ -41,6 +52,18 @@ const rngOf = seed => { let a = seed | 0; return () => { a = a + 0x6D2B79F5 | 0;
 const hexCss = n => '#' + n.toString(16).padStart(6, '0');
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 export const agentLook = id => C.rollLook(fnv(String(id)) & 0xffffff);   // (simstate/looks.js specOf: the look the city gives a sim agent)
+// THE RIDERS' BAKES IN THE CITY'S BUILD WORKERS (C2-carriageperf): bake(job) is the page's worker pool (main.js api.pool.exec), the job
+// jobs.js jobPeds, pedbake.js bakePeds: the same bakeSegFull of the same looks riders.js would bake on the page (the NPCs rolled from
+// the ride's seed as openCarriage rolls them, the agent's from its id as agentLook), about 10 ms a body that no longer lands on the
+// page's frames. Fills fulls[k] as each job comes in; resolves to the agent's body (null: none, or it failed: baked on the page then).
+const BAKE_WAIT = 2500, BAKE_PER = 10;
+function askBakes(bake, seed, n, fulls, agentId) {
+  const s0 = (seed * 104729) & 0xffffff, jobs = [], run = job => Promise.resolve().then(() => bake(job));
+  for (let k0 = 0; k0 < n; k0 += BAKE_PER) jobs.push(run({ type: 'peds', n: Math.min(BAKE_PER, n - k0), seed: (s0 + k0 * 7919) & 0xffffff, pool: 'npc', dogs: false })
+    .then(r => { r?.looks?.forEach((l, i) => { fulls[k0 + i] ??= l.full ?? null; }); }).catch(e => console.warn('carriage: worker bake', e)));
+  const a = agentId == null ? Promise.resolve(null) : run({ type: 'peds', n: 1, seed: fnv(String(agentId)) & 0xffffff, pool: 'agent', dogs: false }).then(r => r?.looks?.[0]?.full ?? null).catch(() => null);
+  return Promise.all([a, ...jobs]).then(([f]) => f);
+}
 
 // ── pixel lettering onto a canvas (the city's 5×7 sign face, vox.js textMask)
 function pix(g, s, x, y, sc, col) { const M = textMask(s); g.fillStyle = col; for (let j = 0; j < 7; j++) for (let i = 0; i < M.w; i++) if (M.at(i, j)) g.fillRect(x + i * sc, y + j * sc, sc, sc); return M.w * sc; }
@@ -113,22 +136,31 @@ async function cardTextures(n, seed) {
   for (let k = 0; k < n; k++) { let I = null, d = null;
     for (let tries = 0; S && tries < 6 && !I; tries++) { d = S.list[(r() * S.list.length) | 0]; try { const im = S.paint(d, 60, 22, { lit: 0 }); if (!im.miss && !im.fell) I = im; } catch { } }
     out.push(canvasTex(60, 22, g => { if (I) { const D = g.createImageData(60, 22); for (let i = 0; i < 60 * 22; i++) { const c = I.c[i]; if (c < 0) { D.data.set([240, 236, 226, 255], i * 4); continue; } D.data.set([c >> 16 & 255, c >> 8 & 255, c & 255, 255], i * 4); } g.putImageData(D, 0, 0); }
-      else { const bg = ['#ffc21a', '#ff4fa3', '#2f5bff', '#6cff4a', '#f4f1ea'][k % 5]; g.fillStyle = bg; g.fillRect(0, 0, 60, 22); pix(g, (d?.big || 'CALL 555-0144').slice(0, 9), 3, 4, 1, '#17171b'); } })); }
+      else { const bg = ['#ffc21a', '#ff4fa3', '#2f5bff', '#6cff4a', '#f4f1ea'][k % 5]; g.fillStyle = bg; g.fillRect(0, 0, 60, 22); pix(g, (d?.big || 'CALL 555-0144').slice(0, 9), 3, 4, 1, '#17171b'); } })); 
+    // (C2-carriageperf: a frame between cards: twelve painted at once were a 90 ms task as the first ride opened)
+    if (k + 1 < n) await nextFrame(); }
   return out;
 }
 
-export async function openCarriage({ program: P, net, now, agent = null, container = document.body, onClose, onDone, seed = 1 } = {}) {
-  css();
-  const root = document.createElement('div'); root.className = 'sbw'; root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', 'On the subway'); container.appendChild(root);
+// ── THE STAGE (C2-carriageperf): the renderer, the scene and everything in it that is the same on every ride (the car, the tunnel, the
+// platform, the lights, the card frames), made on the first ride and kept for the page's life with its compiled shaders, so a later
+// ride builds and compiles nothing. (Each opening used to make it all again, a new WebGL context included, and compile its shaders on
+// the first frame: a 0.5–0.7 s stall that the record, whose clock runs on in the city's loop, skipped over.) A ride takes it over (its
+// canvas into the ride's root) and gives it back on close; a lost context makes the next ride build a new one.
+let STAGE = null;
+const SHADOW_SIDE = { [THREE.FrontSide]: THREE.BackSide, [THREE.BackSide]: THREE.FrontSide, [THREE.DoubleSide]: THREE.DoubleSide };
+function buildStage() {
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setPixelRatio(Math.min(2, devicePixelRatio)); renderer.toneMapping = THREE.NeutralToneMapping;
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; root.appendChild(renderer.domElement);
+  // (PCFShadowMap: what three r185 draws for PCFSoftShadowMap, which it swaps for PCFShadowMap on the first shadowed frame, with a
+  // warning: asked for by name, the shaders compiled before that frame are the ones it draws with. The picture is the same)
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
+  const S = { renderer, lost: false, warm: null, busy: false };
+  renderer.domElement.addEventListener('webglcontextlost', () => { S.lost = true; });
   const scene = new THREE.Scene(); scene.background = new THREE.Color(0x07080c);
   const camera = new THREE.PerspectiveCamera(30, 1, .1, 120);
-  const size = () => { const r = root.getBoundingClientRect(), w = Math.max(1, r.width), h = Math.max(1, r.height); renderer.setSize(w, h, false); camera.aspect = w / h;
-    camera.fov = w / h < 1.2 ? 46 : 28; camera.updateProjectionMatrix(); }; size(); const ro = new ResizeObserver(size); ro.observe(root);
   const MATS = [new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .8, metalness: 0 }), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .25, metalness: .05 }),
     new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .3, metalness: .7 }), new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false })];
-  const own = [], addBank = (b, to, shadow = true) => b.L.forEach((O, li) => { if (!O.v || !O.I.n) return; const m = new THREE.Mesh(geoOf(O), MATS[li]); m.castShadow = shadow && li !== 3; m.receiveShadow = li !== 3; to.add(m); own.push(m.geometry); });
+  const addBank = (b, to, shadow = true) => b.L.forEach((O, li) => { if (!O.v || !O.I.n) return; const m = new THREE.Mesh(geoOf(O), MATS[li]); m.castShadow = shadow && li !== 3; m.receiveShadow = li !== 3; to.add(m); });
   // ── light: a cool fluorescent fill from the strips, a soft key from above the aisle for the shadows
   scene.add(new THREE.HemisphereLight(0xf3f6ff, 0x8d8a82, 1.9));
   const key = new THREE.DirectionalLight(0xfff4e2, 2.1); key.position.set(1.5, 9, 4); key.target.position.set(0, 0, -.5); key.castShadow = true; key.shadow.mapSize.set(2048, 1024);
@@ -142,19 +174,19 @@ export async function openCarriage({ program: P, net, now, agent = null, contain
   for (const [a, b] of [[-7.5, -5.65], [-4.35, -.65], [.65, 4.35], [5.65, 7.5]]) { const m = new THREE.Mesh(stripeGeo, stripeMat); m.scale.x = b - a; m.position.set((a + b) / 2, 1.14, -1.39); car.add(m); }
   const stripTex = canvasTex(240, 32, () => {}), stripMat = new THREE.MeshBasicMaterial({ map: stripTex, toneMapped: false }), stripGeo = new THREE.PlaneGeometry(1.3, .17);
   for (const d of DOORS) { const m = new THREE.Mesh(stripGeo, stripMat); m.position.set(d, 2.56, -1.385); car.add(m); }
-  const cardGeo = new THREE.PlaneGeometry(.78, .286), cardMats = [];
-  cardTextures(12, seed * 31 + 7).then(texs => { if (closed) { texs.forEach(t => t.dispose()); return; } let k = 0;
-    for (const [a, b] of [[-7.4, -5.7], [-4.3, -.7], [.7, 4.3], [5.7, 7.4]]) { const n = Math.floor((b - a + .04) / .82); for (let i = 0; i < n && k < texs.length; i++, k++) {
-      const mat = new THREE.MeshStandardMaterial({ map: texs[k], roughness: .6 }), m = new THREE.Mesh(cardGeo, mat); cardMats.push(mat); m.position.set(a + (b - a - n * .82) / 2 + .41 + i * .82, 2.68, -1.37); m.rotation.x = -.12; car.add(m); } } });
+  // the car cards' frames: placed once, hidden until a ride's own paint is in (cardTextures, per ride), on a blank of the same kind
+  const cardGeo = new THREE.PlaneGeometry(.78, .286), blank = canvasTex(60, 22, () => {}), cards = [];
+  for (const [a, b] of [[-7.4, -5.7], [-4.3, -.7], [.7, 4.3], [5.7, 7.4]]) { const n = Math.floor((b - a + .04) / .82); for (let i = 0; i < n && cards.length < CARDS; i++) {
+    const mat = new THREE.MeshStandardMaterial({ map: blank, roughness: .6 }), m = new THREE.Mesh(cardGeo, mat); m.position.set(a + (b - a - n * .82) / 2 + .41 + i * .82, 2.68, -1.37); m.rotation.x = -.12; m.visible = false; car.add(m); cards.push({ m, mat }); } }
   // ── the tunnel: rib panels and work lights that stream past (instanced, wrapped over 64 m), streaked by speed
-  const TUN = 64, ribGeo = new THREE.BoxGeometry(.22, 4.2, .25), ribs = new THREE.InstancedMesh(ribGeo, new THREE.MeshStandardMaterial({ color: 0x23273a, roughness: .9 }), 26);
+  const ribGeo = new THREE.BoxGeometry(.22, 4.2, .25), ribs = new THREE.InstancedMesh(ribGeo, new THREE.MeshStandardMaterial({ color: 0x23273a, roughness: .9 }), 26);
   const tunWall = new THREE.Mesh(new THREE.PlaneGeometry(80, 5), new THREE.MeshStandardMaterial({ color: 0x0f111a, roughness: 1 })); tunWall.position.set(0, 1.6, -5.2); scene.add(tunWall);
   const lampGeo = new THREE.BoxGeometry(1, .09, .06), lamps = new THREE.InstancedMesh(lampGeo, new THREE.MeshBasicMaterial({ color: 0xffd58a, toneMapped: false }), 12);
   const sigGeo = new THREE.BoxGeometry(.12, .12, .06), sigs = new THREE.InstancedMesh(sigGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), 3);
   for (const m of [ribs, lamps, sigs]) { m.frustumCulled = false; scene.add(m); }
   const RED = new THREE.Color(0xff3030), GRN = new THREE.Color(0x52ff86); for (let k = 0; k < 3; k++) sigs.setColorAt(k, k % 2 ? RED : GRN);
   // ── the platform (one, reused for every station: the wall's canvas is redrawn per station), slides along x with the car's offset
-  const plat = new THREE.Group(); plat.visible = false; scene.add(plat); const PL = 36;
+  const plat = new THREE.Group(); plat.visible = false; scene.add(plat);
   const slab = new THREE.Mesh(new THREE.BoxGeometry(PL, .32, 3.1), new THREE.MeshStandardMaterial({ color: 0xb4ad9f, roughness: .95 })); slab.position.set(0, -.16, -3.17); slab.receiveShadow = true; plat.add(slab);
   const edge = new THREE.Mesh(new THREE.BoxGeometry(PL, .02, .32), new THREE.MeshStandardMaterial({ color: 0xffe23a, roughness: .7 })); edge.position.set(0, .01, -1.8); plat.add(edge);
   const lip = new THREE.Mesh(new THREE.BoxGeometry(PL, .32, .06), new THREE.MeshStandardMaterial({ color: 0x5d5e6b })); lip.position.set(0, -.16, -1.62); plat.add(lip);
@@ -164,10 +196,89 @@ export async function openCarriage({ program: P, net, now, agent = null, contain
   for (let x = -PL / 2 + 2.25; x < PL / 2; x += 4.5) { const c = new THREE.Mesh(colGeo, colMat); c.position.set(x + .6, 2.2, -3.55); c.castShadow = true; plat.add(c); }
   const tubeGeo = new THREE.BoxGeometry(1.4, .06, .14), tubeMat = new THREE.MeshBasicMaterial({ color: 0xfff6dc, toneMapped: false });
   for (let x = -PL / 2 + 1; x < PL / 2; x += 2.4) { const t = new THREE.Mesh(tubeGeo, tubeMat); t.position.set(x, 4.36, -3.0); plat.add(t); }
-  const platLight = new THREE.PointLight(0xfff0d6, 0, 14, 1.4); platLight.position.set(0, 3.2, -3.2); plat.add(platLight);
+  // (its light hangs in the scene, not in the platform, so it is in every frame's light count, dark (intensity 0) while no platform shows:
+  // the shaders' light count never changes, so one set of programs draws every frame. In the platform it left the count when the
+  // platform hid, and every program had a second variant to compile. A light at 0 adds nothing: the picture is the same)
+  const platLight = new THREE.PointLight(0xfff0d6, 0, 14, 1.4); platLight.position.set(0, 3.2, -3.2); scene.add(platLight);
+  return Object.assign(S, { scene, camera, car, leaves, stripeMat, stripTex, blank, cards, ribs, lamps, sigs, plat, wallTex, platLight });
+}
+// a stage handed back: the car where a new ride starts it (every frame sets the rest: the doors, the tunnel, the platform, the line)
+function resetStage(ST) { ST.car.rotation.set(0, 0, 0); ST.car.position.set(0, 0, 0); ST.plat.visible = false; ST.plat.position.x = 0; ST.platLight.position.x = 0; ST.platLight.intensity = 0;
+  for (const l of ST.leaves) l.g.position.x = l.d; for (const c of ST.cards) { if (c.mat.map !== ST.blank) c.mat.map.dispose(); c.mat.map = ST.blank; c.m.visible = false; } }
+function dropStage(ST) { try { ST.scene.traverse(o => { o.geometry?.dispose(); for (const m of [].concat(o.material || [])) { m.map?.dispose(); m.dispose(); } }); ST.renderer.dispose(); } catch { } }
+// The shaders, compiled once, before the first frame, off the main thread where the browser can (KHR_parallel_shader_compile), with
+// the shadow pass's depth programs (three compiles those on the first shadowed frame): each caster's material swapped for the depth
+// material the pass gives it (the shadow side; three's MeshDepthMaterial or the caster's own customDepthMaterial) and compiled into a
+// render target, as the pass draws (no tone mapping, linear output). ONE PROGRAM AT A TIME, a frame between: the GPU process compiles
+// them on its own thread of work, and while it does the page's frames wait (headless Chrome, Metal: all of them at once held the page
+// 0.4–0.75 s; one at a time, a frame or two each). The riders' body must be in the scene (a ride's first rider): their programs are
+// kept between rides (riders.js dispose keepPrograms). Resolves to the programs it compiled.
+async function warmStage(ST) {
+  const { renderer, scene, camera } = ST, depth = new Map(), rt = new THREE.WebGLRenderTarget(1, 1), list = [];
+  scene.traverse(o => { if ((o.isMesh || o.isLine || o.isPoints || o.isSprite) && o.material && !Array.isArray(o.material)) list.push(o); });
+  const depthFor = o => { const side = SHADOW_SIDE[o.material.side]; if (o.customDepthMaterial) { o.customDepthMaterial.side = side; return o.customDepthMaterial; }
+    let d = depth.get(side); if (!d) { d = new THREE.MeshDepthMaterial(); d.side = side; depth.set(side, d); } return d; };
+  const only = o => ({ traverse: f => f(o), traverseVisible: () => {} }), n0 = renderer.info.programs.length;
+  // (one object compiled: its main pass, or its shadow pass's depth material into the target; a frame after each new program)
+  const one = async (o, shadow) => { const n = renderer.info.programs.length; let p;
+    if (!shadow) p = renderer.compileAsync(only(o), camera, scene);
+    else { const m = o.material, prev = renderer.getRenderTarget(); renderer.setRenderTarget(rt); o.material = depthFor(o);
+      try { p = renderer.compileAsync(only(o), camera, scene); } finally { o.material = m; renderer.setRenderTarget(prev); } }
+    await p; if (renderer.info.programs.length > n) await nextFrame(); };
+  try { for (const o of list) await one(o, false); for (const o of list) if (o.castShadow && o.isMesh) await one(o, true); }
+  catch (e) { console.warn('carriage: compileAsync', e); }
+  finally { rt.dispose(); }
+  // (the depth materials are kept with the stage: disposing them would release the programs three's own depth material will use)
+  ST.depthMats = [...depth.values()];
+  return renderer.info.programs.length - n0;
+}
+
+// PREWARM (C2-carriageperf): the stage built and its shaders compiled before the first ride, so no ride compiles: subway/index.js calls
+// it when the subway mounts, during the city's load-in (main.js's own shader warm-up, V6, is there too). The first ride used to compile
+// its twelve programs as it opened: a frame of 250 ms at best (one at a time), 0.6–0.75 s all at once, which the record skipped over.
+// The cost: the stage's WebGL context and buffers (a few MB) on every page that can open the carriage, ridden or not.
+// one frame drawn on the page, unseen (opacity 0, under everything): the canvas's first draw and first composite, the shadow map's
+// target, the uploads, as the first ride would otherwise meet them
+async function firstDraw(ST) { if (typeof document === 'undefined') return; const box = document.createElement('div');
+  box.style.cssText = 'position:fixed;inset:0;opacity:0;pointer-events:none;z-index:-1'; box.appendChild(ST.renderer.domElement); document.body.appendChild(box);
+  try { ST.camera.aspect = Math.max(1, innerWidth) / Math.max(1, innerHeight); ST.camera.updateProjectionMatrix(); ST.renderer.render(ST.scene, ST.camera); await nextFrame(); await nextFrame(); }
+  finally { ST.renderer.domElement.remove(); box.remove(); } }
+export function prewarmCarriage() {
+  if (STAGE && !STAGE.lost) return STAGE.ready ?? Promise.resolve();
+  const ST = STAGE = buildStage(); ST.busy = true;
+  // (its drawing buffer at the page's size, as a ride's root will have it, so the first ride doesn't make it again)
+  if (typeof innerWidth === 'number') ST.renderer.setSize(Math.max(1, innerWidth), Math.max(1, innerHeight), false);
+  // (a rider in the scene for the riders' programs: one NPC body, baked here — about 20 ms)
+  const crowd = createCrowd({ scene: ST.scene, cap: 1 }); try { crowd.add(C.rollLook(1, { pool: 'npc' })); } catch (e) { console.warn('carriage: prewarm rider', e); }
+  // (and the car cards' painter loaded, its modules parsed and first run, one card painted and dropped: on the first ride that was a
+  // 100 ms task)
+  cardTextures(1, 1).then(t => t.forEach(x => x.dispose())).catch(() => {});
+  ST.warm = warmStage(ST);
+  ST.ready = ST.warm.then(() => firstDraw(ST)).finally(() => { crowd.dispose({ keepPrograms: true }); ST.busy = false; ST.ready = null; });
+  return ST.ready;
+}
+
+export async function openCarriage({ program: P, net, now, agent = null, container = document.body, onClose, onDone, keep = null, hud: hudPx = 16, under = false, seed = 1, bake = null } = {}) {
+  css();
+  // (declared first: the car cards' paint resolves while the rest is still being made, C2-transit's awaits below)
+  let closed = false; const T0 = performance.now(), timing = {}; let tLap = T0; const lap = k => { const t = performance.now(); timing[k] = +(t - tLap).toFixed(1); tLap = t; };
+  // the riders' bodies asked of the city's build workers first (C2-carriageperf), so they bake while the rest is made (below)
+  const NPOOL = 30, looks = Array.from({ length: NPOOL }, (_, k) => C.rollLook((seed * 104729 + k * 7919) & 0xffffff, { pool: 'npc' }));
+  const fulls = new Array(NPOOL).fill(null), lookA = agent ? agent.look || agentLook(agent.id) : null; let fullA = null;
+  const asked = bake ? askBakes(bake, seed, NPOOL, fulls, agent && !agent.look ? agent.id : null).then(f => { fullA = f; }) : null;
+  const root = document.createElement('div'); root.className = 'sbw sbw-wait' + (under ? ' sbw-under' : ''); root.style.setProperty('--sbw-hud', hudPx + 'px'); root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', 'On the subway'); container.appendChild(root);
+  if (STAGE?.ready) await STAGE.ready;
+  if (STAGE && (STAGE.lost || STAGE.busy)) { if (STAGE.busy) throw new Error('carriage: the stage is in use'); dropStage(STAGE); STAGE = null; }
+  const fresh = !STAGE; STAGE ??= buildStage(); const ST = STAGE; ST.busy = true; lap(fresh ? 'stage' : 'stageKept');
+  const { renderer, scene, camera, car, leaves, stripeMat, stripTex, cards, ribs, lamps, sigs, plat, wallTex, platLight } = ST;
+  root.appendChild(renderer.domElement);
+  const size = () => { const r = root.getBoundingClientRect(), w = Math.max(1, r.width), h = Math.max(1, r.height); renderer.setSize(w, h, false); camera.aspect = w / h;
+    camera.fov = w / h < 1.2 ? 46 : 28; camera.updateProjectionMatrix(); }; size(); const ro = new ResizeObserver(size); ro.observe(root);
+  const cardsIn = cardTextures(CARDS, seed * 31 + 7).then(texs => { if (closed) { texs.forEach(t => t.dispose()); return; } texs.forEach((t, k) => { const c = cards[k]; if (!c) { t.dispose(); return; } c.mat.map = t; c.m.visible = true; }); });
+  const TUN = 64;
 
   // ── the riders: a pool of NPC bodies baked a few a frame, the agent's own (subway/riders.js: the walker body, the city's clips)
-  const R0 = rngOf(seed * 7919 + 13), rnd = () => R0(), riders = [], pool = [], NPOOL = 30, crowd = createCrowd({ scene, cap: NPOOL + 2 });
+  const R0 = rngOf(seed * 7919 + 13), rnd = () => R0(), riders = [], pool = [], crowd = createCrowd({ scene, cap: NPOOL + 2 });
   // the seats: one a SEAT.pitch (the walkers' heads are 0.8 m wide: a closer pitch puts neighbours' heads through each other)
   const seats = []; for (const [a, b] of BENCHES) { const n = Math.max(1, Math.floor((b - a) / SEAT.pitch)); for (let k = 0; k < n; k++) seats.push({ x: a + (b - a) * (k + .5) / n, z: SEAT.z, bench: a, by: null }); }
   // standing spots, every one at a pole (stand_rail's +x hand on it): at each door pole facing the cut (the camera), or beside it facing
@@ -178,9 +289,12 @@ export async function openCarriage({ program: P, net, now, agent = null, contain
     else if (p.end === 'a') { const sp = atPole(p, Math.PI / 2), BA = BENCHES.find(([a]) => Math.abs(cell(a + .05) - p.x) < .01), s0 = BA && seats.find(s => s.bench === BA[0]); if (s0) { sp.excl = [s0]; s0.excl = [sp]; } spots.push(sp); } }
   const seatFree = s => !s.by && !(s.excl || []).some(o => o.by), spotFree = seatFree;
   const STAND_CLIP = 'stand_rail', SIT_CLIP = 'sit_ride', WAIT_CLIP = 'wait_stop';
-  let built = 0; const looks = Array.from({ length: NPOOL }, (_, k) => C.rollLook((seed * 104729 + k * 7919) & 0xffffff, { pool: 'npc' }));
-  function makeRider(look, kind) { const body = crowd.add(look); return body ? { body, kind, look, parent: null, x: 0, z: 0, yaw: 0, st: 'off', seat: null, spot: null, path: null, t: 0, lean: 0, leanV: 0, out: false, snap: false } : null; }
-  function buildSome(n) { for (let k = 0; k < n && built < NPOOL; k++, built++) { const R = makeRider(looks[built], 'npc'); if (R) pool.push(R); } }
+  let built = 0;
+  function makeRider(look, kind, full = null) { const body = crowd.add(look, full); if (!body) return null;
+    // riders.js supplies the animation machinery; this ride owns its random choices and their clocks, independent of page frames.
+    const animRnd = rngOf(fnv(`${seed}|${kind}|${built}`)); body.g = gait2State({ it: animRnd() * 40 });
+    return { body, draw: { body }, animRnd, kind, look, parent: null, x: 0, z: 0, yaw: 0, st: 'off', seat: null, spot: null, path: null, t: 0, lean: 0, leanV: 0, out: false, snap: false }; }
+  function buildSome(n) { for (let k = 0; k < n && built < NPOOL; k++, built++) { const R = makeRider(looks[built], 'npc', fulls[built]); if (R) pool.push(R); } }
   const take = () => { const free = pool.filter(R => R.st === 'off'); if (!free.length) return null; return free[(rnd() * free.length) | 0]; };
   function place(R, parent) { R.parent = parent; }
   function seatR(R, s, snap = false) { R.seat = s; s.by = R; R.st = 'sit'; R.spot = null; place(R, car); if (snap) { R.x = s.x; R.z = s.z; R.yaw = 0; R.snap = true; } }
@@ -193,9 +307,13 @@ export async function openCarriage({ program: P, net, now, agent = null, contain
     const nSit = Math.round(seats.length * (full ? .8 : .6)), nStand = full ? 5 : 3;
     for (let k = 0; k < nSit; k++) { const R = take(); if (!R) break; const free = seats.filter(seatFree); if (!free.length) break; seatR(R, free[(rnd() * free.length) | 0], true); riders.push(R); }
     for (let k = 0; k < nStand; k++) { const R = take(); if (!R) break; const free = spots.filter(spotFree); if (!free.length) break; standR(R, free[(rnd() * free.length) | 0], true); riders.push(R); } }
-  let me = null; const lookP = agent ? Promise.resolve(agent.look || agentLook(agent.id)) : null;
-  if (lookP) me = makeRider(await lookP, 'agent'); if (me && AG) AG.by = me;
-  buildSome(16); fillCar(true);
+  // (C2-carriageperf: the workers' bodies waited for, up to BAKE_WAIT ms, the page's own frames running; one not in by then is baked here)
+  // (and the car cards, painted a frame apart, so the car opens with them as before)
+  await Promise.race([Promise.all([asked, cardsIn]), new Promise(r => setTimeout(r, BAKE_WAIT))]); lap('bakes');
+  let me = null; if (lookA) me = makeRider(lookA, 'agent', fullA); if (me && AG) AG.by = me;
+  // The whole pool must exist before replay: otherwise a seat or a platform draw depends on how many page frames have baked bodies.
+  // Keep the bakes in batches of four, yielding between them as before.
+  while (built < NPOOL) { await nextFrame(); buildSome(4); } fillCar(true); lap('riders');
 
   // ── the platform's own people: waiting by the doors, they board when the doors open; riders getting off walk away along it
   const waiting = [];
@@ -209,7 +327,7 @@ export async function openCarriage({ program: P, net, now, agent = null, contain
 <div class="sbw-who">${agent ? `<b>@${esc(agent.handle || agent.id)}</b>` : '<b>riding</b>'}<span class="sbw-eta"></span><i class="sbw-bar"><i></i></i></div>
 <button class="sbw-x" aria-label="Leave the subway (Esc)">esc · back to the street</button>`;
   const $ = s => hud.querySelector(s), tag = document.createElement('div'); tag.className = 'sbw-tag'; if (agent) { tag.textContent = '@' + (agent.handle || agent.id); root.appendChild(tag); }
-  $('.sbw-x').addEventListener('click', e => { e.stopPropagation(); close(); });
+  $('.sbw-x').addEventListener('click', e => { e.stopPropagation(); close('left'); });
   import('../ui/signfont.js').then(m => m.loadSignFont?.()).catch(() => {});
 
   // ── line accents (the stripe, the map strip, the cards) and the platform wall: redrawn only when they change
@@ -225,10 +343,10 @@ export async function openCarriage({ program: P, net, now, agent = null, contain
     const left = Math.max(0, P.dur - t); $('.sbw-eta').textContent = `${Math.floor(left / 60)}:${String(Math.floor(left % 60)).padStart(2, '0')} to ${net.nameOf(P.to)}`; $('.sbw-bar i').style.width = (100 * clamp(t / P.dur, 0, 1)).toFixed(1) + '%'; }
 
   // ── the timeline: the program's state at t → the car, the tunnel, the platform, the riders
-  let closed = false, raf = 0, lastT = 0, paused = false, clockT = now(), segK = -1, platFor = '', fade = 0, swapAt = null, boardedK = -1, doneSent = false, tunS = 0, prevV = 0, acc = 0;
-  const ents = [], ride = { roll: 0, bump: 0 }, M4 = new THREE.Matrix4(), Q4 = new THREE.Quaternion(), V3 = new THREE.Vector3(), S3 = new THREE.Vector3(), Yv = new THREE.Vector3(0, 1, 0);
-  const startAboard = clockT > (P.segs[0].kind === 'dwell' ? P.segs[0].t0 + .6 : 0);
-  if (me) { if (startAboard) standAgent(true); else boardAgent(true); }
+  let raf = 0, paused = false, clockT = now() ?? 0, tick = -1, segK = -1, platFor = '', fade = 0, swapAt = null, refillAt = null, tunS = 0, prevV = 0, acc = 0;
+  const boarded = new Set();
+  const all = [], ents = [], ride = { roll: 0, bump: 0 }, M4 = new THREE.Matrix4(), Q4 = new THREE.Quaternion(), V3 = new THREE.Vector3(), S3 = new THREE.Vector3();
+  if (me) boardAgent(true);
   function standAgent(snap = false) { free(me); me.spot = AG; AG.by = me; me.st = 'stand'; place(me, car); if (snap) { me.x = AG.x; me.z = AG.z; me.yaw = AG.yaw; me.snap = true; } }
   function boardAgent(fromPlatform) { free(me); me.x = .9; me.z = -3.0; me.yaw = Math.PI; place(me, car); walk(me, [[.25, -2.0], [.15, -1.1], [AG.x, AG.z]], () => standAgent()); if (!fromPlatform) me.x = .2; }
   function alightAgent() { free(me); walk(me, [[.3, -.4], [.1, -1.3], [-.2, -2.3], [-1.6, -3.0]], () => { me.st = 'stand'; me.yaw = -Math.PI / 2; }); }
@@ -236,7 +354,7 @@ export async function openCarriage({ program: P, net, now, agent = null, contain
     const ln = setLine(s.line, s.dir);
     if (s.kind === 'dwell') {
       if (s.change && k > 0) { swapAt = s.t0 + Math.min(3.2, (s.t1 - s.t0) * .3); if (me) alightAgent(); }   // the change: off this train, then the other line's
-      else if (s.board && k === 0 && me && !startAboard) { /* boarding already set up */ }
+      else if (s.board && k === 0 && me) { /* boarding already set up */ }
       else shuffle(s); }
     if (s.kind === 'run' && k === P.segs.length - 1 && me) { /* the last stretch: the agent moves to the door near the end (step) */ }
     return ln; }
@@ -250,79 +368,132 @@ export async function openCarriage({ program: P, net, now, agent = null, contain
       walk(R, [[d + (rnd() - .5) * .2, -2.0], [d, -1.0], seat ? [seat.x, SEAT.front + .3] : [sp.x, sp.z]], () => { if (seat) { seat.by = null; seatR(R, seat); } else { sp.by = null; standR(R, sp); } riders.push(R); });
       R.boarding = true; } }
   function step(dt, T) {
-    const t = clamp(clockT, 0, P.dur), s = stateAt(P, t);
+    const t = clamp(T, 0, P.dur), s = stateAt(P, t);
     if (s.k !== segK) { segK = s.k; onSegment(s.k, s.seg, t); }
     const ln = net.lines.get(lineNow) ?? setLine(s.line, s.dir);
     // the change: a quick dip to black, the other line's train (new riders), the agent on the platform walks on
-    if (swapAt !== null && t >= swapAt) { swapAt = null; fade = 1; setTimeout(() => { if (closed) return; fillCar(false); setLine(s.seg.line, s.seg.dir); stripKey = ''; if (me) boardAgent(true); }, 180); }
+    if (swapAt !== null && t >= swapAt) { refillAt = swapAt + REFILL_S; swapAt = null; fade = 1; }
+    if (refillAt !== null && t >= refillAt) { refillAt = null; fillCar(false); setLine(s.seg.line, s.seg.dir); stripKey = ''; if (me) boardAgent(true); }
     // the car's speed → the tunnel streaming, the sway, the rail joints; the platform at its offset
     const v = s.v; acc = lerp(acc, dt > 0 ? (v - prevV) / dt : 0, 1 - Math.exp(-dt * 4)); prevV = v; tunS += v * dt;
     const vn = clamp(v / 16, 0, 1), joint = (tunS % 13.5) / 13.5; ride.bump = vn * (joint < .06 ? -.012 * Math.sin(joint / .06 * Math.PI) : 0) - vn * .004 * Math.abs(Math.sin(T * 11));
     ride.roll = .006 * Math.sin(T * 1.9) * (.3 + vn) + .003 * Math.sin(T * 4.7) * vn; car.rotation.x = ride.roll; car.position.y = ride.bump;
     car.rotation.z = -acc * .0015;
-    for (let k = 0; k < 26; k++) { const x = ((k * 2.6 - tunS) % TUN + TUN) % TUN - TUN / 2; const hide = plat.visible && Math.abs(x - plat.position.x) < PL / 2 + .3; M4.compose(V3.set(x, 1.7, -3.15), Q4.identity(), S3.set(1, hide ? .0001 : 1, 1)); ribs.setMatrixAt(k, M4); }
-    for (let k = 0; k < 12; k++) { const x = ((k * 5.6 - tunS + (k % 3) * .9) % (TUN + 3.2) + TUN + 3.2) % (TUN + 3.2) - (TUN + 3.2) / 2, hide = plat.visible && Math.abs(x - plat.position.x) < PL / 2 + 1; M4.compose(V3.set(x, k % 2 ? 2.9 : .5, -3.0), Q4.identity(), S3.set(hide ? .0001 : .22 + v * .085, 1, 1)); lamps.setMatrixAt(k, M4); }
-    for (let k = 0; k < 3; k++) { const x = ((k * 22 - tunS * 1) % TUN + TUN) % TUN - TUN / 2, hide = plat.visible && Math.abs(x - plat.position.x) < PL / 2 + 1; M4.compose(V3.set(x, 1.85, -3.05), Q4.identity(), S3.setScalar(hide ? .0001 : 1)); sigs.setMatrixAt(k, M4); }
-    ribs.instanceMatrix.needsUpdate = lamps.instanceMatrix.needsUpdate = sigs.instanceMatrix.needsUpdate = true;
-    const show = s.at || Math.abs(s.dx) < PL / 2 + 9; plat.visible = show; plat.position.x = s.at ? 0 : s.dx; platLight.intensity = show ? 9 : 0;
+    const show = s.at || Math.abs(s.dx) < PL / 2 + 9; plat.visible = show; plat.position.x = s.at ? 0 : s.dx; platLight.position.x = plat.position.x; platLight.intensity = show ? 9 : 0;
     if (show) { const key2 = s.st + '|' + ln.id; if (key2 !== wallKey) { wallKey = key2; wallTex.userData.redraw((g, w, h) => drawWall(g, w, h, net.nameOf(s.st), ln)); }
       if (platFor !== s.st && !s.at && s.dx > 0) { platFor = s.st; stockPlatform(s.st === P.to ? 1 : 2 + ((rnd() * 2.5) | 0)); } }
     else if (platFor) { platFor = ''; for (const R of waiting.splice(0)) off(R); }
     // the doors: open a beat after the stop, close a beat before it leaves (and at the end of the ride, open as it stops)
     const sg = s.seg, last = s.k === P.segs.length - 1; let open = 0;
-    if (s.at) { const a = t - sg.t0, b = sg.t1 - t; open = ease(Math.min((a - .5) / .7, (b - .9) / .7)); if (open > .5 && waiting.length && !sg.boarded) { sg.boarded = true; boardWaiting(sg); } }
+    if (s.at) { const a = t - sg.t0, b = sg.t1 - t; open = ease(Math.min((a - .5) / .7, (b - .9) / .7)); if (open > .5 && waiting.length && !boarded.has(s.k)) { boarded.add(s.k); boardWaiting(sg); } }
     else if (last && sg.t1 - t < .25) open = ease((.25 - (sg.t1 - t)) / .25);
     for (const l of leaves) l.g.position.x = l.d + l.s * open * .58;
     // the agent: to the door in the last few seconds of the ride
     if (me && last && sg.t1 - t < 5 && me.st === 'stand' && me.spot === AG) { free(me); walk(me, [[.3, -.2], [.12, -.95]], () => { me.st = 'stand'; me.spot = null; me.yaw = Math.PI; }); }
     // the riders: walking ones along their paths (car frame → platform frame across the door line), everyone posed
-    const all = [...riders, ...waiting, ...pool.filter(R => R.st === 'walk' && !riders.includes(R) && !waiting.includes(R))]; if (me) all.push(me); ents.length = 0;
-    for (const R of new Set(all)) { if (R.st === 'off') continue;
+    all.length = 0; all.push(...riders, ...waiting);
+    for (const R of pool) if (R.st === 'walk' && !riders.includes(R) && !waiting.includes(R)) all.push(R);
+    if (me) all.push(me); ents.length = 0;
+    const leanDecay = Math.exp(-dt * 2.5), settle = 1 - Math.exp(-dt * 7);
+    for (const R of all) { if (R.st === 'off') continue;
       if (R.st === 'walk') { if (R.delay > 0) { R.delay -= dt; } else { const p = R.path[0]; if (!p) { R.st = 'stand'; R.then?.(); }
           else { const inPlat = R.parent === plat, ox = inPlat ? plat.position.x : 0, dx = p[0] - R.x, dz = p[1] - R.z, d = Math.hypot(dx, dz), sp = 1.25 * dt;
             if (d <= sp) { R.x = p[0]; R.z = p[1]; R.path.shift(); if (!R.path.length) { const f = R.then; R.then = null; R.st = 'stand'; f?.(); } } else { R.x += dx / d * sp; R.z += dz / d * sp; }
             const ty = Math.atan2(dx, dz); R.yaw += Math.atan2(Math.sin(ty - R.yaw), Math.cos(ty - R.yaw)) * Math.min(1, dt * 9);
             if (!inPlat && R.z < -1.75 && open > .3) { place(R, plat); R.x -= plat.position.x; } else if (inPlat && R.z > -1.75) { place(R, car); R.x += ox; } } } }
-      if (R.st === 'stand') { R.leanV += ((-acc) - R.lean) * dt * 6; R.leanV *= Math.exp(-dt * 2.5); R.lean += R.leanV * dt * 6; } else R.lean = lerp(R.lean, -acc, dt * 3);
+      if (R.st === 'stand') { R.leanV += ((-acc) - R.lean) * dt * 6; R.leanV *= leanDecay; R.lean += R.leanV * dt * 6; } else R.lean = lerp(R.lean, -acc, dt * 3);
       // into a seat or a pole spot (eased from where the walk left it) and the clip that goes with it: sit_ride, stand_rail; wait_stop on
       // the platform; walking or standing loose: none (the walk, the idles)
-      let clip = null; const k = 1 - Math.exp(-dt * 7), to = R.st === 'sit' ? R.seat : R.st === 'stand' ? R.spot : null;
+      let clip = null; const k = settle, to = R.st === 'sit' ? R.seat : R.st === 'stand' ? R.spot : null;
       if (to) { R.x = lerp(R.x, to.x, k); R.z = lerp(R.z, to.z, k); const ty = to.yaw ?? 0; R.yaw += Math.atan2(Math.sin(ty - R.yaw), Math.cos(ty - R.yaw)) * k; clip = R.st === 'sit' ? SIT_CLIP : STAND_CLIP; }
       else if (R.st === 'stand' && R.parent === plat && waiting.includes(R)) clip = WAIT_CLIP;
-      R.clip = clip; ents.push({ body: R.body, parent: R.parent, x: R.x, z: R.z, yaw: R.yaw, clip, snap: R.snap, lean: R.st === 'stand' && R.parent === car ? -R.lean * .03 : 0, show: R.parent !== plat || plat.visible }); R.snap = false; }
-    crowd.frame(ents, dt);
-    frameUI(s, ln, t);
-    if (!doneSent && clockT >= P.dur) { doneSent = true; setTimeout(() => { if (!closed) { onDone?.(); close(); } }, 450); root.classList.add('out'); }
+      // Pre-arm the crowd's clip/idle transitions with this rider's seeded choices; its usual CPU step then advances them.
+      const b = R.body, g = b.g;
+      if (clip !== b.playing) { if (clip) playClip(g, clip, { t: R.animRnd() * CLIP[clip].dur, snap: R.snap }); else if (g.clip) stopClip(g); b.playing = clip; }
+      const d = b.gx === null ? 0 : Math.hypot(R.x - b.gx, R.z - b.gz);
+      if (!clip && (d < 1e-4 || d > 1.5) && !g.wasStill) { g.idle = IDLE_POOL[(R.animRnd() * IDLE_POOL.length) | 0]; g.wasStill = true; }
+      R.clip = clip; const e = R.draw; e.parent = R.parent; e.x = R.x; e.z = R.z; e.yaw = R.yaw; e.clip = clip; e.snap = R.snap;
+      e.lean = R.st === 'stand' && R.parent === car ? -R.lean * .03 : 0; e.show = R.parent !== plat || plat.visible; ents.push(e); R.snap = false; }
+    crowd.frame(ents, dt, false);
   }
+  // Outside geometry and DOM need only the final sample, even when a page frame traverses many island ticks.
+  function drawOutside() { const t = clamp(tick / CAR_HZ, 0, P.dur), s = stateAt(P, t), v = s.v;
+    for (let k = 0; k < 26; k++) { const x = ((k * 2.6 - tunS) % TUN + TUN) % TUN - TUN / 2; const hide = plat.visible && Math.abs(x - plat.position.x) < PL / 2 + .3; M4.compose(V3.set(x, 1.7, -3.15), Q4.identity(), S3.set(1, hide ? .0001 : 1, 1)); ribs.setMatrixAt(k, M4); }
+    for (let k = 0; k < 12; k++) { const x = ((k * 5.6 - tunS + (k % 3) * .9) % (TUN + 3.2) + TUN + 3.2) % (TUN + 3.2) - (TUN + 3.2) / 2, hide = plat.visible && Math.abs(x - plat.position.x) < PL / 2 + 1; M4.compose(V3.set(x, k % 2 ? 2.9 : .5, -3.0), Q4.identity(), S3.set(hide ? .0001 : .22 + v * .085, 1, 1)); lamps.setMatrixAt(k, M4); }
+    for (let k = 0; k < 3; k++) { const x = ((k * 22 - tunS * 1) % TUN + TUN) % TUN - TUN / 2, hide = plat.visible && Math.abs(x - plat.position.x) < PL / 2 + 1; M4.compose(V3.set(x, 1.85, -3.05), Q4.identity(), S3.setScalar(hide ? .0001 : 1)); sigs.setMatrixAt(k, M4); }
+    ribs.instanceMatrix.needsUpdate = lamps.instanceMatrix.needsUpdate = sigs.instanceMatrix.needsUpdate = true;
+    frameUI(s, net.lines.get(lineNow), t); }
   // ── the camera: a section view from the cut side, a touch of handheld drift, the target easing after the agent
   const CAM = { tx: 0, x: 0 }, base = new THREE.Vector3(0, 5.3, 16.4), aim = new THREE.Vector3(0, 1.15, -.7);
   let px = 0, py = 0; root.addEventListener('pointermove', e => { const r = root.getBoundingClientRect(); px = (e.clientX - r.left) / r.width - .5; py = (e.clientY - r.top) / r.height - .5; });
-  function placeCam(T, dt) { const wx = me ? (me.parent === plat ? me.x + plat.position.x : me.x) : 0; CAM.tx = lerp(CAM.tx, clamp(wx * .35, -1.5, 1.5), 1 - Math.exp(-dt * 1.2));
+  function placeCam(T, dt, draw = true) { const wx = me ? (me.parent === plat ? me.x + plat.position.x : me.x) : 0; CAM.tx = lerp(CAM.tx, clamp(wx * .35, -1.5, 1.5), 1 - Math.exp(-dt * 1.2));
+    if (!draw) return;
     camera.position.set(base.x + CAM.tx + px * 1.6 + .05 * Math.sin(T * .31), base.y - py * .5 + .03 * Math.sin(T * .43), base.z); camera.lookAt(aim.x + CAM.tx * .9, aim.y, aim.z); }
   const tagV = new THREE.Vector3();
   function placeTag() { if (!me || !agent || !crowd.world(me, me.st === 'sit' ? 1.9 : 2.25, tagV)) return; tagV.project(camera);
     const r = root.getBoundingClientRect(); tag.style.transform = `translate(${((tagV.x + 1) / 2 * r.width).toFixed(1)}px, ${((1 - tagV.y) / 2 * r.height).toFixed(1)}px) translate(-50%, -100%)`; tag.style.opacity = me.st === 'off' ? 0 : 1; }
-  function frame(T, dt) { if (built < NPOOL) buildSome(2); step(dt, T); placeCam(T, dt); placeTag();
-    if (fade > 0) { fade = Math.max(0, fade - dt * 2.2); } root.style.setProperty('--sbw-fade', String(ease(Math.min(1, fade * 1.6)))); renderer.render(scene, camera); }
-  function loop(ms) { raf = requestAnimationFrame(loop); const T = ms / 1000, dt = lastT ? Math.min(.1, T - lastT) : 0; lastT = T; if (paused) return; clockT = now(); frame(T, dt); }
-  const onKey = e => { if (e.key === 'Escape' && !closed) { e.preventDefault(); e.stopImmediatePropagation(); close(); } };
+  // The integer cursor is only a cache of the drawing at now(): every opening traverses the same ticks from zero. No step is dropped
+  // on a hitch, at 60x, or on opening late. A repeated clock value does no animation work (even the crowd's zero-dt transitions).
+  const tickAt = T => Math.floor(clamp(T, 0, P.dur + EXIT_S) * CAR_HZ + 1e-7);
+  function nextTick() { tick++; const dt = tick === 0 ? 0 : 1 / CAR_HZ, t = tick / CAR_HZ;
+    step(dt, t); placeCam(t, dt, false); fade = Math.max(0, fade - dt * 2.2); }
+  // Opening stays hidden until it catches the page's clock. A seek or Esc during a yield cancels before touching the stage again.
+  // Keep the exact same ticks/animation as play: only the time spent per page frame and the discarded GPU writes change.
+  async function replayOpening() {
+    let cpu = 0, longest = 0, yields = 0; const start = performance.now();
+    while (!closed) {
+      const m = now(); if (m === null || (keep && !keep()) || m < clockT) { close('seek'); break; }
+      clockT = m; const endTick = tickAt(m), t0 = performance.now(); let n = 0;
+      while (tick < endTick) { nextTick(); if (++n >= REPLAY_TICKS || performance.now() - t0 >= REPLAY_MS) break; }
+      const ms = performance.now() - t0; cpu += ms; longest = Math.max(longest, ms);
+      if (tick >= endTick) break;
+      yields++; await nextFrame();
+    }
+    timing.replay = +cpu.toFixed(2); timing.replayMax = +longest.toFixed(2); timing.replayYields = yields;
+    timing.replayWall = +(performance.now() - start).toFixed(2);
+  }
+  function frame(T) { const f0 = timing.frame1 === undefined ? performance.now() : null;
+    const endTick = tickAt(T); while (tick < endTick) nextTick();
+    crowd.draw(ents);
+    root.style.setProperty('--sbw-fade', String(ease(Math.min(1, fade * 1.6))));
+    // Keep the authored CSS easing, sampled at island time: both entry and exit freeze with the record.
+    if (T >= P.dur) root.classList.add('out'); else root.classList.remove('out');
+    root.style.setProperty('--sbw-age', String(T >= P.dur ? T - P.dur : T));
+    drawOutside(); placeCam(Math.max(0, tick) / CAR_HZ, 0); placeTag(); renderer.render(scene, camera); if (f0 !== null) timing.frame1 = +(performance.now() - f0).toFixed(1);
+    if (T >= P.dur + EXIT_S && !closed) { onDone?.(); close('done'); } }
+  function loop() { raf = requestAnimationFrame(loop); if (paused) return; const m = now();
+    if (m === null || (keep && !keep()) || m < clockT) { close('seek'); return; }
+    clockT = m; frame(m); }
+  const onKey = e => { if (e.key === 'Escape' && !closed) { e.preventDefault(); e.stopImmediatePropagation(); close('left'); } };
   addEventListener('keydown', onKey, true);
-  function close() { if (closed) return; closed = true; cancelAnimationFrame(raf); removeEventListener('keydown', onKey, true); ro.disconnect();
-    crowd.dispose();
-    for (const g of own) g.dispose(); for (const m of [...MATS, stripeMat, stripMat, ...cardMats, colMat, tubeMat, ribs.material, lamps.material, sigs.material, tunWall.material, slab.material, edge.material, lip.material, pwall.material, pceil.material]) { m.map?.dispose(); m.dispose(); }
-    for (const g of [stripeGeo, stripGeo, cardGeo, ribGeo, lampGeo, sigGeo, colGeo, tubeGeo, tunWall.geometry, slab.geometry, edge.geometry, lip.geometry, pwall.geometry, pceil.geometry]) g.dispose();
-    renderer.dispose(); renderer.forceContextLoss?.(); root.remove(); onClose?.(); }
-  setLine(P.segs[0].line, P.segs[0].dir); raf = requestAnimationFrame(loop);
-  return { close, get t() { return clockT; }, get closed() { return closed; }, pause(on) { paused = !!on; }, view: { scene, camera, renderer, root },
-    advance(sec, stepS = 1 / 30) { for (let s = 0; s < sec - 1e-6; s += stepS) { lastT += stepS; clockT = now(); frame(lastT, stepS); } },
+  // (the stage is handed back as the next ride wants it, its shaders still compiled; only this ride's riders and card paint go)
+  function close(why = 'left') { if (closed) return; closed = true; cancelAnimationFrame(raf); removeEventListener('keydown', onKey, true); ro.disconnect();
+    crowd.dispose({ keepPrograms: true }); resetStage(ST); renderer.domElement.remove(); ST.busy = false;
+    root.remove(); if (under) document.body.classList.remove('subway-under'); onClose?.(why); }
+  const handle = { close, get t() { return clockT; }, get closed() { return closed; }, pause(on) { paused = !!on; }, view: { scene, camera, renderer, root }, timing,
+    advance(sec) { if (!closed) { clockT += Math.max(0, sec); frame(clockT); } },
     state: () => { const s = stateAt(P, clamp(clockT, 0, P.dur)); return { t: +clockT.toFixed(2), dur: +P.dur.toFixed(2), seg: s.seg.kind, st: s.st, v: +s.v.toFixed(2), dx: +(s.dx ?? 0).toFixed(2), riders: riders.length, waiting: waiting.length, built, crowd: crowd.stats(), line: lineNow, agent: me ? me.st : null,
       calls: renderer.info.render.calls, tris: renderer.info.render.triangles }; } };
+  // C2-transit · the shaders compiled before the first frame (compiled by the first renders they stalled the page 3.0–3.3 s, which the
+  // record skipped over); C2-carriageperf: once for the stage, every variant (warmStage), so a later ride waits for nothing
+  const warming = !ST.warm; if (warming) ST.warm = warmStage(ST); const nc = await ST.warm; timing.compiled = warming ? nc : 0; lap('compile'); timing.programs = renderer.info.programs?.length ?? null;
+  if (!closed) await replayOpening();
+  if (!closed) { frame(clockT); if (!closed) { root.classList.remove('sbw-wait'); if (under) document.body.classList.add('subway-under'); raf = requestAnimationFrame(loop); } }
+  return handle;
 }
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
 
 let cssDone = false;
 function css() { if (cssDone) return; cssDone = true; const s = document.createElement('style'); s.textContent = `
 .sbw { position: fixed; inset: 0; z-index: 30; background: #07080c; animation: sbw-in .45s ease-out both; --sbw-ink: var(--zt-ink, #17171b); --sbw-bone: var(--zt-bone, #e6e1d6); --sbw-white: var(--zt-white, #f4f1ea); --sbw-pink: var(--zt-pink, #ff4fa3); --sbw-sign: var(--k-font-sign, "AI City Sign", "Space Mono", ui-monospace, monospace); --sbw-mono: var(--k-font-mono, "Space Mono", ui-monospace, Menlo, monospace); }
 .sbw.out { animation: sbw-out .45s ease-in both; }
+.sbw, .sbw.out { animation-play-state: paused; animation-delay: calc(-1s * var(--sbw-age, 0)); }
+/* under (C2-transit, slime 10-31 "Panels on top"): the record's panels, its ticker and its transport stay over the car (#k is z 8, the bar 60);
+   the car's own top cards drop below the panel menu, and the city's pins and labels, which mark people in the city, are hidden while it is open */
+.sbw.sbw-under { z-index: 7; } .sbw.sbw-under .sbw-line, .sbw.sbw-under .sbw-stn { top: 64px; }
+/* (its ×, bottom right, was under the agent's card: on the left, over the car's own @agent card) */
+.sbw.sbw-under .sbw-x { left: 16px; right: auto; bottom: calc(var(--sbw-hud, 16px) + 66px); }
+body.subway-under #k .k-pins, body.subway-under #k .k-label { visibility: hidden; } .sbw.sbw-wait { visibility: hidden; animation: none; }
 @keyframes sbw-in { from { opacity: 0; } } @keyframes sbw-out { to { opacity: 0; } }
 .sbw canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .sbw::after { content: ""; position: absolute; inset: 0; background: #000; opacity: var(--sbw-fade, 0); pointer-events: none; }
@@ -334,11 +505,11 @@ function css() { if (cssDone) return; cssDone = true; const s = document.createE
 .sbw-stn.at { background: var(--sbw-c, #2f5bff); color: var(--sbw-white); border-top-color: var(--sbw-ink); }
 .sbw-nm { font: 400 27px/1.05 var(--sbw-sign); letter-spacing: .03em; } .sbw-stn:not(.at) .sbw-nm { font-size: 18px; }
 .sbw-sub:empty { display: none; } .sbw-sub { margin-top: 6px; font-size: 12px; letter-spacing: .04em; } .sbw-sub b { display: inline-block; min-width: 16px; padding: 2px 3px 1px; color: var(--sbw-white); font: 400 18px/1 var(--sbw-sign); box-shadow: 1px 1px 0 var(--sbw-ink); vertical-align: -3px; }
-.sbw-who { position: absolute; left: 16px; bottom: 16px; display: grid; grid-template-columns: auto auto; gap: 6px 12px; align-items: baseline; background: var(--sbw-bone); padding: 8px 12px; box-shadow: 4px 5px 0 var(--sbw-ink); }
+.sbw-who { position: absolute; left: 16px; bottom: var(--sbw-hud, 16px); display: grid; grid-template-columns: auto auto; gap: 6px 12px; align-items: baseline; background: var(--sbw-bone); padding: 8px 12px; box-shadow: 4px 5px 0 var(--sbw-ink); }
 .sbw-who b { font: 400 18px/1 var(--sbw-sign); color: var(--sbw-ink); } .sbw-eta { font-size: 11px; letter-spacing: .04em; color: #3a3a40; }
 .sbw-bar { grid-column: 1 / -1; display: block; height: 5px; background: rgba(23, 23, 27, .15); } .sbw-bar i { display: block; height: 100%; width: 0; background: var(--sbw-pink); }
-.sbw-x { position: absolute; right: 16px; bottom: 16px; pointer-events: auto; border: 0; cursor: pointer; background: var(--sbw-white); color: var(--sbw-ink); font: 700 11px/1 var(--sbw-mono); text-transform: uppercase; letter-spacing: .04em; padding: 10px 12px; min-height: 36px; box-shadow: 3px 3px 0 var(--sbw-pink); }
+.sbw-x { position: absolute; right: 16px; bottom: var(--sbw-hud, 16px); pointer-events: auto; border: 0; cursor: pointer; background: var(--sbw-white); color: var(--sbw-ink); font: 700 11px/1 var(--sbw-mono); text-transform: uppercase; letter-spacing: .04em; padding: 10px 12px; min-height: 36px; box-shadow: 3px 3px 0 var(--sbw-pink); }
 .sbw-x:hover { background: var(--zt-yel, #ffc21a); } .sbw-x:focus-visible { outline: 3px solid var(--sbw-pink); outline-offset: 2px; }
 .sbw-tag { position: absolute; left: 0; top: 0; pointer-events: none; background: var(--sbw-pink); color: var(--sbw-ink); font: 400 18px/1 var(--sbw-sign); padding: 4px 6px 3px; box-shadow: 2px 2px 0 var(--sbw-ink); white-space: nowrap; transition: opacity .2s; }
-@media (max-width: 640px) { .sbw-line { left: 8px; top: 8px; } .sbw-stn { top: 70px; } .sbw-who { left: 8px; bottom: 8px; } .sbw-x { right: 8px; bottom: 64px; } }
+@media (max-width: 640px) { .sbw-line { left: 8px; top: 8px; } .sbw-stn { top: 70px; } .sbw-who { left: 8px; bottom: max(8px, calc(var(--sbw-hud, 16px) - 8px)); } .sbw-x { right: 8px; bottom: calc(var(--sbw-hud, 16px) + 48px); } }
 @media (prefers-reduced-motion: reduce) { .sbw, .sbw.out { animation: none; } }`; document.head.appendChild(s); }

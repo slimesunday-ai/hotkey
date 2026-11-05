@@ -36,6 +36,10 @@ const roles = e => {
 };
 const publicTypes = new Set('season season_end price meet heat high clean buy board mint missed gone rollover evicted tab show fight hustle arrest release turf police shipment outloud card'.split(' '));
 const isPublic = e => publicTypes.has(e.type) || e.type === 'crew' && e.act !== 'invite' || e.type === 'fake' && e.act === 'exposed';
+// §41, 10-31: "Who and where show" is the follower’s live act,
+// not a delayed receipt for global news, tape or People. Every original
+// receipt below retains the same completeness and disclosure assertions.
+const isRecordReceipt = e => e.type !== 'act' && !isPublic(e);
 const publicForm = e => isPublic(e) ? e : e.card ? { id: e.id, minute: e.minute, t: e.t, day: e.day, type: 'card', card: e.card } : null;
 
 async function selectors() {
@@ -144,7 +148,7 @@ function boardProperties(api, s, id, label) {
 }
 function historyProperties(api, s, id, news, label) {
   const rap = api.rapAt(s, id), tape = api.tapeAt(s, id), people = api.peopleAt(s, id);
-  const pub = s.events.map(publicForm).filter(Boolean), record = s.events.filter(e => !isPublic(e));
+  const pub = s.events.map(publicForm).filter(Boolean), record = s.events.filter(isRecordReceipt);
   equal(rap.map(r => r.id), pub.filter(e => roles(e).includes(id)).map(e => e.id).reverse(), `${label}: complete public record naming this agent`);
   equal(tape.events.map(r => r.id), record.filter(e => roles(e).includes(id)).map(e => e.id), `${label}: complete disclosed receipts`);
   for (const row of tape.events) rowProperties(row, s, label);
@@ -351,7 +355,7 @@ for (const seed of [404, 405, 406]) {
     // card/map/leaderboard values are checked at every sample.
     const news = api.newsAt(s);
     for (const scope of ['live', 'record']) {
-      const expected = scope === 'live' ? s.events.map(publicForm).filter(Boolean) : s.events.filter(e => !isPublic(e));
+      const expected = scope === 'live' ? s.events.map(publicForm).filter(Boolean) : s.events.filter(isRecordReceipt);
       equal(news[scope].map(r => r.id), expected.map(e => e.id), `${label}: complete ${scope} news`);
       for (const row of news[scope]) {
         const signature = JSON.stringify([row.id, row.type, row.minute, row.fields]);
@@ -362,7 +366,7 @@ for (const seed of [404, 405, 406]) {
     // rotate at other boundaries. All news forms above are checked regardless.
     const ids = s.board && frames.some(f => f.minute === minute) ? s.board.agents.map(a => a.id) : [id];
     for (const agent of ids) {
-      const tape = api.tapeAt(s, agent), expected = s.events.filter(e => !isPublic(e) && roles(e).includes(agent));
+      const tape = api.tapeAt(s, agent), expected = s.events.filter(e => isRecordReceipt(e) && roles(e).includes(agent));
       equal(tape.events.map(r => r.id), expected.map(e => e.id), `${label}: disclosed dossier receipts`);
       const h = expected.findLast(e => e.type === 'holdings' && e.agent === agent);
       equal(tape.holdings?.id ?? null, h?.id ?? null, `${label}: exact holdings receipt`);
@@ -384,7 +388,8 @@ for (const seed of [404, 405, 406]) {
     equal(api.panelsAt(a, 'a01'), api.panelsAt(b, 'a01'), `seed ${seed}: backwards/fresh panels at ${minute}`);
   }
   const presentKinds = new Set(frames.flatMap(f => f.events.map(e => e.type)));
-  for (const type of presentKinds) property(api.EVENT_KINDS.includes(type), `seed ${seed}: wording supplied for ${type}`);
+  // §41, 10-31: "Who and where show" adds follower acts; global panel wording still covers every original event kind.
+  for (const type of presentKinds) if (type !== 'act') property(api.EVENT_KINDS.includes(type), `seed ${seed}: wording supplied for ${type}`);
   console.log(`PASS seed ${seed}: ${frames.length} frames · ${samples.length} minutes/cues · ${newsRows} news forms · ${values} dossiers · ${presentKinds.size} event kinds`);
   drugTimingProperties(api, frames, player, seed);
 }

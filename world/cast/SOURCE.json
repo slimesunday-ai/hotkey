@@ -1,8 +1,8 @@
 {
- "from": "local cast source checkout (not in this repository)",
- "commit": "6d68cec",
+ "from": "ai-city-fresh-c2clips",
+ "commit": "34d25ec",
  "dirty": false,
- "at": "2026-10-27T15:23:07.965Z",
+ "at": "2026-11-01T19:11:48.257Z",
  "kills": 54,
  "ranks": 0,
  "npc": {
@@ -16,6 +16,9 @@
  "files": [
   "style/city/anim/cast/bake.js",
   "style/city/anim/cast/clips/CLIPS.md",
+  "style/city/anim/cast/clips/acts-props.js",
+  "style/city/anim/cast/clips/acts.js",
+  "style/city/anim/cast/clips/acts.md",
   "style/city/anim/cast/clips/arrest.js",
   "style/city/anim/cast/clips/bench-props.js",
   "style/city/anim/cast/clips/bench.js",

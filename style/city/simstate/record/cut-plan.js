@@ -50,9 +50,30 @@ export function planCuts(plan, board) {
     selected.push(scene);
   }
   selected.sort((a, b) => a.start - b.start || compare(a.id, b.id));
+  const starts = selected.map((scene, i) => i === 0 ? plan.start : scene.start);
+  // Establish a required scene before its action, including the scenario's
+  // quarter-minute pre-roll. Otherwise startup followed by a seek back across
+  // the shared arrival boundary logs arrival/action/arrival/action together.
+  // Pull preceding optional setups earlier only within their available room:
+  // every selected scene still gets an on-screen interval, and a preceding
+  // fight/arrest keeps its full duration. Scene times remain the show's facts.
+  let previous = -1;
+  for (let i = 0; i < selected.length; i++) {
+    if (!required(selected[i])) continue;
+    const first = previous + 1;
+    const boundary = previous < 0 ? plan.start : Math.max(selected[previous].end, starts[previous] + .5);
+    let earliest = boundary + .5 * (i - first);
+    for (let j = first; j < i; j++) {
+      const visible = Math.min(.25, selected[j].end - selected[j].start, starts[j + 1] - selected[j].start);
+      earliest = Math.max(earliest, selected[j].start + visible + .5 * (i - j - 1));
+    }
+    starts[i] = Math.min(starts[i], Math.max(selected[i].start - .5, earliest));
+    for (let j = i - 1; j >= first; j--) starts[j] = Math.min(starts[j], starts[j + 1] - .5);
+    previous = i;
+  }
   const cuts = selected.map((scene, i) => ({ sceneId: scene.id, score: priority(scene),
-    start: i === 0 ? plan.start : scene.start,
-    end: selected[i + 1]?.start ?? plan.end,
+    start: starts[i],
+    end: starts[i + 1] ?? plan.end,
     subjects: [...scene.publicActors], captionFields: sceneCaption(scene, board) }));
   // Moving the opening establishing shot earlier can only increase separation.
   return freeze(cuts);

@@ -17,6 +17,7 @@
 //   new (2026-10-15, GAME.md §20's staging for the new game): heist.js · breakin.js · grab.js (events) · bench.js · cook.js ·
 //               errands.js (activities) · drugs.js (moods)
 //   game-port.js (2026-10-27, events + activities): the game's bare-handed clips that fit §20's staging (game-port.md)
+//   acts.js (2026-11-01, activities): the day's errand acts the record viewer stages (GAME.md §41; acts.md), sleep and shove_walk
 import { CLIP_BASE } from '../idle.js';
 import { CLIPS as robbery } from './robbery.js';
 import { CLIPS as falls } from './falls.js';
@@ -37,10 +38,11 @@ import { CLIPS as grab } from './grab.js';
 import { CLIPS as drugs } from './drugs.js';
 import { CLIPS as errands } from './errands.js';
 import { CLIPS as gamePort } from './game-port.js';
+import { CLIPS as acts } from './acts.js';
 export { CLIP_BASE };
 
-export const GROUPS = { robbery, falls, arrest, skate, ride, transit, 'deal-hang': dealHang, 'talk-patrol': talkPatrol, work, high, react, heist, breakin, bench, cook, grab, drugs, errands, 'game-port': gamePort };   // (new groups go LAST: ids are registry order)
-export const FAMILY = { robbery: 'events', falls: 'events', arrest: 'events', skate: 'travel', ride: 'travel', transit: 'travel', 'deal-hang': 'activities', 'talk-patrol': 'activities', work: 'activities', high: 'moods', react: 'react', heist: 'events', breakin: 'events', bench: 'activities', cook: 'activities', grab: 'events', drugs: 'moods', errands: 'activities', 'game-port': 'events' };
+export const GROUPS = { robbery, falls, arrest, skate, ride, transit, 'deal-hang': dealHang, 'talk-patrol': talkPatrol, work, high, react, heist, breakin, bench, cook, grab, drugs, errands, 'game-port': gamePort, acts };   // (new groups go LAST: ids are registry order)
+export const FAMILY = { robbery: 'events', falls: 'events', arrest: 'events', skate: 'travel', ride: 'travel', transit: 'travel', 'deal-hang': 'activities', 'talk-patrol': 'activities', work: 'activities', high: 'moods', react: 'react', heist: 'events', breakin: 'events', bench: 'activities', cook: 'activities', grab: 'events', drugs: 'moods', errands: 'activities', 'game-port': 'events', acts: 'activities' };
 // the defaults every clip entry gets (CLIPS.md § The entry)
 const DEF = { loop: false, hold: false, next: null, blendIn: .1, blendOut: .25, moving: false, speed: 0, stride: 1, shift: null, pair: null, note: '' };
 const NAME_RE = /^[a-z][a-z0-9_]*$/;

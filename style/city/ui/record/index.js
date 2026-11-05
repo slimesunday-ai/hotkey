@@ -29,41 +29,58 @@ import { refreshPanels } from './view.js';
 import { createTv } from './tv.js';
 import { createDirector } from '../../camera/director.js';
 import { createRecordTape } from './tape.js';
+import { createPortraits } from '../portrait.js';
+import { createFollowKeeper } from './follow.js';
+import { createIdentity, bodyOf, HOODED } from './identity.js';
 
 export async function mountRecordUI(api, { Q, page }) {
-  const { sim } = await import('../../simstate/store.js');
+  const { sim: store } = await import('../../simstate/store.js');
+  const identity = createIdentity({ draw: () => page.draw, following: () => {
+    const r = api.cam, s = r?.subject, watching = r?.mode === 'follow' || r?.mode === 'photo' && r.photoSub === 'follow';
+    return watching && s?.agent ? s.aid : null;
+  } });
+  const sim = { agents: () => store.agents(), on: (...args) => store.on(...args), record: () => {
+    const s = store.record(); return { ...s, ...identity.at(s.minute) };
+  } };
   const root = mountRoot(Q, { fonts: false }); tooltips();
   // (the stylesheets first: a panel restored after the reload measures its box at once — the map sizes its sheet from it)
   await Promise.all([['./record.css', 'data-r-css'], ['./board.css', 'data-b-css'], ['./tape.css', 'data-tape-css'], ['../map/map.css', 'data-map-css']].map(([href, key]) => new Promise(done => {
     if (document.querySelector(`link[${key}]`)) return done();
     const link = h('link', { rel: 'stylesheet', href: new URL(href, import.meta.url).href, [key]: '' }); link.onload = link.onerror = done; document.head.append(link); })));
   root.setAttribute('data-record', ''); document.body.classList.add('r-ui'); document.body.classList.toggle('dev', Q.get('dev') === '1');
-  // the walkers record/draw.js placed: only drawn roster agents (a hooded agent has no walker during the show; a stand-in is the stage's)
+  // The drawing's own walkers stay pickable under their internal ids. Labels
+  // and cards pass through the viewer's identity selector before reaching DOM.
   const whereOf = id => { const a = page.draw?.agents?.map.get(id); return a?.w ? { x: a.w.p[0], y: a.w.p[1], z: a.w.p[2], drawn: true } : null; };
-  const pickSim = { agents: () => sim.agents(), where: whereOf, me: null };
+  const pickSim = { agents: () => sim.agents(), where: whereOf, me: null, label: c => identity.at(page.player.minute).identity.walker(c),
+    locatable: id => !identity.at(page.player.minute).identity.hidden(id) };
   let chooser = null;
-  const city = createCityLayer({ api, sim: pickSim, root, onPick: (id, o) => { closeChooser(); if (o?.cluster) return openChooser(o.cluster, o.x, o.y); openDossier(id); },
+  const city = createCityLayer({ api, sim: pickSim, root, onPick: (id, o) => { closeChooser(); if (o?.cluster) return openChooser(o.cluster, o.x, o.y); openDossier(id, { from: 'body' }); },
     onMiss: () => { closeChooser(); if (dossier.isOpen) dossier.close(); } });
-  const dossier = createDossier({ api, sim, root, city, where: whereOf, onClose: keep });
-  const people = createPeople({ sim, root, dossier: { open: id => openDossier(id) } });
+  // (one portrait renderer for the card's head and the morning cards' faces: ui/portrait.js, its own small WebGL context)
+  const portraits = api.THREE ? createPortraits({ THREE: api.THREE }) : null;
+  // C2 · follow THIS agent: the card's Follow (F) asks the rig; the keeper holds the rig on that agent through the record's walker swaps
+  // and the day / night reload (?follow=), and lets go when the viewer leaves follow or picks someone else
+  const follow = createFollowKeeper({ api, Q });
+  const dossier = createDossier({ api, sim, root, city, where: whereOf, portraits, onClose: keep, onFollow: id => follow.want(id) });
+  const people = createPeople({ sim, root, dossier: { open: id => openDossier(id, { from: 'name' }) } });
   const map = createMap({ sim, root, onOpen: () => { dossier.close(); people.close(); ch9.close(); board.close(); cards.close(); closeChooser(); } });
   const ticker = createTicker({ sim, root });
   const showOf = () => { const s = page.player.snapshot().show; return s ? { night: s.night, start: s.start, end: s.end } : null; };
   const ch9 = createCh9({ sim, root, showOf });
   const board = createBoard({ sim, root, onOpen: () => { map.close(); dossier.close(); } });
   // (the cards open on their own at a new morning only when the centre is free; the morning already seen rides the URL, ?cardsSeen=)
-  const cards = createCards({ sim, root, sceneOf: r => sceneOf(page, r), seen: Q.has('cardsSeen') ? +Q.get('cardsSeen') : null, onSeen: () => keep(),
+  const cards = createCards({ sim, root, portraits, sceneOf: r => sceneOf(page, r), seen: Q.has('cardsSeen') ? +Q.get('cardsSeen') : null, onSeen: () => keep(),
     onOpen: why => { if (why === 'auto' && (ch9.isOpen || map.isOpen)) return false; map.close(); ch9.close(); },
     onReplay: r => { cards.close(); keep(); ui.replayed = replayCard(page, r, { tape }); } });
   const police = createPoliceView({ THREE: api.THREE, scene: api.scene });
   // C1-8 · the director: TV mode by night (the show's cut) and by day; the camera goes back where it was after a scene or a replay
-  const tv = createTv({ root, onToggle: () => { if (!director) return; if (director.mode === 'off') director.start('viewer'); else director.stop('viewer'); } });
+  const tv = createTv({ root, snapshot: () => sim.record(), onToggle: () => { if (!director) return; if (director.mode === 'off') director.start('viewer'); else director.stop('viewer'); } });
   let director = null;
   try { if (api.cam && page.frames) director = createDirector({ api, page, Q, ui: tv, frames: page.frames }); } catch (e) { console.error('[record tv]', e); }
   // C1-9 · the tape: the scrubber, its markers, the missed card and the replays (the director frames them)
   let tape = null;
-  try { tape = createRecordTape({ api, page, sim, Q, root, director, dossier, uiBusy: () => map.isOpen || (!!api.cam && ['photo', 'fly', 'walk'].includes(api.cam.mode)) }); } catch (e) { console.error('[record tape]', e); }
-  function openDossier(id) { map.close(); board.close(); dossier.open(id); }
+  try { tape = createRecordTape({ api, page, sim, Q, root, director, dossier, follow, uiBusy: () => map.isOpen || (!!api.cam && ['photo', 'fly', 'walk'].includes(api.cam.mode)) }); } catch (e) { console.error('[record tape]', e); }
+  function openDossier(id, options) { map.close(); board.close(); dossier.open(id, options); }
   // the menu (top left): the same screens as the keys
   const bar = h('nav', { id: 'r-menu', class: 'r-menu', 'aria-label': 'Panels' },
     button('People', { kbd: '/', tip: 'People and the leaderboards (/)', onclick: () => { map.close(); people.toggle(); keep(); } }),
@@ -73,15 +90,17 @@ export async function mountRecordUI(api, { Q, page }) {
     button('Cards', { kbd: 'Y', tip: 'The morning cards: the night’s top 5 (Y)', onclick: () => { cards.toggle(); keep(); } }),
     button('Ticker', { tip: 'The news ticker (Shift+N)', onclick: () => { ticker.toggle(); keep(); } }), tv.button);
   root.append(bar);
+  let chooserAt = null, chooserKey = null;
   function openChooser(ids, x, y) {
-    const cards = new Map(sim.agents().map(c => [c.id, c]));
+    closeChooser(); chooserAt = { ids, x, y };
+    const s = sim.record(); chooserKey = s.identityKey;
     chooser = h('div', { class: 'k-chooser', role: 'menu', 'aria-label': 'Who here' }, h('div', { class: 'k-h' }, `${ids.length} here`),
-      ...ids.map(id => h('button', { type: 'button', role: 'menuitem', onclick: () => { closeChooser(); openDossier(id); } }, cards.get(id)?.name ?? id, h('span', null, '@' + id))));
+      ...ids.map(id => { const c = bodyOf(s, id); return h('button', { type: 'button', role: 'menuitem', onclick: () => { closeChooser(); openDossier(id, { from: 'body' }); } }, c.name, c.id ? h('span', null, '@' + c.id) : null); }));
     root.append(chooser);
     chooser.style.transform = `translate(${Math.round(Math.max(8, Math.min(innerWidth - chooser.offsetWidth - 8, x - chooser.offsetWidth / 2)))}px, ${Math.round(Math.max(8, Math.min(innerHeight - chooser.offsetHeight - 8, y + 14)))}px)`;
     screens.open('r-chooser', { esc: closeChooser, isOpen: () => !!chooser });
   }
-  function closeChooser() { chooser?.remove(); chooser = null; screens.close('r-chooser'); }
+  function closeChooser() { chooser?.remove(); chooser = null; chooserAt = null; screens.close('r-chooser'); }
   // the record player's bar: every panel stops above it
   const fitBar = () => { const r = document.getElementById('record-player')?.getBoundingClientRect(); root.style.setProperty('--r-bar', (r ? Math.ceil(innerHeight - r.top) + 8 : 14) + 'px'); };
   fitBar(); addEventListener('resize', fitBar);
@@ -89,9 +108,14 @@ export async function mountRecordUI(api, { Q, page }) {
   // the rig's person picker steps aside for a release the UI claimed (a click on an agent opens the dossier instead of following)
   const rig = api.cam;
   if (rig?.people?.pick) { const pick0 = rig.people.pick; rig.people.pick = function (...a) { return city.claimed ? null : pick0.apply(this, a); }; }
+  if (rig?.people?.label) { const label0 = rig.people.label; rig.people.label = function (w) {
+    return w?.agent && page.draw?.hoodedAt(w.aid, page.player.minute) ? HOODED : label0.call(this, w);
+  }; }
   const typing = e => /^(INPUT|SELECT|TEXTAREA)$/.test(e.target?.tagName || '') || e.target?.isContentEditable;
   addEventListener('keydown', e => {
     if (e.defaultPrevented || typing(e) || e.metaKey || e.ctrlKey || e.altKey) return;
+    // F: follow the open card's agent. Held F (key repeat), F while already following them, and photo mode's F stay the camera's own
+    if (e.code === 'KeyF' && dossier.isOpen && !e.repeat && !dossier.following && rig?.mode !== 'photo') { e.preventDefault(); e.stopPropagation(); dossier.toggleFollow(); return; }
     const act = { Slash: () => { map.close(); people.toggle(); }, KeyB: () => map.toggle(), KeyN: () => e.shiftKey ? ticker.toggle() : (map.close(), cards.close(), ch9.toggle()),
       KeyL: () => board.toggle(), KeyY: () => cards.toggle() }[e.code];
     if (!act) return; e.preventDefault(); e.stopPropagation(); act(); keep();
@@ -115,16 +139,23 @@ export async function mountRecordUI(api, { Q, page }) {
   if (want.has('map')) map.open();
   if (want.has('board') && !Q.get('dossier')) board.open();
   if (want.has('cards')) cards.open();
-  if (Q.get('dossier') && sim.agents().some(c => c.id === Q.get('dossier'))) dossier.open(Q.get('dossier'));
+  const restored = sim.record().identity.resolve(Q.get('dossier'));
+  if (restored && sim.agents().some(c => c.id === restored)) dossier.open(Q.get('dossier'), { from: 'name' });
   update();
   // (the board's countdowns also move between published changes: once a game minute)
   let lastMin = null;
-  const frame = (dt, t) => { try { tape?.frame(); director?.frame(dt); police.frame(api.camera, { framing: !!director?.framing, avoid: uiRects, canvas: api.renderer.domElement }); if (board.isOpen && Math.floor(page.player.minute) !== lastMin) { lastMin = Math.floor(page.player.minute); board.update(); } const s = rig?.mode === 'follow' ? rig.subject : null; city.follow(s?.agent ? s.aid : null); city.frame(dt, t); } catch (e) { if (!frame.failed) { frame.failed = true; console.error('[record ui]', e); } } };
+  let identityKey = null;
+  const frame = (dt, t) => { try { tape?.frame(); director?.frame(dt); police.frame(api.camera, { framing: !!director?.framing, avoid: uiRects, canvas: api.renderer.domElement }); if (board.isOpen && Math.floor(page.player.minute) !== lastMin) { lastMin = Math.floor(page.player.minute); board.update(); } follow.frame(); dossier.syncFollow();
+    const key = sim.record().identityKey;
+    if (key !== identityKey) { identityKey = key; update(); tv.refresh(); tape?.refreshIdentity(); }
+    if (chooserAt && key !== chooserKey) { const { ids, x, y } = chooserAt; openChooser(ids, x, y); }
+    const s = rig?.mode === 'follow' ? rig.subject : null; city.follow(s?.agent ? s.aid : null); city.frame(dt, t);
+  } catch (e) { if (!frame.failed) { frame.failed = true; console.error('[record ui]', e); } } };
   // (the screen boxes the police signs keep clear of: the menu, the ticker, the player's bar, the caption, an open panel)
   const uiRects = () => [...document.querySelectorAll('#r-menu, #r-ticker, #record-player, #r-tv-cap, #r-tape-cap, #r-missed, #k .k-panel, #k .r-panel, #k .k-chooser')]
     .filter(el => { if (el.hidden || el.offsetParent === null) return false; const cs = getComputedStyle(el); return cs.visibility !== 'hidden' && +cs.opacity > .05; })
     .map(el => el.getBoundingClientRect()).filter(r => r.width > 0 && r.height > 0 && r.right > 0 && r.left < innerWidth && r.bottom > 0 && r.top < innerHeight);
-  const ui = { frame, claimed: e => city.claimed === e, sim, city, dossier, people, map, ticker, ch9, board, cards, police, tv, director, tape, replayed: null, root, showOf, pickable: () => city.visible(),
+  const ui = { frame, claimed: e => city.claimed === e, sim, city, dossier, follow, portraits, people, map, ticker, ch9, board, cards, police, tv, director, tape, replayed: null, root, showOf, pickable: () => city.visible(),
     stats: () => ({ dossier: dossier.current, people: people.isOpen, map: map.isOpen, ch9: ch9.isOpen, ticker: ticker.on, board: board.isOpen, cards: cards.isOpen, ...city.stats() }) };
   api.ui = ui; window.__recordUI = ui;
   return ui;

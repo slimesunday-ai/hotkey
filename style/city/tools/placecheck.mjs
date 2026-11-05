@@ -10,7 +10,7 @@ import { addressesFor } from '../simstate/record/addresses.js';
 import { PLACE_TABLE, CITY_PLACES, HOUSE_LOTS, STANDS, CORNERS, DISTRICTS, SITES } from '../simstate/record/places.js';
 import { createRecordPlayer, showMinute, SHOW_MINUTES } from '../simstate/record/player.js';
 import { parseFeed } from '../simstate/record/adapter.js';
-import { planShow, createShowPlayer } from '../simstate/record/show-plan.js';
+import { planShow, createShowPlayer, showState } from '../simstate/record/show-plan.js';
 import { createRoutinePlanner } from '../simstate/record/routines.js';
 
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -79,12 +79,19 @@ async function run() {
   }
   // Independent prefix projection: C1-2 before the finale, then the published
   // finale's scene cues and held preceding board. Never uses player/reducer code.
+  // §41, 10-30: "no one wants to watch people drop off screen"; cache immutable published travel plans.
+  const finalePlans = new WeakMap();
   function at(frames, minute) {
     const prefix = frames.filter(f => f.minute <= minute && (f.step.kind !== 'night' || f.day * 1440 + 1265 <= minute));
     const last = prefix.at(-1), night = prefix.findLast(f => f.step.kind === 'night'), events = new Map();
     let board = null, finale = null, sightings = {};
     for (const frame of prefix) {
-      if (frame.step.kind === 'night' && frame.day === 14) finale = planShow(frame, board);
+      // §41, 10-30: "no one wants to watch people drop off screen"; origins determine the running time.
+      if (frame.step.kind === 'night' && frame.day === 14) {
+        if (!finalePlans.has(frame)) finalePlans.set(frame, planShow(frame, board, { origins: new Map(
+          createRoutinePlanner(frames).at(showMinute(14) - .0001).map(row => [row.agent, row])) }));
+        finale = finalePlans.get(frame);
+      }
       const held = frame.step.kind === 'night' && frame.day === 14 && minute < finale.end;
       const due = held ? new Set([...finale.openingIds, ...finale.scenes.filter(s => s.end <= minute).flatMap(s => s.revealIds)]) : null;
       for (const event of frame.events) if (!due || due.has(event.id)) events.set(event.id, event);
@@ -95,7 +102,9 @@ async function run() {
       reveal: night ? { night: night.day, start: finale?.start ?? night.day * 1440 + 1265,
         ...(finale ? { end: finale.end } : {}) } : null,
       ...(finale ? { show: minute < finale.end ? { night: 14, start: finale.start, end: finale.end,
-        active: finale.scenes.filter(s => s.start <= minute && minute < s.end),
+        // §41, 10-30: "no one wants to watch people drop off screen"; hold each place through its next departure.
+        placements: [...new Map(finale.movements.filter(row => row.minute <= minute).map(row => [row.agent, row])).values()],
+        finale: finale.finale, active: finale.scenes.filter(s => s.start <= minute && minute < s.end),
         completed: finale.scenes.filter(s => s.end <= minute).map(s => s.id) } : null } : {}) };
   }
   async function planners() {
@@ -150,19 +159,22 @@ async function run() {
           && target.district === null && target.lot === null && target.standPlace === null, 'boarded agent stays off island from leave beat');
         else if (minute >= finale.end || missed && minute >= missedEnd) property(target.reason === (agent.evicted ? 'heap' : 'home')
           && target.cityPlace === (agent.evicted ? 'heap' : book[agent.id].home), 'other missed agent rests at home/Heap after scene');
-        else if (!Object.hasOwn(show.seen, agent.id)) property(target.reason === 'hidden' && target.cityPlace === null, 'hooded walker hidden');
+        // §41, 10-30: "you watch X mask up and do it"; the roster walker remains.
+        else if (!Object.hasOwn(show.seen, agent.id)) property(target.reason !== 'hidden' && target.cityPlace !== null, 'hooded walker present');
         else {
           const named = finale.scenes.filter(s => s.publicActors.includes(agent.id));
           const active = named.find(s => s.start <= minute && minute < s.end);
           const completed = named.filter(s => s.end <= minute).sort((a, b) => b.end - a.end)[0];
-          const want = active?.place ?? (minute >= boarding ? SITES.ferry : completed?.place ?? named[0]?.place
-            ?? (show.plays[agent.id]?.kind === 'vault' ? SITES.vault : null));
+          // §41, 10-30: "no one wants to watch people drop off screen"; departure rows bridge the scenes.
+          const want = finale.movements.findLast(row => row.agent === agent.id && row.minute <= minute)?.place
+            ?? active?.place ?? completed?.place ?? named[0]?.place;
           property(want && target.cityPlace === want.cityPlace && target.lot === (want.lot ?? null), `finale ${agent.id} follows scene place at ${minute}`);
         }
       }
       else if (isShow(snapshot, minute)) {
         const show = snapshot.events.find(e => e.type === 'show' && e.night === snapshot.reveal.night);
-        if (!Object.hasOwn(show.seen, agent.id)) property(target.reason === 'hidden' && target.cityPlace === null, 'hooded walker hidden');
+        // §41, 10-30: "you watch X mask up and do it"; captions still use seen.
+        if (!Object.hasOwn(show.seen, agent.id)) property(target.reason !== 'hidden' && target.cityPlace !== null, 'hooded walker present');
         else if (show.seen[agent.id] === 'home') property(target.cityPlace === (agent.evicted ? 'heap' : book[agent.id].home), 'seen at address');
         else property(target.district === show.seen[agent.id], `seen ${agent.id} in public district`);
       } else if (minute >= 1440 && (minute % 1440 >= 1280 || minute % 1440 < 360)) {
@@ -228,11 +240,13 @@ async function run() {
     const vault = { ...state, events: [...state.events, { id: 2, type: 'fight', night: 1, kind: 'vault', place: 'downtown', sides: [{ size: 2, strength: 3 }], minute }] };
     equal(fightsAt(vault, 1)[0].cityPlace, SITES.vault.cityPlace, 'vault at precinct');
     const hidden = targetsAt(state)[2];
-    property(hidden.reason === 'hidden' && hidden.cityPlace === null, 'hooded has no location');
+    // §41, 10-30: "you watch X mask up and do it"; old archives retain a public rest anchor.
+    property(hidden.reason !== 'hidden' && hidden.cityPlace !== null, 'hooded has a public location');
     assert.throws(() => targetsAt(state, minute - 1), /at or before/);
     const drawn = { agents: targetsAt(state).filter(t => t.reason !== 'hidden'), fights: [] };
     property(checkDrawn(state, minute, drawn).ok, 'page drawn seam accepts targets');
-    property(!checkDrawn(state, minute, { ...drawn, agents: [...drawn.agents, { agent: 'c', cityPlace: aHome }] }).ok, 'page catches named hooded walker');
+    // §41, 10-30: "you watch X mask up and do it"; catch a misplaced walker rather than its identity.
+    property(!checkDrawn(state, minute, { ...drawn, agents: drawn.agents.map(a => a.agent === 'c' ? { ...a, cityPlace: aHome } : a) }).ok, 'page catches misplaced hooded walker');
     property(!checkDrawn(state, minute, { ...drawn, agents: drawn.agents.map((a, i) => i ? a : { ...a, x: 1e6, z: 1e6 }) }).ok, 'page catches wrong physical coordinates');
     const finaleStart = showMinute(14), finaleShow = { ...show, night: 14, minute: finaleStart,
       seen: { a: 'junkyard' }, hooded: {}, plays: { a: { kind: 'board', place: 'junkyard' } } };
@@ -242,8 +256,9 @@ async function run() {
     const missScene = plan.scenes.find(s => s.kind === 'missed');
     for (const m of [missScene.start, (missScene.start + missScene.end) / 2, missScene.end, plan.end, 15 * 1440 + 361]) {
       const s = { minute: m, frame: null, board, day: 14, events: [finaleShow, ...(m >= missScene.end ? [missed] : [])],
-        reveal: { night: 14, start: plan.start, end: plan.end }, show: m < plan.end ? { night: 14, start: plan.start,
-          active: plan.scenes.filter(row => row.start <= m && m < row.end) } : null };
+        reveal: { night: 14, start: plan.start, end: plan.end },
+        // §41, 10-30: "no one wants to watch people drop off screen"; use the variable presentation window.
+        show: showState(plan, m) };
       const rows = targetsAt(s);
       property(rows[0].cityPlace === (m < missScene.end ? 'docks' : addressesFor(board.agents.map(a => a.id)).a.home), 'non-jailed missed agent stays through scene then goes home');
       property(rows[1].reason === 'jail' && rows[1].cityPlace === 'jail', 'preceding-board prisoner stays on Iron Island throughout finale');
@@ -347,7 +362,9 @@ async function run() {
       const staged = createShowPlayer(frames), stagedRepeat = createShowPlayer(parseFeed(fs.readFileSync(fileOf(seed), 'utf8')));
       const finaleFrame = frames.find(f => f.step.kind === 'night' && f.day === 14);
       const preceding = frames.slice(0, finaleFrame.i).findLast(f => f.board !== undefined).board;
-      const finale = planShow(finaleFrame, preceding);
+      // §41, 10-30: "no one wants to watch people drop off screen"; sample the same public 9:05 origins.
+      const finale = planShow(finaleFrame, preceding, { origins: new Map(
+        createRoutinePlanner(frames).at(showMinute(14) - .0001).map(row => [row.agent, row])) });
       const book = addressesFor(frames[0].board.agents.map(a => a.id));
       if (addressBook) equal(book, addressBook, 'addresses stable across seeds');
       addressBook = book;

@@ -14,6 +14,7 @@ Poses stay procedural in the vertex shader, like the idles; a clip is a GLSL bod
 | `deal-hang.js`, `talk-patrol.js`, `work.js` | activities | deals, `brush_pass`, leaning, sitting, talking, patrol, digging, carrying, sweeping |
 | `high.js` | moods | `wired_walk`, `spaced_walk`, `guarded_walk` (walking overlays), `wired_bounce`, `spaced_drift`, `guarded_stance` |
 | `react.js` | react | `film_phone` (+ `phone-prop.js`), `rubberneck_walk` (a walking overlay) |
+| `acts.js` | activities | the day's errand acts (acts.md): `phone_up` → `phone_call` → `phone_down`, `phone_type`, `earpiece_listen`, `parcel_tuck`, `haggle_counter`, `change_clothes`, `floorboard_lift` → `floorboard_rummage` → `floorboard_close`, `sleep`, `shove_walk` (a walking overlay) (+ `acts-props.js`) |
 
 - **Your group file is the only file you edit.** `index.js` imports every group file statically, so a new clip never touches it.
 - A new group means one import line and one `GROUPS` entry in `index.js`. Only the registry owner adds those.

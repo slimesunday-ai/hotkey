@@ -2,7 +2,7 @@
 //   pins     a marker over each drawn sim agent's head + a ground ring at its feet; crowds whose markers overlap become one marker
 //            with a count; the label shows on hover and on the one followed; P toggles them (kept in this browser)
 //   rings    one InstancedMesh (a single draw call, depth-tested so walls hide them, no shadows, no fog): every pinned agent's ring,
-//            and with pins off only the hovered and the selected one
+//            and with pins off only the hovered and the selected body (the record's by-name cards select no body)
 //   picking  screen space, never a raycast against the batched walkers: each drawn agent is a capsule from its feet to its head
 //            projected to the screen (at least 18 px round), the nearest within reach wins; plain walkers aren't pickable
 // Positions come from the store only (sim.where), once per frame for the agents that are drawn; DOM is moved with transforms, and
@@ -70,7 +70,8 @@ export function createCityLayer({ api, sim, root, onPick, onMiss = () => {}, onH
       if (head.x < -40 || head.x > W() + 40 || foot.y < -40 || head.y > Hh() + 40) continue;
       const d = Math.hypot(w.x - camera.position.x, w.y - camera.position.y, w.z - camera.position.z); if (d > 520) continue;
       const cc = tape.active ? (tape.agent(c.handle)?.live || c) : c;
-      pts.push({ h: c.handle, card: cc, x: head.x, y: head.y, fx: foot.x, fy: foot.y, d, wx: w.x, wy: w.y, wz: w.z, mine: c.handle === sim.me, wanted: !!cc.wanted, local: !!c.npc });
+      const words = sim.label?.(cc) ?? { name: '@' + c.handle, sub: subOf(cc), wanted: !!cc.wanted };
+      pts.push({ h: c.handle, card: cc, words, locatable: sim.locatable?.(c.handle) !== false, x: head.x, y: head.y, fx: foot.x, fy: foot.y, d, wx: w.x, wy: w.y, wz: w.z, mine: c.handle === sim.me, wanted: words.wanted, local: !!c.npc });
     }
     // hover (not while dragging; not under a panel: the DOM has the pointer there)
     let h1 = null; if (mouse && !dragging) { const t1 = pickAt(mouse.x, mouse.y); h1 = t1?.h || null; hotCluster = t1?.cluster || null; } else hotCluster = null;
@@ -78,10 +79,12 @@ export function createCityLayer({ api, sim, root, onPick, onMiss = () => {}, onH
     else if (!hot && hotCluster && el.style.cursor !== 'pointer') el.style.cursor = 'pointer'; else if (!hot && !hotCluster && el.style.cursor === 'pointer') el.style.cursor = '';
     // clusters (pins on): near first, a marker joins the first cluster within CLUSTER px
     clusters = [];
-    if (pinsOn) { pts.sort((a, b) => a.d - b.d); for (const p of pts) { let c = null; for (const q of clusters) if (Math.abs(q.x - p.x) < CLUSTER && Math.abs(q.y - p.y) < CLUSTER) { c = q; break; }
+    // Anonymous bodies remain pickable. Only locatable bodies enter markers,
+    // including cluster counts; read the selector again on every frame.
+    if (pinsOn) { pts.sort((a, b) => a.d - b.d); for (const p of pts) { if (!p.locatable) continue; let c = null; for (const q of clusters) if (Math.abs(q.x - p.x) < CLUSTER && Math.abs(q.y - p.y) < CLUSTER) { c = q; break; }
       if (c) c.members.push(p); else clusters.push({ x: p.x, y: p.y, members: [p] }); } }
-    // rings: pins on → all; off → the hovered and the selected
-    const ringFor = p => pinsOn || p.h === hot || p.h === selected || (hotCluster && hotCluster.includes(p.h));
+    // rings: pins on → all; off → the hovered and the body selected by input
+    const ringFor = p => p.locatable && (pinsOn || p.h === hot || p.h === selected || (hotCluster && hotCluster.includes(p.h)));
     for (const p of pts) { if (!ringFor(p)) continue; if (ni >= cap) makeRings(cap * 2);
       const isHot = p.h === hot || p.h === selected || (hotCluster && hotCluster.includes(p.h)), pulse = isHot ? 1.3 + Math.sin(t * 5) * .06 : p.local ? .78 : 1;
       M.compose(V.set(p.wx, p.wy + .045, p.wz), Qt.identity(), S.setScalar(pulse)); rings.setMatrixAt(ni, M);
@@ -98,9 +101,9 @@ export function createCityLayer({ api, sim, root, onPick, onMiss = () => {}, onH
     for (; k < pool.length; k++) { const el2 = pool[k]; if (!el2._cls.includes('is-off')) { el2.className = 'k-pin is-off'; el2._cls = 'k-pin is-off'; } }
     // the label: the hovered agent, else the hovered crowd, else the one followed
     const lab = hot ? pts.find(p => p.h === hot) : null;
-    if (lab) { label.move(lab.x, lab.y - (pinsOn ? 18 : 6)); if (batch || !label.on || label._h !== lab.h) { label._h = lab.h; label.show(lab.x, lab.y - (pinsOn ? 18 : 6), { name: '@' + lab.h, sub: subOf(lab.card), wanted: lab.wanted }); } }
-    else if (hotCluster && pinsOn) { const c = clusters.find(q => q.members.length > 1 && q.members.some(m => hotCluster.includes(m.h))); if (c) { label._h = null; label.names(c.x, c.y - 22, c.members.map(m => '@' + m.h)); } else label.hide(); }
-    else { const f = followed && pts.find(p => p.h === followed); if (f) { label.move(f.x, f.y - (pinsOn ? 18 : 6)); if (batch || label._h !== f.h) { label._h = f.h; label.show(f.x, f.y - (pinsOn ? 18 : 6), { name: '@' + f.h, sub: subOf(f.card), wanted: f.wanted }); } } else { label._h = null; label.hide(); } }
+    if (lab) { label.move(lab.x, lab.y - (pinsOn ? 18 : 6)); const key = JSON.stringify([lab.h, lab.words]); if (batch || !label.on || label._h !== key) { label._h = key; label.show(lab.x, lab.y - (pinsOn ? 18 : 6), lab.words); } }
+    else if (hotCluster && pinsOn) { const c = clusters.find(q => q.members.length > 1 && q.members.some(m => hotCluster.includes(m.h))); if (c) { label._h = null; label.names(c.x, c.y - 22, c.members.map(m => m.words.name)); } else label.hide(); }
+    else { const f = followed && pts.find(p => p.h === followed); if (f) { label.move(f.x, f.y - (pinsOn ? 18 : 6)); const key = JSON.stringify([f.h, f.words]); if (batch || label._h !== key) { label._h = key; label.show(f.x, f.y - (pinsOn ? 18 : 6), f.words); } } else { label._h = null; label.hide(); } }
     const ms = performance.now() - t0; n++; frameMs += (ms - frameMs) * .05; frameMax = Math.max(frameMax * .995, ms);
   }
   const subOf = c => [c.cls, c.crew && !c.npc ? c.crew : null, c.now].filter(Boolean).join(' · ');
@@ -109,7 +112,8 @@ export function createCityLayer({ api, sim, root, onPick, onMiss = () => {}, onH
     get claimed() { return claimed; },
     get pins() { return pinsOn; },
     setPins(on) { pinsOn = !!on; prefs.set(PINS_KEY, pinsOn ? '1' : '0'); return pinsOn; },
-    select(h) { selected = h; }, follow(h) { followed = h; },
+    // Record cards pass their input origin. The live page keeps its existing selection.
+    select(h, { from = 'body' } = {}) { selected = from === 'body' ? h : null; }, follow(h) { followed = h; },
     get hot() { return hot; },
     screenOf(hh) { const p = pts.find(q => q.h === hh); return p ? { x: p.x, y: p.y, fx: p.fx, fy: p.fy } : null; },
     visible: () => pts.map(p => p.h),

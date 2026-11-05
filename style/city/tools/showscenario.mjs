@@ -4,11 +4,14 @@
 // Steps, in order; the first that fails stops the run (no shots of a broken state):
 //   1 shows     every night of every seed: "Go to show", played at --speed to the show's close. Logged: every scene the page staged
 //               (stage/record.js log(): kind, variant, actors, stand-ins and their looks, clips, the minutes it was seen, where). Checked
-//               against show-plan.js's list, computed here in node from the same feed: every scene staged, by its kind (its kind and
+//               against show-plan.js's list, computed here in node from the same feed: every performance staged, by its kind (its kind and
 //               variant, a clip of its kind; the named agent itself for a named play), at its place, inside its window (a fight, an
 //               arrest and lay low stay on until the close); no hooded name: a stand-in is keyed by no agent id, wears no hooded
-//               agent's own look, every actor is in show.seen; per frame, no hooded agent drawn during the show. The reveal (D4 (c)):
-//               per frame, the store holds a night's result exactly from its scene's end, and the board is held until the close
+//               agent's own look, every actor is in show.seen or is a masked agent playing its own hooded scene unnamed (slime, 10-30,
+//               GAME.md §41: "Let it show: you watch X mask up and do it, and the hood only fools people who aren't watching X");
+//               per frame, no hooded agent drawn during the show while its row is hidden. The reveal (D4 (c)):
+//               per frame, the store holds a night's result exactly from its scene's end, and the board is held until the close.
+//               Arrival markers: at start and midpoint, their plan's travellers are drawn, off-trip and near their own destinations
 //   2 replay    one night again from its frame ("Go to show" once more): the same scenes, kinds, actors and stand-in counts
 //   3 probe     stage/recordprobe.mjs on the record: the stage's gate on every night of the first seed with a fight or an arrest
 //   4 recheck   C1-3's and C1-4's scenarios (recordscenario, routinescenario), run as they are, their shots to --out
@@ -66,6 +69,24 @@ function judge(plan, show, P, seed) {
   const stays = sc => sc.beat === 'fight' || sc.beat === 'arrest' || sc.kind === 'laylow';
   for (const sc of plan.scenes) {
     const L = byId.get(sc.id), label = `${seed}/n${plan.night} ${sc.id.split(':').slice(1).join(':')} (${sc.kind}${sc.variant ? ':' + sc.variant : ''})`;
+    // slime, 11-03: "Do it. I want the best choice not the worst choice".
+    // Arrival markers wait for movements, not staged performances (§41, 10-30).
+    if (sc.kind === 'arrival') {
+      const id = sc.id.slice(`${plan.eventId}:arrival:`.length), movements = sc.id === `${plan.eventId}:arrivals`
+        ? plan.movements.filter(mv => mv.minute === plan.start)
+        : plan.movements.filter(mv => mv.agent === id && mv.minute <= sc.start).slice(-1);
+      if (!movements.length) errors.push(`${label}: no matching movement in the plan`);
+      for (const minute of [sc.start, (sc.start + sc.end) / 2]) {
+        const sample = P.arrivals.find(s => s.minute === minute), agents = new Map((sample?.agents ?? []).map(a => [a.id, a]));
+        for (const mv of movements) {
+          const a = agents.get(mv.agent), at = `${a?.x ?? null},${a?.z ?? null}`, who = `${label} minute ${minute} ${mv.agent}`;
+          if (!a?.drawn) errors.push(`${who}: not drawn (at ${at})`);
+          if (a?.trip || mv.arrival > minute) errors.push(`${who}: mid-trip (at ${at})`);
+          if (a?.drawn && !near(mv, a)) errors.push(`${who}: at ${at}, not at ${mv.place.standPlace ?? mv.place.cityPlace}`);
+        }
+      }
+      continue;
+    }
     if (!L) { errors.push(`${label}: not staged`); continue; }
     if (L.kind !== sc.kind || (L.variant ?? null) !== (sc.variant ?? null)) errors.push(`${label}: staged as ${L.kind}:${L.variant}`);
     if (L.first < sc.start - .02 || L.first >= sc.end) errors.push(`${label}: first seen ${L.first.toFixed(2)} outside ${sc.start.toFixed(2)}–${sc.end.toFixed(2)}`);
@@ -74,8 +95,15 @@ function judge(plan, show, P, seed) {
     const kinds = clipsFor(sc);
     if (sc.kind !== 'results' && !(sc.kind === 'laylow' && L.props) && !L.clips.some(c => kinds.includes(c))) errors.push(`${label}: no clip of its kind (${L.clips.join('/') || 'none'})`);
     if (sc.beat === 'ambient' && sc.kind !== 'hooded' && !L.actors.includes(sc.publicActors[0])) errors.push(`${label}: its agent not staged in it`);
-    if ((sc.kind === 'hooded' || sc.hoodedCount) && !L.standIns.length) errors.push(`${label}: no anonymous stand-in for ${sc.hoodedCount} hooded`);
-    for (const a of L.actors) if (!Object.hasOwn(show.seen, a)) errors.push(`${label}: hooded agent ${a} drawn as itself`);
+    // Re-pinned for slime's 10-30 call (GAME.md §41): "Let it show: you watch X mask up and do it, and the hood only fools people who
+    // aren't watching X". A hooded scene's hooded figures are anonymous stand-ins or the masked agents themselves (show.masked); one of
+    // the two must be there. (Was: an anonymous stand-in, always.)
+    const maskedIn = L.actors.filter(a => Object.hasOwn(show.masked ?? {}, a));
+    if ((sc.kind === 'hooded' || sc.hoodedCount) && !L.standIns.length && !maskedIn.length) errors.push(`${label}: no hooded figure (stand-in or masked agent) for ${sc.hoodedCount} hooded`);
+    // Re-pinned for slime's 10-30 call (GAME.md §41): "Let it show: you watch X mask up and do it, and the hood only fools people who
+    // aren't watching X". An actor outside show.seen may be drawn as itself only when it is a masked agent in its play, and the scene
+    // never names it (publicActors, what captions read). (Was: every actor in show.seen.)
+    for (const a of L.actors) if (!Object.hasOwn(show.seen, a) && (!Object.hasOwn(show.masked ?? {}, a) || sc.publicActors.includes(a))) errors.push(`${label}: hooded agent ${a} drawn as itself`);
     for (const h of L.standIns) if (roster.some(id => new RegExp(`(^|[^a-z0-9])${id}([^0-9]|$)`).test(h))) errors.push(`${label}: stand-in ${h} carries an agent id`);
     for (const k of L.looks) if (hoodedLooks.has(k)) errors.push(`${label}: stand-in wears a hooded agent's own look (${k})`);
   }
@@ -111,6 +139,23 @@ async function playShow(B, n, seen, speed) {
   await playTo(B, end + .1, speed);
   return B.ev(READ);
 }
+// Read exact marker minutes after saving the seed's complete playback log and per-frame checks.
+// Keep these seeks out of every later show's playback history.
+async function readArrivals(B, plan) {
+  const minutes = [...new Set(plan.scenes.filter(sc => sc.kind === 'arrival').flatMap(sc => [sc.start, (sc.start + sc.end) / 2]))].sort((a, b) => a - b),
+    ids = [...new Set(plan.movements.map(mv => mv.agent))], samples = [];
+  for (const minute of minutes) {
+    await typeMinute(B, minute);
+    await B.ev('new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))');
+    const sample = await B.ev(`(() => { const R = window.__record; return { minute: R.player.minute,
+      agents: ${JSON.stringify(ids)}.map(id => { const a = R.draw.agents.map.get(id), w = a?.w, s = R.draw.stateAt(id, R.player.minute);
+        return { id, drawn: !!w && !w.hidden && !w.gone && !s.hidden, trip: !!(s.trip || a?.rec?.trip || a?.run),
+          x: w?.p[0] ?? null, z: w?.p[2] ?? null }; }) }; })()`);
+    if (sample.minute !== minute) throw new Error(`arrival sample sought ${minute}, read ${sample.minute}`);
+    samples.push(sample);
+  }
+  return samples;
+}
 
 async function main() {
   if (!PORT) { console.error('usage: node style/city/tools/showscenario.mjs --port <port>'); process.exit(2); }
@@ -122,16 +167,22 @@ async function main() {
     B = await chrome();
     // 1 · every night, every seed
     for (const seed of SEEDS) {
-      const frames = framesOf(seed), planner = createShowPlanner(frames), nights = frames.filter(f => f.step.kind === 'night').map(f => f.day);
+      const frames = framesOf(seed), planner = createShowPlanner(frames), nights = frames.filter(f => f.step.kind === 'night').map(f => f.day), observed = [];
       await B.send('Page.navigate', { url: `${BASE}/style/city/index.html?sim=record&feed=${FEED(seed)}&recordPaused=1&tod=night&simtod=0` });
       await ready(B);
       for (const n of QUICK ? nights.slice(0, 2) : nights) {
         const plan = planner.night(n), show = frames.find(f => f.step.kind === 'night' && f.day === n).events.find(e => e.type === 'show');
-        const t0 = Date.now(), P = await playShow(B, n, Object.keys(show.seen), SPEED), errs = judge(plan, show, P, seed);
+        const t0 = Date.now(), P = await playShow(B, n, Object.keys(show.seen), SPEED), secs = +((Date.now() - t0) / 1000).toFixed(1);
+        observed.push({ plan, show, P, secs });
+        console.log(`  ${seed} night ${n} playback: ${P.log.length}/${plan.scenes.length} scenes staged · ${P.frames} frames · ${secs} s`);
+      }
+      for (const { plan, show, P, secs } of observed) {
+        const t0 = Date.now(); P.arrivals = await readArrivals(B, plan);
+        const errs = judge(plan, show, P, seed);
         errors.push(...errs);
         for (const L of P.log) { for (const c of L.clips) clips.set(c, (clips.get(c) || 0) + 1); const k = L.kind + (L.variant ? ':' + L.variant : ''); counts[k] = (counts[k] || 0) + 1; }
-        result.nights.push({ seed, night: n, scenes: plan.scenes.length, staged: P.log.length, frames: P.frames, errors: errs.length, secs: +((Date.now() - t0) / 1000).toFixed(1) });
-        console.log(`  ${seed} night ${n}: ${P.log.length}/${plan.scenes.length} scenes staged · ${P.frames} frames · ${errs.length ? 'FAIL ' + errs.slice(0, 3).join(' | ') : 'ok'} · ${((Date.now() - t0) / 1000).toFixed(0)} s`);
+        result.nights.push({ seed, night: plan.night, scenes: plan.scenes.length, staged: P.log.length, frames: P.frames, errors: errs.length, arrivals: P.arrivals, secs, arrivalSecs: +((Date.now() - t0) / 1000).toFixed(1) });
+        console.log(`  ${seed} night ${plan.night}: ${P.log.length}/${plan.scenes.length} scenes staged · ${P.frames} frames · ${errs.length ? 'FAIL ' + errs.slice(0, 3).join(' | ') : 'ok'} · ${secs} s playback`);
       }
     }
     result.kinds = counts; result.clips = Object.fromEntries([...clips].sort());

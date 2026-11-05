@@ -74,11 +74,35 @@ import { createSetFx, hash, hashOf } from './setfx.js';
 import { viseGeometry, lampGeometry, vaultGeometry, vaultDoorGeometry, containerGeometry, moundGeometry, packageGeometry, pileGeometry, boothGeometry, carGeometry, VAULT, BOOTH, CAR } from './setprops.js';
 import { GAME_MIN } from '../simstate/simclock.js';
 import { GANGWAY, QUAY, below, poseAt } from '../second-chance.js';
+import { CRUISER } from './props.js';
+import { travelId } from '../simstate/record/continuity.js';
+import { createCastPlan, createStandInputs } from '../simstate/record/cast-plan.js';
+import { createBackPlan, backAt, TARGET_GO, SET_GO } from '../simstate/record/back-plan.js';
+import { createTrips } from '../simstate/record/trips.js';
+import { addressesFor } from '../simstate/record/addresses.js';
+import { actsFor, setOf, FENCE_BOOTH } from './acts.js';
+import { createActMarks } from './act-marks.js';
+import { remap } from '../../../world/city.js';
 
 export const SCENE_FROM = 0;
 const SIDE = .2;
-export function createScenes({ stage, scene, agents, layer, looks, player, planner, frames, wide, meetings = new Map(), night: NIGHT = true, log = () => {} }) {
+export function createScenes({ stage, scene, agents, layer, looks, player, planner, frames, wide, book = null, meetings = new Map(), night: NIGHT = true, log = () => {}, continuity = null }) {
   const C = stage.ctx, live = new Map(), taken = new Set(), staged = new Map(), queued = new Map();
+  // C2-cast · THE CAST PLAN (simstate/record/cast-plan.js, docs/redesign/stage-20261031.md design A): who stands in a fight or a prowl,
+  // and on which mark, from the record and the ground alone. The stage only animates the figures toward their planned marks; an agent
+  // drawn as itself is taken when its walker is drawn and free, and walks to its mark (on a seek its stand spot is that mark already,
+  // agents.js planSpot). Ground: the stage's height map with the scenes' own props out of it (rendered alike however the page got here)
+  const ownMeshes = () => [...pool.values()].flat();
+  const occBare = (x, z, h) => { const shown = []; for (const m of ownMeshes()) if (m?.visible) { m.visible = false; shown.push(m); } try { return C.occ(x, z, h); } finally { for (const m of shown) m.visible = true; } };
+  const cplan = createCastPlan({ frames, planner, book: book ?? addressesFor((frames[0]?.board?.agents ?? []).map(a => a.id)), stands: wide,
+    ground: { occ: occBare, laneNear: (x, z, r) => C.psim?.laneNear?.(x, z, r) ?? null, door: lot => layer.homeAt(lot) } });
+  const backTrips = createTrips(), backPlan = createBackPlan({ cplan, walkPath: backTrips.walkPath,
+    spotAt: (id, place, minute) => agents.returnSpot?.(id, place, minute) ?? planSpotAt(id, place, minute), homeOf: (id, minute, P) => { const sp = agents.returnSpot?.(id, P.key, P.start - 1e-6); return sp && !sp.plan ? sp : null; } });
+  agents.returnTrip = (id, dep, minute) => backPlan.forTrip(id, dep, minute);
+  const planOf = sc => { try { return cplan.scene(sc); } catch (e) { log('record cast plan ' + sc.id + ': ' + (e && e.stack || e)); return null; } };
+  // C2 · the day's errands (stage/acts.js, the walkers' own clips by the loops' plan): the tags and the stash's parcel round them
+  const actsOf = actsFor(agents.map), names = new Map((frames[0]?.board?.agents ?? []).map(a => [a.id, a.name ?? a.id]));
+  const actMarks = actsOf ? createActMarks({ acts: actsOf, agents, scene, player, nameOf: id => names.get(id) ?? id }) : null;
   const lookOf = kind => looks ? looks.of({ id: 'standin:' + kind, outfit: kind === 'civ' ? undefined : kind }) : 0;
   const frameOf = n => frames.find(f => f.step.kind === 'night' && f.day === n);
   // a night's fights, for the payoff (SHOW.md: the stager keeps the typed public event by id): the planner's own inputs
@@ -139,8 +163,16 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
   // (a spot's walks: the step from its lane, a cop's or a worker's beat, a dealer's pace strip — stands.js)
   const walksOf = sp => [...(sp.entry ? [sp.entry] : []), ...(sp.beat || []).map(([x, z]) => ({ x, z })), ...(sp.pace ? [{ x: sp.pace[0], z: sp.pace[1] }] : [])];
   const pathD = (x, z, sp) => { let d = Math.hypot(sp.x - x, sp.z - z) + ROOM - STEP_W; for (const q of walksOf(sp)) d = Math.min(d, segD(x, z, q, sp)); return d; };
-  agents.keepOff = sp => { if (!marks.size) return false; if (markedNear(sp.x, sp.z, ROOM)) return true;
-    for (const L of marks.values()) for (const m of L) if (pathD(m.x, m.z, sp) < STEP_W) return true; return false; };
+  // (C2-cast: the marks kept off are the plan's on at the minute — the same however the page got there — and those of the scenes the
+  // plan doesn't cast yet, as they were staged)
+  // (C2-seek: each part that is a function of the minute takes it, so the stand plan, simstate/record/stand-plan.js, asks it for any
+  // minute and gets the answer playing there gets: the plan's marks, the reservations, the planned figure spots. Only the marks of the
+  // scenes the plan doesn't cast are the stage's own, as they were staged: liveKept)
+  const SI = createStandInputs({ cplan, spotsOf: place => agents.spots.get(place), side: SIDE, targetGo: () => TARGET_GO, setGo: () => SET_GO, room: ROOM, stepW: STEP_W, minute: () => player.minute }), { keptAt, planSpotAt, planBounds, planMarks, nearMark } = SI;
+  const liveKept = sp => { const L = []; for (const [id, M] of marks) if (!live.get(id)?.plan) L.push(...M); return L.length ? nearMark(L, sp) : false; };
+  agents.keepOff = (sp, a = null) => keptAt(sp, a?.id ?? null, player.minute) || liveKept(sp);
+  agents.liveKept = liveKept;
+  agents.planSpot = (a, place) => planSpotAt(a.id, place, player.minute);
   // n marks for scene sc round a = {x, z, ry}: rings from `near` to `far` m (`rings`: these radii only, a partner at its distance), the
   // nearest the anchor's facing first; skip: actors whose own walkers don't count (the borrowed target the marks stand round)
   // from: a walker that walks to the mark: the straight way there passes nobody (it would stall in them, stage steer)
@@ -239,17 +271,25 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
   function step(S, t, dt) {
     if (!S.alive) return false;
     const m = player.minute, sc = S.sc, p = (m - sc.start) / Math.max(1e-6, sc.end - sc.start);
+    // The bodies keep walking after a scene closes; its performance and props keep their original window.
+    if (!S.keep && m >= sc.end) { syncDepartures(S, m); for (const mesh of S.meshes) release(mesh); S.meshes.length = 0; return true; }
     // (an agent this scene borrowed whose own play's window opens: handed back to play it; a fight or an arrest takes it again after)
-    for (const A of [...S.actors]) if (A.kind === 'held' && !A.freed && sc.beat !== 'ambient' && agents.map.get(A.h)?.rec?.show) {
+    for (const A of [...S.actors]) if (A.kind === 'held' && !A.freed && !A.departure && sc.beat !== 'ambient' && agents.map.get(A.h)?.rec?.show) {
       C.free(A); S.actors.splice(S.actors.indexOf(A), 1); if (S.V === A) { S.V = null; S.want = A.h; } }
-    try { S.tick?.(m, p, t, dt); } catch (e) { log('record scene ' + sc.id + ': ' + (e && e.stack || e)); }
+    try { syncDepartures(S, m); S.tick?.(m, p, t, dt); syncDepartures(S, m); } catch (e) { log('record scene ' + sc.id + ': ' + (e && e.stack || e)); }
     const at = !S.noteAt || S.noteAt();
     for (const A of S.actors) if (!A.freed && A.w) note(sc, m, { standIn: A.kind === 'standin' ? A : null, actor: A.kind === 'held' ? A.h : null, clip: A.now ?? A.clip ?? null, x: at ? A.x : null, z: at ? A.z : null });
     const L = staged.get(sc.id) ?? (note(sc, m, {}), staged.get(sc.id)); L.props = Math.max(L.props ?? 0, S.meshes.filter(x => x.visible).length);
     return true;
   }
   function end(S, abort) {
-    for (const A of S.actors) { if (A.freed) continue; if (A.kind === 'standin') { if (S.byCar) A.inCar = true; else if (!abort) leave(A, { v: 1.6, clip: S.flee ?? null }); C.free(A, { remove: true, now: abort }); } else C.free(A, { now: abort }); }
+    // (C2: an arrest whose arrested rides to Iron Island now hands it on, cuffed, with its cruiser and its officers, to the ride: none is
+    // put back on its spot or taken out of view first)
+    if (!abort && S.sc.beat === 'arrest' && continuity?.rides) { const due = continuity.rides(player.minute);
+      const A = S.actors.find(B => B.kind === 'held' && !B.freed && due.some(r => r.id === B.h));
+      if (A) { const crew = S.actors.filter(B => B !== A && B.kind === 'standin' && !B.freed); handoff.set(A.h, { A, car: S.car ?? null, crew });
+        for (const B of [A, ...crew]) B.ride = true; if (S.car) S.meshes.splice(S.meshes.indexOf(S.car), 1); } }
+    for (const A of S.actors) { if (A.freed || A.ride || A.departure) continue; if (A.kind === 'standin') { if (S.byCar) A.inCar = true; else if (!abort) leave(A, { v: 1.6, clip: S.flee ?? null }); C.free(A, { remove: true, now: abort }); } else C.free(A, { now: abort }); }
     for (const m of S.meshes) release(m); S.meshes.length = 0;
     for (const v of S.subs || []) stage.stop(v);
     live.delete(S.sc.id); marks.delete(S.sc.id); faces.delete(S.sc.id);
@@ -260,24 +300,85 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
   // (a set's beats due at minute m, in order, with their starts: [name, start minute]; 'end' once it has paid off)
   const dueBeats = (sc, m, p) => [...(sc.beats || []).filter(x => x.start <= m && x.start < sc.end).map(x => [x.name, x.start]), ...(p >= 1 ? [['end', sc.end]] : [])];
   const LATE = 1, paid0 = (sc, m, t) => t - Math.max(0, (m - sc.end) * GAME_MIN);
+  // Departures use island minutes throughout; frame time and playback speed never enter their positions.
+  const sinceEnd = (sc, m) => Math.max(0, (m - sc.end) * 60), SET_UP = 1.5;
+  function poseBack(A, row, m) {
+    const p = backAt(row, m); A.path = []; A.tx = null; A.tz = null; A.x = p.x; A.z = p.z; A.ry = p.ry; A.faceTo = null;
+    A.clip = row.clip; A.pose = { w: p.arrived ? 0 : 1 }; A.snap = true;
+    if (A.w) A.w.ph = p.distance * 3.1;
+    return p;
+  }
+  function finishBack(A, row) {
+    if (row.id) { A.home = [row.to.x, A.y, row.to.z, row.to.ry ?? A.ry]; agents.finishReturn?.(row.id, row.start, row.to); }
+    C.free(A, { remove: !row.id, now: true });
+  }
+  // Every planned figure leaves by the same row, including every side of a fight. The extra run keeps drawing a walk after its
+  // scene closes. It never hands a target to stepActor: that step only commits this minute's evaluated position to the walker.
+  function syncDepartures(S, m) {
+    if (!S.plan) return;
+    for (const row of backPlan.scene(S.sc, m)) {
+      if (m < row.start || S.departed?.has(row.key)) continue;
+      let A = S.actors.find(A => !A.freed && (row.id ? A.h === row.id : A.h === keyOf(S.sc, row.key)));
+      if (!A && row.id && m < row.end) { A = borrow(row.id); if (A) S.actors.push(A); }
+      if (!A) continue;
+      (S.departed ??= new Set()).add(row.key); A.departure = row; A.handing = true; A.leaving = true;
+      if (S.V === A) { S.V = null; S.Vgone = true; }
+      (S.backed ??= new Set()).add(row.id);
+      if (poseBack(A, row, m).arrived) { finishBack(A, row); continue; }
+      stage.run({ actors: [A], ev: { who: null }, step: () => {
+        if (A.freed) return false; if (poseBack(A, row, player.minute).arrived) { finishBack(A, row); return false; } return true;
+      }, end: abort => { if (!A.freed && abort) C.free(A, { remove: A.kind === 'standin', now: true }); } }, 'record:return');
+    }
+  }
+  const freeExit = A => { if (!A?.departure) C.free(A, { remove: true }); };
+
   // clip by elapsed seconds: [[clip, secs], …] (the last holds)
   const seqAt = (seq, s) => { for (const [c, d] of seq) { if (s < d) return c; s -= d; } return seq.at(-1)[0]; };
   const lead = id => agents.map.get(id)?.w?.g?.clip?.name ?? null;
   // an agent's walker for a fight or an arrest, never while it plays its own play (its window: draw.js gives its row a show)
   const borrow = id => agents.map.get(id)?.rec?.show ? null : C.actor(id);
-
+  // (C2-cast: an agent of the plan's is taken once its walker stands at the scene's place, its row's; never off a trip on its way there)
+  // (or on the last stretch of its way there, walking the lanes to its spot within 40 m of the scene: taken there and walked to its mark,
+  // as a seek has it standing there; a late arrival at the Strip let a prowl's 60% pass with no figure, seed 404 nights 10, 11, 13)
+  // (one taken after its scene began walks to its mark at its pace in island time — the page's seconds scaled by the playback speed —
+  // as a late trip hurries: at 10x a walk on the page's seconds took ten times its island time, and the prowl's 60% passed first)
+  const pace = (v, sc) => player.minute > sc.start + .05 ? v * Math.max(1, player.speed) : v;
+  // (a scene's place is logged once its cast agents stand on their marks, as a walk's is: one taken on its way in is not logged there)
+  const onMarks = S => S.actors.every(A => A.freed || (!A.cast && A !== S.V) || (A.tx === null && !A.path?.length));
+  const here = (id, P) => { const a = agents.map.get(id); if (!a?.w || a.d?.place !== P.key) return false; if (a.mode === 'stand' && !a.step) return true;
+    return a.mode === 'walk' && a.goalFor === P.key && !!P.anchor && Math.hypot(a.w.p[0] - P.anchor.x, a.w.p[2] - P.anchor.z) < 40; };
+  // ── C2 · THE HOODED AS THEMSELVES (GAME.md §41, slime 10-30: "you watch X mask up and do it, and the hood only fools people who aren't
+  // watching X"). castOf(scene): the masked agents who play a hooded scene (draw.js, continuity.js maskedCast: typed facts only); its
+  // stand-ins drop by them, never both. Their walkers wear the hood (draw.js: the row's outfit) from their mask-up to out of the play
+  // (by the record, never by which walkers exist yet: on a seek's first frame none does, and a cast read then fell back to a stand-in)
+  const castOf = sc => continuity?.castOf?.(sc) ?? [];
   const MAKERS = {
     // a named play: the agent plays it (draw.js / loops.js); its partner and its props here
     ambient(S, minute) {
-      const sc = S.sc, id = sc.publicActors[0], sp = spotOf(id) ?? placeSpot(sc.place, sc.id), k = sc.variant ? `hustle:${sc.variant}` : sc.kind;
+      // (C2-cast: staged round the agent's own stand spot at the play's place once the drawing has given it one — on a seek at once, as
+      // it walks there on play: agents.js claims it as the trip starts — never round wherever it happens to stand on the frame the scene
+      // begins; a place with no stand spots (a home) round the place's own spot)
+      const sc = S.sc, id = sc.publicActors[0], key = sc.place.lot ? 'home:' + sc.place.cityPlace : sc.place.standPlace ?? sc.place.cityPlace;
+      const own = () => { const a = agents.map.get(id); return a?.spot?.place === key ? spotOf(id) : null; };
+      const sp0 = !sc.place.lot && agents.spots.get(key)?.length && id ? own() : placeSpot(sc.place, sc.id);
+      if (!sp0) { note(sc, minute, {}); S.tick = m => { const sp = own(); if (sp) { S.tick = null; setup(sp, m); } }; return; }
+      setup(sp0, minute);
+      function setup(sp, minute) {
+      const k = sc.variant ? `hustle:${sc.variant}` : sc.kind;
       S.where = sp;
       // (the partner at its distance from the agent, in front of it when that ground is free, else the nearest free way round)
       // (and the agent turns to it: the row's face, loops.js, so the pair stands face to face at its gap — off that line their heads meet.
       // side: a deal's buyer stands at the dealer's +x hand instead, out of its pace strip (deal_pace walks 1.15 m ahead), turned to it.
       // No free ground at the gap (the place can't hold the pair): no partner, rather than one drawn into somebody)
-      const partner = (d, kind, side = false) => { const was = shortBy.has(sc.id), [q] = freeGround(sc, side ? { ...sp, ry: sp.ry + Math.PI / 2 } : sp, 1, { rings: [d] });
+      // (C2-cast: its mark the cast plan's ring round the spot, cast-plan.js ringMark: off the place's other stand spots and the plan's marks,
+      // never round the crowd, which gives way to it)
+      // (a player on the spot the plan gave it: the plan's own partner, cast-plan.js; none there when the plan has none)
+      const P = planOf(sc), onPlan = !!P?.spot && Math.hypot(P.spot.x - sp.x, P.spot.z - sp.z) < .05, pf = onPlan ? P.figures.find(g => g.role === 'partner') : null;
+      if (onPlan) S.plan = P;
+      const partner = (d, kind, side = false) => { let q = null; if (onPlan) q = pf ? pf.mark : null; else try { q = cplan.ringMark(sc, side ? { ...sp, ry: sp.ry + Math.PI / 2 } : sp, d); } catch (e) { log('record cast plan ' + sc.id + ': ' + (e && e.message || e)); }
         const off = q && side && Math.abs(Math.cos(facing(sp, q) - sp.ry)) > .5;
-        if (!q || off || (!was && shortBy.has(sc.id))) { marks.get(sc.id)?.pop(); if (q) shortBy.set(sc.id, 1); return null; }
+        if (!q || off) { shortBy.set(sc.id, 1); return null; }
+        (marks.get(sc.id) || marks.set(sc.id, []).get(sc.id)).push(q);
         const A = standIn(sc, 'p', { ...q, ry: facing(q, sp) }, kind); if (A) { A.faceTo = [sp.x, sp.z]; S.actors.push(A); if (!side) faceTo(sc, id, q); } return A; };
       if (k === 'hustle:stickup') { const A = partner(2.2, 'civ'); S.tick = (m, p) => { if (A) A.clip = lead(id) === 'aim_hold' || lead(id) === 'aim_draw' ? (A.now === 'cower' ? 'cower' : 'hands_up_point') : A.now === 'hands_up_point' || A.now === 'cower' ? 'cower' : 'deal_lookout'; }; }
       else if (k === 'hustle:mugging' || k === 'hustle:campers') {
@@ -295,30 +396,44 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
       else if (k === 'run' && sc.beats?.length) runSet(S, sp, id);
       else if (k === 'laylow') {
         // in at the door: the walker steps inside and stays in; the curtains drawn, the lights out (the windows dark)
-        const goIn = () => { const A = C.actor(id); if (!A) return null; S.actors.push(A); const h = layer.homeAt(sc.place.cityPlace); if (h?.door) { A.tx = h.door[0] - h.face[0] * .6; A.tz = h.door[2] - h.face[1] * .6; A.v = 1.2; } return A; };
-        let A = goIn(); S.tick = () => { if (!A) A = goIn(); };
+        // (C2-cast: taken after its step in was due — a seek past the play's first island seconds — it is put in at the door, as playing
+        // there has it; one taken back by the drawing is taken again)
+        const goIn = () => { const A = C.actor(id); if (!A) return null; S.actors.push(A); const h = layer.homeAt(sc.place.cityPlace);
+          if (h?.door) { const x = h.door[0] - h.face[0] * .6, z = h.door[2] - h.face[1] * .6; if (player.minute > sc.start + .05) { A.x = x; A.z = z; A.tx = null; A.path = []; A.snap = true; } else { A.tx = x; A.tz = z; A.v = 1.2; } } return A; };
+        let A = goIn(); S.tick = () => { if (A?.freed) { const i = S.actors.indexOf(A); if (i >= 0) S.actors.splice(i, 1); A = null; } if (!A) A = goIn(); };
         S.meshes.push(...panes(sc.place.cityPlace, 0x07090f, .97));
         const h = windowsOf(sc.place.cityPlace), w = h?.windows[0]; if (w) { const c = mesh('curtain', paneM(0x8a2f3a)); if (c) { C.props.windowAt(c, w, h.rot); c.scale.x *= .5; c.position.y = w[1]; S.meshes.push(c); } }
         S.keep = true;
       }
       note(sc, minute, {});
+      }
     },
     hooded(S) {
-      // (every one of the district's count: a hooded count is public; each creeps between two marks of its own on free ground)
-      // (its second mark one it has a clear way to from the first: creeping across to any free mark it passed the agents standing
-      // between, seed 404 night 6)
-      const sc = S.sc, n = sc.hoodedCount, a = placeSpot(sc.place, sc.id), M = freeGround(sc, a, n, { near: 1.5, far: 6 }); S.where = a; S.flee = 'run_getaway';
-      for (let k = 0; k < n; k++) { const p = M[k] ?? a, A = standIn(sc, k, { ...p, ry: facing(p, a) }, 'hooded'); if (A) { A.marks = [p, freeGround(sc, p, 1, { near: 1.5, far: 4, skip: [A], from: p, stay: true })[0] ?? p]; A.at = 0; S.actors.push(A); } }
+      // (every one of the district's count: a hooded count is public; each creeps between its two planned marks, cast-plan.js)
+      // (C2-cast: the plan's figures: a masked agent's own walker in its slot, taken whenever it is drawn and free and walked up to its
+      // mark — on a seek it stands there already, agents.js planSpot — and a stand-in for every other slot. Never both, never a swap)
+      const sc = S.sc, P = planOf(sc); if (!P) return; const a = P.anchor; S.where = a; S.flee = 'run_getaway'; S.plan = P;
+      // (its place logged once its figures stand on their marks: a cast agent taken on its way in is logged where it prowls, as a walk's)
+      S.noteAt = () => onMarks(S); 
+      marks.set(sc.id, P.figures.flatMap(g => [g.mark, g.mark2]).filter(Boolean));
+      const prowl = (A, g) => { A.marks = [g.mark, g.mark2 ?? g.mark]; A.at = 0; A.fig = g; S.actors.push(A); };
+      const due = new Set();
+      P.figures.forEach((g, k) => { if (g.id) { due.add(g); return; } const A = standIn(sc, g.key ?? k, { ...g.mark, ry: facing(g.mark, a) }, 'hooded'); if (A) prowl(A, g); });
+      // (a cast walker taken back from the scene — placed anew by the drawing — is taken again where it is drawn now: its spot, the mark)
+      const take = p => { if (p >= .6) return; for (const A of [...S.actors]) if (A.cast && A.freed && !A.handing) { S.actors.splice(S.actors.indexOf(A), 1); due.add(A.fig); }
+        for (const g of [...due]) { const A = here(g.id, P) ? borrow(g.id) : null; if (!A) continue; due.delete(g); A.cast = true; prowl(A, g); A.tx = g.mark.x; A.tz = g.mark.z; A.v = 1.3 * Math.max(1, player.speed); } };
       // (they slip away on foot from 60% of the window, so none is still walking off in view when it ends: a next show's jump takes no one)
-      S.tick = (m, p, t) => p >= .6 ? S.actors.forEach(A => { if (A.freed || A.leaving) return; leave(A, { v: 1.8, clip: 'run_getaway' }); C.free(A, { remove: true }); }) : S.actors.forEach((A, k) => { const ph = (t + k * 1.7) % 9; if (ph < 4 && A.tx === null && !A.walked) { A.at = 1 - A.at; const q = A.marks[A.at]; A.tx = q.x; A.tz = q.z; A.v = .7; A.walked = true; }
-        A.clip = A.tx !== null ? 'creep_walk' : ph < 6 ? 'deal_lookout' : 'lookout_wave'; if (ph >= 6) A.walked = false; });
+      S.tick = (m, p, t) => { take(p);
+        if (p >= .6) return; S.actors.forEach((A, k) => { const ph = (t + k * 1.7) % 9; if (ph < 4 && A.tx === null && !A.walked) { A.at = 1 - A.at; const q = A.marks[A.at]; A.tx = q.x; A.tz = q.z; A.v = .7; A.walked = true; }
+        A.clip = A.tx !== null ? 'creep_walk' : ph < 6 ? 'deal_lookout' : 'lookout_wave'; if (ph >= 6) A.walked = false; }); };
+      take((player.minute - sc.start) / Math.max(1e-6, sc.end - sc.start));
     },
     // (C1-7: a corner fight, a dealer's corner taken by force: seed 406 night 13's; staged as a hit on the corner's holder, its unnamed
     // attackers unhooded stand-ins when their side is)
     hit(S) { fight(S); }, breakin(S) { fight(S); }, collar(S) { fight(S); }, corner(S) { fight(S); },
     grab(S) { if (S.sc.beats?.length) grabSet(S); else fight(S); }, vault(S) { if (S.sc.beats?.length) vaultSet(S); else fight(S); },
     arrest(S) {
-      const sc = S.sc, F = fightsOf(sc.night), e = F.arrests.get(sc.eventId), who = e && sc.publicActors.includes(e.agent) ? e.agent : null;
+      const sc = S.sc, F = fightsOf(sc.night), e = F.arrests.get(sc.eventId), who = e && (sc.publicActors.includes(e.agent) || castOf(sc).includes(e.agent)) ? e.agent : null;
       // (a collar's target, still held by its fight: handed over to the arrest)
       if (who && C.busy(who)) for (const T of live.values()) for (const B of T.actors) if (B.h === who && !B.freed) { C.free(B); T.actors.splice(T.actors.indexOf(B), 1); if (T.V === B) T.V = null; }
       // (the arrested one: its own walker once it is not playing its own play; until then the arrest waits)
@@ -330,7 +445,7 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
     results(S) { S.where = placeSpot(S.sc.place, S.sc.id); },
     // night 14's walk: a named walker is draw.js's (its show trip, then its arrival loops); an unnamed one a hooded stand-in walking in
     walk(S, minute) {
-      const sc = S.sc, a = placeSpot(sc.place, sc.id); S.where = a; S.keepTill = sc.end; if (sc.publicActors.length || !sc.hoodedCount) return;
+      const sc = S.sc, a = placeSpot(sc.place, sc.id); S.where = a; S.keepTill = sc.end; if (sc.publicActors.length || castOf(sc).length || !sc.hoodedCount) return;
       // (C1-7d: it walks in only the last few metres, from free ground with a clear way to its mark, just in time for the arrive beat:
       // walked in along the lanes from 15 m out it went through the crowd on them and stood in a named walker that had come to its spot
       // meanwhile, seed 406 night 14. Its mark is picked when it comes, round whoever stands there then)
@@ -364,7 +479,7 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
     // C1-7d · missed the boat (GAME.md §15): at the empty berth, the agent at the gangway's foot looking out after her; on Iron Island
     // (arrested at the dock) where it stands. Its own walker; afterwards placement sends it home (or keeps it in jail)
     missed(S) {
-      const sc = S.sc, id = sc.publicActors[0] ?? null, jail = sc.place.cityPlace === 'jail', berth = { x: GANGWAY.foot.x + QUAY.dx * 2.2, z: GANGWAY.foot.z, ry: Math.PI };
+      const sc = S.sc, id = sc.publicActors[0] ?? castOf(sc)[0] ?? null, jail = sc.place.cityPlace === 'jail', berth = { x: GANGWAY.foot.x + QUAY.dx * 2.2, z: GANGWAY.foot.z, ry: Math.PI };
       S.where = jail ? (spotOf(id) ?? placeSpot(sc.place, sc.id)) : berth; S.keepTill = sc.end;
       // (still cuffed by its dock arrest, which stays until the close: handed over, so the jail takes it and it is drawn there)
       let A = null; const take = () => { if (A || !id) return;
@@ -409,6 +524,31 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
     // (no ground yet, the stage's map not drawn: asked again on later updates, three times at most)
     if (!v && (tries.set(cue.eventId, (tries.get(cue.eventId) ?? 0) + 1).get(cue.eventId)) < 3) return null;
     venues.set(cue.eventId, v); if (!v) return null; agents.spots.set(v.key, v.spots); return v.key;
+  }
+  // C2 · AN ACT'S OWN MARKS (stage/acts.js), as a sit-down's venue: its own place key ('venue:act<event id>'), for the act row's length;
+  // draw.js asks (actSpot). Who and where stay the routine's (the place, its travel); only the spot within it is the stage's:
+  //   hand-over  give, pay: the pair face to face, two open marks the pass's gap apart (bribe_pass's pair, 1.02 m) either side of one
+  //              measured stand spot of the cue's place (by the event's hash), so the pair meets wherever their routine spots fell
+  //   fence      fence_*, bounty: at the shelf of the Heap's fence booth, facing its window (acts.js FENCE_BOOTH), by the act's slot
+  const actSpots = new Map();
+  function actSpot(t) {
+    const cue = t?.live; if (!cue) return null;
+    if (actSpots.has(cue.eventId)) return actSpots.get(cue.eventId);
+    const set = setOf(cue.kind), key = 'venue:act' + cue.eventId;
+    let spots = null;
+    if (set === 'handover' && cue.participants?.length > 1) {
+      const id = cue.place.standPlace ?? cue.place.cityPlace, list = (wide.places[id]?.spots || []).filter(s => !s.over);
+      if (list.length) {
+        const sp = list[idHash('act|' + cue.eventId) % list.length], ry = sp.ry ?? 0, lx = Math.cos(ry), lz = -Math.sin(ry);
+        const mark = (s, k) => { const face = Math.atan2(-lx * s, -lz * s); return { x: sp.x + lx * .51 * s, z: sp.z + lz * .51 * s, y: sp.y ?? SIDE, ry: face, st: face, k, place: key, taken: null, kind: 'open', ax: sp.x, az: sp.z }; };
+        spots = [mark(1, 0), mark(-1, 1)];
+      }
+    } else if (set === 'fence' && cue.place.corePlace === 'fence') {
+      const B = FENCE_BOOTH, [x, z] = remap(B.x + ((idHash('act|' + cue.eventId) % 3) - 1) * B.step, B.z);
+      spots = [{ x, z, y: SIDE, ry: B.ry, st: B.ry, k: 0, place: key, taken: null, kind: 'open' }];
+    }
+    if (!spots) { actSpots.set(cue.eventId, null); return null; }
+    agents.spots.set(key, spots); actSpots.set(cue.eventId, key); return key;
   }
   function makeVenue(cue) {
     const key = 'venue:' + cue.eventId, k = venueSlot(cue), same = [...venues.values()].filter(v => v && v.venue === cue.venue && v.day === Math.floor(cue.minute / 1440)).map(v => v.at);
@@ -515,11 +655,14 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
   const crewLook = (s, k) => s?.hooded ? 'hooded' : 'crew:' + (k % 4);
   // after a set's payoff (its result public): the downed get up (lie_hurt → get_up at its 2 s wrap, falls.js), then 5.5 s on every
   // stand-in still there goes on foot and the borrowed are handed back, so none is in view when the show closes and the next one jumps in
-  function clearOut(S, t0, t, { cuffed = [] } = {}) {
-    if (t - t0 > 1.5 && !S.up) { S.up = true; for (const A of S.actors) if (!A.freed && !A.leaving && /lie_hurt|shove_fall|guard_bowled|crate_rammed/.test(A.w?.g?.clip?.name ?? '')) { A.clip = 'get_up'; A.seam = { from: 'lie_hurt', P: 2 }; } }
-    if (t - t0 > 5.5 && !S.gone) { S.gone = true; for (const A of [...S.actors]) { if (A.freed || A.leaving) continue;
+  // (C2-cast: `since`, island seconds since the scene's end, sinceEnd; an agent with a planned mark (back(A) → mark) walks back to its own
+  // spot on game time from SET_GO, through the departure plan, instead of being let go where it stands)
+  function clearOut(S, since, { cuffed = [] } = {}) {
+    const t = since, t0 = 0;
+    if (t - t0 > SET_UP && !S.up) { S.up = true; for (const A of S.actors) if (!A.freed && !A.leaving && /lie_hurt|shove_fall|guard_bowled|crate_rammed/.test(A.w?.g?.clip?.name ?? '')) { A.clip = 'get_up'; A.seam = { from: 'lie_hurt', P: 2 }; } }
+    if (t - t0 > SET_GO && !S.gone) { S.gone = true; for (const A of [...S.actors]) { if (A.freed || A.leaving) continue;
         if (A.kind === 'held') { C.free(A); S.actors.splice(S.actors.indexOf(A), 1); continue; }
-        leave(A, { v: 1.6, clip: cuffed.includes(A) ? 'cuffed_walk' : null, late: t - t0 - 5.5 }); C.free(A, { remove: true }); } }
+        leave(A, { v: 1.6, clip: cuffed.includes(A) ? 'cuffed_walk' : null, late: t - t0 - SET_GO }); freeExit(A); } }
   }
   // ── LEAVING ON FOOT: vignettes.js leaveOnFoot (to the nearest lane, then along the lanes away from the camera), its first leg round
   // everyone: the shortest way on the ground (a 0.5 m grid, 14 m round it, on its floor) to a lane, ROOM clear of every walker there
@@ -528,6 +671,7 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
   // (C1-9b · o.late: island seconds since it should have gone, on a seek past that moment. Over LATE it went before the minute the
   // viewer landed on: not drawn, as playing there would have it gone from the scene; under it, it sets off now)
   function leave(A, o = {}) {
+    if (A.departure) return A.departure.path;
     if (o.late > LATE) { C.free(A, { remove: true, now: true }); return null; }
     const P = C.psim, R = 14, h = .5, N = Math.round(2 * R / h) + 1, x0 = A.x - R, z0 = A.z - R;
     const people = C.walkersNear(A.x, A.z, R + ROOM, [A]).map(([x, z]) => ({ x, z }));
@@ -625,7 +769,7 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
         // (C1-7d: the public jobbers are handed back at the payoff: on night 14 the jobber runs for the boat through Glasswall then, its walk)
         if (b === 'end') { S.paidAt = paid0(sc, m, t); if (!won) for (const A of crew) if (!A.freed) A.clip = 'cuffed_idle';
           if (sc.night === 14) for (const L of look) if (L.A && !L.A.freed) { C.free(L.A); S.actors.splice(S.actors.indexOf(L.A), 1); L.A = null; L.done = true; } } }
-      if (S.paidAt !== undefined) clearOut(S, S.paidAt, t, { cuffed: won ? [] : crew });
+      if (S.paidAt !== undefined) clearOut(S, sinceEnd(sc, m), { cuffed: won ? [] : crew });
       for (const [k, A] of crew.entries()) if (!A.freed && !A.leaving && A.tx === null && A.clip == null && b === 'shove' && k >= guards.length) A.clip = 'deal_lookout';
       // (C1-7d: the shover goes in to drill once its guard is down: on a short beat guard_bowled still stands when the drill begins, and
       // the shover walking past it to the drill came within 1.09 m, seed 406 night 14)
@@ -649,7 +793,7 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
         if (!A.inVault) { if (S.inMouth || (S.lastOut && !S.lastOut.freed && !S.lastOut.leaving)) return; A.inVault = true; S.inMouth = A; go(A, mouth); return; }
         // (out of the mouth straight away from the door, between the guards and the crew, then off along the lanes)
         if (A.tx === null && S.inMouth === A && !A.outward) { A.outward = true; A.tx = clear.x; A.tz = clear.z; A.v = CLIP.loot_carry.speed; A.clip = 'loot_carry'; A.faceTo = null; S.inMouth = null; S.lastOut = A; return; }
-        if (A.outward && A.tx === null) { leave(A, { clip: 'loot_carry', away: [V.x, V.z] }); C.free(A, { remove: true }); out++; } });
+        if (A.outward && A.tx === null) { leave(A, { clip: 'loot_carry', away: [V.x, V.z] }); freeExit(A); out++; } });
       dodge(S, crew.filter(A => !A.inVault && A !== driller && A !== heaver), t);
     };
   }
@@ -660,30 +804,33 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
     // middle), the loser 1.45 m on, facing him (grab.md "The docks")
     // (the line through it, the tug's two and the ram's fall beyond the loser, ROOM clear of everyone standing round: the first such turn of
     // the first such free spot; else the free spot as it is)
-    const M = freeGround(sc, { ...a, ry: a.ry ?? 0 }, 6, { near: 0, far: 7 }); marks.set(sc.id, []);
-    const lineAt = (q, ry) => { const dx = Math.sin(ry), dz = Math.cos(ry), W = { x: q.x - dx * .48, z: q.z - dz * .48, ry }, Lr = { x: W.x + dx * 1.45, z: W.z + dz * 1.45, ry: ry + Math.PI };
-      const ok = [W, Lr, { x: Lr.x + dx * 1.2, z: Lr.z + dz * 1.2 }].every(p => !C.walkersNear(p.x, p.z, ROOM, []).length); return ok ? { c0: { x: q.x, z: q.z, ry }, W, Lr } : null; };
-    let L0 = null; for (const q of M) { for (let k = 0; k < 4 && !L0; k++) L0 = lineAt(q, (a.ry ?? 0) + k * Math.PI / 2); if (L0) break; }
-    const q0 = M[0] ?? a, { c0, W, Lr } = L0 ?? (() => { const ry = a.ry ?? 0, dx = Math.sin(ry), dz = Math.cos(ry), W = { x: q0.x - dx * .48, z: q0.z - dz * .48, ry }; return { c0: { x: q0.x, z: q0.z, ry }, W, Lr: { x: W.x + dx * 1.45, z: W.z + dz * 1.45, ry: ry + Math.PI } }; })();
-    marks.get(sc.id).push({ x: c0.x, z: c0.z });
-    S.where = c0; marks.get(sc.id).push(W, Lr, { x: Lr.x + Math.sin(c0.ry) * 1.2, z: Lr.z + Math.cos(c0.ry) * 1.2 });
+    // (C2-cast: the set's marks and its figures are the cast plan's, cast-plan.js grabPlan: the crate, the lead's lift spot and the
+    // rival's, the crew and the officers round it, the public grabbers as themselves on marks of their own)
+    const P = planOf(sc); if (!P?.set) return; S.plan = P;
+    const { crate: c0, W, Lr } = P.set;
+    marks.set(sc.id, [{ x: c0.x, z: c0.z }, W, Lr, { x: Lr.x + Math.sin(c0.ry) * 1.2, z: Lr.z + Math.cos(c0.ry) * 1.2 }, ...P.figures.map(g => g.mark)]);
+    S.where = c0;
     const crate = mesh('crate', crateM); if (crate) { crate.matrixAutoUpdate = false; crateMatrix(THREE, groundPose(c0.x, c0.z, c0.ry), crate.matrix); crate.matrixWorldNeedsUpdate = true; S.meshes.push(crate); }
     S.sides = f.sides.map(s => ({ made: [], count: s.count, hooded: s.hooded, ids: s.ids, strength: s.strength }));
-    const named = sc.publicActors.filter(id => agents.map.has(id)), total = f.sides.reduce((n, s) => n + s.count, 0), nCrew = Math.max(won ? 2 : 1, total - named.length);
-    const nCops = won ? 0 : Math.max(1, f.cops || 0), others = freeGround(sc, c0, Math.max(0, nCrew - 2) + nCops + named.length, { near: 1.7, far: 6 });
-    const crew = []; for (let k = 0; k < nCrew; k++) { const side = S.sides[Math.min(S.sides.length - 1, k % Math.max(1, S.sides.length))], p = k === 0 ? W : k === 1 && won ? Lr : (o => ({ ...o, ry: facing(o, c0) }))(others.shift() ?? c0);
-      const A = standIn(sc, 'c' + k, p, crewLook(side, k)); if (A) { A.faceTo = k < 2 && won ? null : [c0.x, c0.z]; A.ry = p.ry; A.snap = true; crew.push(A); S.actors.push(A); side?.made.push(A); } }
-    const cops = []; for (let k = 0; k < nCops; k++) { const o = others.shift() ?? c0, A = standIn(sc, 'k' + k, { ...o, ry: facing(o, c0) }, 'officer'); if (A) { A.faceTo = [c0.x, c0.z]; cops.push(A); S.actors.push(A); } }
-    const pub = named.map(id => ({ id, p: others.shift() ?? null, A: null }));
-    // (a public grabber walks in once it is free: to a mark it has a clear way to from where it stands then, or it stays there. Sent
-    // to the mark picked at the start, its straight walk passed the lead with the crate at 1.1 m, seed 404 night 2)
-    const take = () => { for (const q of pub) if (!q.A && q.p) { q.A = borrow(q.id); if (q.A) { S.actors.push(q.A); const A = q.A;
-      const [m] = freeGround(sc, c0, 1, { near: 1.7, far: 6, skip: [A], from: { x: A.x, z: A.z }, agent: true }); if (m) { A.tx = m.x; A.tz = m.z; A.v = 1.3; } A.faceTo = [c0.x, c0.z]; } } };
-    take();
+    const crew = [], cops = [];
+    for (const g of P.figures) { if (g.id) continue; const p = g.mark;
+      const A = standIn(sc, g.key, p, g.look); if (!A) continue; A.ry = p.ry; A.snap = true; S.actors.push(A);
+      if (g.role === 'cop') { A.faceTo = [c0.x, c0.z]; cops.push(A); } else { A.faceTo = (g.role === 'lead' || g.role === 'rival') && won ? null : [c0.x, c0.z]; crew.push(A); S.sides[Math.min(S.sides.length - 1, g.side ?? 0)]?.made.push(A); } }
+    const pub = P.figures.filter(g => g.id).map(g => ({ id: g.id, p: g.mark, A: null }));
+    // (a public grabber is taken once it stands at the docks, out of its own play, and walks to its planned mark)
+    // (one taken back by the drawing — a seek places every walker anew — is taken again where it stands: its planned mark)
+    // (after the set's payoff, on game time: one is taken on a seek only while it stands there or walks back, put on its mark or on its way)
+    const take = () => { const m = player.minute, since = m >= sc.end ? sinceEnd(sc, m) : -1;
+      for (const q of pub) { if (q.A?.freed && !q.A.handing && !q.back) { const i = S.actors.indexOf(q.A); if (i >= 0) S.actors.splice(i, 1); q.A = null; }
+        if (q.A || q.back || !q.p || !here(q.id, P)) continue;
+        if (since >= SET_GO) { q.back = true; continue; }
+        const A = borrow(q.id); if (!A) continue;
+        q.A = A; S.actors.push(A); if (since >= 0) { A.x = q.p.x; A.z = q.p.z; A.tx = null; A.snap = true; } else { A.tx = q.p.x; A.tz = q.p.z; A.v = 1.3; } A.faceTo = [c0.x, c0.z]; } };
     const spotsAt = (wide.places[f.standPlace ?? f.cityPlace]?.spots || []).filter(s => !s.over);
     S.at = spotsAt.length ? spotsAt.reduce((b, s) => Math.hypot(s.x - c0.x, s.z - c0.z) < Math.hypot(b.x - c0.x, b.z - c0.z) ? s : b) : null;
     const lead = crew[0], rival = won ? crew[1] : null, rest = crew.slice(won ? 2 : 0), done = new Set();
     let punchAt = -1, ramFrom = null, carried = false, paidAt = null;
+    take();
     S.tick = (m, p, t) => {
       take(); const b = p >= 1 ? 'end' : beatIn(sc, m);
       // (the scramble's fists, every 3.2 s: punches and wound-up haymakers round the crate, each turned to it)
@@ -695,7 +842,7 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
       for (const [b, b0] of dueBeats(sc, m, p)) if (!done.has(b)) { done.add(b);
         if (b === 'tug' && lead && rival) { lead.faceTo = null; rival.faceTo = null; lead.ry = W.ry; rival.ry = Lr.ry; lead.snap = rival.snap = true; lead.clip = 'crate_tug'; rival.clip = 'crate_tug_lose'; }
         if (b === 'ram' && lead && rival) { const hx = lead.x + Math.sin(lead.ry) * 1.15, hz = lead.z + Math.cos(lead.ry) * 1.15; ramFrom = { x: hx, z: hz }; rival.tx = hx; rival.tz = hz; rival.v = 1.6; rival.clip = null; rival.faceTo = null; rival.endRy = lead.ry + Math.PI; }
-        if (b === 'carry' && lead) { carried = true; leave(lead, { clip: 'crate_run', away: [rival?.x ?? c0.x, rival?.z ?? c0.z], late: (m - b0) * GAME_MIN }); C.free(lead, { remove: true }); }
+        if (b === 'carry' && lead) { carried = true; leave(lead, { clip: 'crate_run', away: [rival?.x ?? c0.x, rival?.z ?? c0.z], late: (m - b0) * GAME_MIN }); freeExit(lead); }
         if (b === 'end') { paidAt = paid0(sc, m, t); if (!won) for (const A of cops) A.clip = 'guard_post'; } }
       // (the ram: the rival back in front of the holder, both started on the same frame; he goes down, shove_fall → lie_hurt)
       if (b === 'ram' && rival && !rival.freed && rival.endRy !== undefined && rival.tx === null) { rival.ry = rival.endRy; rival.snap = true; rival.endRy = undefined; rival.clip = 'crate_rammed'; lead.clip = 'crate_ram'; }
@@ -704,8 +851,8 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
       // (the dust where the rival lands)
       if (rival?.now === 'shove_fall') { const age = rival.nowT - .7; if (age >= 0 && age < .9) fx.dust(hash(seed, 5), toW(rival.w, [0, 0, -.9]), age, { n: 10, size: .14 }); }
       // after the scene: the crew goes on foot (a lost one flees the officers), the public grabbers are handed back 3 s on
-      if (paidAt !== null && t - paidAt > 3 && !S.fled) { S.fled = true; for (const A of [...rest, ...(won ? [] : crew)]) if (!A.freed && !A.leaving) { leave(A, { v: 1.8, clip: won ? null : 'flee_run', late: t - paidAt - 3 }); C.free(A, { remove: true }); } }
-      if (paidAt !== null) clearOut(S, paidAt, t);
+      if (paidAt !== null && sinceEnd(sc, m) > 3 && !S.fled) { S.fled = true; for (const A of [...rest, ...(won ? [] : crew)]) if (!A.freed && !A.leaving) { leave(A, { v: 1.8, clip: won ? null : 'flee_run', late: sinceEnd(sc, m) - 3 }); freeExit(A); } }
+      if (paidAt !== null) clearOut(S, sinceEnd(sc, m));
     };
   }
   function arrestNow(S, e, held) {
@@ -738,7 +885,7 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
       // (it walks up once the arrested stands on its mark: never into it while it steps clear)
       if (K) S.actors.push(K); let sent = false;
       // (at the close the cruiser takes them: the jail's cut, draw.js; its stand-ins go with it, in the car, as the cruiser goes)
-      const car = cruiserAt(a.x, a.z); if (car) S.meshes.push(car); S.keep = true; S.byCar = true;
+      const car = cruiserAt(a.x, a.z); if (car) { S.meshes.push(car); S.car = car; } S.keep = true; S.byCar = true;
       let cuff = -1;
       S.tick = (m, p, t) => {
         // (C1-7d: taken back after its walker was placed anew — the cut of its walk to the docks — it is put on the quay's mark again)
@@ -767,43 +914,50 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
   function fight(S) {
     const sc = S.sc, F = fightsOf(sc.night), f = F.rows.get(sc.eventId); if (!f) return;
     S.f = f; S.keep = true;
-    // (at the fight's own place, placement.js fightsAt's; its public target joins it only when it stands within 6 m of it)
-    let a = placeSpot(f, sc.eventId); const tw = f.target ? agents.map.get(f.target)?.w : null, close = !!tw && Math.hypot(tw.p[0] - a.x, tw.p[2] - a.z) < 6;
-    const V = close && sc.publicActors.includes(f.target) && f.kind !== 'breakin' ? borrow(f.target) : null;
-    // (a target that steps to clear ground: its attackers stand beyond it, the way it walks, never across its way there)
-    S.where = a; if (V) { S.actors.push(V); const o = { x: V.x, z: V.z }, c = clearStep(S, V); if (c) S.where = a = { ...a, x: c.x, z: c.z, ry: Math.hypot(c.x - o.x, c.z - o.z) > .1 ? facing(o, c) : V.ry }; } S.V = V;
-    S.want = close && sc.publicActors.includes(f.target) && f.kind !== 'breakin' && !V ? f.target : null;
+    // (C2-cast: its figures and their marks are the cast plan's, cast-plan.js: the public target (a break-in's is indoors) as itself on
+    // its mark, the sides' stand-ins round it and a hooded side's slots first to the masked agents cast in it, each its own walker)
+    const P = planOf(sc); if (!P) return; S.plan = P; S.noteAt = () => onMarks(S);
+    let a = { ...P.anchor }; S.where = a;
+    marks.set(sc.id, P.figures.map(g => g.mark).filter(Boolean));
     const kind = f.kind === 'hit' || f.kind === 'breakin' ? 'hooded' : f.kind === 'collar' ? 'officer' : 'hooded';
-    // (the stand-ins on free ground: round the target at arm's length when it is drawn, else round the fight's place, its two sides
-    // facing each other across it; a break-in's at the door as before)
     const want = f.sides.map(s => s.count - s.ids.length), total = want.reduce((x, y) => x + y, 0);
-    // (C1-7d: the lunge and the punches reach: 1.8 m off the walkers' lanes, not 1.35, where there is the ground — seed 406 night 14's
-    // route fight lunged at a passer-by 1.1 m off)
-    const M = f.kind === 'breakin' ? [] : V ? freeGround(sc, a, total, { rings: [1.15, 1.6, 2.1, 2.6], skip: [V], lane: 1.8 }) : freeGround(sc, a, total, { near: .7, far: 6, lane: 1.8 });
-    if (!V && M.length) { const cx = M.reduce((x, m) => x + m.x, 0) / M.length, cz = M.reduce((x, m) => x + m.z, 0) / M.length, ax = Math.sin(a.ry), az = Math.cos(a.ry);
-      M.sort((p, q) => ((p.x - cx) * ax + (p.z - cz) * az) - ((q.x - cx) * ax + (q.z - cz) * az)); S.where = a = { ...a, x: cx, z: cz }; }
     // (the measured stand spot it stands at, the nearest the figures' middle: what drawn() reports for placecheck; a lot reports its centre)
     const spotsAt = (wide.places[f.standPlace ?? f.cityPlace]?.spots || []).filter(s => !s.over);
     S.at = f.lot || !spotsAt.length ? null : spotsAt.reduce((b, s) => Math.hypot(s.x - a.x, s.z - a.z) < Math.hypot(b.x - a.x, b.z - a.z) ? s : b);
-    let used = 0;
-    // (a break-in's figures fan out from the door by their place among every side's, so two sides never share a mark: the first at the
-    // door, r0 m out, the rest 2 m out, 0.9 rad apart — 1.37 m from the first and 1.74 m from each other at the least. At 1.6 m and
-    // fanned by the place in its own side the door's walk-up put two sides' figures 0.71 m apart, seed 415 night 5)
+    // (a break-in's figures fan out from the door by their place among every side's, so two sides never share a mark: cast-plan.js)
     const fan = (g, r0) => { const r = g ? 2 : r0, ang = a.ry + (g ? (g - 1 - (total - 2) / 2) * .9 : 0); return { x: a.x + Math.sin(ang) * r, z: a.z + Math.cos(ang) * r, ry: a.ry }; };
-    S.sides = f.sides.map((s, i) => { const n = want[i], made = [];
-      for (let k = 0; k < n; k++) { const g = f.kind === 'breakin' ? used++ : 0, p = f.kind === 'breakin' ? fan(g, .7)
-          : (q => ({ ...q, ry: facing(q, a) }))(M[used++] ?? a);
-        const A = standIn(sc, `${i}:${k}`, p, f.kind === 'corner' && !s.hooded ? 'crew:' + (k % 4) : kind); if (A) { A.faceTo = [a.x, a.z]; A.g = g; made.push(A); S.actors.push(A); } }
-      return { made, count: s.ids.length + made.length, hooded: s.hooded ? made.length : 0, ids: s.ids, strength: s.strength }; });
+    const tgt = P.figures.find(g => g.role === 'target') ?? null; S.V = null; S.want = tgt;
+    S.sides = f.sides.map(() => ({ made: [] })); S.due = [];
+    for (const g of P.figures) { if (g.role === 'target') continue; const made = S.sides[g.side].made;
+      if (g.id) { S.due.push({ g, made }); continue; }
+      const A = standIn(sc, g.key, g.mark, g.look); if (A) { A.faceTo = [a.x, a.z]; A.g = g.g ?? 0; made.push(A); S.actors.push(A); } }
+    S.sides = S.sides.map(({ made }, i) => ({ made, count: f.sides[i].ids.length + want[i], hooded: f.sides[i].hooded ? want[i] : 0, ids: f.sides[i].ids, strength: f.sides[i].strength }));
     if (f.kind === 'grab') { const c = mesh('crate', crateM); if (c) { c.matrixAutoUpdate = false; crateMatrix(THREE, groundPose(a.x, a.z, a.ry), c.matrix); c.matrixWorldNeedsUpdate = true; S.meshes.push(c); S.crate = c; } }
     if (f.kind === 'breakin' && a.door) { const h = a.door, made = S.sides[0]?.made || [];
       made.forEach(A => { const q = fan(A.g, .62); A.tx = q.x; A.tz = q.z; A.v = 1.2; A.faceTo = null; S.faceAfter = [h.door[0], h.door[2]]; }); }
-    let paid = false, paidAt = 0, beatAt = -1;
+    // (an agent of the plan's: taken whenever its walker is drawn and free before the payoff — the scene's begin, or later: it is then
+    // on its way, or out of its own play — and walked up to its mark; a walker taken back by the drawing is taken again where it stands.
+    // On a seek it stands on its mark already, agents.js planSpot)
+    const castIn = q => { const A = here(q.g.id, P) ? borrow(q.g.id) : null; if (!A) return false; A.cast = true; A.g = q.g.g ?? 0; A.castQ = q; const m = f.kind === 'breakin' && a.door ? fan(A.g, .62) : q.g.mark;
+      A.tx = m.x; A.tz = m.z; A.v = pace(1.3, sc); A.faceTo = null; A.endFace = f.kind === 'breakin' && a.door ? null : [a.x, a.z]; if (f.kind === 'breakin' && a.door) S.faceAfter = [a.door.door[0], a.door.door[2]];
+      q.made.push(A); S.actors.push(A); return true; };
+    // (after the payoff, on a seek: the target until it is let go, on its mark; a cast attacker while it is still walking back)
+    const takeAll = paid => { if (paid) {
+      if (S.want && !S.V && !S.Vgone && sinceEnd(sc, player.minute) < TARGET_GO) {
+        const B = borrow(S.want.id); if (B) { S.V = B; S.actors.push(B); B.x = S.want.mark.x; B.z = S.want.mark.z; B.tx = null; B.snap = true; }
+      }
+      return;
+    }
+      if (S.want && !S.V) { const B = here(S.want.id, P) ? borrow(S.want.id) : null; if (B) { S.V = B; S.actors.push(B); B.tx = S.want.mark.x; B.tz = S.want.mark.z; B.v = pace(1.2, sc); B.faceTo = null; } }
+      for (const A of [...S.actors]) if (A.cast && A.freed && !A.handing && A.castQ) { S.actors.splice(S.actors.indexOf(A), 1); A.castQ.made.splice(A.castQ.made.indexOf(A), 1); S.due.push(A.castQ); A.castQ = null; }
+      if (S.V?.freed) { const i = S.actors.indexOf(S.V); if (i >= 0) S.actors.splice(i, 1); S.V = null; }
+      S.due = S.due.filter(q => !castIn(q)); };
+    takeAll(player.minute >= sc.end);
+    let paid = false, beatAt = -1;
     S.tick = (m, p, t) => {
-      // (the target not standing yet when the scene began: it joins where it stands)
-      if (S.want && !S.V && !paid) { const B = borrow(S.want); if (B) { S.V = B; S.actors.push(B); S.want = null; } }
-      // (after the payoff the target is handed back to its place and its own loops, 3 s on)
-      if (paid && S.V && t - paidAt > 3 && !S.V.freed) { C.free(S.V); S.actors.splice(S.actors.indexOf(S.V), 1); S.V = null; }
+      // (C2-cast: the plan's agents, taken whenever they are drawn and free, up to the payoff)
+      takeAll(paid || p >= 1);
+      for (const A of S.actors) if (A.cast && A.endFace && A.tx === null && !A.path?.length) { A.faceTo = A.endFace; A.endFace = null; }
       const att = S.sides[0]?.made || [], other = S.sides[1]?.made || [], won = f.won, V = S.V;
       if (S.faceAfter && S.actors.every(A => A.tx === null)) { for (const A of S.actors) if (A !== V) A.faceTo = S.faceAfter; S.faceAfter = null; }
       if (p < 1) {
@@ -813,20 +967,16 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
         if (beatAt < 0 || t - beatAt > 3.2) { beatAt = t;
           if (f.kind === 'grab') { att.forEach((A, k) => { A.clip = k % 2 ? 'punch' : 'haymaker_wind'; }); other.forEach((A, k) => { A.clip = k % 2 ? 'haymaker_wind' : 'punch'; }); }
           else if (f.kind === 'collar') { att.forEach(A => { A.clip = 'scuffle_pair'; if (V) A.faceTo = [V.x, V.z]; }); if (V) V.clip = 'scuffle_partner'; }
-          else { att.forEach((A, k) => { A.clip = beatAt === t && t < 1 ? 'rob_lunge_grab' : k % 2 ? 'punch' : 'haymaker_wind'; if (V) A.faceTo = [V.x, V.z]; }); if (V) { V.faceTo = att[0] ? [att[0].x, att[0].z] : null; V.clip = 'stagger'; } } }
+          else { att.forEach((A, k) => { if (A.cast && (A.tx !== null || A.path?.length)) return; A.clip = beatAt === t && t < 1 ? 'rob_lunge_grab' : k % 2 ? 'punch' : 'haymaker_wind'; if (V) A.faceTo = [V.x, V.z]; }); if (V) { V.faceTo = att[0] ? [att[0].x, att[0].z] : null; V.clip = 'stagger'; } } }
         return; }
-      // (4 s after the payoff the stand-ins still there go on foot, the haul with the winners: out of view before the show closes, so
-      // a jump to the next show — shows back to back — never takes them away in view)
-      if (paid) { if (!S.gone && t - paidAt > 4) { S.gone = true; const win = f.kind === 'grab' ? (won ? att : other) : [];
-          for (const A of [...att, ...other]) { if (A.freed) continue; leave(A, { v: 1.8, clip: A === win[0] ? 'crate_run' : win.includes(A) ? 'run_getaway' : null, late: t - paidAt - 4 }); C.free(A, { remove: true }); } }
-        return; }
-      paid = true; paidAt = paid0(sc, m, t);
+      if (paid) return;
+      paid = true;
       // the payoff: the scene's result is public now (show-plan.js releases it at this scene's end)
       if (f.kind === 'grab') { const win = won ? att : other, lose = won ? other : att; win.forEach((A, k) => { A.clip = k ? 'lookout_wave' : 'crate_lift'; }); lose.forEach(A => { A.clip = 'winded_rest'; }); if (S.crate && win.length) S.crate.visible = false; }
       else if (f.kind === 'collar') { att.forEach(A => { A.clip = won ? 'patrol_walk' : 'winded_rest'; }); if (V) V.clip = won ? 'cower' : 'winded_rest'; }
       else { if (V) V.clip = won ? 'cower' : 'winded_rest'; S.flee = won ? 'run_getaway' : 'flee_run';
-        // the hooded leave on foot with (or without) the haul, out of view first; the scene stays as its aftermath until the close
-        for (const A of att) { leave(A, { v: 2.2, clip: S.flee, late: t - paidAt }); C.free(A, { remove: true }); } }
+      }
+
     };
   }
   // ── C1-7d · THE BOARDING LINE (night 14, SHOW.md "Finale and day 15": boarding 10–13, the ferry's leave 13.25–14). Every board scene's
@@ -842,9 +992,9 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
   function lineOf(plan) {
     const list = plan.scenes.filter(sc => sc.kind === 'board' && sc.beat === 'finale').sort((a, b) => a.start - b.start), ferry = plan.scenes.find(sc => sc.kind === 'ferry');
     const leave = ferry?.beats?.find(b => b.name === 'leave') ?? ferry ?? null; if (!list.length || !leave) return null;
-    return { night: plan.night, start: list[0].start, leave, rows: list.map((sc, k) => ({ sc, k, id: sc.publicActors[0] ?? null, g0: sc.beats?.find(b => b.name === 'gangway')?.start ?? sc.start, A: null })), by: new Map(), run: null, actors: [] };
+    return { night: plan.night, start: list[0].start, leave, rows: list.map((sc, k) => ({ sc, k, id: sc.publicActors[0] ?? castOf(sc)[0] ?? null, g0: sc.beats?.find(b => b.name === 'gangway')?.start ?? sc.start, A: null })), by: new Map(), run: null, actors: [] };
   }
-  const climb = (B, u) => { const P = [slotAt(0), GANGWAY.foot, GANGWAY.top, GANGWAY.door], D = [0]; for (let i = 1; i < P.length; i++) D.push(D[i - 1] + Math.hypot(P[i].x - P[i - 1].x, P[i].z - P[i - 1].z, (P[i].y ?? SIDE) - (P[i - 1].y ?? SIDE)));
+  const climb = (B, u) => { const P = [B.from ?? slotAt(0), GANGWAY.foot, GANGWAY.top, GANGWAY.door], D = [0]; for (let i = 1; i < P.length; i++) D.push(D[i - 1] + Math.hypot(P[i].x - P[i - 1].x, P[i].z - P[i - 1].z, (P[i].y ?? SIDE) - (P[i - 1].y ?? SIDE)));
     const d = D.at(-1) * Math.max(0, Math.min(1, u)); let i = 1; while (i < D.length - 1 && D[i] < d) i++; const f = (d - D[i - 1]) / Math.max(1e-6, D[i] - D[i - 1]), a = P[i - 1], b = P[i];
     return { x: a.x + (b.x - a.x) * f, y: (a.y ?? SIDE) + ((b.y ?? SIDE) - (a.y ?? SIDE)) * f, z: a.z + (b.z - a.z) * f, ry: Math.atan2(b.x - a.x, b.z - a.z) }; };
   function lineStep(m, reset) {
@@ -861,13 +1011,15 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
         // walker is a figure the probe holds to ROOM — a07 taken beside a26 on its side spot, 0.78 m, seed 404 night 14. Its gangway beat
         // takes it all the same, straight onto the gangway)
         if (B.id) { const a = agents.map.get(B.id), roomy = a?.w && (up || done || !C.walkersNear(a.w.p[0], a.w.p[2], ROOM, []).some(([, , w]) => w !== a.w));
-          if (roomy && a.mode === 'stand' && !a.step && !a.rec?.trip && !C.busy(B.id)) { B.A = C.actor(B.id); if (B.A) { L.actors.push(B.A); B.snap = reset || up || done; } } }
+          if (roomy && a.d?.place === 'docks' && !a.rec?.trip && !C.busy(B.id) && (agents.boardReady ? agents.boardReady(B.id) : a.mode === 'stand' && !a.step)) { B.A = C.actor(B.id); if (B.A) { L.actors.push(B.A); B.snap = reset; } } }
         else if (!done && !(qi >= 0 && L.actors.some(O => !O.freed && Math.hypot(O.x - slotAt(Math.min(QMAX - 1, qi)).x, O.z - slotAt(Math.min(QMAX - 1, qi)).z) < ROOM))) { const p = slotAt(Math.max(0, Math.min(QMAX - 1, qi))); B.A = standIn(B.sc, 'b', { ...p, ry: facing(p, GANGWAY.foot) }, 'hooded'); if (B.A) { L.actors.push(B.A); B.A.look = lookOf('hooded'); } }
         if (B.A) L.by.set(B.sc.id, B);
       }
       const A = B.A; if (!A || A.freed) continue;
       if (done) { if (B.state !== 'below') { B.state = 'below'; const q = below(B.k); A.x = q.x; A.z = q.z; A.y = q.y; A.tx = null; A.path = []; A.faceTo = null; A.clip = 'deal_lookout'; A.snap = true;
           if (A.kind === 'standin') { A.inCar = true; C.free(A, { remove: true, now: true }); } } continue; }
+      // (C2: up the gangway from where it stands when its beat comes, walked, never put at the line's head first)
+      if (up && B.state !== 'up' && !reset) B.from = { x: A.x, z: A.z, y: A.y ?? SIDE };
       if (up) { const q = climb(B, (m - B.g0) / Math.max(1e-6, B.sc.end - B.g0)); B.state = 'up'; A.tx = null; A.path = []; A.x = q.x; A.y = q.y; A.z = q.z; A.ry = q.ry; A.faceTo = null; A.snap = true; A.clip = 'evicted_carry'; continue; }
       const p = slotAt(Math.max(0, qi));
       if (B.snap || B.state === undefined && Math.hypot(A.x - p.x, A.z - p.z) < .1) { A.x = p.x; A.z = p.z; A.tx = null; B.snap = false; }
@@ -876,8 +1028,9 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
       // (only into an empty place in the line: cut in beside the one still stepping out of it, a18 stood in a17, seed 404 night 14; a step
       // up the line is a walk)
       else if (B.slot !== qi) { const first = B.slot === undefined, w = first ? wayAround(A, p, line.actors) : null, len = w?.length ? w.reduce((d, q, k) => d + Math.hypot(q[0] - (k ? w[k - 1][0] : A.x), q[1] - (k ? w[k - 1][1] : A.z)), 0) : Math.hypot(p.x - A.x, p.z - A.z);
-        const v = first ? Math.max(1.3, len / Math.max(.01, (B.g0 - m) * GAME_MIN)) : 1.3, free = !L.actors.some(O => O !== A && !O.freed && Math.hypot(O.x - p.x, O.z - p.z) < ROOM);
-        if (v > 2.4 && free) { A.x = p.x; A.z = p.z; A.tx = null; A.path = []; A.snap = true; } else if (w?.length) { A.tx = null; A.path = w; A.v = Math.min(2.4, v); } else { A.path = []; A.tx = p.x; A.tz = p.z; A.v = Math.min(2.4, v); } A.clip = null; A.faceTo = null; }
+        // (C2: a boarder late for its place in the line hurries there, 2.4 m/s at most, never put there: GAME.md §41, slime 10-30)
+        const v = first ? Math.max(1.3, len / Math.max(.01, (B.g0 - m) * GAME_MIN)) : 1.3;
+        if (w?.length) { A.tx = null; A.path = w; A.v = Math.min(2.4, v) * Math.max(1, player.speed); } else { A.path = []; A.tx = p.x; A.tz = p.z; A.v = Math.min(2.4, v) * Math.max(1, player.speed); } A.clip = null; A.faceTo = null; }
       B.slot = qi; B.state = 'queue';
       if (A.tx === null && !A.path?.length) { A.faceTo = [GANGWAY.foot.x, GANGWAY.foot.z]; A.clip = 'deal_lookout'; }
     }
@@ -920,7 +1073,7 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
     // no partner, or another one, on the next — two seeks to one minute staged different figures, seed 404 at 2706.29)
     // (C1-9b: a stand-in already leaving keeps walking off across a seek forward; a seek back is to before it left: it goes)
     const back = lastM !== null && minute < lastM; lastM = minute;
-    if (reset) { stage.abortAll({ keepLeaving: !back }); live.clear(); queued.clear(); taken.clear(); marks.clear(); shortBy.clear(); faces.clear(); for (const list of pool.values()) list.forEach(release); fx.clear(); }
+    if (reset) { stage.abortAll({ keepLeaving: !back }); rides.clear(); handoff.clear(); maskedUp.clear(); live.clear(); queued.clear(); taken.clear(); marks.clear(); shortBy.clear(); faces.clear(); for (const list of pool.values()) list.forEach(release); fx.clear(); }
     const show = player.snapshot().show ?? null; cur = show;
     // (C1-7: day 15's mint, planner.stagingAt's: its three-minute tail after the dawn frame)
     const mint = show ? null : (() => { try { return planner.stagingAt?.(minute)?.day === 15 ? planner.day(15) : null; } catch { return null; } })();
@@ -928,25 +1081,116 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
     // (C1-7d: night 14's boarding line, from boarding's start to her leave beat)
     const L0 = show?.night === 14 ? (line?.night === 14 ? line : (line = lineOf(plan))) : line;
     if (L0 && minute >= L0.start && minute < L0.leave.start) { if (reset || !L0.run) lineRun(); } else if (L0?.run) lineStep(minute, false);
-    if (plan) for (const sc of plan.scenes) if (sc.start <= minute && (minute < sc.end || ((sc.beat === 'fight' || sc.beat === 'arrest' || sc.kind === 'laylow') && minute < plan.end))) want.add(sc.id);
+    if (plan) for (const sc of plan.scenes) if (sc.start <= minute && (minute < sc.end || backPlan.scene(sc, minute).some(row => minute >= row.start && minute < row.end) || ((sc.beat === 'fight' || sc.beat === 'arrest' || sc.kind === 'laylow') && minute < plan.end))) want.add(sc.id);
     for (const [id, S] of live) if (!want.has(id)) { S.alive = false; }
     for (const id of queued.keys()) if (!want.has(id)) queued.delete(id);
     if (plan) for (const sc of plan.scenes) if (want.has(sc.id) && !live.has(sc.id) && !queued.has(sc.id)) queued.set(sc.id, { sc, minute, at: pageS() });
-    start();
+    // (C2-cast: no frame count is waited for. A seek's scenes begin once the drawing has placed every walker anew — draw.js updates the
+    // scenes before agents.js places them, so a walker taken on the seek's own update would be the one before the seek, taken back at
+    // once: they begin from the next frame(), which runs after that placing — and their agents are taken whenever they stand there)
+    if (!reset) start();
   }
   // a queued scene begins once its named agent stands at its place (a cut trip places it on the next frames), 1.5 s at most
   function start() {
     for (const [id, q] of queued) {
-      const who = q.sc.beat === 'ambient' ? q.sc.publicActors[0] : q.sc.beat === 'fight' ? fightsOf(q.sc.night).rows.get(q.sc.eventId)?.target : null, a = who && q.sc.publicActors.includes(who) ? agents.map.get(who) : null;
-      if (a && !(a.w && a.mode === 'stand' && a.spot && !a.step) && pageS() - q.at < 1.5) continue;
+      // (C2: a break-in borrows no target (fight(): its target is indoors), and one not drawn at all is not on its way: neither is waited
+      // for — sought into a break-in it waited 1.5 s for a target indoors, and the masked crew stood at their spots meanwhile, seed 404
+      // nights 5 and 8)
+      // (C2-cast: no wait for its agent: the scene's figures are the plan's, and its agents join whenever their walkers stand there)
+      const N = cplan.night(q.sc.night); if (N && !N.ready) continue;
       if (q.sc.kind === 'vault' && q.sc.beats?.length && pageS() - q.at < 4 && !vaultClear(q.sc)) continue;
       queued.delete(id);
       try { begin(q.sc, player.minute); } catch (e) { log('record scene ' + id + ': ' + (e && e.stack || e)); }
     }
   }
+  // ── C2 · THE MASK-UP (slime 10-30: "you watch X mask up and do it"): where it stands at its play's place, its trip there over, a masked
+  // agent goes through its pockets (pat_pockets) and the hood goes on (draw.js: the row's outfit, from continuity.js maskWindows' on).
+  // How it looks is slime's to direct
+  const maskedUp = new Set();
+  function maskUps(m) {
+    for (const [id, list] of continuity?.masks ?? []) for (const w of list) {
+      const k = id + '|' + w.night; if (maskedUp.has(k) || m < w.arrive || m >= w.on + .2) continue;
+      const A = borrow(id); if (!A) continue; maskedUp.add(k); A.clip = 'pat_pockets'; A.faceTo = null;
+      stage.run({ actors: [A], ev: { who: null }, step: t => { if (A.freed) return false; if (t > 1.8 || player.minute >= w.on + .2) { C.free(A); return false; } return true; },
+        end: abort => { if (!A.freed) C.free(A, { now: abort }); } }, 'record:maskup');
+    }
+  }
+  // ── C2 · THE RIDE TO IRON ISLAND (slime 10-30: no one drops off screen; was: the jail's cut). A jail segment's trip (draw.js stateAt
+  // ride: trips.js's booked time) is the cruiser's: from its start the arrested walks cuffed to the cruiser's rear kerb-side door and gets
+  // in (get_in_car), its officers with it; in the car (continuity.js rideBoarded) the cruiser drives the road to Iron Island's kerb (the
+  // city's own travel, travel.mjs's taxi route, posed by the minute: a seek lands it on the same stretch), arriving at the ride's arrival,
+  // when the yard takes the agent. Following the arrested, the camera rides with the cruiser (a stand-in subject under its id, as a cab's
+  // rider, movement.js). The cruiser drives its own line, not in the traffic: how it drives is slime's to direct
+  const rides = new Map(), handoff = new Map(); let TRV = null;
+  const travel = () => TRV ??= Promise.all([import('../../../world/export/world.json', { with: { type: 'json' } }), import('../../../world/export/travel.mjs'), import('../simstate/movetune.mjs')])
+    .then(([{ default: world }, { createTravel }, { tuneWorld }]) => createTravel(tuneWorld(structuredClone(world)))).catch(e => { log('record ride: no travel (' + (e && e.message || e) + ')'); return null; });
+  const camOn = id => { const c = typeof window !== 'undefined' ? window.__city?.cam : null; return !!c && c.mode === 'follow' && c.subject?.aid === id; };
+  function carPt(car, lx, lz) { const ry = car.rotation.y, ux = Math.sin(ry), uz = Math.cos(ry); return { x: car.position.x + lx * uz + lz * ux, z: car.position.z - lx * ux + lz * uz }; }
+  function startRide(r) {
+    // (the arrest that holds it hands it on as it ends, this frame or the next: wait for that, a few island seconds at most)
+    if (!handoff.has(r.id) && C.busy(r.id) && player.minute < r.dep + .05) return null;
+    const H = handoff.get(r.id); handoff.delete(r.id);
+    let car = H?.car ?? null; if (!car) { const w = agents.map.get(r.id)?.w; car = w ? cruiserAt(w.p[0], w.p[2]) : null; } if (!car) return null;
+    const R = { r, car, A: H?.A ?? null, crew: H?.crew ?? [], roadRest: null, road: null, len: null, proxy: null };
+    setup(R);
+    travel().then(T => { let road = null; try { road = T?.trip(travelId(r.from), 'jail', 'taxi', { dep: 0 })?.legs.find(l => l.kind === 'taxi')?.path ?? null; } catch {} R.roadRest = road ?? []; });
+    R.run = stage.run({ actors: [R.A, ...R.crew].filter(Boolean), ev: { who: null }, step: () => rideStep(R), end: abort => rideEnd(R, abort) }, 'record:ride');
+    rides.set(r.id, R); return R;
+  }
+  // (the walk to the car on the island's clock, as the gangway's climb: from where the arrested stands at the ride's start to the rear
+  // door at a cuffed walk's 1.1 m/s, then 2 s to get in — so a seek lands it on the same step, at any speed; at most 45% of the ride)
+  function setup(R) {
+    const r = R.r, car = R.car, w0 = R.A ? { x: R.A.x, z: R.A.z } : (q => q ? { x: q[0], z: q[2] } : null)(agents.map.get(r.id)?.w?.p);
+    R.start = { x: car.position.x, z: car.position.z };
+    R.door = carPt(car, -(CRUISER.hw + .45), (CRUISER.doors.rear[0] + CRUISER.doors.rear[1]) / 2); R.from = w0 ?? R.door;
+    const cap = r.dep + (r.arr - r.dep) * .45; R.t0 = Math.min(cap, Math.max(r.dep, player.minute));
+    R.walkTo = Math.min(cap, R.t0 + Math.hypot(R.door.x - R.from.x, R.door.z - R.from.z) / 1.1 / 60); R.inAt = Math.min(cap, R.walkTo + 2 / 60);
+    R.crewFrom = R.crew.map(B => ({ x: B.x, z: B.z })); R.front = carPt(car, -(CRUISER.hw + .45), (CRUISER.doors.front[0] + CRUISER.doors.front[1]) / 2);
+  }
+  function rideStep(R) {
+    const m = player.minute, r = R.r, inCar = R.inAt; if (m >= r.arr || !R.alive && R.alive !== undefined) return false;
+    if (m < inCar) {
+      // (handed on late, after the ride began: it takes over the arrest's walker, cruiser and officers, and starts its walk from there)
+      const H = handoff.get(r.id); if (H) { handoff.delete(r.id); if (H.car && H.car !== R.car) { release(R.car); R.car = H.car; } if (!R.A) R.A = H.A; R.crew = H.crew; R.run.actors.push(...[R.A, ...R.crew].filter(B => B && !R.run.actors.includes(B))); setup(R); }
+      if (!R.A) { R.A = borrow(r.id); if (R.A) { R.run.actors.push(R.A); setup(R); } }
+      const u = R.walkTo > R.t0 ? Math.max(0, Math.min(1, (m - R.t0) / (R.walkTo - R.t0))) : 1, lerp = (a, b) => ({ x: a.x + (b.x - a.x) * u, z: a.z + (b.z - a.z) * u });
+      const A = R.A; if (A && !A.freed) { const q = lerp(R.from, R.door); A.tx = null; A.path = []; A.x = q.x; A.z = q.z;
+        if (u < 1) { A.faceTo = null; A.ry = Math.atan2(R.door.x - R.from.x, R.door.z - R.from.z); A.moving = 1.1; A.clip = 'cuffed_walk'; } else { A.faceTo = [R.car.position.x, R.car.position.z]; A.clip = 'get_in_car'; } }
+      R.crew.forEach((B, k) => { if (B.freed) return; const q = lerp(R.crewFrom[k], R.front); B.tx = null; B.path = []; B.x = q.x; B.z = q.z; B.clip = u < 1 ? null : 'guard_post'; if (u < 1) B.ry = Math.atan2(R.front.x - R.crewFrom[k].x, R.front.z - R.crewFrom[k].z); });
+      return true;
+    }
+    // (in the car: the walkers off the street, out of sight in it — stage/index.js seen()'s inCar)
+    for (const B of [R.A, ...R.crew]) if (B && !B.freed) { B.inCar = true; C.free(B, { remove: true, now: true }); }
+    if (!R.road && R.roadRest) { R.road = [[R.start.x, R.start.z], ...R.roadRest]; R.len = R.road.slice(1).reduce((d, q, k) => d + Math.hypot(q[0] - R.road[k][0], q[1] - R.road[k][1]), 0); }
+    const P = R.road; if (!P) return true;
+    let d = Math.max(0, Math.min(1, (m - inCar) / Math.max(1e-6, r.arr - inCar))) * (R.len ?? 0), k = 1;
+    while (k < P.length - 1 && d > Math.hypot(P[k][0] - P[k - 1][0], P[k][1] - P[k - 1][1])) { d -= Math.hypot(P[k][0] - P[k - 1][0], P[k][1] - P[k - 1][1]); k++; }
+    if (P.length > 1) { const a = P[k - 1], b = P[k], L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, f = Math.min(1, d / L);
+      R.car.position.set(a[0] + (b[0] - a[0]) * f, 0, a[1] + (b[1] - a[1]) * f); if (L > .05) R.car.rotation.set(0, Math.atan2(b[0] - a[0], b[1] - a[1]), 0); }
+    // (the follow cam rides with it: a stand-in subject on the cruiser under the agent's id; the agent itself again once in the yard)
+    if (!R.proxy && camOn(r.id)) { const a = agents.map.get(r.id); R.proxy = { id: -2e6 - idHash(r.id), agent: true, aid: r.id, look: a?.look ?? 0, p: [0, .7, 0, 0], yawS: 0, vc: 0, ph: 0, tier: 1, gone: false, ride: true };
+      try { window.__city.cam.follow.set(R.proxy); } catch (e) { log('record ride: follow ' + e.message); } }
+    if (R.proxy) { const q = R.proxy; q.p[0] = R.car.position.x; q.p[2] = R.car.position.z; q.p[3] = q.yawS = R.car.rotation.y; q.vc = R.len / Math.max(1e-6, (r.arr - inCar) * GAME_MIN); }
+    return true;
+  }
+  function rideEnd(R, abort) {
+    R.alive = false; release(R.car); if (R.proxy) R.proxy.gone = true;
+    for (const B of [R.A, ...R.crew]) if (B && !B.freed) C.free(B, { remove: true, now: true });
+    if (rides.get(R.r.id) === R) rides.delete(R.r.id);
+  }
+  function rideFrame(m) {
+    if (!continuity?.rides) return;
+    const due = continuity.rides(m), ids = new Set(due.map(r => r.id));
+    for (const [id, R] of rides) if (!ids.has(id) && player.minute < R.r.dep) { R.alive = false; }
+    for (const r of due) if (!rides.has(r.id)) startRide(r);
+    // (a hand-off no ride took up — its ride not due after all: given back as the arrest's end would have)
+    for (const [id, H] of handoff) if (!ids.has(id)) { handoff.delete(id); if (H.car) release(H.car); for (const B of [H.A, ...H.crew]) if (!B.freed) C.free(B, { remove: B.kind === 'standin', now: true }); }
+  }
   // per frame: the scenes' log for the named plays the loops play (the agent's walker, its clip, while its row names the scene)
   function frame() {
     fx.commit(); venueProps();
+    try { actMarks?.frame(); } catch (e) { log('record acts: ' + (e && e.stack || e)); }
+    { const m = player.minute; try { maskUps(m); rideFrame(m); } catch (e) { log('record c2: ' + (e && e.stack || e)); } }
     if (line?.run?.alive) lineStep(player.minute, false);
     if (queued.size) start();
     if (!cur) return false;
@@ -975,8 +1219,10 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
   }
   function log_() { return [...staged.values()]; }
   // (x, z) inside a figure's room: the agents' loops keep out (life.js keepOut)
-  const keepOut = (x, z) => marks.size > 0 && markedNear(x, z, ROOM);
+  const keepOut = (x, z) => { const near = m => Math.hypot(m.x - x, m.z - z) < ROOM; if (planMarks(player.minute).some(near)) return true; for (const [id, L] of marks) if (!live.get(id)?.plan && L.some(near)) return true; return false; };
   // (C1-7d: an agent the boarding line holds — in the queue, on the gangway or below: on its way aboard, not at a stand spot; draw.js)
   const boarding = id => !!line?.run && line.rows.some(B => B.id === id && B.A && !B.A.freed);
-  return { update, frame, drawn, taken, keepOut, venue, boarding, fxStats: () => fx.stats(), venueOf: key => [...venues.values()].find(v => v?.key === key) ?? null, faceOf: id => faces.get(id) ?? null, log: log_, clearLog: () => staged.clear(), get live() { return live; }, get queued() { return queued; }, get short() { return Object.fromEntries(shortBy); }, get marks() { return marks; } };
+  return { update, frame, drawn, taken, backPlan, keepOut, venue, actSpot, standInputs: { keptAt, planSpotAt, planBounds, liveKept }, boarding, acts: actMarks, fxStats: () => fx.stats(), venueOf: key => [...venues.values()].find(v => v?.key === key) ?? null, faceOf: id => faces.get(id) ?? null, log: log_, clearLog: () => staged.clear(), get live() { return live; }, get queued() { return queued; }, get short() { return Object.fromEntries(shortBy); }, get marks() { return marks; }, get rides() { return rides; },
+    // (C2: the minute a ride's arrested is in the cruiser, its walk to the car over: draw.js hides its walker from then)
+    rideIn: id => rides.get(id)?.inAt ?? null };
 }

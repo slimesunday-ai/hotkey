@@ -19,17 +19,22 @@
 // sit_bench …), its beat and its talks run there; life lets go the moment it isn't standing. claim() clusters crews and suits the act.
 import * as THREE from 'three';
 import { SIDE } from '../style.js';
-import { createMovement } from './movement.js';   // (MOVEMENT W3a: trips with legs, true sync — the cabs they ride)
+import { createMovement, MOVE } from './movement.js';   // (MOVEMENT W3a: trips with legs, true sync — the cabs they ride)
 import { createLife, roleOf } from './life.js';   // (W8: city life — busy at their places: life.js)
-import { createSimClock } from './simclock.js';   // (SIM CLOCK: the sim's whole minutes → a smooth game clock that never runs backward)
+import { createSimClock, CLOCK as SIMCLOCK } from './simclock.js';   // (SIM CLOCK: the sim's whole minutes → a smooth game clock that never runs backward)
 
 export const SPEED = { min: 1.1, max: 2.6, stroll: 1.25, step: 1.2 };   // m/s: walking pace … a hurry; a step on or off the lanes
 export const LAG = 30;   // m behind the sim's clock before an unseen walker is moved on to where the sim has it
 export const WAIT = 1;   // m: stepping on, an agent waits this far short of its lane point for a gap (stands.js keeps that point off every lane)
+export const LEAD_MAX = 100;   // m: a walker is walked from where it is drawn to its trip's first point up to this far (the step-off's own limit)
 
 // clockNow (C1-9b, the record path): () → the playhead's island minute, written exactly every frame: the movement runs on it as it
 // is (a seek, a new clock epoch, is the jump), not on the fitted, slewed line made for the old sim's whole-minute polls, which ran a
 // frame ahead of the playhead and stayed there when paused. Null: as ever
+// C2-transit (docs/redesign/transit-20261031.md, design A) · THE PAGE'S CLOCK, made here once and handed to the movement: a game minute is
+// ISLAND_MIN real seconds on the record at 1× (record/player.js: seconds × speed / 60; record/clock.js), 1 / CLOCK.pace0 on a live page (the
+// sim's 60-min day: 2.5 s). The movement reads every timing off it (simstate/movement.js ONE CLOCK)
+const ISLAND_MIN = 60;
 export function createAgents({ peds, places, stands = null, doorOf: doorAnchor = () => null, looks = null, log = () => {}, scene = null, clips = null, life = true, lifeOpts = null, clockNow = null }) {
   const sim = peds.sim, A = new Map(), PL = new Map([...(places.places || []), ...(places.lots || [])].map(p => [p.id, p]));
   const S = { spawned: 0, removed: 0, jumps: 0, steps: 0, waits: 0, noWay: 0, ms: [], maxMs: 0 };
@@ -38,7 +43,8 @@ export function createAgents({ peds, places, stands = null, doorOf: doorAnchor =
   const SC = createSimClock(), clock = SC.clock, simNow = SC.now;
   // MOVEMENT W3a · a trip with LEGS (the sim's movement branch, or the dev mock) is drawn by movement.js on its legs at their real
   // durations, on the movement clock (SC.move: the sim's minutes arrive whole, once a second — slewed, never stepped, unless the sim jumps)
-  const MV = createMovement({ peds, log, clips: clips || peds.clips || null }); if (scene) MV.setScene(scene);
+  const PAGE = clockNow ? { secondsPerMinute: ISLAND_MIN, now: clockNow } : { secondsPerMinute: 1 / SIMCLOCK.pace0, now: () => SC.moveNow };
+  const MV = createMovement({ peds, log, clips: clips || peds.clips || null, clock: PAGE }); if (scene) MV.setScene(scene);
   const LIFE = createLife({ A, REG: clips || peds.clips || null, log, ...(lifeOpts || {}) }), LIFE_ON = life && (typeof location === 'undefined' || new URLSearchParams(location.search).get('life') !== '0');   // (W8: every standing agent busy at its place; it lets go the moment the walker isn't standing)
   const TQ = new THREE.Quaternion(), EU = new THREE.Euler();
   // ── places: their stand spots (each resolved once to the lane point it is reached from) and the lane point indoors is reached from
@@ -63,10 +69,24 @@ export function createAgents({ peds, places, stands = null, doorOf: doorAnchor =
   // step-off is a few metres on the walker's own side or over a crossing, not straight over the road to the far corner)
   // keepOff (C1-6, the record's show only): spot → true while a staged scene's figure stands in its room (stage/record.js); null: as ever
   let keepOff = null;
-  function claim(a, place, near = null) { if (a.spot?.place === place) return a.spot; release(a); const list = spots.get(place) || [], role = a.rec?.loopRole ?? roleOf(a.rec?.act), crew = a.rec?.crew, pair = a.rec?.pairWith;
+  // planSpot (C2-cast, the record's show only: stage/record.js from cast-plan.js): (a, place) → the spot a scene's plan gives this agent
+  // at this place now (its mark in a fight or a prowl), the same object while it holds; null: as ever. A seek places it there, as playing
+  // there walks it there; it takes no measured spot from anyone (the plan keeps its marks off them). false: no spot here now (indoors)
+  let planSpot = null;
+  // standPlan (C2-seek, the record only: draw.js from simstate/record/stand-plan.js, docs/redesign/tape-20261103.md): (a, place) → the spot
+  // the record's stand plan gives this agent at this place now (a spot of the place's, or the cast plan's planned one), null (none free:
+  // indoors), undefined (no stay of its there: as ever). A seek and playing there read the same. liveKept (stage/record.js): spot → true
+  // in the room of a scene the cast plan doesn't cast, as the stage staged it: the plan leaves those out, the walker steps aside live
+  let standPlan = null, liveKept = null, heldAt = null, returnTrip = null;
+  function claim(a, place, near = null) { const pl = standPlan?.(a, place);
+    if (pl !== undefined && !(pl && liveKept?.(pl))) { if (pl === null) { release(a); return null; } if (a.spot !== pl) { release(a); a.spot = pl; } pl.taken = a.id; return pl; }
+    return claimFree(a, place, near); }
+  function claimFree(a, place, near = null) { const ps = planSpot?.(a, place) ?? null; if (ps === false) { release(a); return null; }
+    if (ps) { if (a.spot === ps) return ps; release(a); ps.taken = a.id; a.spot = ps; return ps; }
+    if (a.spot?.place === place && !a.spot.plan) return a.spot; release(a); const list = spots.get(place) || [], role = a.rec?.loopRole ?? roleOf(a.rec?.act), crew = a.rec?.crew, pair = a.rec?.pairWith;
     // (C1-4: a sit-down's pair stands together: next to the partner when it is already there)
     const mates = pair && list.some(s => s.taken === pair) ? list.filter(s => s.taken === pair) : crew ? list.filter(s => s.taken && A.get(s.taken)?.rec?.crew === crew) : [], sit = hashS(String(a.id)) % 2 === 0;
-    let sp = null, best = 1e9; list.forEach((s, k) => { if (s.taken || keepOff?.(s) || (s.kind === 'bench' && (role !== 'hang' || !sit))) return;
+    let sp = null, best = 1e9; list.forEach((s, k) => { if (s.taken || keepOff?.(s, a) || (s.kind === 'bench' && (role !== 'hang' || !sit))) return;
       let v = k + (mates.length ? 4 * Math.min(...mates.map(m => Math.hypot(m.x - s.x, m.z - s.z))) : 0) + (near ? 1.5 * near(s) : 0);
       if (role === 'deal' && s.pace) v -= 4; if ((role === 'patrol' || role === 'work') && s.beat) v -= 4;
       if (role === 'hang' && sit) v -= s.kind === 'bench' ? 8 : s.kind === 'stoop' ? 7 : s.kind === 'wall' ? 4 : 0;
@@ -94,6 +114,9 @@ export function createAgents({ peds, places, stands = null, doorOf: doorAnchor =
   function remove(a) { if (a.held) { a.held = null; stage?.lost?.(a.id); } if (a.w) { a.w.mv = null; a.w.tq = null; a.w.lift = 0; } if (a.w) { sim.removeAgent(a.id); a.w = null; S.removed++; } a.mode = null; a.step = null; a.goalFor = null; release(a); }
   function standAt(a, sp) { if (a.w) { sim.removeAgent(a.id); a.w = null; } a.step = null; a.w = sim.putAgent({ id: a.id, look: a.look, fix: [sp.x, sp.y, sp.z, sp.ry ?? 0] }); if (!a.w) { release(a); return; } a.spot = sp; sp.taken = a.id; a.mode = 'stand'; a.placed = true; S.spawned++; }
   // (a.placed, C1-9b: placed outright, a seek or the page's start; the record's life poses it at once, not eased in. Unread elsewhere)
+  // (C2-cast: from where it stands, straight to another spot of the same place)
+  function stepTo(a, sp) { const w = a.w, p = w.p; LIFE.drop(a); w.mv = null;
+    a.step = { kind: 'out', t: 0, dur: Math.max(.4, Math.hypot(sp.x - p[0], sp.z - p[2]) / SPEED.step), a: [p[0], p[1], p[2]], b: [sp.x, sp.y, sp.z], ry: Math.atan2(sp.x - p[0], sp.z - p[2]) }; a.mode = 'out'; S.steps++; }
   function stepOff(a) {   // halted at its lane point → a straight walk to its spot (stands.js checked the line clear)
     const w = a.w, sp = a.spot, lp = sim.where({ E: w.E, s: w.s }, [0, 0, 0, 0]); w.halt = true;
     a.step = { kind: 'out', t: 0, dur: Math.max(.4, Math.hypot(sp.x - lp[0], sp.z - lp[2]) / SPEED.step), a: lp.slice(0, 3), b: [sp.x, sp.y, sp.z], ry: Math.atan2(sp.x - lp[0], sp.z - lp[2]) }; a.mode = 'out'; S.steps++; }
@@ -106,7 +129,7 @@ export function createAgents({ peds, places, stands = null, doorOf: doorAnchor =
     a.step = { kind: 'on1', t: 0, dur: Math.max(.2, Math.hypot(wp[0] - p0[0], wp[2] - p0[2]) / SPEED.step), a: p0, b: wp, lp: lp.slice(0, 3), ry: Math.atan2(wp[0] - p0[0], wp[2] - p0[2]), E: from.E, s: from.s, way, goal, trip };
     if (sp && sp.taken === a.id) sp.taken = null; a.spot = spot; if (spot) spot.taken = a.id; a.mode = 'in'; S.steps++; }
   function stepFrame(a, dt) {
-    const st = a.step, w = a.w;
+    const st = a.step, w = a.w; if (st.kind === 'path') { pathAt(a); return; }
     if (st.kind === 'wait') { if (!clearFor(a, st.E, st.s)) { S.waits++; a.waitT = (a.waitT || 0) + dt; w.vc = 0; return; }   // (a gap in the walkers: on)
       a.waitT = 0; sim.onAgent(w, st.E, st.s); w.fix = [st.b[0], st.b[1], st.b[2], st.ry]; Object.assign(st, { kind: 'on2', t: 0, a: st.b, b: st.lp, dur: Math.max(.3, Math.hypot(st.lp[0] - st.b[0], st.lp[2] - st.b[2]) / SPEED.step) }); return; }
     st.t = Math.min(1, st.t + dt / st.dur); const k = st.t, x = st.a[0] + (st.b[0] - st.a[0]) * k, y = st.a[1] + (st.b[1] - st.a[1]) * k, z = st.a[2] + (st.b[2] - st.a[2]) * k;
@@ -117,6 +140,35 @@ export function createAgents({ peds, places, stands = null, doorOf: doorAnchor =
     a.step = null;
     if (st.kind === 'out') { if (w.E) sim.offAgent(w, w.fix); w.fix = [st.b[0], st.b[1], st.b[2], a.spot?.ry ?? st.ry]; a.mode = 'stand'; return; }
     w.fix = null; sim.goAgent(w, st.way, st.goal); a.mode = 'walk'; }
+  // (C2-seek, the record: the walk off a trip to its spot, draw.js offWalk(a, sp) → { P, L, t0, dur }: along P from minute t0 for dur
+  // island s, its place a function of the minute (pathAt), the same on a seek; false when there is none or it is over)
+  let offWalk = null;
+  // (played, from where the path is at this minute when the walker is there, within 1.5 m and this frame's walk. A walker elsewhere —
+  // one the stage held at its trip's end while the path's minutes ran on (about 14.5 island s at a corner's arrival, at the docks), a
+  // crew member stopped short behind the others — walks the same graph from where it stands, offWalk(a, sp, from), starting now and
+  // hurrying, up to SPEED.max, to stand when the path's own walk ends, as a late trip catches up (at once if that is past; never slower
+  // than the stroll). It had first hopped onto the path (404 a04, 9.3 m in a frame at 7028.27, followed), then walked the lanes, which
+  // round a one-way crossing: 405 a01 and a19, held at corner--1_1's south end, walked 13 island min west and back to spots 9-14 m off,
+  // and the night's fight and hooded prowl there took them on their way)
+  function walkOff(a, sp) { const o = clockNow ? offWalk?.(a, sp) : null; if (!o || !a.w) return false;
+    const now = clockNow(), T = (now - o.t0) * 60; let st = null;
+    if (a.placed) { if (T < o.dur) st = { kind: 'path', P: o.P, L: o.L, t0: o.t0, dur: o.dur, sp }; }
+    else { const q = pathPoint(o, T);
+      if (T < o.dur && Math.hypot(a.w.p[0] - q[0], a.w.p[2] - q[2]) <= 1.5 + WALK_V(o) * islandDt) st = { kind: 'path', P: o.P, L: o.L, t0: o.t0, dur: o.dur, sp };
+      else { const c = offWalk(a, sp, [a.w.p[0], a.w.p[2]]); if (c && c.L > .05) { const left = o.dur - T;
+        st = { kind: 'path', P: c.P, L: c.L, t0: now, dur: Math.min(c.L / SPEED.stroll, Math.max(.4, c.L / SPEED.max, left)), sp }; } } }
+    if (!st) return false;
+    const w = a.w; LIFE.drop(a); w.mv = null; if (w.E) sim.offAgent(w, [w.p[0], w.p[1], w.p[2], w.yawS ?? w.p[3]]);
+    a.step = st; a.mode = 'out'; S.steps++; pathAt(a); return true; }
+  // (the walk off's point T island s from its start: [x, y, z, ry | null], ry null where the path has no heading)
+  function pathPoint(st, T) { let s = Math.min(st.L, st.L * Math.max(0, T) / st.dur), x = st.P[0][0], y = st.P[0][1], z = st.P[0][2], ry = null;
+    for (let k = 1; k < st.P.length; k++) { const p = st.P[k - 1], q = st.P[k], l = Math.hypot(q[0] - p[0], q[2] - p[2]); if (s <= l || k === st.P.length - 1) { const u = l > 1e-9 ? Math.min(1, s / l) : 1; x = p[0] + (q[0] - p[0]) * u; y = p[1] + (q[1] - p[1]) * u; z = p[2] + (q[2] - p[2]) * u; if (l > 1e-9) ry = Math.atan2(q[0] - p[0], q[2] - p[2]); break; } s -= l; }
+    return [x, y, z, ry]; }
+  function pathAt(a) { const st = a.step, w = a.w, T = Math.max(0, (clockNow() - st.t0) * 60), done = T >= st.dur;
+    const [x, y, z, r] = pathPoint(st, T), ry = r ?? w.fix?.[3] ?? 0;
+    if (done) { a.step = null; const sp = st.sp; w.fix = [sp.x, sp.y ?? SIDE, sp.z, sp.ry ?? ry]; sim.where(w); w.vc = 0; a.mode = 'stand'; return; }
+    w.fix = [x, y, z, ry]; sim.where(w); w.vc = WALK_V(st); }
+  const WALK_V = st => st.L / st.dur;
   // sent (or re-sent) along a way to a place's goal; the trip's timing is kept to judge how far behind the sim it falls
   function route(a, place, p = null) { const w = a.w, G = goalAt(a, place); if (!G) return false; const way = sim.wayTo(w.E, w.s, G.goal); if (!way) { release(a); return false; }
     sim.goAgent(w, way, G.goal); a.goalFor = place; a.leg = { L: left(w), p0: p }; return true; }
@@ -133,11 +185,13 @@ export function createAgents({ peds, places, stands = null, doorOf: doorAnchor =
   let islandDt = 0, lastIsland = null, islandEp = null;
   const FR = new THREE.Frustum(), PM = new THREE.Matrix4(), V = new THREE.Vector3(); let cam = null, farR = 90, tick = 0, snaps0 = -1;
   const seen = w => { if (!cam || !w) return false; const p = w.p; if (Math.hypot(p[0] - cam.position.x, p[2] - cam.position.z) > farR) return false; V.set(p[0], p[1] + 1, p[2]); return FR.containsPoint(V); };
+  const seenAt = (x, y, z) => { if (!cam) return false; if (Math.hypot(x - cam.position.x, z - cam.position.z) > farR) return false; V.set(x, y + 1, z); return FR.containsPoint(V); };
+  const followed = id => { const c = typeof window !== 'undefined' ? window.__city?.cam : null; return !!c && c.mode === 'follow' && c.subject?.aid === id; };
   function drive(t, dt, focus, camera, R) {
     const t0 = performance.now(); clock.pageT += dt; cam = camera; farR = (R?.charMid ?? 70) * 1.05; tick++;   // (page time from the frames' dt: monotonic, whoever drives the frames)
     if (camera) { PM.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); FR.setFromProjectionMatrix(PM); }
     // (C1-9b, the record: a step on or off its spot runs on island seconds too, and stands still while the record is paused)
-    { const T = clockNow ? clockNow() * 60 : null; islandDt = T === null || lastIsland === null || clock.epoch !== islandEp ? 0 : Math.max(0, T - lastIsland); lastIsland = T; islandEp = clock.epoch; }
+    { const T = clockNow ? clockNow() * PAGE.secondsPerMinute : null; islandDt = T === null || lastIsland === null || clock.epoch !== islandEp ? 0 : Math.max(0, T - lastIsland); lastIsland = T; islandEp = clock.epoch; }
     looks?.pump(); const now = clockNow ? clockNow() : simNow(), mnow = clockNow ? now : SC.move(dt), sn = clockNow ? clock.epoch : SC.stats().moveSnaps; if (mnow !== null) MV.frame(mnow, sn !== snaps0, clock.running === false ? 0 : clock.rate); snaps0 = sn;   // (MOVEMENT REVIEW #7: a snap of the movement clock is a jump: a late bus rider may join mid-ride only then)
     for (const a of A.values()) { try { if (a.w && a.w.look !== a.look) a.w.look = a.look; update(a, now, dt, mnow); overlay(a); } catch (e) { log(`agent ${a.id}: ${e && e.message || e}`); remove(a); } a.first = false; }   // (only the first frame places people outright)
     if (LIFE_ON) try { LIFE.frame(dt); } catch (e) { log('life: ' + (e && e.message || e)); }   // (W8: after the orders: only who is standing; ?life=0 turns it off)
@@ -151,15 +205,44 @@ export function createAgents({ peds, places, stands = null, doorOf: doorAnchor =
   // ── MOVEMENT W3a · a trip with legs
   function endRun(a, jump = false) { if (!a.run) return; a.run.release(a, jump); a.run = null; if (a.w) { a.w.mv = null; a.w.tq = null; a.w.lift = 0; } }   // (jump: a seek, the cab goes too)
   function legTrip(a, now, dt) {
-    const tr = a.d.trip, back = !!a.run && a.run.lastNow !== null && now !== null && now < a.run.lastNow - 1; if (a.run && (a.run.trip !== tr || back)) endRun(a, back);   // (a new trip, or the clock went back: a tape seek)
-    if (!a.run) { a.run = MV.run(a, tr); if (a.step) a.step = null;
-      const w = a.w; if (w && (a.mode === 'stand' || a.mode === 'out')) { const k = tr.legs.findIndex(l => l.path?.length >= 2 && l.kind !== 'bus' && l.kind !== 'taxi'), p0 = k >= 0 ? tr.legs[k].path[0] : null;   // (from its spot: the first stretch starts where it stands)
-        if (p0 && Math.hypot(w.p[0] - p0[0], w.p[2] - p0[1]) < 30) a.run.leadFrom(k, [w.p[0], w.p[2]]); }
+    const tr = a.d.trip, returning = returnTrip?.(a.id, tr.dep, now) ?? null, returnKey = returning ? `${returning.end}|${returning.to.x},${returning.to.z}` : null, back = !!a.run && a.run.lastNow !== null && now !== null && now < a.run.lastNow - 1; if (a.run && (a.run.trip !== tr || back || (a.run.returnKey ?? null) !== returnKey)) endRun(a, back);   // (a new trip, or the clock went back: a tape seek)
+    // (C2-indoors2, the record's homes: out of its home, the walk out through its door is the trip's first stretch, drawn indoors;
+    // indoors.out(a) → its step [x, z] while that lasts, else null)
+    // (C2-seek: indoors.exit(a) → { step: [x, z], end } for a trip whose first stretch is the walk out of its home, end its island minute:
+    // the same on a seek and on play, so the run's lead and its lateness are read from it, never from what the frames saw)
+    const out = indoors?.out?.(a) ?? null, ex = indoors?.exit?.(a) ?? null;
+    if (!a.run) { a.run = MV.run(a, tr); a.run.returnKey = returnKey;
+      if (returning) { a.run.delay = Math.max(0, returning.end - tr.dep); a.run.lastNow = returning.end; }
+      if (a.step) a.step = null; a.run.exitEnd = ex ? ex.end : null;
+      // (from its spot: the first stretch starts where it stands)
+      // (C2-transit: from wherever it is drawn, up to LEAD_MAX m, beyond 30 m along the lanes: movement.js leadWay. Only within 30 m and
+      // only from a spot it was: a walker drawn 38 m from its trip's first point jumped there on the departure's frame — seed 404, a05 at
+      // 6300.001 from (32.8, 6.3), a18 at 6780.001 from (40.2, 4.2), both to corner-1_-1's point (29.7, -31.8). The leg keeps its booked
+      // time, so a far lead hurries. A first leg whose start is a long undrawn access stretch (off the walkers' graph: the woods, the labs,
+      // MOVE.offHide) is left as it was beyond 30 m: the walk out of the woods stays out of view, as the walk in (slime 10-31, "Hold at the edge"))
+      // (C2 merge: walking out of its home, the lead starts from its step, indoors.out; else from where it is drawn)
+      // (C2-seek: walking out of its home, from its step whether or not a frame saw the walk out: a seek past it leads from there too)
+      // (C2-seek: else from the spot the stand plan had it on as it left, where a seek has it too, unless its walker is drawn elsewhere
+      // than that spot's loops reach: then from where it is drawn, as before)
+      const hs = heldAt?.(a.id, tr.dep - 1e-6), w = a.w, hq = hs && (!w || Math.hypot(w.p[0] - hs.x, w.p[2] - hs.z) < 1.5) ? [hs.x, hs.z] : null;
+      const q = returning ? [returning.to.x, returning.to.z] : ex?.step ?? hq ?? out ?? (w ? [w.p[0], w.p[2]] : null); if (q) { const k = tr.legs.findIndex(l => l.path?.length >= 2 && l.kind !== 'bus' && l.kind !== 'taxi'), p0 = k >= 0 ? tr.legs[k].path[0] : null;
+        const d0 = p0 ? Math.hypot(q[0] - p0[0], q[1] - p0[1]) : Infinity, hid = !tr.legs[k]?.coarse && tr.legs[k]?.off?.[0] >= MOVE.offHide;
+        if (d0 < 30 || (d0 < LEAD_MAX && !hid)) a.run.leadFrom(k, q); }
       if (a.spot) release(a); if (a.w?.E) sim.offAgent(a.w, [a.w.p[0], a.w.p[1], a.w.p[2], a.w.yawS ?? a.w.p[3]]); a.mode = 'leg'; a.goalFor = null; }
-    if (now === null) return; const o = a.run.frame(now, dt, a); a.mode = 'leg';
+    if (now === null) return;
+    // (walking out: the indoors draws it, the run waits on its step; when it is out, the run starts there from its beginning, late by
+    // as long, and catches up as after a stage hold. A seek into the walk out puts the walker in for the indoors to draw)
+    if (out) { if (!a.w) { a.w = sim.putAgent({ id: a.id, look: a.look, fix: [out[0], SIDE, out[1], 0] }); if (a.w) S.spawned++; } return; }
+    // (out of its door at the walk out's own end, ex.end: late by as long from there, the lateness caught up from that minute; played or
+    // sought past it, the run reads the same. It had read the first frame it saw out, and a seek past the walk out never saw one:
+    // departure 100, out at 100.5, minute 100.6 drew a delay of 0.6 played and 0 sought, the walkers 36 m apart)
+    if (a.run.exitEnd != null) { const e = a.run.exitEnd; a.run.exitEnd = null; if (now >= e) { a.run.delay = Math.max(a.run.delay, e - tr.dep); if (a.run.lastNow === null || a.run.lastNow < e) a.run.lastNow = e; } }
+    const o = a.run.frame(now, dt, a); a.mode = 'leg';
     if (!o.show) { if (a.w) { sim.removeAgent(a.id); a.w = null; S.removed++; } return; }
     if (!a.w) { a.w = sim.putAgent({ id: a.id, look: a.look, fix: [o.x, o.y, o.z, o.yaw] }); if (!a.w) return; S.spawned++; a.w.yawS = o.yaw; }
-    const w = a.w; w.fix = [o.x, o.y, o.z, o.yaw]; w.vc = o.vc; w.ph += (o.cad || o.vc) * dt * 3.1; w.mv = o.prop || o.clip || o.stand ? o : a.rec?.walkClip && o.vc > .2 ? walkMv(a) : null;
+    // (C2-seek, the record: its place this frame at once, sim.where, as the indoors does: out of view peds.js refreshes a walker's place
+    // only every sixth frame, so a followed rider the camera had fallen behind was drawn — and followed — in 10 m hops, 404 a10 at 6600.31)
+    const w = a.w; w.fix = [o.x, o.y, o.z, o.yaw]; if (clockNow) sim.where(w); w.vc = o.vc; w.ph += (o.cad || o.vc) * dt * 3.1; w.mv = o.prop || o.clip || o.stand ? o : a.rec?.walkClip && o.vc > .2 ? walkMv(a) : null;
     if (o.snap) { w.yawS = o.yaw; w.omega = 0; }   // (a kickturn, a cab door, a turnstile: the heading outright, as the clip has it)
     if (o.duck) { EU.set(o.duck * .55, 0, 0); w.tq = (w.tq || new THREE.Quaternion()).setFromEuler(EU); w.lift = -o.duck * .55; } else if (w.tq && !a.held) { w.tq = null; w.lift = 0; }
     if (o.prop) MV.prop(o.prop, o.x, o.base ?? (o.y - .12), o.z, w.yawS ?? o.yaw, w, o); }
@@ -167,15 +250,25 @@ export function createAgents({ peds, places, stands = null, doorOf: doorAnchor =
   function arrival(p) { const ln = sim.laneNear(p[0], p[2], 3), wayOf = s => { const g = ln && entryOf(s), way = g ? sim.wayTo(ln.E, ln.s, g) : null, L = way ? wayLen(ln.E, ln.s, way, g) : Infinity; return L <= 100 ? { g, way, L } : null; };
     return { ln, wayOf, near: s => wayOf(s)?.L ?? Math.hypot(s.x - p[0], s.z - p[2]) + 100 }; }
   function update(a, now, dt, mnow = now) {
-    const d = a.d, w = a.w; if (!d) return;
+    const d = a.d, w = a.w; if (!d) return; let tk = null;
     if (a.held) { if (a.run && a.run.hn == null && mnow !== null) a.run.hn = mnow; return; }   // (held: the stage moves it; its trip runs late by as long)
     if (a.run && a.run.hn != null && mnow !== null) { a.run.delay += Math.max(0, mnow - a.run.hn); a.run.hn = null; }
     if (d.kind === 'trip' && d.legs) { legTrip(a, mnow, dt); return; }
     if (a.run) endRun(a);
     if (a.mode === 'leg') { if (!w) a.mode = null;   // (the trip is over: to a stand spot from where it ended, or indoors)
-      else if (d.kind === 'stand' && !d.now && !a.step) { const p = w.p, { ln, wayOf } = arrival(p);
+      // (C2-indoors2, the record's homes: a trip home handed to the indoors where it ends, on the spot a seek claims; no step-off: the
+      // indoors walks it to its step and in on the arrival's own clock, as a seek has it)
+      // ('far': its walker drawn far from that end goes, and is placed on its spot the next frame, as a seek places it)
+      else if (d.kind === 'stand' && !d.now && !a.step && (tk = indoors?.takes?.(a))) { if (tk === 'far') { remove(a); a.inNow = true; return; }
+        const p = w.p, sp = claim(a, d.place, arrival(a.rec?.arrive ?? p).near); if (!sp) { remove(a); return; }
+        if (w.E) sim.offAgent(w, [p[0], p[1], p[2], w.yawS ?? p[3]]); w.fix = [p[0], p[1], p[2], w.yawS ?? p[3]]; a.mode = 'stand'; a.placed = false; return; }
+      // (C2-seek: the way to its spot from its trip's own end, rec.arrive, the point its spot was chosen by: from the lane nearest the walker,
+      // a metre off it, the way could be from the street's other side and none, and the walker went, 19 m, to reappear on its spot — 404 a05
+      // at 6482.88, followed)
+      else if (d.kind === 'stand' && !d.now && !a.step) { const p = w.p, ar = a.rec?.arrive && Math.hypot(a.rec.arrive[0] - p[0], a.rec.arrive[2] - p[2]) < 3 ? a.rec.arrive : p, { ln, wayOf } = arrival(ar);
         // (C1-9b: the spot by its trip's own end, rec.arrive, the record's, when it has one: as a seek there claims it; walked from here)
-        const sp = claim(a, d.place, arrival(a.rec?.arrive ?? p).near); if (!sp) { remove(a); return; } const dS = Math.hypot(sp.x - p[0], sp.z - p[2]);   // (no way along the lanes: straight, and dearer than any)
+        const sp = claim(a, d.place, arrival(a.rec?.arrive ?? p).near); if (!sp) { remove(a); return; } const dS = Math.hypot(sp.x - p[0], sp.z - p[2]);
+        if (walkOff(a, sp)) return;   // (no way along the lanes: straight, and dearer than any)
         // MOVEMENT REVIEW #1 · THE STAND-SPOT STEP-OFF DOES THE LAST METRES: the walk now ends on the walkers' graph (travel.mjs), so a spot
         // with a lane point (its entry) is walked to along the lanes — round the corner, over the crossing — and stepped off to, as a
         // walker's arrival always was (up to 100 m: the crossings are one-way, and the far corner can be the way round — walked, not popped
@@ -200,10 +293,28 @@ export function createAgents({ peds, places, stands = null, doorOf: doorAnchor =
         // (C1-9b, the record: off a trip that ended at rec.arrive [x, y, z], placed outright or come up from a ride, it claims the spot a walk off that
         // trip claims)
         if (!w) { const ar = a.rec?.arrive ?? null, sp = claim(a, d.place, ar ? arrival(ar).near : null); if (!sp) return; const g = entryOf(sp);   // (no spot free: indoors)
-          if (a.first || d.now || !g) { standAt(a, sp); return; }   // (startup, an arrest: straight to the spot)
+          // (C2-indoors2: an arrival home with no walker drawn at its trip's end, a ride that ends out of view, is the indoors' too: put on
+          // its spot for the indoors to draw on the arrival's clock, as a seek has it, never stepped off the lanes and then moved)
+          // (C2-seek, the record: a trip whose end was out of view leaves no walker; placed outright on its spot, as a seek has it, unless
+          // it is followed or its spot is in view: then it walks up from the lane, never a pop in view)
+          if (a.first || d.now || !g || a.inNow || indoors?.takes?.(a) || (clockNow && !followed(a.id) && !seenAt(sp.x, sp.y ?? SIDE, sp.z))) { a.inNow = false; standAt(a, sp); walkOff(a, sp); return; }   // (startup, an arrest, an indoors hand-over: straight to the spot; C2-seek: a seek mid-walk off its trip, on its way there)
           if (!clearFor(a, g.E, g.s)) { S.waits++; a.waitT = (a.waitT || 0) + dt; return; }   // (after a ride: they walk up from the lane)
           a.w = sim.putAgent({ id: a.id, look: a.look, E: g.E, s: g.s, check: false }); if (!a.w) return; S.spawned++; a.goalFor = d.place; stepOff(a); return; }
-        if (a.mode === 'stand') { if (a.spot?.place !== d.place) remove(a); return; }   // (standing elsewhere: the patrol took them)
+        if (a.mode === 'stand') { if (a.spot?.place !== d.place) { remove(a); return; }   // (standing elsewhere: the patrol took them)
+          // (C2-cast, the record's show: the plan's spot for it here now, or its spot kept for another player or in a planned figure's room:
+          // it steps across to its own, as a seek places it there; nowhere else free, it stays)
+          // (C2-seek: the stand plan's spot for it here now: it steps across to it, as a seek places it there; one in a live scene's room:
+          // aside onto a free spot, as before, until the scene is done with it)
+          const pl = standPlan?.(a, d.place);
+          if (pl !== undefined) { const old = a.spot;
+            if (pl && liveKept?.(pl)) { if (old === pl || (old && liveKept(old))) { release(a); const sp = claimFree(a, d.place); if (sp && sp !== old) stepTo(a, sp); else if (!sp && old) { old.taken = a.id; a.spot = old; } } }
+            else if (pl && pl !== old) { release(a); a.spot = pl; pl.taken = a.id; stepTo(a, pl); }
+            return; }
+          const ps = planSpot?.(a, d.place) ?? null, old = a.spot;
+          if (ps && ps !== old) { claim(a, d.place); if (a.spot && a.spot !== old) stepTo(a, a.spot); }
+          else if (!ps && old?.plan) { release(a); const sp = claim(a, d.place); if (sp) stepTo(a, sp); }
+          else if (!ps && old && !old.plan && keepOff?.(old, a)) { release(a); const sp = claim(a, d.place); if (sp && sp !== old) stepTo(a, sp); else if (!sp) { old.taken = a.id; a.spot = old; } }
+          return; }
         if (d.now) { remove(a); return; }
         if (a.mode === 'walk') { if (a.goalFor !== d.place && !route(a, d.place)) { remove(a); return; } w.v = SPEED.max;   // (the sim has them there: the last stretch in a hurry)
           if (w.halt) { if (a.spot) stepOff(a); else remove(a); return; }
@@ -243,15 +354,39 @@ export function createAgents({ peds, places, stands = null, doorOf: doorAnchor =
   function snapOne(a) { remove(a); a.first = true; a.noWay = null; a.waitT = 0; }
   // ── STAGE: a vignette borrows a walker (stage/index.js); it gives it back where it took it
   let stage = null;
+  // (C2-indoors2: the record's homes, draw.js: { takes(a), out(a) }; null: as ever)
+  let indoors = null;
   function hold(id) { const a = A.get(id); if (!a || !a.w || a.step || a.run?.busyNow()) return null; if (a.held) return a.w; const w = a.w;   // (MOVEMENT W3a: never off a bus or out of a cab. The W3a commit had put the rest of this line inside that comment: `w` was undefined, every vignette's hold threw)
     a.held = { E: w.E, s: w.s, next: w.next, route: w.route, goal: w.goal, halt: w.halt, mode: a.mode, fix: w.fix ? w.fix.slice() : null }; MV.unpose(w);
     if (w.E) sim.offAgent(w, [w.p[0], w.p[1], w.p[2], w.yawS ?? w.p[3]]); return w; }
   function unhold(id, { remove: rm = false } = {}) { const a = A.get(id); if (!a?.held) return; const h = a.held; a.held = null; const w = a.w;
     if (rm || !w) { remove(a); return; }
     if (h.E) { sim.onAgent(w, h.E, h.s); w.fix = null; if (!h.halt) sim.goAgent(w, [h.next, ...(h.route || [])].filter(Boolean), h.goal); }   // (back on its lane point, on its way)
+    // (C2-cast: one let go standing on its own spot stays there: a scene that walked it back on game time hands it over where it is)
+    else if (a.spot && Math.hypot(w.p[0] - a.spot.x, w.p[2] - a.spot.z) < .3) w.fix = [w.p[0], w.p[1], w.p[2], w.yawS ?? w.p[3]];
     else if (h.fix) w.fix = h.fix.slice(); }
+  // (C2-cast: the spot an agent standing at its place has now: the plan's when the plan gives it one, else a planned spot it no longer
+  // has is given up for the one a claim gives — the same a seek places it on; the walker is not moved)
+  function respot(id) { const a = A.get(id); if (!a?.d || a.d.kind !== 'stand') return a?.spot ?? null;
+    if (standPlan && standPlan(a, a.d.place) !== undefined) { claim(a, a.d.place); return a.spot; }
+    const ps = planSpot?.(a, a.d.place) ?? null; if ((ps && ps !== a.spot) || (!ps && a.spot?.plan)) { release(a); claim(a, a.d.place); } return a.spot; }
+  // The record ferry takes an arrived walker where its trip ended. Its walk to a stand spot is not part of that trip,
+  // and the queue replaces that destination. Never interrupt a trip or a ride, and never replace or move the body here.
+  function boardReady(id) {
+    const a = A.get(id); if (!clockNow || !a?.w || a.held || a.d?.kind !== 'stand' || a.d.place !== 'docks' || a.rec?.trip || a.run?.busyNow() || (a.run && !a.run.done)) return false;
+    if (a.step && !(a.mode === 'out' && ['path', 'out'].includes(a.step.kind))) return false;
+    if (!['stand', 'out', 'leg'].includes(a.mode)) return false;
+    a.step = null; a.mode = 'stand'; a.goalFor = null; return true;
+  }
   return {
-    setAgents, drive, clock, hold, release: unhold, setStage(s) { stage = s; }, get stage() { return stage; }, set keepOff(fn) { keepOff = fn; },
+    setAgents, drive, clock, hold, boardReady, release: unhold, setStage(s) { stage = s; }, get stage() { return stage; }, set indoors(v) { indoors = v; }, get indoors() { return indoors; }, set keepOff(fn) { keepOff = fn; }, set planSpot(fn) { planSpot = fn; }, set offWalk(fn) { offWalk = fn; }, set standPlan(fn) { standPlan = fn; }, get standPlan() { return standPlan; }, set liveKept(fn) { liveKept = fn; }, set heldAt(fn) { heldAt = fn; }, set returnTrip(fn) { returnTrip = fn; }, nearOf: p => arrival(p).near, respot,
+    // Record departures ask the stand plan at departure, independent of the page's current claim.
+    returnSpot: (id, place, minute) => { const sp = heldAt?.(id, minute); return sp?.place === place ? sp : undefined; },
+    finishReturn(id, minute, to = null) { const a = A.get(id), sp = heldAt?.(id, minute); if (!a?.held) return;
+      if (a.run) endRun(a);
+      const dest = sp && !sp.plan ? sp : to; if (!dest) return;
+      release(a); if (sp && !sp.plan) { a.spot = sp; sp.taken = id; }
+      a.mode = 'stand'; a.step = null; a.goalFor = null; a.held.E = null; a.held.fix = [dest.x, dest.y ?? .2, dest.z, dest.ry ?? 0]; },
     setClock(t, pageT, running) { SC.observe(t, pageT, running); },
     stats: () => { const v = [...A.values()]; return { agents: v.length, walking: v.filter(a => a.mode === 'walk' || (a.mode === 'leg' && a.w)).length, onLegs: v.filter(a => a.run).length, riding: v.filter(a => a.run?.busyNow()).length, standing: v.filter(a => a.mode === 'stand').length, stepping: v.filter(a => a.step).length,
       hidden: v.filter(a => !a.w).length, rate: +clock.rate.toFixed(3), simT: simNow() === null ? null : +simNow().toFixed(1), clock: SC.stats(), spawned: S.spawned, removed: S.removed, jumps: S.jumps, steps: S.steps, waits: S.waits, noWay: S.noWay,

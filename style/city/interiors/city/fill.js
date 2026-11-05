@@ -4,6 +4,8 @@
 // A slot built for a sim piece (its demo is a dog bed, a keypad, a gate, a camera or a safe) takes that piece only when the home has that
 // security. `show` (a vacant Gatehill unit, staged by the realtor) fills every slot with the layout's own demo piece.
 import { OBJECTS, byId } from '../home/index.js';
+// (the drugs, as the card's Pockets names them: one list on the city side)
+import { DRUGS } from '../../ui/record/format.js';
 
 const RANK = { common: 0, event: 1, rare: 1, epic: 2, grail: 3, legendary: 4, '1of1': 5 };
 const CAP = { trailer: 1.2, apartment: 2.2, house: 3.2, penthouse: 5, mainland: 4.6 };   // (mainland: the collectors' neighbourhood)   // the best rarity a tier's owner plausibly has
@@ -41,3 +43,37 @@ export function wealthOf(tier, agent, home) { const base = { trailer: .1, apartm
   return Math.max(0, Math.min(1, base * .55 + money * .45 + marks * .05)); }
 // what the overlay says about a piece: its picker name, rarity and kind
 export const infoOf = id => { const o = byId.get(id); return o ? { name: o.name, rarity: o.game?.rarity ?? '', kind: o.game?.kind ?? '' } : null; };
+
+// C2-indoors (2026-10-31) · WHAT A RECORD HOME'S SLOTS SHOW: only what the record has already disclosed (GAME.md §19, slime 10-30: "you
+// see them cook or hide something under the floor, but what, how much and which drug land on the tape a day later"). `held` is the last
+// disclosed holdings receipt (panel-data.js tapeAt(...).holdings, as the card's Pockets reads it: its typed fields), or null.
+//   none disclosed   neutral: a stash slot shows its stash shut (every home has one, §: the sim keeps a stash per home), a gear slot
+//                    its gear (a console, a cook rig, a light: no holding in it), every trophy, collectible, cash and product slot empty
+//   disclosed        kind by kind, only what the receipt itself lists (C2-indoors2, the 10-31 review: a receipt of {parts: 1} had filled the
+//                    product slot with SUDO baggies): the stash open and a cash piece (the money counter) when it has cash; the baggies
+//                    only for a drug it names that has baggies of its own (crime.js: SUDO lime, TEMP pink, HALLU cyan), in that drug's
+//                    colour (the most it holds; DRUGS' order on a tie); a scale or a rolling tray for any dose it lists (a named drug or
+//                    unnamed doses); as many trophy and collectible slots as it lists pieces, each the slot's own piece. Chems, parts,
+//                    guns, lockpicks and warrants have no prop here: their slots stay empty (a gun rack or a wall of pieces shows guns, so
+//                    it is never filled as a trait piece either)
+// Each slot's fill carries `shows` (null | 'cash' | 'goods' | 'pieces') and, for goods, `good` (the receipt's goods key it shows):
+// what of the receipt it shows (tools/indoorcheck.mjs, tools/indoorleakcheck.mjs read them).
+const CASHY = new Set(['money-counter', 'cash-stack', 'duffel-cash', 'trophy-in-the-bank', 'counterfeit-press']), DOSE_GEAR = new Set(['scale-digital', 'rolling-tray']);
+const GUNS = new Set(['gun-rack', 'piece-wall']), BAGGIES = 'baggies-product';
+// baggies-product's variants, by its vnames (home/crime.js): the drug each colour is. TRUTH, CLEAR and FIREWALL have none
+export const BAGGIE = Object.freeze({ sudo: 0, temp: 1, hallu: 2 });
+export function recordFills(A, held) {
+  const r = held?.fields ?? null, cash = r ? +(r.cash ?? 0) : 0, n = k => r ? +(r.goods?.[k] ?? 0) || 0 : 0;
+  const doses = [...DRUGS, 'doses'].filter(k => n(k) > 0), bag = DRUGS.filter(k => Object.hasOwn(BAGGIE, k) && n(k) > 0).sort((a, b) => n(b) - n(a))[0] ?? null;
+  let pieces = r ? (r.pieces?.length ?? 0) : 0;
+  return A.slots.map((s, i) => { const o = byId.get(s.demo); if (!o) return null; const kind = o.game?.kind ?? null, v = s.variant ?? 0;
+    if (o.cat === 'stash' || o.sim === 'stash') return { id: o.id, variant: v, state: cash > 0 ? 'open' : 'closed', shows: cash > 0 ? 'cash' : null };
+    if (o.sim) return null;   // (a safe, the dog, an alarm or a camera: security the record doesn't carry; left out)
+    if (CASHY.has(o.id)) return cash > 0 ? { id: o.id, variant: v, shows: 'cash' } : null;
+    if (o.id === BAGGIES) return bag ? { id: o.id, variant: BAGGIE[bag], shows: 'goods', good: bag } : null;
+    if (DOSE_GEAR.has(o.id)) return doses.length ? { id: o.id, variant: v, shows: 'goods', good: doses[0] } : null;
+    if (GUNS.has(o.id)) return null;
+    if (kind === 'gear' || (!kind && o.cat === 'lights')) return { id: o.id, variant: v, shows: null };
+    if (pieces > 0) { pieces--; return { id: o.id, variant: v, shows: 'pieces' }; }
+    return null; });
+}

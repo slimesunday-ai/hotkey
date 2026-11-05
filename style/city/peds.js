@@ -27,11 +27,12 @@ import { tierize } from './gpu.js';
 import { createPedSim, CROWD, PED, pedsPer100 } from './pedsim.js';
 import { geometryOf } from './gpu.js';
 import { CLOCK } from './traffic/rules.js';
+import { CAM } from './camera/config.js';
 import { WALK2, createAnimTexture2, animUniforms2, writeGait2, installAnim2 } from './anim/cast/walk2.js';   // (cast pass: the fresh cast's walk: connected legs + the seat's midline fix)
 import { ELBOW } from './anim/cast/elbow/styles.js';   // (THE ELBOW, 2026-10-08: the cast's bend style, compiled into the walker; ai-city-fresh ELBOW.md § The cast)
 import { createFineAtlas, installFine, fineAttr } from './anim/cast/fine.js';   // (cast pass: fine detail on the near tier, ai-city-fresh PORTING.md §3)
 import { sdata } from '../../world/city.js';   // (SPREAD: the data this spread reads)
-import { installFade } from './camera/fade.js';   // (CAMERA FADE 10-09b: near the camera or on its line to the person followed, a walker dissolves)
+import { installFade, onLens, fadeOfWalker, lensGone } from './camera/fade.js';   // (CAMERA FADE 10-09b: near the camera or on its line to the person followed, a walker dissolves)
 const TURN_LEAN = .09;   // lean into a turn (rad per rad/s per m/s; the lab's v1 WALK.turnLean, shared by v2)
 export { CROWD, PED, pedsPer100 };
 
@@ -55,6 +56,10 @@ export function createPeds({ scene, night, R, bake, seed = 0x9ed5, densityOf = (
   let dogM = null, dogIds = null; const DOG_CAP = 96, dogMat = tierize(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .72, metalness: 0 }));
   const nearMat = tierize(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .62, metalness: 0 }), { vmat: true }), midMat = tierize(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .62, metalness: 0 }), { vmat: true });
   nearMat.customProgramCacheKey = () => 'ped-near';   // (walk2.js installAnim2 extends it, in build(): the texture's size is known there)
+  // C2-indoors (2026-10-31) · the walkers skip the homes' cutaway (gpu.js CUT, as interiors/city/life.js's resident does): an agent drawn
+  // inside an open room, or on its step in front of it, is never cut away with the house's walls
+  for (const m of [nearMat, midMat]) { const prev = m.onBeforeCompile, key = m.customProgramCacheKey.bind(m);
+    m.onBeforeCompile = (sh, r) => { prev.call(m, sh, r); sh.fragmentShader = sh.fragmentShader.replace('if ( uCut[1].w > 0. )', 'if ( false )'); }; m.customProgramCacheKey = () => key() + '|nocut'; }
   // CAST PASS (2026-10-02) · fine paint on the near tier: one atlas for every walker look, one hook on the near material (after the cache
   // key above: installFine wraps it). Near geometries carry aFine (zeros for a look with no paint); mid, far and the depth pass are untouched
   // (the mid bake resamples chars.js build(), which draws each painted face in its average colour; far reads full.main).
@@ -80,7 +85,24 @@ export function createPeds({ scene, night, R, bake, seed = 0x9ed5, densityOf = (
     if (geos.length) { dogM = new THREE.BatchedMesh(DOG_CAP, geos.reduce((n, g) => n + g.attributes.position.count, 0), geos.reduce((n, g) => n + g.index.count, 0), dogMat); dogM.castShadow = true; dogM.receiveShadow = true; dogM.sortObjects = false; dogM.perObjectFrustumCulled = true; dogM.frustumCulled = false;
       dogIds = geos.map(g => dogM.addGeometry(g)); for (let k = 0; k < DOG_CAP; k++) { dogM.addInstance(dogIds[0]); dogM.setVisibleAt(k, false); } scene.add(dogM); }
     for (const m of [nearMat, midMat, farMat, dogMat]) installFade(m, 'walker');
+    onLens(lens);
     scene.add(nearM, midM, farM); ready = true; }
+  // THE LINE, CLEAR (C2-camera2, camera/fade.js): a body the fade has dissolved to nothing this frame — on the line to the person
+  // followed, or the camera inside it — is taken out of its batch until the next frame's update draws it again, so the homes' depth
+  // pick and the stage's occlusion read what the screen shows. Its own instance matrix (feet, the stage's lift, the mid tier's bob)
+  // is what the shader faded: the same numbers here (fadeOfWalker).
+  // (applied again at the end of every update with the last state: a pose made before the walkers moved — orbit, a shot — is not undone
+  // by this frame's batches)
+  const LO = [0, 0, 0], LM = new THREE.Matrix4(); let lensNow = 0, dogN = 0, lensL = null;
+  function lens(L) { lensL = L; lensNow = 0; if (!L.on || !ready) return; const p = L.p, s = L.s, k = CAM.fade, reach = k.walker[0] + k.walker[2] + .1;
+    // (gone only on the line — inside the box round the camera and the subject — or with the camera inside it)
+    const x0 = Math.min(p.x, s ? s[0] : p.x) - reach, x1 = Math.max(p.x, s ? s[0] : p.x) + reach, z0 = Math.min(p.z, s ? s[2] : p.z) - reach, z1 = Math.max(p.z, s ? s[2] : p.z) + reach;
+    const one = (m, i) => { m.getMatrixAt(i, LM); const e = LM.elements; LO[0] = e[12]; LO[1] = e[13]; LO[2] = e[14];
+      if (LO[0] < x0 || LO[0] > x1 || LO[2] < z0 || LO[2] > z1) return;
+      if (lensGone(fadeOfWalker(LO, p, s))) { m.setVisibleAt(i, false); lensNow++; } };
+    for (let i = 0; i < near.length; i++) one(nearM, i);
+    for (let i = 0; i < mid.length; i++) one(midM, i);
+    if (dogM) for (let i = 0; i < dogN; i++) one(dogM, i); }
   bake().then(build).catch(e => console.error('peds: bake failed', e));
   // SIM LIVE pass · a sim agent's own look ({ full, mid, main }, pedbake.js's shape) appended to the batches → its look index (≥ the
   // generic pool, which generic walkers keep). The batches grow with room to spare (by half again, V8 below), so most looks cost no reallocation.
@@ -163,12 +185,12 @@ export function createPeds({ scene, night, R, bake, seed = 0x9ed5, densityOf = (
         writeGait2(tex, nearCap, k, w.g); }
       pedTex.needsUpdate = true;
       for (let k = 0; k < midCap; k++) { const w = mid[k]; if (!w) { midM.setVisibleAt(k, false); continue; }
-        midM.setGeometryIdAt(k, midIds[lk(w)]); Qn.setFromAxisAngle(Y, w.yawS ?? w.p[3]); V3.set(w.p[0], w.p[1] + Math.abs(Math.cos(w.ph)) * .045 * Math.min(1, w.vc), w.p[2]); if (w.tq) { Qn.multiply(w.tq); V3.y += w.lift || 0; } M4.compose(V3, Qn, S1); midM.setMatrixAt(k, M4); midM.setVisibleAt(k, true); }
+        midM.setGeometryIdAt(k, midIds[lk(w)]); Qn.setFromAxisAngle(Y, w.yawS ?? w.p[3]); V3.set(w.p[0], w.p[1] + Math.abs(Math.cos(w.ph)) * .045 * Math.min(1, w.vc), w.p[2]); if (w.tq || w.lieQ) { Qn.multiply(w.tq || w.lieQ); V3.y += w.lift || 0; } M4.compose(V3, Qn, S1); midM.setMatrixAt(k, M4); midM.setVisibleAt(k, true); }
       let nd = 0; if (dogIds.length) for (const list of [near, mid]) for (const w of list) { if (w.dog < 0 || nd >= DOG_CAP) continue; sim.ahead(w, PED.dogLead, DP);
         const g = w.vc < .1 ? 2 : ((w.ph / Math.PI) | 0) & 1; Qn.setFromAxisAngle(Y, DP[3]); V3.set(DP[0], DP[1] + (g < 2 ? Math.abs(Math.sin(w.ph * 2)) * .02 : 0), DP[2]); M4.compose(V3, Qn, SC);
         dogM.setGeometryIdAt(nd, dogIds[(w.dog % 20) * 3 + g]); dogM.setMatrixAt(nd, M4); dogM.setVisibleAt(nd, true); nd++; }
-      if (dogM) for (let k = nd; k < DOG_CAP; k++) dogM.setVisibleAt(k, false);
-      for (let k = 0; k < far.length; k++) { const w = far[k], sz = sizeAt(w.dn); Qn.setFromAxisAngle(Y, w.yawS ?? w.p[3]); V3.set(w.p[0], w.p[1], w.p[2]); SF.set(sz, sz, sz); M4.compose(V3, Qn, SF);
+      if (dogM) for (let k = nd; k < DOG_CAP; k++) dogM.setVisibleAt(k, false); dogN = nd;
+      for (let k = 0; k < far.length; k++) { const w = far[k], sz = sizeAt(w.dn); Qn.setFromAxisAngle(Y, w.yawS ?? w.p[3]); V3.set(w.p[0], w.p[1], w.p[2]); if (w.tq || w.lieQ) { Qn.multiply(w.tq || w.lieQ); V3.y += (w.lift || 0) * sz; } SF.set(sz, sz, sz); M4.compose(V3, Qn, SF);
         farM.setGeometryIdAt(k, farIds[lk(w)]); farM.setMatrixAt(k, M4); farM.setVisibleAt(k, true); }
       for (let k = far.length; k < farN; k++) farM.setVisibleAt(k, false); farN = far.length;
       // continuity (and when each walker was last seen: pedsim.js lets one leave only after PED.grace s unseen)
@@ -179,9 +201,10 @@ export function createPeds({ scene, night, R, bake, seed = 0x9ed5, densityOf = (
       if (fresh) for (const w of T.prev) { if (w.drawnF === frame || w.onF !== frame - 1) continue; const d = Math.hypot(w.p[0] - cam.x, w.p[1] - cam.y, w.p[2] - cam.z);
         if (w.gone || onScreen(w, d)) { T.rem++; why(T.remWhy, w.gone ? 'left' : 'undrawn'); note(w.gone ? 'left' : 'undrawn', w, d); } }
       T.prev.length = 0; for (const list of [near, mid, far]) for (const w of list) T.prev.push(w); T.vis = vis; T.maxId = mx; T.frames++;
+      if (lensL) lens(lensL);
       const ms = performance.now() - T0; T.ms += (ms - T.ms) * .05; T.msMax = Math.max(T.msMax * .995, ms);   // (the whole update: sim step, tiers, batches, stats)
       return moving; },
-    stats: () => ({ onScreenRemovals: T.rem, onScreenSpawns: T.spawn, removalWhy: { ...T.remWhy }, spawnWhy: { ...T.spawnWhy }, log: T.log.slice(), visible: T.vis, pool: sim.walkers.length, frames: T.frames,
+    stats: () => ({ lensNow, onScreenRemovals: T.rem, onScreenSpawns: T.spawn, removalWhy: { ...T.remWhy }, spawnWhy: { ...T.spawnWhy }, log: T.log.slice(), visible: T.vis, pool: sim.walkers.length, frames: T.frames,
       tiers: [near.length, mid.length, far.length], caps: [nearCap, midCap, farCap], updateMs: +T.ms.toFixed(3), updateMax: +T.msMax.toFixed(3),
       walkers: sim.walkers.length, agents: sim.agents.length, dontWalk: sim.stat.dontWalk, stepOffs: sim.stat.stepOffs, dogs: sim.walkers.filter(w => w.dog >= 0).length, want, edges: sim.edges.length, lanes: sim.lanes.size, deadEnds: sim.deadEnds, avoidMs: +sim.stat.avg.toFixed(3), avoidMax: +sim.stat.max.toFixed(3) }),
     density: (focus, radius) => sim.density(focus, radius),

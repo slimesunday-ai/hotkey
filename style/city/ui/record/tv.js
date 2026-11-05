@@ -6,6 +6,7 @@
 //   button    TV in the menu (key 0): on when off, off when on
 //   floorPx   the lowest screen row a framed figure may stand on: above the caption, the ticker and the record player
 import { h, set, button } from '../kit.js';
+import { bodyHidden, HOODED } from './identity.js';
 
 // the public action, by the scene's kind (night) or the moment's (day): words for what is seen, never for how it ends
 const ACTION = {
@@ -22,24 +23,30 @@ const words = s => String(s ?? '').replace(/[-_]/g, ' ');
 export const actionOf = f => ACTION[f.kind] ?? words(f.kind);
 export const placeOf = p => PLACE[p] ?? (/^sitdown-/.test(p) ? { car: 'in a car', diner: 'a diner booth', roof: 'a rooftop', rooftop: 'a rooftop' }[p.slice(8)] ?? words(p.slice(8)) : null) ?? (/^(downtown|strip|suburbs|industrial|docks)-\d$/.test(p) ? `${PLACE[p.split('-')[0]]} corner` : /^lab/.test(p) ? 'a lab' : words(p));
 
-export function createTv({ root, onToggle }) {
+export function captionNames(f, snapshot = null) {
+  // replayCut supplies recordEventId only after its age and disclosure checks.
+  return (f.subjects ?? []).map(s => f.recordEventId == null && snapshot && bodyHidden(snapshot, s.id) ? HOODED : s.driver ? `${s.name} (${s.driver})` : s.name);
+}
+export function createTv({ root, onToggle, snapshot = () => null }) {
   const who = h('div', { class: 'r-tv-who' }), what = h('div', { class: 'r-tv-what' });
   const cap = h('div', { id: 'r-tv-cap', class: 'r-tv-cap', role: 'status', 'aria-live': 'polite', hidden: true }, h('span', { class: 'r-live r-tv-bug' }, 'TV'), who, what);
   const btn = button('TV', { kbd: '0', tip: 'TV mode: the director has the camera; any input hands it back (0)', cls: 'r-tv-btn', onclick: () => onToggle() });
   btn.setAttribute('data-tv-button', ''); btn.setAttribute('aria-pressed', 'false');
   root.append(cap);
+  let fields = null;
   // the caption's text: names (driver) · …, a hooded count; then the action · the place
   function caption(f) {
+    fields = f;
     if (!f) { cap.hidden = true; return null; }
-    const names = (f.subjects ?? []).map(s => s.driver ? `${s.name} (${s.driver})` : s.name);
+    const names = captionNames(f, snapshot());
     if (f.anonymousCount) names.push(`${f.anonymousCount} hooded`);
     set(who, names.join(' · ') || ' '); set(what, `${actionOf(f)} · ${placeOf(f.place)}`);
     cap.hidden = false; return `${who.textContent} | ${what.textContent}`;
   }
   return {
-    button: btn, el: cap, caption,
+    button: btn, el: cap, caption, refresh() { if (fields && !cap.hidden) caption(fields); },
     on() { btn.setAttribute('aria-pressed', 'true'); btn.classList.add('is-on'); document.body.classList.add('r-tv-on'); },
-    off() { btn.setAttribute('aria-pressed', 'false'); btn.classList.remove('is-on'); document.body.classList.remove('r-tv-on'); cap.hidden = true; },
+    off() { fields = null; btn.setAttribute('aria-pressed', 'false'); btn.classList.remove('is-on'); document.body.classList.remove('r-tv-on'); cap.hidden = true; },
     // the lowest row a framed figure may stand on: above the caption when it shows, else above the ticker and the player's bar
     floorPx() {
       let y = innerHeight;

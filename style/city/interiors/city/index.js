@@ -14,34 +14,27 @@
 import * as THREE from 'three';
 import { CUT } from '../../gpu.js';
 import { P, addressAt } from '../../plan.js';
-import { layoutFor, TIER_OF } from './assign.js';
+import { layoutFor, TIER_OF, skinned } from './assign.js';
+import { lotEntry, homeSeed } from './frame.js';
 import { sdata } from '../../../../world/city.js';   // (SPREAD: the data this spread reads)
 
 const SECN = { lock: 'lock + chain', door: 'steel door', alarm: 'alarm', dog: 'dog', safe: 'safe' };
 const SCARN = { crime: 'crime scene', boarded: 'boarded up', burned: 'burned out', foreclosed: 'foreclosed', memorial: 'memorial' };
-// fix round · a home's roof top over its anchor's roof line (a house's anchor carries its eave only), measured by depth hits over 44 houses
-// and 54 trailers: one-storey houses (eave 3.4 m) up to +4.5 (A-frames, capes), two-storey (eave 6.2) up to +3.6, trailers up to +1.6
-const RIDGE = { low: 4.6, two: 3.7, trailer: 1.7 }, HEADTILT = .7, HEADK = .84;
+const HEADTILT = .7, HEADK = .84;
 const KEEP = 3, ROOM = { trailer: [5, 4], apartment: [5, 4], house: [5.5, 4.5], penthouse: [6.5, 5.5] };
 const smooth = t => t * t * (3 - 2 * t);
 
-export function createHomes(api, { Q, NIGHT = false, SHOT = false } = {}) {
+// C2-indoors (2026-10-31) · RECORD: the record viewer's homes (interiors/city/record.js). record.roomOf(h) → { name, A (the layout in its
+// skin), fills, owner, key } | null: no demo state, no live sim, no resident, no sleeper (the person inside is the agent's own walker),
+// no camera framing (the follow cam follows the walker), no overlay, no keys; open() builds the room in place and sets the cut, close()
+// clears it. The three-room cache is the same.
+export function createHomes(api, { Q, NIGHT = false, SHOT = false, record = null } = {}) {
   const { scene, camera, controls, renderer, ANCHORS } = api;
   let idx = new Map(), idxN = -1, order = [], cur = null, saved = null, tween = null, raf = 0, mods = null, stP = null, placesP = null;
   const cache = new Map(), asm = new Map(), stats = { opens: 0, lastMs: 0, buildMs: 0, calls: 0 };
   // ── the homes the streamed blocks anchored: a frame per home (local x across its front, local z toward the street)
   // vol [x0, x1, y0, y1, z0, z1]: the home's real building volume in that frame (fix round: fitted, not a slab of sky over the roof) —
   // what a clicked point must fall in (a margin for eaves, porches, sills and fire escapes), and the ray's box when a depth pick fails
-  function lotEntry(id, l, block) {
-    const f = l.face ?? [0, 1], R = l.house; if (!R) return null; const alongX = f[1] !== 0, yaw = l.yaw || 0;
-    let fw = alongX ? R[2] - R[0] : R[3] - R[1], fd = alongX ? R[3] - R[1] : R[2] - R[0], th = Math.atan2(f[0], f[1]) + yaw;
-    if (yaw) { const c = Math.abs(Math.cos(yaw)), s = Math.abs(Math.sin(yaw)), k = c * c - s * s; [fw, fd] = [(fw * c - fd * s) / k, (fd * c - fw * s) / k]; }
-    if (fw < 4.3 && fd > fw + 2.5) { th -= Math.PI / 2; [fw, fd] = [fd, fw]; }   // a narrow pad end-on to the street: cut its long side instead
-    const tier = TIER_OF[l.tier] ?? l.tier ?? 'house', wallY = l.wall ? l.wall[1] - l.wall[4] / 2 : .2, floorY = wallY + (tier === 'trailer' ? .45 : .32), roof = l.roof ?? floorY + 3;
-    const ridge = roof + (tier === 'trailer' ? RIDGE.trailer : roof - wallY < 4 ? RIDGE.low : RIDGE.two);   // (a house's anchor roof is its eave; a trailer's is its top)
-    return { id, kind: 'lot', tier, block, cx: (R[0] + R[2]) / 2, cz: (R[1] + R[3]) / 2, th, fw, fd, floorY, H: Math.max(2.3, Math.min(2.8, roof - floorY - .02)), top: roof + 4, ceiling: false,
-      vol: [-fw / 2 - .7, fw / 2 + .7, wallY - .4, ridge + .4, -fd / 2 - .7, fd / 2 + 1.5] };
-  }
   function unitEntry(u, b, block) {
     const f = b.face ?? [0, 1], th = Math.atan2(f[0], f[1]), xa = [Math.cos(th), -Math.sin(th)], za = [Math.sin(th), Math.cos(th)], tower = b.kind === 'tower';
     const ws = (u.windows || []).filter(w => w.length < 6 || w[5] === b.rot); if (!ws.length) return null;
@@ -136,14 +129,15 @@ export function createHomes(api, { Q, NIGHT = false, SHOT = false } = {}) {
     return mods = { R, F, G, C, MATS, GLOW }; }
   // ── building one home's inside (cached: the last KEEP stay built)
   async function build(h) {
-    const [{ R, F, G, C, MATS }, S0] = await Promise.all([load(), state()]), st = S0.model.homes.get(h.id) ?? null, tier = h.tier;
-    const name = layoutFor(h.id, tier), A0 = asm.get(name) ?? await fetch(new URL(`../home/assemblies/${name}.json`, import.meta.url)).then(r => r.json()); asm.set(name, A0);
-    const SV = await savedP, rec = SV.load(h.id, tier), A = rec?.layout ?? A0;   // (home builder: the owner's saved layout, else the preset)
+    const RR = record ? record.roomOf(h) : null; if (record && !RR) return null;
+    const [{ R, F, G, C, MATS }, S0] = await Promise.all([load(), RR ? { src: 'record', model: { homes: new Map([[h.id, { owner: RR.owner, sec: new Set(), scars: new Set(), lit: true }]]) }, agents: new Map() } : state()]), st = S0.model.homes.get(h.id) ?? null, tier = h.tier;
+    const name = RR ? RR.name : layoutFor(h.id, tier), A0 = RR ? RR.A : asm.get(name) ?? await fetch(new URL(`../home/assemblies/${name}.json`, import.meta.url)).then(r => r.json()); if (!RR) asm.set(name, A0);
+    const SV = await savedP, rec = RR ? null : SV.load(h.id, tier), A = rec?.layout ?? A0;   // (home builder: the owner's saved layout, else the preset)
     const agent = st?.owner ? S0.agents.get(st.owner) : null, sec = st?.sec ?? new Set(), scars = [...(st?.scars ?? [])], vacant = !st || (!st.owner && !scars.length);
-    const show = vacant && tier === 'penthouse', seed = (h.id.split('').reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7) & 0xffff) || 1;
-    const wealth = show ? 1 : F.wealthOf(tier, agent, st), auto = st?.owner || show ? F.fillsFor(A0, { tier, wealth, sec, seed, show }) : A0.slots.map(() => null);
+    const show = vacant && tier === 'penthouse', seed = homeSeed(h.id);
+    const wealth = RR ? RR.wealth ?? .5 : show ? 1 : F.wealthOf(tier, agent, st), auto = RR ? RR.fills : st?.owner || show ? F.fillsFor(A0, { tier, wealth, sec, seed, show }) : A0.slots.map(() => null);
     const fills = rec ? A.slots.map((s, i) => s.fill !== undefined ? s.fill : auto[i] ?? null) : auto;   // (a saved slot's `fill` is the owner's pick, null = left empty)
-    const asleep = !!st?.asleep, lightsOn = NIGHT && !!st?.lit, key = [h.id, name, st?.owner, agent?.look, [...sec].sort(), scars.sort(), asleep, lightsOn, NIGHT, rec?.rev ?? 0].join('|');
+    const asleep = !!st?.asleep, lightsOn = NIGHT && !!st?.lit, key = [h.id, name, st?.owner, agent?.look, [...sec].sort(), scars.sort(), asleep, lightsOn, NIGHT, rec?.rev ?? 0, RR?.key ?? ''].join('|');
     const hit = cache.get(key); if (hit) { cache.delete(key); cache.set(key, hit); return hit; }
     const t0 = performance.now(), [rw, rd] = ROOM[tier] ?? ROOM.house;
     const band = h.kind === 'lot' ? .28 : 0, SW = h.fw - 2 * band, SD = h.fd - band;   // (a lot's room stands inside its walls' band)
@@ -229,22 +223,25 @@ export function createHomes(api, { Q, NIGHT = false, SHOT = false } = {}) {
     ov.hidden = false; }
   // ── open / close / step
   let busy = null;
-  async function open(id, { instant = false } = {}) {
+  // (still: C2-indoors2, the record's homes: () → false once what the room was built from is out of date, e.g. a seek landed while it
+  // was being built; that build is never shown)
+  async function open(id, { instant = false, still = null } = {}) {
     const h = typeof id === 'string' ? index().get(id) : id; if (!h) return false; const t0 = performance.now();
     if (editor?.active) editor.exit();
-    busy = h.id; const [e, B] = await Promise.all([build(h), builder()]); if (busy !== h.id) return false;
+    busy = h.id; const [e, B] = await Promise.all([build(h), record ? null : builder()]); if (busy !== h.id || !e) return false;
+    if (still && !still()) { if (busy === h.id) busy = null; return false; }
     if (cur && cur.e !== e) cur.e.g.removeFromParent();
-    if (!cur) saved = { pos: camera.position.clone(), tgt: controls.target.clone() };
-    scene.add(e.g); e.g.visible = true; e.g.updateMatrixWorld(true); cur = { h, e }; setCut(h, e); attachDecor(B);
+    if (!cur && !record) saved = { pos: camera.position.clone(), tgt: controls.target.clone() };
+    scene.add(e.g); e.g.visible = true; e.g.updateMatrixWorld(true); cur = { h, e }; setCut(h, e); if (!record) attachDecor(B);
     const G = mods.GLOW.value; if (NIGHT) G.setRGB(...(e.st?.lit ? [.55, .42, .26] : [.035, .045, .09])); else G.setRGB(.06, .055, .05);
-    fly(frameOf(h, e), instant); showOverlay(h, e); if (zEl) zEl.hidden = !e.head; camera.updateMatrixWorld(); tick(); loop();
+    if (!record) { fly(frameOf(h, e), instant); showOverlay(h, e); if (zEl) zEl.hidden = !e.head; camera.updateMatrixWorld(); tick(); loop(); }
     stats.opens++; stats.lastMs = Math.round(performance.now() - t0); stats.buildMs = Math.round(e.ms); stats.last = { id: h.id, layout: e.name, tier: h.tier, wealth: +e.wealth.toFixed(2), tris: e.res.bank.tris(), meshes: e.g.children.length };
     if (Q.has('log')) console.log(`home ${h.id}: ${e.name} · open ${stats.lastMs} ms (build ${stats.buildMs}) · ${e.g.children.length} meshes`);
     return true; }
   function close({ instant = false } = {}) { if (!cur) return; if (editor?.active) editor.exit(); decor?.dispose(); decor = null; cur.e.g.removeFromParent(); cur = null; busy = null; clearCut(); if (ov) ov.hidden = true; if (zEl) zEl.hidden = true;
     if (saved) fly(saved, instant); saved = null; }
   function step(dir) { if (!cur) return; index(); const L = order.filter(x => x.tier === cur.h.tier), k = L.findIndex(x => x.id === cur.h.id), n = L.length; if (!n) return; open(L[((k < 0 ? 0 : k + dir) % n + n) % n]); }   // (fix round: within the tier)
-  addEventListener('keydown', ev => { if (!cur || editor?.active || /^(INPUT|SELECT|TEXTAREA)$/.test(ev.target?.tagName || '')) return; if (ev.key === 'Escape') close(); else if (ev.key === ']') step(1); else if (ev.key === '[') step(-1); });
+  if (!record) addEventListener('keydown', ev => { if (!cur || editor?.active || /^(INPUT|SELECT|TEXTAREA)$/.test(ev.target?.tagName || '')) return; if (ev.key === 'Escape') close(); else if (ev.key === ']') step(1); else if (ev.key === '[') step(-1); });
   // ── home builder: the visit decor (lock badges, showcase brackets, the flex numbers) and edit mode (the owner only)
   function attachDecor(B) { decor?.dispose(); decor = null; if (!cur) return; const { h, e } = cur, own = isOwner(h, e.st), lived = !!e.st?.owner || e.show;
     e.flex = B.flexOf([...e.A.items.map(it => it.id), ...e.fills.filter(Boolean).map(f => f.id)]); if (lived) decor = B.decorate({ e, camera, renderer, visitor: !own }); }
@@ -255,12 +252,14 @@ export function createHomes(api, { Q, NIGHT = false, SHOT = false } = {}) {
   // after an edit: the room rebuilt from the saved layout, the camera where it is
   async function refresh() { if (!cur) return; const { h } = cur, e = await build(h); if (!cur || cur.h.id !== h.id) return; if (e !== cur.e) { cur.e.g.removeFromParent(); scene.add(e.g); e.g.visible = true; e.g.updateMatrixWorld(true); cur = { h, e }; setCut(h, e); }
     e.g.visible = true; attachDecor(await builder()); showOverlay(h, e); if (zEl) zEl.hidden = !e.head; tick(); loop(); }
-  const H = { open, close, step, index, edit, refresh, get editing() { return !!editor?.active; }, isOwner: id => { const h = index().get(id); return isOwner(h, h && cur?.h.id === id ? cur.e.st : null); }, get current() { return cur ? { id: cur.h.id, ...stats.last } : null; }, stats, cache,
+  // (C2-camera: the open room's own three-quarter street-side framing, frameOf, for the follow cam's cutaway: GAME.md §41, slime 10-31,
+  // "Rise to the cutaway")
+  const H = { frame: () => cur ? frameOf(cur.h, cur.e) : null, open, close, step, index, edit, refresh, get editing() { return !!editor?.active; }, isOwner: id => { const h = index().get(id); return isOwner(h, h && cur?.h.id === id ? cur.e.st : null); }, get current() { return cur ? { id: cur.h.id, ...stats.last } : null; }, stats, cache,
     get decor() { return decor && { badges: decor.badges, show: decor.show }; },
     async click(ev) { if (editor?.active) return; const h = await pick(ev); if (h) { if (h.id !== cur?.h.id) await open(h); } else if (cur) close(); }, lastPick, hitAt: (x, y) => sceneHit({ clientX: x, clientY: y }), homeAt };
   // ── ?home=<lot id>: go there, wait for its block's anchors, open it (for links and shots)
   let ready; H.ready = new Promise(r => { ready = r; });   // (shots wait on it: main.js renders once it settles)
-  const want = Q.get('home'); if (want) { const m = /^lot:(-?[\d.]+),(-?[\d.]+)/.exec(want) || null, a = /^apt:(-?\d+)_(-?\d+)/.exec(want), xz = m ? [+m[1] + 5, +m[2] + 6] : a ? [(+a[1] + .5) * P, (+a[2] + .5) * P] : null;
+  const want = record ? null : Q.get('home'); if (want) { const m = /^lot:(-?[\d.]+),(-?[\d.]+)/.exec(want) || null, a = /^apt:(-?\d+)_(-?\d+)/.exec(want), xz = m ? [+m[1] + 5, +m[2] + 6] : a ? [(+a[1] + .5) * P, (+a[2] + .5) * P] : null;
     if (xz && !index().has(want)) api.goTo(xz[0], xz[1]);
     const t0 = performance.now(), wait = () => { if (index().has(want)) { open(want, { instant: true }).then(ok => ready(ok), e => { console.warn(e); ready(false); }); return; }
       if (performance.now() - t0 < (SHOT ? 150000 : 45000)) setTimeout(wait, 150); else { console.warn('home not found: ' + want); ready(false); } }; wait(); } else ready(false);

@@ -2258,3 +2258,51 @@ Dated lines, with slime's words quoted. Anything not in this file isn't the plan
   - **Crowded night scenes brush.** `showscenario`'s crowding probe fails on seed 404: figures briefly within about a
     metre.
   - **A late trip's cut to the arrival** (§20; slime, 10-11) has no transition yet. How it looks is his call.
+- 2026-10-30, gore: slime, "gore is in 100%", answering whether NPCs shoved into the street and hit by cars
+  get "blood effects". It replaces the 10-07 "toon, never gore" line in `style/city/MOVEMENT.md` (a plan line, not
+  his call). Presentation only (§20); no rule changes. Agents are still hurt or killed only by the rules.
+- 2026-10-30, continuity: slime, on agents vanishing in the record viewer: "it just feels buggy seeing agents
+  disappear... you go to follow an agent from the start and they just vanish... no one wants to watch people drop off
+  screen... if the agent goes into a house, we should watch them enter the house, then be inside the house with the
+  agent. any room the agent enters we should see... every action the agent preforms, weather cooking, dealing, etc...
+  needs to be watchable". This replaces the 10-11 call that a late trip cuts to the arrival (§20). §19 stands (slime,
+  10-30: "i think it's fine how it is"); how a followed agent's private side shows is open.
+- 2026-10-30, following an agent (slime picked both, from options put to him):
+  - Tonight's hooded robber: "Let it show: you watch X mask up and do it, and the hood only fools people who aren't
+    watching X." A viewer who follows the attacker sees who it is, live; the hood holds everywhere else until §19's 24 hours.
+  - Inside: "Watch the action live, details a day late: you see them cook or hide something under the floor, but what,
+    how much and which drug land on the tape a day later." §19's private side keeps its 24 hours; the action itself is live.
+- 2026-10-31, following an agent, two more (slime picked from options put to him):
+  - Indoors: "One room is fine as long as there is variety we can expand to multi room later if it works". A followed
+    agent goes through its door into its home's one room (the island's preset interiors, varied by home); several rooms
+    come later if this works.
+  - A private errand (a tip, a bribe, a hand-over, a pay, a lookout, a fence listing, a bounty, a crew stash): "Who and
+    where show". A follower sees the act, who it's with and where, live; what, how much, which drug, the target and
+    the reason keep §19's 24 hours. As with the hood, this is the follower's view only and agents' briefings don't
+    change (Claude's default, put to slime 10-30; his to change).
+- 2026-10-31, following an agent, the rides (slime, from options put to him): the subway, "We already created an inside
+  the carriage subway scene": a followed rider is shown inside the carriage (subway/), not glided over from the street.
+  The woods: "Hold at the edge": the camera waits at the treeline until the agent comes out; the walk in stays undrawn.
+- 2026-10-31, following an agent indoors, the camera (slime, from options put to him): "Rise to the cutaway": while the
+  followed agent is inside, the camera rises to its room's own three-quarter view from the street side and eases back
+  down at the door. A meeting (or a day errand) that can't fit its walk and its minutes before the 9:05 show: slime,
+  "Do your recommendation here"; Claude's call: it is staged after the show closes, from where the show left the pair,
+  still its full minutes. The show doesn't wait for it: everyone's show starts on time.
+- 2026-10-31, following an agent, small calls (slime, from options put to him): on a station's stairs the camera stays on
+  the sidewalk ("Keep as is"); the record's panels (the card, the ticker) stay on top of the carriage ("Panels on top");
+  a home errand with no time to walk in or out (the agent arrives just for it, or leaves right after): "go with your
+  recommendation": it plays just inside the door, at its real time, losing a few seconds at its edges; errand times stay
+  as routines.js gives them. The privacy redesign note (docs/redesign/privacy-20261031.md): "Approved the privacy plan".
+- 2026-10-31, who decides (slime): "If anything is related to engineering you make the decision, if anything is
+  related to art, I make the decision." Claude decides how things are built; slime decides how things look. Changes to
+  existing checks, gate thresholds and the sim/city contract still go to him (CLAUDE.md), unless he says otherwise.
+- 2026-10-31, the show's casting (slime, from options put to him): seekscenario's play step waits until the record has
+  paused before comparing ("Fix the check"); a hooded attacker who is also its own fight's target is drawn in that fight
+  as the hooded target ("As the hooded target"). Claude's call (engineering): a fight's post-payoff timers (attackers
+  walking back, the target let go) run on game time, so seek and play agree at every speed.
+- 2026-11-03, the hood and a card opened by name (slime asked Claude "What do you think we do", then: "Ok go wit your
+  recommendations on the ones I asked you for your recommendations"): while an agent's body wears the hood, its card
+  opened by name (People, the ticker) still names it, but nothing outside following points at the hooded body: no ring,
+  no pin, no fly to where it stands. "Go there" follows it instead, so the viewer becomes its follower, the one view the
+  hood doesn't fool. Names stay everywhere, and nothing on a card opened by name gives away that its agent is hooded
+  (anonymity on the body, never by omitting names).

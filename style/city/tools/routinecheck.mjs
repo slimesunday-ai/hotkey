@@ -45,7 +45,9 @@ async function moduleUnderTest() {
       if (early && result.length) result[0] = { ...result[0],
         place: { ...result[0].place, corePlace: early.seen[result[0].agent] ?? 'hidden' } };
       return result;`);
-  } else if (fault === 'missing-partner') replace('for (const agent of [a, b]) put', 'for (const agent of [a]) put');
+  }
+  // §41, 10-30: "no one wants to watch people drop off screen"; meetings now wait for travel.
+  else if (fault === 'missing-partner') replace('for (const id of [job.cue.a, job.cue.b]) {', 'for (const id of [job.cue.a]) {');
   else if (fault === 'random') replace('function at(minute) {', 'function at(minute) { Math.random();');
   else if (fault) throw new Error(`unknown fault ${fault}`);
   for (const name of ['places.js', 'addresses.js', 'adapter.js', 'player.js', 'routine-places.js']) {
@@ -64,8 +66,10 @@ function verifyMeetings(plan, events, label) {
     property(pair.every(Boolean), `${label} meet ${event.id} both schedules include it`);
     property(pair.every(r => r.minute === cue.minute && r.role === 'meet'), 'meeting begins together');
     property(pair.every(r => isDeepStrictEqual(r.place, { ...cue.place, lot: cue.place.lot ?? null }))
-      || pair.every(r => r.cut && isDeepStrictEqual(r.scenePlace, cue.place)), 'meeting together or explicit paired scene cut');
-    property(pair.every(r => r.cut) && cue.cut, 'unannounced trip has paired arrival cut');
+      // §41, 10-30: "no one wants to watch people drop off screen"; jail keeps its own physical anchor.
+      || pair.every(r => ['jail', cue.place.cityPlace].includes(r.place.cityPlace) && isDeepStrictEqual(r.scenePlace, cue.place)), 'meeting together, with jail respected');
+    // §41, 10-30: "no one wants to watch people drop off screen"; no arrival cut.
+    property(pair.every(r => !r.cut) && !cue.cut && cue.minute >= cue.departure, 'meeting follows its trips');
   }
 }
 
@@ -141,7 +145,8 @@ function synthetic(createRoutinePlanner) {
   property(evicted.at(1810).every(r => r.place.cityPlace === 'heap'), 'public eviction leaves home immediately');
   const dawn = createRoutinePlanner([frames[0], frame(1, 3240,
     [event(1, 3240, 'meet', { a: 'a', b: 'b', sitdown: 'dawn' })])]);
-  property(dawn.at(3241).filter(r => r.meet === 1).length === 2, 'new dawn meet survives routine reset');
+  // §41, 10-30: "no one wants to watch people drop off screen"; observe the arrival, not a cut at publication.
+  property(dawn.at(dawn.day(2).meetings[0].minute).filter(r => r.meet === 1).length === 2, 'new dawn meet survives routine reset');
   const hourly = createRoutinePlanner([frames[0], frame(1, 1860,
     [event(1, 1860, 'outloud', { agent: 'a', line: 'On the hour' })])]);
   equal(hourly.day(1).bubbles[0].place, hourly.at(1860).find(r => r.agent === 'a').place,

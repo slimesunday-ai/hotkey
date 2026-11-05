@@ -252,7 +252,7 @@ export function createTrafficSim({ seed = 0x7aff1c, night = false, clock = () =>
   function release(c) { if (!c.route) return; c.route = null; c.asCar = false; if (c.stage) c.stageEnd = true; else c.kind = 'car'; if (c.L.kind === 'lane') { c.next = pickNext(c.L, c); c.go = !c.L.to.sig && !!c.next; } }
   function leave(c) { const a = c.L.cars, q = a.indexOf(c); if (q >= 0) a.splice(q, 1); }
   function spawn(ln, s, o = {}) { const m = o.model ?? ((rnd() * 1e6) | 0), c = { id: nextId++, kind: o.kind || 'car', model: m, len: o.len || 4.4, wid: o.wid || 1.8, L: null, s: 0, v: 0, acc: 0, next: null, go: false, passed: false,
-      hist: [], x: 0, z: 0, h: 0, dh: 0, steer: 0, spin: rnd() * 6.28, F: [0, 0, 0], seenT: -1e9, born: t, box: null, brake: false, gone: false };
+      hist: [], x: 0, z: 0, h: 0, dh: 0, steer: 0, spin: rnd() * 6.28, F: [0, 0, 0], seenT: -1e9, born: t, box: null, brake: false, gone: false, wreck: null, haz: null, hazL: null, hazS: 0, skid: 0, yawOff: 0, hgt: 0 };   // (C2-GORE: wreck, haz, hazS, skid, yawOff — HAZARD below)
     // the driver (fix round: speed variety): desired speed ±12 %, acceleration and headway ±20 %; a long vehicle pulls away slower
     const lg = c.len > LONG ? (c.len > 8 ? .55 : .7) : 1; c.dv = (.88 + rnd() * .24) * (lg < 1 ? .92 : c.kind === 'patrol' ? 1.04 : 1); c.a = CAR.a * (.8 + rnd() * .4) * lg; c.T = CAR.T * (.85 + rnd() * .4) * (lg < 1 ? 1.2 : 1);
     enter(c, ln, s); c.v = o.v ?? 0; place(c); cars.push(c); stat.spawns++; return c; }
@@ -309,6 +309,38 @@ export function createTrafficSim({ seed = 0x7aff1c, night = false, clock = () =>
   // s a frame, longer past that (up to hMax); the shared signal clock (rules.js advance) moves with each step. null: the page's dt.
   function tick(dt) { const T = fleet?.pace ? fleet.pace() : null, tt = T === null ? Math.min(dt, .1) : T; if (!(tt > 0)) return 0;
     const n = Math.min(TICK.max, Math.ceil(tt / TICK.h - 1e-6)), h = Math.min(tt / n, TICK.hMax); for (let k = 0; k < n; k++) { advance(h); step(h); } return n * h; }
+  // ── C2-GORE (2026-10-30) · HAZARDS: someone in the road off a zebra (traffic/accident.js publishes them: hazards = [{ x, z, r, hit }],
+  // a crowd walker stumbling off the kerb). A car on a lane sees one once it stands in its way (across the road within its half-width + r
+  // of its line), ahead of its nose, within HZ.look m. With room to stop at its comfortable braking it stops short, as for a car ahead;
+  // without, it brakes as hard as it can (bMax: c.skid, the skid) — and a car that still can't stop in time hits them: onHit(c, h, v) when
+  // its nose reaches them. Only an ordinary car can hit: a route car (a cab, the stage's cruiser) or a patrol always stops short (its
+  // move clamped to the gap, as every move is to the car ahead). A car that hit someone is a WRECK (c.wreck = { t, go }): it skids to a
+  // stop and stands (the cars behind queue, IDM) until accident.js lets it go (c.wreck.go). Off when nobody is in the road: no cost.
+  // (2026-11-04, slime: "the taxi hasent moved since the accident and cars are driving through it". The hit is accident.js's: a car is a
+  // wreck only when onHit takes the hit (→ true), so every wreck has its owner to let it go — a car that "hit" a hazard no live case was
+  // behind stood for good. A car holds the hazard it can't stop for (c.haz) only while that hazard is in the road: with the list empty —
+  // the walker back on the kerb — it lets go of it, and never hits someone already gone. A wreck comes to rest in its own lane: it slid
+  // on into the junction's box, where the other ways' cars drive over it. tools/wreckcheck.mjs.)
+  const HZ = { look: 40, vHit: 1.2, lim: 1e9 }, hazards = []; let onHit = null;
+  const canHit = c => c.kind === 'car' && !c.route && !c.stage && !c.asCar;
+  function hazardStep(c, acc, lim) { HZ.lim = lim; const L = c.L;
+    if (c.wreck) { if (c.wreck.go) { c.wreck = null; c.skid = 0; return acc; }
+      if (c.v > .02) { c.skid = 1; if (L.kind === 'lane') HZ.lim = Math.min(lim, Math.max(0, L.len - c.s - .05)); return Math.min(acc, -CAR.bMax); } c.v = 0; c.skid = 0; HZ.lim = 0; return Math.min(acc, 0); }
+    c.haz = null; c.skid = 0; if (L.kind !== 'lane') return acc;
+    let best = null, bg = HZ.look, ba = 0;
+    for (const h of hazards) { if (h.hit) continue; const dx = h.x - L.x0, dz = h.z - L.z0, al = dx * L.ux + dz * L.uz, lat = Math.abs(dx * -L.uz + dz * L.ux);
+      if (lat > c.wid / 2 + h.r || al < c.s - c.len - .3) continue; const g = al - h.r - c.s; if (g < bg) { bg = g; best = h; ba = al; } }
+    if (!best) return acc;
+    const v = c.v, g = Math.max(0, bg);
+    if (g > v * v / (2 * CAR.b) + 1.5 || !canHit(c) || best.soft) { HZ.lim = Math.min(lim, g); return Math.min(acc, idmStop(c, v, Math.max(.02, g))); }   // (room to stop, or a car that always does)
+    // (hard on the brakes: it stops short — or it won't)
+    c.skid = v > 2 ? 1 : 0; if (g >= v * v / (2 * CAR.bMax)) HZ.lim = Math.min(lim, g);
+    else { c.haz = best; c.hazL = L; c.hazS = ba - best.r; }
+    return Math.min(acc, -CAR.bMax); }
+  function hitNow(c) { const h = c.haz; c.haz = null; if (c.v < HZ.vHit) { c.s = Math.min(c.s, c.hazS); return; }   // (crept into them at a walk: no hit)
+    // (a wreck only when the accidents take the hit; else nobody is there to be hit, and it drives on)
+    h.hit = true; if (!onHit || onHit(c, h, c.v) !== true) { c.skid = 0; return; } c.wreck = { t, go: false, v: c.v }; c.skid = 1; }
+
   // ── one step
   function step(dt) { const t0 = typeof performance !== 'undefined' ? performance.now() : 0; t += dt; stepN++; if (dt <= 0) return;
     for (const L of links) if (L.cars.length > 1) L.cars.sort((p, q) => q.s - p.s);
@@ -357,11 +389,16 @@ export function createTrafficSim({ seed = 0x7aff1c, night = false, clock = () =>
       if (c.route) { const R = c.route, st = R.stops[0];   // (MOVEMENT W3a: a route car's stop on this link — held there until its go())
         if (st && st.i === R.i) { const g = st.s - c.s; if (g < -1) R.stops.shift(); else { acc = Math.min(acc, idmStop(c, c.v, Math.max(.02, g))); lim = Math.min(lim, Math.max(0, g)); c.bw = c.v < .2 && g < 14 ? (c.bw || 0) + dt : 0; if ((g < .8 || c.bw > 2) && c.v < .4) { st.at ??= t; if (st.go(c, t - st.at)) { R.stops.shift(); c.bw = 0; } } } }   // (held short of it by the car ahead: it serves the stop from there)
         else if (!st && !R.links[R.i + 1] && L.kind === 'lane') release(c); }
+      if (c.wreck || hazards.length) { acc = hazardStep(c, acc, lim); lim = HZ.lim; }   // (C2-GORE: someone in the road; a car that hit them)
+      // (nobody in the road now: a hazard it couldn't stop for is gone with them)
+      else if (c.haz) { c.haz = null; c.skid = 0; }
       c.acc = acc; c.lim = lim; }
     for (const c of cars) { if (c.kin) continue; const vPrev = c.v; let v = Math.max(0, c.v + c.acc * dt), ds = Math.max(0, (c.v + v) / 2 * dt); if (ds > c.lim) { ds = c.lim; v = Math.min(v, ds / dt); }
       c.v = v; c.brake = c.acc < -.7 || (v < .3 && vPrev < .5); c.spin += ds / (c.r || .34); c.s += ds; c.odo = (c.odo || 0) + ds;
       // band entries: counters (a car putting its nose into a zebra that shows WALK)
       if (c.L.kind === 'conn') for (const bd of c.L.bands) if (c.s - ds < bd.s0 && c.s >= bd.s0) { if (walkOn(bd.key)) { stat.walkEntries++; if (debug) debug(c, bd, 'walk'); } if (walkersIn(bd)) stat.intoWalkers++; }
+      // (C2-GORE: its nose reached them)
+      if (c.haz && !c.haz.hit && c.L === c.hazL && c.s >= c.hazS) hitNow(c);
       crossOn(c); c.yw = false; }
     for (const c of cars) if (!c.kin) place(c);   // (a kin car — a stage car pulled in, a cab in or into its bay — is posed by its owner)
     findBusy();
@@ -408,13 +445,13 @@ export function createTrafficSim({ seed = 0x7aff1c, night = false, clock = () =>
     const inR = (x, z, pad) => { let dx = x - fx, dz = z - fz; if (dx * dx + dz * dz < (R0 + pad) ** 2) return true; if (!cam || cam[2] <= 0) return false; dx = x - cam[0]; dz = z - cam[1]; return dx * dx + dz * dz < (cam[2] + pad) ** 2; };
     const unseen = c => first || (t - c.seenT >= TRAFFIC.grace && !seen(c.x, c.z, 3));
     if (first) for (const c of cars.slice()) if (!c.route && !c.kin) drop(c);   // (transit sync: a camera jump re-seeds the traffic, not the buses and cabs on their runs: it dropped them all, and every rider waiting for one rode out of view)
-    for (const c of cars.slice()) if ((!c.route && !c.kin && !inR(c.x, c.z, 16) && unseen(c)) || (c.stageEnd && unseen(c))) drop(c);   // (a route car runs wherever it is: MOVEMENT W3a)
+    for (const c of cars.slice()) if ((!c.route && !c.kin && !c.wreck && !inR(c.x, c.z, 16) && unseen(c)) || (c.stageEnd && unseen(c))) drop(c);   // (a route car runs wherever it is: MOVEMENT W3a)
     const rim = Math.max(R0, cam ? cam[2] : 0), fall = (x, z) => { let d = Math.hypot(x - fx, z - fz); if (cam) d = Math.min(d, Math.hypot(x - cam[0], z - cam[1])); return d <= TRAFFIC.full ? 1 : Math.max(TRAFFIC.edge, 1 - (1 - TRAFFIC.edge) * (d - TRAFFIC.full) / Math.max(1, rim - TRAFFIC.full)); };
     const near = [], tgt = []; let target = 0; alive.forEach((ln, k) => { const [x, z] = lanePts[k]; if (!inR(x, z, 0)) return; const n = ln.len * density(ln) / 100 * fall(x, z); near.push(ln); tgt.push(n); target += n; });
     const scale = target > TRAFFIC.max ? TRAFFIC.max / target : target > 0 && target < TRAFFIC.min ? Math.min(2, TRAFFIC.min / target) : 1; want = Math.round(target * scale);
     const cnt = near.map(l => l.cars.length + l.next.reduce((s, c) => s + c.cars.length, 0)); let n = cars.length;
     if (n > want * 1.05) { const over = near.map((l, k) => [l, cnt[k] - tgt[k] * scale]).filter(e => e[1] > 1).sort((a, b) => b[1] - a[1]);
-      for (const [l, sur] of over) { let m = Math.floor(sur); for (const c of l.cars.slice()) { if (m <= 0 || n <= want) break; if (c.kind !== 'car' || !unseen(c) || c.box) continue; drop(c); m--; n--; } } }
+      for (const [l, sur] of over) { let m = Math.floor(sur); for (const c of l.cars.slice()) { if (m <= 0 || n <= want) break; if (c.kind !== 'car' || !unseen(c) || c.box || c.wreck) continue; drop(c); m--; n--; } } }
     const order = near.map((l, k) => k).filter(k => tgt[k] * scale > cnt[k]), key = order.map(k => cnt[k] / (tgt[k] * scale) + rnd() * .05), ix = order.map((k, q) => q).sort((a, b) => key[a] - key[b]);
     const add = (ln, kind) => { for (let tries = 0; tries < 6; tries++) { const s = 7 + rnd() * (ln.len - 14), model = kind === 'patrol' ? -1 : MODELS.pick(ln.x0 + ln.ux * s, ln.z0 + ln.uz * s, ln), [len, wid, r] = MODELS.size(model); if (!clearAt(ln, s, len)) continue;
         const px = ln.x0 + ln.ux * (s - len / 2), pz = ln.z0 + ln.uz * (s - len / 2); if (!first && seen(px, pz, 4)) continue;
@@ -430,6 +467,7 @@ export function createTrafficSim({ seed = 0x7aff1c, night = false, clock = () =>
     get t() { return t; }, get want() { return want; }, MODELS,
     why(c) { const L = c.L; if (L.kind !== 'lane' || !c.next) return null; return { light: lightFor(L), box: { ...L.to.box }, room: exitRoom(c.next, c), next: c.next.turn, out: c.next.out.cars.map(o => [+o.s.toFixed(1), +o.v.toFixed(1)]), outLen: +c.next.out.len.toFixed(1) }; },
     setWalkers(w) { walk = w; },
+    hazards, set onHit(f) { onHit = f; },   // (C2-GORE: someone in the road, and what a car that hits them calls)
     // MOVEMENT W3a · route cars (simstate/movement.js): one on links[0] at s, if the lane is clear there (o.force: anyway) → the car, or null
     spawnRoute(links, s, o = {}) { const L = links[0]; if (!L) return null; const len = o.len || 4.4;
       if (!o.force && L.cars.some(q => q.s > s - len - 3 && q.s - q.len < s + 4)) return null;

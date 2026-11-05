@@ -57,6 +57,19 @@ export function createTapeReader(frames) {
     // several forms in a different beat order. Replacements retain their id.
     return publicAt(snapshot).map(e => marker(snapshot, e)).filter(Boolean).sort((a, b) => a.id - b.id);
   }
+  // C2 · betrayals: a dot of their own kind, once the record discloses the betray receipt (its type is 'betray' at the playhead; the
+  // public Turned card that comes first is not a disclosure). Kept out of markersAt: the six public kinds stay that list's contract.
+  // The dot sits at its receipt's cue (the scene that reveals it, else its publication), on its typed place (a scene's, else the
+  // district), framed on the betrayer (event.by: named by the receipt itself), and its replay starts as a marker's does.
+  function betrayal(snapshot, event) {
+    const { plan, scene, minute } = cue(snapshot, event);
+    const place = anchor(scene?.place) ?? (event.place != null ? district(event.place) : null);
+    return { id: event.id, minute, kind: 'betray', place, betray: event.kind ?? null,
+      replayStart: Math.max(plan?.start ?? 0, (scene?.start ?? minute) - .25), subjects: subjects(event.by, event.victims ?? []) };
+  }
+  function betrayalsAt(snapshot) {
+    return publicAt(snapshot).filter(e => e.type === 'betray').map(e => betrayal(snapshot, e)).sort((a, b) => a.id - b.id);
+  }
   function paperCardAt(snapshot, eventId) {
     const events = publicAt(snapshot), event = events.find(e => e.id === eventId);
     if (!event) return null;
@@ -84,7 +97,7 @@ export function createTapeReader(frames) {
       replayStart: scene ? Math.max(plan.start, scene.start - .25) : marked?.replayStart ?? plan.start,
       subjects: people, framing: { agent: victim, place } };
   }
-  return Object.freeze({ markersAt, paperCardAt });
+  return Object.freeze({ markersAt, betrayalsAt, paperCardAt });
 }
 
 // Two explicit views: replay is sought to the old minute; disclosed is the

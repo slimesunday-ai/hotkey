@@ -1,3 +1,12 @@
+// C2 · THE BAR SAYS WHERE YOU ARE, AND TAKES YOU BACK. The viewer is LIVE (watching the record go on from where they are) until they
+// jump: Go to show, Shows back to back, a scrub or an arrow on the track, the minute box, a marker. The first jump keeps the departure
+// (the minute, the speed, playing or not, the camera's mode, pose and follow subject, the open card) and the bar turns JUMPED, with
+// one way back (#r-back, or Esc with nothing open) to exactly that: the old tape's "Back to live". A replay (a missed card's, a morning
+// card's) is REPLAY and goes back by itself; Back ends it early. The departure rides the URL (?tapeBack=) through the day / night
+// reload, and so does a follow (ui/record/follow.js). The player's range input is gone: the track is the one scrubber.
+// C2 · LEGIBLE DOTS. Each kind wears its colour and its glyph (show, fight, arrest, turf, sale, ferry); a folded pip is a small stack
+// of its kinds with their counts; hovering a dot says what, who, where and when. Betrayals (tape-data's betrayalsAt: once the record
+// discloses the betray receipt) are diamonds on the bar's top lane, the record's own lane; a click on one goes there as a marker does.
 // C1-9, the drawn half · THE TAPE ON THE RECORD PATH (?sim=record; GAME.md §20 "Replay and rewind"; TV plan A4). ui/record/index.js
 // mounts it; ?sim=live keeps its own tape (ui/tape/), untouched.
 //   scrubber  one bar over the season so far, folded into the record player's bar (#record-player: its old range input steps aside;
@@ -27,28 +36,52 @@ import { placeXZ } from '../../camera/director.js';
 import { actionOf, placeOf } from './tv.js';
 import { sceneOf } from './replay.js';
 import { createMissed } from './missed.js';
+import { tapeWords, tapeName, KIND, clockOf } from './tape-format.js';
+import { bodyHidden } from './identity.js';
 
 export const TAPE = { replaySpeed: 10, clusterPx: 14, settleMs: 250, landMs: 9000, holdMs: 4000, reach: 30, seenMs: 400, seenM: 170 };
 const DAY = 1440;
-const KIND = { show: 'The show', fight: 'Fight', arrest: 'Arrest', turf: 'Corner', sale: 'Dawn sale', ferry: 'Ferry' };
-const clockOf = m => { const c = islandClock(m); return `day ${c.day} ${c.hhmm}`; };
+// the order a folded pip stacks its kinds in (the loudest first), and each kind's glyph (12×12, currentColor)
+const ORDER = ['fight', 'arrest', 'betray', 'show', 'turf', 'sale', 'ferry'];
+const GLYPH = {
+  fight: '<path d="M7.2 .8 2.6 6.9h3l-1 4.3 4.8-6.4H6.2z"/>',
+  arrest: '<path d="M6 .9 7.5 4.2l3.6.3-2.7 2.3.8 3.5L6 8.4 2.8 10.3l.8-3.5L.9 4.5l3.6-.3z"/>',
+  show: '<rect x="1.2" y="2.2" width="9.6" height="7" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 4.1v3.2l2.7-1.6z"/>',
+  turf: '<path d="M2.6 11.2V1" stroke="currentColor" stroke-width="1.5"/><path d="M3.2 1.3h7l-1.8 2.4 1.8 2.4h-7z"/>',
+  sale: '<text x="6" y="10" text-anchor="middle" font-size="11" font-weight="900" font-family="system-ui,sans-serif">$</text>',
+  ferry: '<path d="M.8 6.8h10.4l-1.7 3.4H2.5z"/><path d="M3.4 6.1V3.6h4.2l1.2 2.5z"/><path d="M5.2 3.3V1.2" stroke="currentColor" stroke-width="1.2"/>',
+  betray: '<path d="M10.8 1.2 4.4 7.6l-.9-.9 6.4-6.4z"/><path d="M2.4 6.6l3 3-.9.9-.8-.8-1.6 1.6-.9-.9 1.6-1.6-.8-.8z"/>',
+};
+const glyph = kind => { const g = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); g.setAttribute('viewBox', '0 0 12 12'); g.setAttribute('aria-hidden', 'true');
+  g.setAttribute('fill', 'currentColor'); g.setAttribute('class', 'r-tape-g'); g.dataset.glyph = kind; g.innerHTML = GLYPH[kind] ?? ''; return g; };
 
-export function createRecordTape({ api, page, sim, Q, root, director = null, dossier = null, uiBusy = () => false }) {
+export function createRecordTape({ api, page, sim, Q, root, director = null, dossier = null, follow = null, uiBusy = () => false }) {
   const P = page.player, frames = page.frames, reader = createTapeReader(frames), from = P.bounds.from, to = P.bounds.to;
-  const missed = createMissed({ root, onReplay: paper => replayPaper(paper) });
-  const log = { visits: [], missed: [], seeks: 0 };
-  let horizon = Math.max(P.minute, Math.min(to, +(Q.get('tapeHorizon') || 0) || 0)), markers = [], byId = new Map(), known = null;
+  const missed = createMissed({ root, onReplay: paper => replayPaper(paper), words: paper => words(markers.find(m => m.id === paper.id) ?? paper) });
+  const log = { visits: [], missed: [], seeks: 0, departs: [], backs: [] };
+  let horizon = Math.max(P.minute, Math.min(to, +(Q.get('tapeHorizon') || 0) || 0)), markers = [], betrays = [], byId = new Map(), known = null;
+  let depart = null, refollow = null;
+  try { if (Q.has('tapeBack')) depart = JSON.parse(Q.get('tapeBack')); } catch { depart = null; }
   let visit = null, retained = null, own = 0, seen = new Set(), lastSeen = 0, popFor = null, lastUrl = 0;
 
   // ── the bar: inserted into the record player's own bar, above its controls
   const bar = document.getElementById('record-player');
   const inner = h('div', { class: 'r-tape-in' }), head = h('div', { class: 'r-tape-head' }), pips = h('div', { class: 'r-tape-pips' });
   const track = h('div', { class: 'r-tape-track', role: 'slider', tabindex: '0', 'aria-label': 'The season so far', 'aria-valuemin': String(from) }, inner, pips, head);
-  const now = button('Now', { tip: 'Back to the furthest moment you reached', cls: 'r-tape-now', onclick: () => { seek(horizon, 'now'); } });
+  // the state, left of the track: LIVE, or JUMPED with the moment you are watching, or REPLAY; the way back, right of it
+  const bpips = h('div', { class: 'r-tape-bpips' }), lane = h('i', { class: 'r-tape-lane', 'aria-hidden': 'true' }, 'record');
+  track.prepend(lane); track.append(bpips);
+  const stDot = h('i', { class: 'r-tape-dot' }), stWord = h('b', { class: 'r-tape-word' }), stAt = h('span', { class: 'r-tape-at' });
+  const stateEl = h('div', { class: 'r-tape-state', role: 'status', 'aria-live': 'polite' }, stDot, h('span', { class: 'r-tape-st' }, stWord, stAt));
+  const backBtn = h('button', { type: 'button', id: 'r-back', class: 'r-tape-back', hidden: true, onclick: () => back('button') });
+  const backLabel = h('span'), backKey = h('kbd', null, 'Esc'); backBtn.append(h('span', { class: 'r-tape-back-arrow', 'aria-hidden': 'true' }, '↩'), backLabel, backKey);
   const span = h('span', { class: 'r-tape-span' });
-  const row = h('div', { id: 'r-tape', class: 'r-tape', 'data-safe-avoid': '' }, track, span, now);
+  const row = h('div', { id: 'r-tape', class: 'r-tape', 'data-safe-avoid': '' }, stateEl, track, span, backBtn);
   const pop = h('div', { id: 'r-tape-pop', class: 'r-tape-pop', role: 'menu', hidden: true });
-  if (bar) { bar.classList.add('has-tape'); bar.prepend(row); bar.append(pop); }
+  const tip = h('div', { id: 'r-tape-tip', class: 'r-tape-tip', role: 'tooltip', hidden: true });
+  if (bar) { bar.classList.add('has-tape'); bar.prepend(row); bar.append(pop, tip); bar.querySelector('input[type=range]')?.remove(); bar.dataset.state = 'live';
+    // a jump the player's own controls make (Go to show, Shows back to back, the minute box): record/page.js says so before it seeks
+    bar.addEventListener('record-jump', e => leave(e.detail?.by ?? 'control')); }
   const speedBox = bar?.querySelector('select[aria-label="Playback speed"]') ?? null;
   // the night bands and the midnight ticks, once, in season coordinates (the inner strip is the whole season; the track shows its start
   // to the horizon)
@@ -65,54 +98,80 @@ export function createRecordTape({ api, page, sim, Q, root, director = null, dos
 
   // ── words, from typed fields only
   const board = () => (retained ?? sim.record())?.board;
-  const nameOf = id => id ? board()?.agents?.find(a => a.id === id)?.name ?? id : null;
-  function words(m, ev = byId.get(m.id)) {
-    const who = nameOf(m.subjects?.agent), place = m.place ? placeOf(m.place.corePlace ?? m.place.cityPlace) : null;
-    let what = KIND[m.kind] ?? m.kind;
-    if (m.kind === 'show') what = `The show · night ${ev?.night ?? ''}`.trim();
-    else if (m.kind === 'fight') what = actionOf({ kind: ev?.kind ?? 'fight' });
-    else if (m.kind === 'arrest') what = 'an arrest';
-    else if (m.kind === 'turf') what = 'a corner changes hands';
-    else if (m.kind === 'sale') what = 'a sale at dawn';
-    else if (m.kind === 'ferry') what = ev?.type === 'board' ? 'boards the ferry' : 'the ferry drops everyone at the docks';
-    what = what.charAt(0).toUpperCase() + what.slice(1);
-    return { what, who, place, line: [who, place, clockOf(m.minute)].filter(Boolean).join(' · ') };
-  }
+  const view = () => ({ ...sim.record(), board: board() });
+  const nameOf = (id, eventId) => tapeName(view(), id, eventId);
+  const words = (m, ev = byId.get(m.id)) => tapeWords(m, ev, view());
 
   // ── the markers: the presented snapshot's (sim.record()), at the playhead, a replay's too (C1-9b: nothing after the playhead is on
   // the bar, a replay's playhead included). A missed card or an open marker list whose event the playhead hasn't published goes
   function refresh() {
     const s = sim.record();
-    if (!s?.frame) { markers = []; byId = new Map(); } else { markers = reader.markersAt(s); byId = new Map(s.events.map(e => [e.id, e])); }
-    const have = new Set(markers.map(m => m.id)); missed.retain(id => have.has(id));
+    if (!s?.frame) { markers = []; betrays = []; byId = new Map(); } else { markers = reader.markersAt(s); betrays = reader.betrayalsAt(s); byId = new Map(s.events.map(e => [e.id, e])); }
+    const have = new Set([...markers, ...betrays].map(m => m.id)); missed.retain(id => have.has(id));
     if (popFor && popIds.some(id => !have.has(id))) closePop();
     layout(true);
   }
   let scale = 0, laid = '', tw = 1, lastH = null;
-  function layout(force = false) {
-    const H = Math.max(horizon, from + 60), k = tw / (H - from);
-    if (force || lastH === null || Math.abs(H - lastH) * k > .25) { lastH = H; inner.style.width = pips.style.width = ((to - from) / (H - from) * 100).toFixed(4) + '%'; }
-    if (!force && Math.abs(k - scale) / (scale || 1) < .08) return;
-    scale = k;
+  const fold = (list, k) => {
     const groups = [];
-    for (const m of [...markers].sort((a, b) => a.minute - b.minute || a.id - b.id)) {
+    for (const m of [...list].sort((a, b) => a.minute - b.minute || a.id - b.id)) {
       const g = groups.at(-1);
       if (g && (m.minute - g.first) * k <= TAPE.clusterPx) { g.list.push(m); g.last = m.minute; } else groups.push({ first: m.minute, last: m.minute, list: [m] });
     }
-    const sig = groups.map(g => g.list.map(m => m.id).join(',')).join('|') + '@' + Math.round(k * 1e4);
-    if (sig === laid) return; laid = sig;
-    pips.replaceChildren(...groups.map(g => {
-      const lead = g.list.find(m => m.kind === 'fight') ?? g.list.find(m => m.kind === 'arrest') ?? g.list[0], at = (g.first + g.last) / 2;
-      const b = h('button', { type: 'button', class: `r-tape-mk is-${lead.kind}`, style: `left:${pct(at)}`, 'data-ids': g.list.map(m => m.id).join(','),
-        'data-minute': String(+at.toFixed(3)), 'aria-label': g.list.length > 1 ? `${clockOf(g.first)}: ${g.list.length} moments` : `${words(lead).what}, ${clockOf(lead.minute)}` }, g.list.length > 1 ? String(g.list.length) : '');
-      b.addEventListener('click', e => { e.stopPropagation(); if (g.list.length === 1) { closePop(); goMarker(g.list[0]); } else openPop(g.list, b); });
-      b.addEventListener('pointerdown', e => e.stopPropagation());
-      return b;
-    }));
-    if (popFor && !groups.some(g => g.list.some(m => m.id === popFor))) closePop();
+    return groups;
+  };
+  // one pip: a single moment wears its kind (colour, glyph); a folded one is a small stack of its kinds, each with its count
+  function pip(g, cls) {
+    const kinds = new Map(); for (const m of g.list) kinds.set(m.kind, (kinds.get(m.kind) || 0) + 1);
+    const order = [...kinds].sort((a, b) => ORDER.indexOf(a[0]) - ORDER.indexOf(b[0])), lead = order[0][0], at = (g.first + g.last) / 2, one = g.list.length === 1;
+    const b = h('button', { type: 'button', class: `${cls} is-${lead}${one ? '' : ' is-fold'}`, style: `left:${pct(at)}`, 'data-ids': g.list.map(m => m.id).join(','),
+      'data-minute': String(+at.toFixed(3)), 'data-kind': one ? lead : null, 'data-kinds': one ? null : order.map(([k, n]) => `${k}:${n}`).join(','),
+      'aria-label': one ? `${words(g.list[0]).what}, ${clockOf(g.list[0].minute)}` : `${clockOf(g.first)}: ${order.map(([k, n]) => `${n} ${KIND[k] ?? k}`).join(', ')}` });
+    // (a pip at either end of the track sits inside it, not half cut off)
+    const x = (at - from) * scale; if (x < 12) b.classList.add('is-start'); else if (x > tw - 12) b.classList.add('is-end');
+    if (one) b.append(glyph(lead));
+    // (betrayals on their lane: one diamond, its glyph, and how many it holds)
+    else if (cls === 'r-tape-bt') b.append(glyph(lead), h('b', { class: 'r-tape-n' }, String(g.list.length)));
+    else {
+      // (every kind it holds gets its mark, the loudest at the bottom; four kinds or more stack two abreast)
+      if (order.length > 3) b.classList.add('is-wide');
+      for (const [k, n] of order) b.append(h('i', { class: `r-tape-in-k is-${k}`, 'data-kind': k }, String(n)));
+    }
+    b.addEventListener('click', e => { e.stopPropagation(); hideTip(); if (one) { closePop(); goMarker(g.list[0]); } else openPop(g.list, b); });
+    b.addEventListener('pointerdown', e => e.stopPropagation());
+    b.addEventListener('pointerenter', () => showTip(g, b)); b.addEventListener('pointerleave', hideTip);
+    b.addEventListener('focus', () => showTip(g, b)); b.addEventListener('blur', hideTip);
+    return b;
   }
+  function layout(force = false) {
+    const H = Math.max(horizon, from + 60), k = tw / (H - from);
+    if (force || lastH === null || Math.abs(H - lastH) * k > .25) { lastH = H; inner.style.width = pips.style.width = bpips.style.width = ((to - from) / (H - from) * 100).toFixed(4) + '%'; }
+    if (!force && Math.abs(k - scale) / (scale || 1) < .08) return;
+    scale = k;
+    const groups = fold(markers, k), bgroups = fold(betrays, k);
+    const sig = [groups, bgroups].map(G => G.map(g => g.list.map(m => m.id).join(',')).join('|')).join('/') + '@' + Math.round(k * 1e4);
+    if (sig === laid) return; laid = sig;
+    pips.replaceChildren(...groups.map(g => pip(g, 'r-tape-mk')));
+    bpips.replaceChildren(...bgroups.map(g => pip(g, 'r-tape-bt')));
+    lane.hidden = !bgroups.length;
+    if (popFor && ![...groups, ...bgroups].some(g => g.list.some(m => m.id === popFor))) closePop();
+  }
+  // the hover card: what, who, where, when; a folded pip: its moments, a line each
+  let tipFor = null, popAt = null;
+  function showTip(g, b) {
+    if (!bar) return;
+    tipFor = { g, b };
+    const rows = g.list.slice(0, 6).map(m => { const w = words(m); return h('div', { class: `r-tape-tip-row is-${m.kind}` }, h('i', { class: 'r-tape-tip-k' }, glyph(m.kind)), h('b', null, w.what), h('span', null, w.line)); });
+    tip.replaceChildren(...rows, ...(g.list.length > 6 ? [h('div', { class: 'r-tape-tip-more' }, `+${g.list.length - 6} more`)] : []),
+      h('div', { class: 'r-tape-tip-do' }, g.list.length === 1 ? 'Click: go there and watch it' : 'Click: pick one'));
+    tip.hidden = false;
+    const r = b.getBoundingClientRect(), B = bar.getBoundingClientRect(), tw2 = tip.offsetWidth;
+    tip.style.left = Math.round(Math.max(8, Math.min(B.width - tw2 - 8, r.left + r.width / 2 - B.left - tw2 / 2))) + 'px';
+  }
+  function hideTip() { tipFor = null; tip.hidden = true; }
   let popIds = [];
   function openPop(list, at) {
+    popAt = { list, at };
     popFor = list[0].id; popIds = list.map(m => m.id);
     pop.replaceChildren(h('div', { class: 'r-tape-pop-h' }, `${clockOf(list[0].minute)} – ${islandClock(list.at(-1).minute).hhmm}`),
       ...list.map(m => { const w = words(m);
@@ -122,7 +181,7 @@ export function createRecordTape({ api, page, sim, Q, root, director = null, dos
     const r = at.getBoundingClientRect(), B = bar.getBoundingClientRect(), pw = pop.offsetWidth;
     pop.style.left = Math.round(Math.max(8, Math.min(B.width - pw - 8, r.left + r.width / 2 - B.left - pw / 2))) + 'px';
   }
-  function closePop() { popFor = null; popIds = []; pop.hidden = true; pop.replaceChildren(); }
+  function closePop() { popAt = null; popFor = null; popIds = []; pop.hidden = true; pop.replaceChildren(); }
   addEventListener('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target) && !e.target.closest?.('.r-tape-mk')) closePop(); }, true);
 
   // ── the track: a press or a drag seeks (never past the horizon)
@@ -134,7 +193,7 @@ export function createRecordTape({ api, page, sim, Q, root, director = null, dos
   const endDrag = e => { if (drag === e.pointerId) { if (drag_x !== null) seek(minuteAt(drag_x), 'scrub'); drag = null; drag_x = null; } };
   track.addEventListener('pointerup', endDrag); track.addEventListener('pointercancel', endDrag);
   track.addEventListener('keydown', e => { const d = e.code === 'ArrowLeft' ? -60 : e.code === 'ArrowRight' ? 60 : 0; if (!d) return; e.preventDefault(); e.stopPropagation(); seek(Math.min(horizon, P.minute + d), 'key'); });
-  function seek(m, by) { log.seeks++; if (visit) cancel('viewer'); own++; try { P.seek(Math.max(from, Math.min(horizon, m))); } finally { own--; } log.lastSeek = { by, minute: P.minute }; }
+  function seek(m, by) { log.seeks++; leave(by); if (visit) cancel('viewer'); own++; try { P.seek(Math.max(from, Math.min(horizon, m))); } finally { own--; } log.lastSeek = { by, minute: P.minute }; }
 
   // ── the player: a published change refreshes the markers; a viewer's seek ends a visit; a new fight or arrest nobody saw is missed
   P.on((state, meta) => {
@@ -171,10 +230,12 @@ export function createRecordTape({ api, page, sim, Q, root, director = null, dos
   }
 
   // ── visits: a marker (go there, play on) or a replay (play it, then back)
-  const walkerOf = id => { const a = id ? page.draw?.agents?.map.get(id) : null; return a?.w && !a.w.gone ? { x: a.w.p[0], y: a.w.p[1], z: a.w.p[2], h: id } : null; };
+  const walkerOf = id => { if (bodyHidden(sim.record(), id)) return null;
+    const a = id ? page.draw?.agents?.map.get(id) : null; return a?.w && !a.w.gone ? { x: a.w.p[0], y: a.w.p[1], z: a.w.p[2], h: id } : null; };
   // (record/page.js reloads the page when the playhead crosses into the other half of the island's day)
   const reloads = m => Q.get('simtod') !== '0' && islandClock(m).night !== !!TOD.night;
   function goMarker(m) {
+    leave('marker');
     const w = words(m);
     return begin({ kind: 'marker', id: m.id, start: m.replayStart, end: null, framing: { agent: m.subjects?.agent ?? null, place: m.place }, label: [w.what, w.place].filter(Boolean).join(' · '), back: null });
   }
@@ -279,8 +340,8 @@ export function createRecordTape({ api, page, sim, Q, root, director = null, dos
     const snap = P.snapshot(), disclosed = retainedSnap();
     let names = [];
     try { names = recordSideAt(snap, disclosed).names.filter(n => !v.framing.agent || n.victim === v.framing.agent); } catch { names = []; }
-    const who = [nameOf(v.framing.agent), names.length ? `hood off: ${names.map(n => n.name ?? n.agent).join(', ')}` : null].filter(Boolean);
-    capWho.textContent = who.join(' · ') || ' ';
+    const safeWho = [nameOf(v.framing.agent, v.id), names.length ? `hood off: ${names.map(n => n.name ?? n.agent).join(', ')}` : null].filter(Boolean);
+    capWho.textContent = safeWho.join(' · ') || ' ';
     capWhat.textContent = [v.label, clockOf(v.start)].filter(Boolean).join(' · ');
     cap.dataset.names = names.map(n => n.agent).join(',');
     cap.hidden = false;
@@ -296,6 +357,7 @@ export function createRecordTape({ api, page, sim, Q, root, director = null, dos
     const v = visit;
     if (v && (v.back || v.phase !== 'play')) u.searchParams.set('tapeVisit', JSON.stringify({ k: v.kind, id: v.id, s: v.start, e: v.end, b: v.back, f: v.framing, l: v.label, n: v.night ?? null }));
     else u.searchParams.delete('tapeVisit');
+    if (depart) u.searchParams.set('tapeBack', JSON.stringify(depart)); else u.searchParams.delete('tapeBack');
     if (u.href !== location.href) history.replaceState(history.state, '', u);
   }
   // (after the reload: the visit comes back from the URL, its camera already at the place)
@@ -308,6 +370,78 @@ export function createRecordTape({ api, page, sim, Q, root, director = null, dos
   }
   refresh(); known = new Set(markers.map(m => m.id)); keepUrl(true);
 
+  // ── C2 · leaving and coming back. The departure is what the viewer had when they first jumped; a later jump keeps it
+  const camNow = () => { const r = api.cam, s = r?.subject, c = api.camera, T = api.controls.target;
+    const mode = r?.mode ?? 'orbit', aid = (mode === 'follow' || (mode === 'photo' && r.photoSub === 'follow')) && s?.agent ? s.aid : null;
+    return { mode: aid ? 'follow' : 'orbit', aid, pos: c.position.toArray().map(v => +v.toFixed(3)), tgt: [T.x, T.y, T.z].map(v => +v.toFixed(3)), fov: +c.fov.toFixed(2) }; };
+  function leave(by) {
+    if (depart) return;
+    // (from inside a replay: where the replay will take the viewer back to)
+    if (visit?.back) { const [m, speed, running] = visit.back, home = director?.home;
+      depart = { m, speed, running, cam: home ? { mode: 'orbit', aid: null, pos: home.pos, tgt: home.tgt, fov: home.fov ?? api.camera.fov } : camNow(), card: dossier?.reference ?? dossier?.current ?? null, by }; }
+    else depart = { m: P.minute, speed: P.speed, running: P.running, cam: camNow(), card: dossier?.reference ?? dossier?.current ?? null, by };
+    log.departs.push({ ...depart, at: performance.now() });
+    keepUrl(true); paint();
+  }
+  // back to the departure: the playhead, the speed, playing or not, the camera (its pose; then its follow, once the walker is placed),
+  // the card. A replay goes back by itself: Back only ends it early
+  function back(by = 'button') {
+    if (visit?.back) { finish(); log.backs.push({ by, replay: true, minute: P.minute }); return true; }
+    const d = depart; if (!d) return false;
+    if (visit) cancel('back');
+    closePop(); hideTip(); depart = null;
+    const r = api.cam;
+    if (r && (r.blending || r.mode !== 'orbit')) r.toOrbit({ instant: true });
+    api.camera.position.fromArray(d.cam.pos); api.controls.target.fromArray(d.cam.tgt);
+    if (d.cam.fov && api.camera.fov !== d.cam.fov) { api.camera.fov = d.cam.fov; api.camera.updateProjectionMatrix(); }
+    api.controls.update?.();
+    if (d.card && d.card !== dossier?.current) dossier?.open(d.card); else if (!d.card && dossier?.isOpen) dossier.close();
+    // (across the day / night reload the new page puts the follow back: ui/record/follow.js reads ?follow=)
+    const crossing = reloads(d.m);
+    if (d.cam.mode === 'follow' && d.cam.aid) { if (crossing) follow?.after(d.cam.aid); else refollow = { aid: d.cam.aid, t: performance.now() }; }
+    else follow?.want(null);
+    own++; try { P.seek(d.m); } finally { own--; }
+    if (P.speed !== d.speed) P.setSpeed(d.speed);
+    if (d.running) P.play(); else P.pause();
+    refresh(); known = new Set(markers.map(x => x.id));
+    log.backs.push({ by, minute: P.minute, to: d.m, cam: d.cam.mode, aid: d.cam.aid, card: d.card, crossing });
+    keepUrl(true); paint();
+    return true;
+  }
+  function stepRefollow(t) {
+    const f = refollow, r = api.cam, w = r?.people?.byAid(f.aid);
+    if (w) { r.setMode('follow', { subject: w }); follow?.want(f.aid); refollow = null; return; }
+    if (t - f.t > 6000) refollow = null;
+  }
+  // Esc with nothing open (the kit's Esc stack, ui/kit.js screens, takes it first when something is): back
+  addEventListener('keydown', e => {
+    if (e.code !== 'Escape' || e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (/^(INPUT|SELECT|TEXTAREA)$/.test(e.target?.tagName || '') || e.target?.isContentEditable) return;
+    if (!depart && !visit?.back) return;
+    if (!pop.hidden) { closePop(); e.preventDefault(); e.stopImmediatePropagation(); return; }
+    e.preventDefault(); e.stopImmediatePropagation(); back('esc');
+  }, true);
+  // the bar's state, painted only when it changes
+  let painted = '';
+  function paint() {
+    const state = visit?.back ? 'replay' : depart ? 'jumped' : 'live';
+    const key = `${state}|${Math.floor(P.minute)}|${depart?.m ?? ''}`;
+    if (key === painted) return; painted = key;
+    if (bar) bar.dataset.state = state;
+    stateEl.dataset.state = state;
+    stWord.textContent = state === 'live' ? 'LIVE' : state === 'replay' ? 'REPLAY' : 'JUMPED';
+    stAt.textContent = state === 'live' ? clockOf(P.minute) : `watching ${clockOf(P.minute)}`;
+    const to = state === 'replay' ? visit.back[0] : depart?.m;
+    backBtn.hidden = state === 'live';
+    backLabel.textContent = to == null ? '' : state === 'replay' ? `End replay · back to ${clockOf(to)}` : `Back to ${clockOf(to)}`;
+    backBtn.dataset.to = to == null ? '' : String(to);
+    span.textContent = '';
+    head.classList.toggle('is-away', state !== 'live');
+    depMark.hidden = state === 'live';
+    if (to != null) depMark.style.left = ((to - from) / (Math.max(horizon, from + 60) - from) * 100).toFixed(3) + '%';
+  }
+  const depMark = h('i', { class: 'r-tape-depart', hidden: true, 'aria-hidden': 'true' }); track.append(depMark);
+
   // ── per frame (ui/record/index.js)
   function frame() {
     const t = performance.now();
@@ -315,8 +449,8 @@ export function createRecordTape({ api, page, sim, Q, root, director = null, dos
     const H = Math.max(horizon, from + 60);
     const left = ((P.minute - from) / (H - from) * 100).toFixed(3) + '%'; if (head.style.left !== left) head.style.left = left;
     track.setAttribute('aria-valuemax', String(Math.round(horizon))); track.setAttribute('aria-valuenow', String(Math.round(P.minute)));
-    now.hidden = !(P.minute < horizon - .5) && !visit?.back;
-    span.textContent = visit?.back ? 'replay' : P.minute < horizon - .5 ? `${clockOf(P.minute)} of ${clockOf(horizon)}` : 'now';
+    paint();
+    if (refollow) stepRefollow(t);
     layout();
     // (the player's speed box shows the replay's 10× and the speed it goes back to)
     if (speedBox && document.activeElement !== speedBox && speedBox.value !== String(P.speed)) speedBox.value = String(P.speed);
@@ -330,8 +464,10 @@ export function createRecordTape({ api, page, sim, Q, root, director = null, dos
   else addEventListener('resize', () => { tw = track.clientWidth || 1; layout(true); });
   tw = track.clientWidth || 1;
   const tape = {
-    frame, goMarker, replayPaper, replayCard, refresh, missed, el: row, pop, cap, log,
-    markers: () => markers.map(m => ({ ...m })),
+    frame, goMarker, replayPaper, replayCard, refresh, missed, el: row, pop, cap, log, back, leave,
+    refreshIdentity() { if (tipFor) showTip(tipFor.g, tipFor.b); if (popAt) openPop(popAt.list, popAt.at); missed.refresh(); caption(); },
+    markers: () => markers.map(m => ({ ...m })), betrayals: () => betrays.map(m => ({ ...m })),
+    get state() { return visit?.back ? 'replay' : depart ? 'jumped' : 'live'; }, get departure() { return depart ? { ...depart } : null; },
     get horizon() { return horizon; },
     get visit() { return visit ? { kind: visit.kind, id: visit.id, phase: visit.phase, start: visit.start, end: visit.end, back: visit.back, framing: visit.framing, landed: visit.landed ?? null } : null; },
     get seen() { return [...seen]; },

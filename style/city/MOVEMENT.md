@@ -11,7 +11,7 @@ shared shape here first, then in code.
 - **Movement is gameplay:** time vs money vs risk. The fastest way across town costs the most, and agents plan for it.
 - **True sync, no teleports:** what the sim says a trip takes is what the city shows. Getting somewhere takes real time.
 - **Modes:** walk, skateboard, scooter, bike, bus, subway, taxi. Owned cars and stolen cars come later.
-- **Everything is animated:** activities, travel and events, robberies included, and getting shot (toon, never gore).
+- **Everything is animated:** activities, travel and events, robberies included, and getting shot. Gore is in (slime, 2026-10-30: "gore is in 100%"; GAME.md §41).
 - **The UI style is Zine × TE · Pink** (style lab, `ui/stylelab/`, id `z-te-pink`).
 
 ## 1. Time conversion

@@ -56,13 +56,24 @@ export const CAM = {
     enterMax: 160, enterT: [.8, 2.2], blendIn: .25,   // into follow from another mode: down the line of sight in parameter space (s, by distance), the rig's blend only turns the view
     orbitRate: 1.8,           // rad/s from keys
     cycleRadius: 70,          // m: Tab picks among the people this close to the one you follow
+    floorY: 0,                // m: the lowest the subject's feet count for the pivot (C2: a station's stairs go under the street; the camera doesn't)
     lostWait: 1.6,            // s to wait for someone who vanished (indoors, out of range) before following the nearest
+    // INDOORS (C2-camera, GAME.md §41, slime 10-31: "Rise to the cutaway"): while the agent followed is inside its home the camera rises to
+    // its room's own three-quarter street-side view (interiors frameOf) and eases back down at the door. inT / outT / switchT: s of the
+    // ease in at the door, out at the door, and onto another room or person (a seek or a jump further than snapFar m: at once) ·
+    // holdMax: s the camera holds still for a room that isn't open yet (a seek, a reload) · ks × kp: the ease's path shapes tried (how
+    // early it rises, how early its look point moves to the room): clear of solids outside the house, the person in sight; none → at once
+    // (blindOk: ease even with the person out of sight a moment) · the viewer's orbit inside: yaw ± rad and
+    // pitch [lo, hi] rad off the room's own view (its elevation kept within el), zoom × its distance — the outside angle and distance
+    // are kept apart and come back as they were
+    room: { inT: 1.5, outT: 1.3, switchT: 1, snapFar: 40, holdMax: 1.5, ks: [1, 2, 3, 5, -2, -3, -5], kp: [1, 2, -2], blindOk: false, yaw: .7, pitch: [-.45, .4], el: [.3, 1.4], zoom: [.6, 1.8] },
     fov: 55,
   },
   // CAMERA FADE (10-09b, camera/fade.js): walkers, cars and dogs in the camera's near zone or on the camera → subject line dissolve to
   // alpha (a 4×4 screen-door); one the camera is inside is not drawn. near: the zone (m off the body's surface; nearIn…nearAt ramps 0 → alpha,
   // inside it the body is gone) · line: m off the sight line · ramp: m over which a body comes back · walker [r, y0, y1] · car [r, y, half-length]
-  fade: { on: true, alpha: .35, line: .25, ramp: .35, nearIn: .05, nearAt: .25, near: .6, walker: [.3, .3, 1.55], car: [1.0, .8, 1.5] },
+  // lineAlpha (C2-camera2): what a body on the line dissolves to (fade.js THE LINE, CLEAR: 0, gone, and out of its batch; it was alpha)
+  fade: { on: true, alpha: .35, line: .25, ramp: .35, nearIn: .05, nearAt: .25, near: .6, lineAlpha: 0, walker: [.3, .3, 1.55], car: [1.0, .8, 1.5] },
   photo: {
     speed: 3.5, lookSmooth: .14, inputSmooth: .16, accelHL: .29, brakeHL: .43,   // slower, heavier: smooth pans for clips
     fovRange: [14, 100], rollStep: .9,          // deg · rad/s

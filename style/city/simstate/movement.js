@@ -38,10 +38,14 @@ import { createTravel } from '../../../world/export/travel.mjs';   // (CAB FOLLO
 import * as CLIPS from '../anim/cast/clips/index.js';   // (the authored clips: anim/cast/clips/CLIPS.md — skate, transit, the stops and the cabs)
 import { BOARD, REST as BOARD_REST, boardGeometry, boardMatrix } from '../anim/cast/clips/skate-board.js';   // (the one skateboard model, posed by the clip's clock)
 import { sdata } from '../../../world/city.js';   // (SPREAD: the data this spread reads)
+// (C2: the subway's network and a ride's program, the carriage's own: where the follow cam's stand-in is underground)
+import { loadNet, programOf, stateAt as subwayAt } from '../subway/net.js';
 
-import { GAME_MIN } from './simclock.js';
+// (the traffic's second: traffic/cabs.js plans every cab and traffic/fleet.js runs the lights on simclock.js's GAME_MIN, the drawing seconds of
+// a game minute — a cab is a car of the traffic, so its rider's times are compared in the cab plan's own units; traffic/ is outside this module)
+import { GAME_MIN as TRAFFIC_MIN, CLOCK as SIMCLOCK } from './simclock.js';
 export { GAME_MIN } from './simclock.js';
-// MOVEMENT W3b's seam: UNDER.hook(leg, simNow, legs, agent) for a stairs leg, a platform wait or a subway leg → a draw ({ show, x, y, z, yaw, vc, mode })
+// MOVEMENT W3b's seam: UNDER.hook(leg, simNow, legs, agent, clock) for a stairs leg, a platform wait or a subway leg → a draw ({ show, x, y, z, yaw, vc, mode })
 // or null (out of view). subway/index.js sets it: the stepped walk down and up the kiosk's stairs, and the carriage scene for a followed rider.
 export const UNDER = { hook: null };
 export const MOVE = {
@@ -74,7 +78,7 @@ export const MOVE = {
   // booking has it — it is put back on the booking at once (counted: lagSnaps). A leg that ends late hands its lag to the next leg on foot
   // or on wheels; a wait or a ride after it starts on the sim's clock (the wait is that much shorter). r: the mover's body radius.
   // AT WALKING PACE ONLY (2026-10-10, slime on the tape: "he just starts glitching and tweaking on the road"). The brake, the catch-up and
-  // the cap are body speeds (m/s, s of lag at the natural pace: GAME_MIN s a game minute), and the crowd they brake for walks in real
+  // the cap are body speeds (m/s, s of lag at the natural pace: the page clock's secondsPerMinute s a game minute), and the crowd they brake for walks in real
   // time whatever the clock does. When the movement clock runs faster than maxPace × the natural pace — the tape playing at 4× (where a
   // marker click plays it), 16×, 60×, or a sim run faster than its 60-min day — a leg's booking ran away from its brake: held up at
   // walking speed, capped 3 s behind (0.75 real s at 4×), let go, held again — a stop every other frame, and pops of 0.7–4 m in view
@@ -87,7 +91,24 @@ export const MOVE = {
   // row stand on the far side of the file's line, away from the junction — instead of walking through them on a red. Less where a corner
   // post stands in the way (zebraLat: a signal pole by the kerb on the junction side of some crossings)
   zebra: { on: true, lat: .75 },
+  // C2 · the hand-over between legs (run() below): gaps over min m and under max m eased across at about v m/s
+  ease: { on: true, min: .3, max: 12, v: 6 },
+  // C2 · m under the street's level from which a walker on a station's stairs hands the follow cam to its stand-in on the sidewalk (run(): under())
+  underY: .6,
+  // C2-transit · m from where a walker is drawn to its trip's first point beyond which the lead goes along the lanes (run(): leadWay);
+  // within it the lead is straight, as it was (along the lanes, short leads ran longer, hence faster: a05's 5.6–7.6 m steps at 10×)
+  leadWay: 30,
 };
+// C2-transit (docs/redesign/transit-20261031.md, design A) · ONE CLOCK. createMovement takes the page's clock once:
+//   clock = { secondsPerMinute, now() }   secondsPerMinute: the real seconds a game minute takes when the page plays at its own pace (the
+//                                         bodies at their own speeds): a live page 2.5 (the sim's 60-min day, simclock.js CLOCK.pace0), the
+//                                         record 60 (the island's minute at 1×). Fixed for the page. now(): the movement's game minute
+// Every leg's own seconds are this clock's: a walk's speed, a skate plan and its clips, a coarse leg's pace, the crew's lag, the crowd grid's
+// cap and brake (MOVE.lag), the stairs and the subway program (subway/: the hook gets the clock), so where a leg is drawn is a pure function
+// of the minute at every speed (a seek there equals playing there). The rate the page plays at (frame()'s rate, game min per s) only sets
+// pace (= rate × secondsPerMinute: 1 at the page's own pace): the lag holds below MOVE.lag.maxPace, and above it (fast play) the drawn speed
+// is the booking's on screen (DS = pace: a walk at 10× on the record goes 15 m/s and steps like it). The cabs alone keep the traffic's
+// second (TRAFFIC_MIN above). Before: GAME_MIN (60 / speed on the record, set by record/clock.js) and NAT (a page test) chosen site by site
 // riders avoid: ?ridersavoid=0 → as before (no weave, no published movers, kickturns and detours as they were)
 if (typeof location !== 'undefined' && new URLSearchParams(location.search).get('ridersavoid') === '0') MOVE.avoid = false;
 // the skate clips stand the body on the deck (skate.js: the root carries the deck's height), so the walker itself stays on the ground
@@ -101,8 +122,26 @@ const SPEED = { walk: 1.5, skate: 4, bike: 5.5, scooter: 6.5 }, coarseId = id =>
 const hash = s => { let h = 2166136261; for (let k = 0; k < s.length; k++) h = Math.imul(h ^ s.charCodeAt(k), 16777619); return h >>> 0; };
 const lerp = (a, b, k) => a + (b - a) * k, wrapA = a => Math.atan2(Math.sin(a), Math.cos(a)), smooth01 = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
 
-export function createMovement({ peds, log = () => {}, clips = null }) {
+// C2-seek · WHEN A LATE TRIP'S DRAWING ENDS (the run's own catch-up rule, below: R.delay falls by MOVE.catchUp per minute while it is on
+// foot, so the walker goes 1 + catchUp times its booked pace until it is back on its clock). A trip late by d0 from minute e (its walk out
+// of home, agents.js exitEnd) ends drawn at the minute its clock, now - delay, reaches its arrival: (arr + d0 + catchUp·e) / (1 + catchUp),
+// or at its booked arrival when it has caught up before. Only a trip on foot and wheels all the way (walk, skate, bike, scooter): a wait
+// for a bus, a cab or a train takes up lateness on the traffic's own time, so its end is the booked one. → island minute
+export const ON_FOOT = new Set(['walk', 'skate', 'bike', 'scooter']);
+export function lateArrival(trip, d0, e) {
+  if (!(d0 > 0) || !trip?.legs?.every(l => ON_FOOT.has(l.kind))) return trip?.arr ?? null;
+  const c = MOVE.catchUp, caught = e + d0 / c; if (caught <= trip.arr) return trip.arr;
+  return Math.max(trip.arr, (trip.arr + d0 + c * e) / (1 + c));
+}
+export function createMovement({ peds, log = () => {}, clips = null, clock = null }) {
   const sim = peds.sim, S = { runs: 0, legs: 0, cabs: 0, fallbacks: 0, late: 0, decodeFail: 0, ms: [], arrivals: [], vlegs: [] };
+  // the page's clock (above); without one (the node probes): the live page's
+  const SPM = clock?.secondsPerMinute ?? 1 / SIMCLOCK.pace0, cabS = m => m * TRAFFIC_MIN;
+  // (the clock the subway's hook reads: the stairs' and the ride's seconds, the carriage's minute, the pace it plays at, and the frame of the
+  // clock's last jump — a seek, a page that joins)
+  const CLK = { secondsPerMinute: SPM, now: () => gameNow, pace: () => pace, epoch: () => jumpF };
+  // (C2-transit: main.js mounts subway/index.js on the record page too, with the camera: the stairs and, for a followed rider, the carriage)
+  let NET = null; loadNet().then(n => { NET = n; }).catch(e => log('movement: no subway network (' + (e && e.message || e) + ')'));
   // ── the walkers' graph by position (the export's walk graph IS pedsim's: same nodes, same edge ids)
   let NB = null, INC = null, SIDES = null;
   // (riders avoid: a node a dealing crew's corner moved out into the road keeps its own place, n.x0/z0 — the export's paths are on it)
@@ -309,16 +348,39 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
   // ── the follow cam onto the vehicle and back (camera/follow.js: its public set(); the stand-in carries the agent's id)
   const PX = new Map(); let pxSeq = 0;
   const camOn = id => { const c = window.__city?.cam; return !!c && c.mode === 'follow' && c.subject?.aid === id; };
-  function proxyOn(a, car, y) { if (!camOn(a.id) || PX.has(a.id)) return; const p = { id: -1e6 - (++pxSeq), agent: true, aid: a.id, look: a.look, p: [car.x, y, car.z, car.h], yawS: car.h, vc: 0, ph: 0, tier: 1, gone: false, car, y, ride: true };
-    PX.set(a.id, p); try { window.__city.cam.follow.set(p); } catch (e) { log('movement: follow ' + e.message); } }
-  function proxyOff(a) { const p = PX.get(a.id); if (!p) return; p.gone = true; PX.delete(a.id); }
+  // C2 (GAME.md §41, slime 10-30: "you lost the continuity of following an agent") · RIDING: every agent riding out of view right now
+  // (in a cab, underground) → the thing that carries it ({ car: { x, z, h, v, gone }, y, look }). The stand-in is made from it on
+  // demand: when the camera is on the agent as it boards (proxyOn), and whenever the camera asks for the agent by its id while it
+  // rides (sim.rideOf, camera/follow.js people.byAid: a follow pressed, put back after a reload, or kept by ui/record/follow.js)
+  const RIDING = new Map();
+  function standIn(id, look) { const had = PX.get(id); if (had) return had; const r = RIDING.get(id); if (!r) return null; const car = r.car;
+    const p = { id: -1e6 - (++pxSeq), agent: true, aid: id, look: look ?? r.look, p: [car.x, r.y, car.z, car.h], yawS: car.h, vc: 0, ph: 0, tier: 1, gone: false, car, y: r.y, ride: true };
+    PX.set(id, p); return p; }
+  function proxyOn(a, car, y) { RIDING.set(a.id, { car, y, look: a.look }); if (!camOn(a.id) || PX.has(a.id)) return; const p = standIn(a.id, a.look);
+    try { window.__city.cam.follow.set(p); } catch (e) { log('movement: follow ' + e.message); } }
+  function proxyOff(a) { RIDING.delete(a.id); const p = PX.get(a.id); if (!p) return; p.gone = true; PX.delete(a.id); }
+  sim.rideOf = id => standIn(id);
   const proxyFrame = () => { for (const p of PX.values()) { const c = p.car; if (c.gone) { p.gone = true; continue; } p.p[0] = c.x; p.p[1] = p.y; p.p[2] = c.z; p.p[3] = c.h; p.yawS = c.h; p.vc = c.v; } };
+  // C2 · the subway stand-in's way (under() in run()): the top of a station's stairs (subway/index.js well(): the block's anchors, else the
+  // station's slot), and the streets between two stations' stairs (travel.mjs: the walk the export would plan), kept once both stairs
+  // are known from their blocks' anchors
+  // (the stairs' top is under the entrance's cover: the stand-in waits on the sidewalk in front of it, where the walk in starts)
+  const SUB = () => window.__city?.subway ?? null, wellTop = id => { const w = SUB()?.well?.(id); if (w?.top) return w.dir ? [w.top[0] - w.dir[0] * 1.5, w.top[1] - w.dir[1] * 1.5] : w.top; const s = NET?.stations.get(id); return s ? [s.x, s.z] : null; };
+  const RUNS = new Map();
+  function runRoute(a, b) { const k = a + '>' + b; if (RUNS.has(k)) return RUNS.get(k); const A = wellTop(a), B = wellTop(b); if (!A || !B) return null;
+    const known = !!(SUB()?.well?.(a)?.door && SUB()?.well?.(b)?.door && W); let pts = [A, B];
+    if (known) { try { TV ??= createTravel(W); const tr = TV.trip(A, B, 'walk', { dep: 0 }), q = tr?.legs?.flatMap(l => l.path || []) ?? []; if (q.length >= 2) pts = [A, ...q, B]; } catch (e) { log('movement: subway way ' + e.message); } }
+    const cl = [0]; for (let n = 1; n < pts.length; n++) cl.push(cl[n - 1] + Math.hypot(pts[n][0] - pts[n - 1][0], pts[n][1] - pts[n - 1][1]));
+    const r = { pts, cl, len: cl[cl.length - 1] }; if (known) RUNS.set(k, r); return r; }
+  function alongRoute(r, f) { const d = Math.max(0, Math.min(1, f)) * r.len; let n = 1; while (n < r.pts.length - 1 && r.cl[n] < d) n++;
+    const A = r.pts[n - 1], B = r.pts[n], L = r.cl[n] - r.cl[n - 1], u = L > 0 ? Math.max(0, Math.min(1, (d - r.cl[n - 1]) / L)) : 0;
+    return [lerp(A[0], B[0], u), lerp(A[1], B[1], u), Math.atan2(B[0] - A[0], B[1] - A[1])]; }
 
   // ── RIDERS AVOID · the movers this frame (pedsim.js steps its walkers aside for them), and the weave. MOVERS: each moving leg's place,
   // heading, speed and its path over the next 1.6 s (FT) — true sync, so that is where it will be. The weave reads last frame's walkers
   // (a 2 m grid, made once a frame when a leg first asks).
   const MOVERS = sim.movers || [], FT = [.2, .4, .6, .8, 1, 1.2, 1.4, 1.6], WG = new Map(), wcell = (x, z) => (Math.floor(x / 2) + 8192) * 16384 + (Math.floor(z / 2) + 8192);
-  let fno = 0, wgF = -1, jumpF = 0, pace = 1; const CF = new Float32Array(12), CS = new Float32Array(12), AXV = { N: [0, 1], S: [0, -1], W: [1, 0], E: [-1, 0] }, RW = [0, 0], RL2 = [0, 0], ST = { E: null, dA: 0, dB: 0, ax: 0, az: 0, lo: 0, hi: 0 }, FP = [0, 0, 0, 0];
+  let fno = 0, wgF = -1, jumpF = 0, pace = 1, DS = 1; const CF = new Float32Array(12), CS = new Float32Array(12), AXV = { N: [0, 1], S: [0, -1], W: [1, 0], E: [-1, 0] }, RW = [0, 0], RL2 = [0, 0], ST = { E: null, dA: 0, dB: 0, ax: 0, az: 0, lo: 0, hi: 0 }, FP = [0, 0, 0, 0];
   function walkerGrid() { WG.clear(); for (const w of sim.walkers) { if (!w.p) continue; const k = wcell(w.p[0], w.p[2]); let L = WG.get(k); if (!L) WG.set(k, L = []); L.push(w); } }
   // the stretch of path at distance d along G a weave may use: an edge's straight run (crossing: out in the road only; a side: its clear
   // strip round the lane, from 0.3 m behind to 1.5 m ahead) → ST { ax, az: the axis across it, lo, hi: the room along that axis, dA, dB:
@@ -414,14 +476,19 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
     // the first body it would touch, from where it was on (sampled every step m along the path)
     const P0 = pos(uWas), x0 = P0[0], z0 = P0[2], hx = Math.sin(P0[3]), hz = Math.cos(P0[3]), ox = R.wv ? R.wv.ax * R.wv.off : 0, oz = R.wv ? R.wv.az * R.wv.off : 0, mine = me?.w || null;
     const sg = G0.segs?.[G0.k], road = !!sg?.E?.cross && (() => { const s = sg.s0 + (sg.s1 - sg.s0) * Math.max(0, Math.min(1, sg.len ? (m(uWas) - sg.c0) / sg.len : 0)), sIn = sg.s1 >= sg.s0 ? s : sg.E.len - s; return sIn > STEP + .3 && sg.E.len - sIn > 1; })();   // (on a zebra, out in the road)
-    let hit = Infinity; const du = (u1 - u0) / Math.max(1e-6, m(u1) - m(u0)) * C.step;
+    // (blkW: C2-GORE — the crowd walker it is held up by)
+    let hit = Infinity, blkW = null; const du = (u1 - u0) / Math.max(1e-6, m(u1) - m(u0)) * C.step;
     for (let u = uWas + du, n = 0; n < 40 && m(u) - mWas <= reach + 1e-6 && u <= u1 + 1e-9; u += du, n++) { const q = pos(u), x = q[0] + ox, z = q[2] + oz; let bad = false;
       sim.near(x, z, C.r + C.pad + .7, k => { if (bad) return; const B = sim.grid, o = B.w[k]; if (o && o === mine) return; if (o && !B.b[k] && !o.fix && (C.walkers === false || o.blk === mine || (sim.yields(o) && (B.x[k] - x0) * hx + (B.z[k] - z0) * hz > C.close))) return;   // (a walker that makes way: RIDERS AVOID steps it aside — unless it is close by now; one standing for this very rider is no wall for it)
         const bx = B.x[k], bz = B.z[k], b = B.b[k], rs = C.r + B.r[k] + C.pad + (b ? b.room ?? 0 : 0);
         if (road && !(o && (o.vc || 0) > .3 && (Math.sin(o.p[3]) * hx + Math.cos(o.p[3]) * hz) > .7)) return;   // (out in the road it goes on: only someone ahead going its way holds it up)
         const d = Math.hypot(bx - x, bz - z); if (d >= rs) return; const d0 = Math.hypot(bx - x0 - ox, bz - z0 - oz); if (d >= d0 - 1e-3) return;   // (not closing in on it)
-        bad = true; });
+        bad = true; if (o && !b && !o.agent) blkW = o; });
       if (bad) { hit = u; break; } }
+    // C2-GORE (2026-10-30, slime: "some agents getting pushed out of the way") · a walking agent held up by a crowd walker shoves it (the
+    // accident layer, traffic/accident.js, decides whether and how; it moves only the walker). The agent's own way and clock are untouched:
+    // the walker gone, its lag is walked off as ever
+    if (hit < Infinity && blkW && L.kind === 'walk' && sim.hooks?.shove) sim.hooks.shove(blkW, mine, hx, hz, cl);
     if (hit < Infinity) { const room = Math.max(0, m(hit) - mWas - 2 * C.step), vA = Math.sqrt(2 * C.brake * room); uNew = Math.min(uTry, Math.max(uWas, clamp(uWas + (room > 0 ? Math.min(room, vA * dt) : 0) * du / C.step))); S2.lagHeld = (S2.lagHeld || 0) + 1; }
     const uCap = clamp(uOf(C.cap)); if (uNew < uCap - 1e-9) { uNew = uCap; S2.lagCapped = (S2.lagCapped || 0) + 1; }
     uNew = Math.max(uNew, Math.min(uWas, uBook));   // (never backward)
@@ -429,6 +496,16 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
     cl = k1 > 1e-9 ? Math.max(0, Math.min(C.cap, (uOf(0) - uNew) / k1)) : 0;
     if (cl > 0 && TS?.seen) { const p = pos(uNew), px = p[0], pz = p[2]; if (!TS.seen(px, pz, 2)) { const q = pos(uBook); if (!TS.seen(q[0], q[2], 2)) { uNew = uBook; cl = 0; S2.lagSnaps = (S2.lagSnaps || 0) + 1; } } }   // (unseen where it is and where its booking has it: back on its booking)
     R.lv = dt > 0 && R.lk === R.k && R.lu !== undefined ? Math.abs(m(uNew) - mWas) / dt : null; R.cl = cl; R.lagS = cl; R.lu = uNew; R.lk = R.k; R.lend = u1; return uNew; }
+  // C2-transit · a lead from more than MOVE.leadWay m from the trip's first point goes along the lanes (travel.mjs: the walk
+  // the export would plan from the spot to that point), not straight across whatever is between: [spot, …the way…, first point]. The leg
+  // keeps its booked time: the walker is that much brisker. Null (straight, as before) when it is near, or no way is known yet
+  function leadWay(q, e) {
+    if (!W || !e || Math.hypot(q[0] - e[0], q[1] - e[1]) <= MOVE.leadWay) return null;
+    try { TV ??= createTravel(W); const tr = TV.trip(q, e, 'walk', { dep: 0 }), pts = tr?.legs?.flatMap(l => l.path || []) ?? []; if (pts.length < 2) return null;
+      const out = [q]; for (const p of [...pts, e]) { const l = out[out.length - 1]; if (Math.hypot(p[0] - l[0], p[1] - l[1]) > .05) out.push(p); }
+      // (a way far longer than the gap — round a block for a one-way crossing — would race the walker round it: straight then, as before)
+      let L = 0; for (let k = 1; k < out.length; k++) L += Math.hypot(out[k][0] - out[k - 1][0], out[k][1] - out[k - 1][1]); return L <= 2.5 * Math.hypot(q[0] - e[0], q[1] - e[1]) + 20 ? out : null; }
+    catch (err) { log('movement: lead way ' + (err && err.message || err)); return null; } }
   function run(a, trip) {
     const legs = kerbed(trip.legs), R = { trip, k: 0, delay: 0, phase: null, G: [], t0: null, lastNow: null, veh: null, busy: false, lead: null, end: null, aid: String(a.id), ck: crewKey(trip), rank: 0, lagS: 0, lag: 0, home: 0 };
     { let g = CREW.get(R.ck); if (!g) CREW.set(R.ck, g = new Set()); g.add(R); }   // (MOVEMENT REVIEW #4: its crew, if it has one)
@@ -440,7 +517,7 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
     // end, a wait. The path's raw end is on the export's node line, 1.2 m off the lane on a 4 m walk)
     const drawnEnd = k => { for (let j = k; j >= 0; j--) { const G = R.G[j]; if (G?.len) { const P = at(G, G.len, [0, 0, 0, 0]); if (P) return [P[0], P[2]]; } if (legs[j].kind === 'bus' || legs[j].path?.length || legs[j].at) break; } return pathEnd(k); };
     const nextStart = k => { for (let j = k; j < legs.length; j++) { const L = legs[j]; if (L.kind === 'bus' || L.kind === 'taxi' || L.kind === 'subway') return null; const p = L.path; if (p?.length) return p[0]; } return null; };
-    const draw = (x, y, z, yaw, vc = 0, o = {}) => { R.lastXZ = [x, z]; return { show: true, x, y, z, yaw, vc, ...o }; };
+    const draw = (x, y, z, yaw, vc = 0, o = {}) => { R.lastXZ = [x, z]; if (R.under) { R.under = false; proxyOff(a); } return { show: true, x, y, z, yaw, vc, ...o }; };
     function faceRoad(p, k) {   // a waiter faces where its ride comes from: the cab path's first stretch (a legacy bus leg's too), turned to the road
       const nx = legs.slice(k).find(l => l.path?.length > 1 && (l.kind === 'bus' || l.kind === 'taxi')); if (!nx) return null; const q = nx.path[0];
       return Math.atan2(q[0] - p[0], q[1] - p[1]); }
@@ -451,9 +528,9 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
     const crewEnd = G => { const P = at(G, G.len - Math.min(G.len * .5, R.rank * MOVE.crew.short), [0, 0, 0, 0]); return P ? [P[0], P[2]] : null; };   // (MOVEMENT REVIEW #4: where the last walk stopped a crew member short)
     const phase0 = (name, salt = '') => { const c = CLIPS.CLIP[name]; return c ? (hash(a.id + salt) % 997) / 997 * c.dur : 0; };   // (a loop's start: everyone out of step)
     R.busyNow = () => R.busy;
-    R.frame = (now, dt, me) => {
+    const legFrame = (now, dt, me) => {
       const dG = R.lastNow === null ? 0 : Math.max(0, now - R.lastNow); R.lastNow = now; R.busy = false;
-      { const C = MOVE.crew, r = R.rank = crewRank(R), lagT = r * C.lag; R.lagS = R.fno === undefined ? lagT : R.lagS + Math.max(-C.ease * dt, Math.min(C.ease * dt, lagT - R.lagS)); R.lag = R.lagS / GAME_MIN; R.home = crewFan(r) && Math.sign(crewFan(r)) * C.lat; }   // (MOVEMENT REVIEW #4: the crew's lag, eased; its lateral slot)
+      { const C = MOVE.crew, r = R.rank = crewRank(R), lagT = r * C.lag; R.lagS = R.fno === undefined ? lagT : R.lagS + Math.max(-C.ease * dt, Math.min(C.ease * dt, lagT - R.lagS)); R.lag = R.lagS / SPM; R.home = crewFan(r) && Math.sign(crewFan(r)) * C.lat; }   // (MOVEMENT REVIEW #4: the crew's lag, eased; its lateral slot)
       R.jump = R.fno === undefined || jumpF > R.fno; R.fno = fno;   // (MOVEMENT REVIEW #7: this run's first frame, or the movement clock jumped since its last — a seek, a page that joins)
       if (R.jump) { R.cl = 0; R.lu = undefined; }   // (the lag starts over on a jump: a seek forward kept the old place and was dragged up to 3 s behind)
       if (R.delay > 0 && R.phase === null) R.delay = Math.max(0, R.delay - dG * MOVE.catchUp);
@@ -466,17 +543,17 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
           R.done = true; if (coarseId(trip.to) || hidEnd(legs[legs.length - 1])) return { show: false }; const Ge = R.rank && R.G[legs.length - 1], e = Ge && Ge.len ? crewEnd(Ge) : drawnEnd(legs.length - 1), wo = R.wv && R.wv.k === legs.length - 1 ? R.wv.off : 0; return e ? draw(e[0] + (wo ? R.wv.ax * wo : 0), SIDE, e[1] + (wo ? R.wv.az * wo : 0), R.lastYaw ?? 0) : { show: false }; }   // (crowd grid: where its weave left it, if it ended held up beside its path)   // (MOVEMENT REVIEW #1: in at the labs, the jail, the woods — off the walkers' graph — out of view)
         const onLeg = L.kind === 'walk' || L.kind === 'skate' || L.kind === 'bike' || L.kind === 'scooter'; if (!onLeg && R.cl) R.cl = 0;   // (crowd grid: the lag is walked off, or a wait absorbs it)
         if (onLeg && R.cl && !lagOn(L)) R.cl = Math.max(0, R.cl - dt * Math.max(1, pace) * MOVE.lag.catchWalk);   // (the lag off — faster than walking pace — mid-hold: walked off, no jump)
-        const tt0 = now - R.delay - R.lag, tt = tt0 - (onLeg ? (R.cl || 0) / GAME_MIN : 0), dur = Math.max(1e-3, L.arr - L.dep);
+        const tt0 = now - R.delay - R.lag, tt = tt0 - (onLeg ? (R.cl || 0) / SPM : 0), dur = Math.max(1e-3, L.arr - L.dep);
         // ── on foot or on wheels
         if (L.kind === 'walk' || L.kind === 'skate' || L.kind === 'bike' || L.kind === 'scooter') {
           if (tt >= L.arr && !(lagOn(L) && R.lk === R.k && R.lu < R.lend - 1e-3)) { R.k++; continue; }   // (crowd grid: a leg held up ends where it is drawn to its end, not where its clock is)
           if (!L.path || L.path.length < 2) { R.k++; continue; }
-          let G = R.G[R.k]; if (!G) { const p = L.path.slice(); if (R.lead && R.k === R.lead.k) { if (L.off?.[0] > 0) p.unshift(R.lead.p); else p[0] = R.lead.p; }   // (MOVEMENT REVIEW #1: a path that starts on the sidewalk — its id's stretch undrawn — is walked to from the spot, not cut short of it)
+          let G = R.G[R.k]; if (!G) { const p = L.path.slice(); if (R.lead && R.k === R.lead.k) { const q = R.lead.p, way = leadWay(q, p[0]); if (way) p.splice(0, 1, ...way); else if (L.off?.[0] > 0) p.unshift(q); else p[0] = q; }   // (MOVEMENT REVIEW #1: a path that starts on the sidewalk — its id's stretch undrawn — is walked to from the spot, not cut short of it)
             // TRANSIT SYNC · a walk into a station's stairs ends where the flight's own walk-in starts, and one out of them starts where the flight
             // leaves the walker (subway/index.js flight(), the block's anchors): the export's station point is 2.3–6 m off it (a jump at every station)
             const nx = legs[R.k + 1], pv = legs[R.k - 1];
-            if (UNDER.hook && nx?.kind === 'stairs' && nx.dir !== 'up') { const d = UNDER.hook(nx, nx.dep, legs, a); if (d?.show !== false && d && Number.isFinite(d.x)) p[p.length - 1] = [d.x, d.z]; }
-            if (UNDER.hook && pv?.kind === 'stairs' && pv.dir === 'up') { const d = UNDER.hook(pv, pv.arr - 1e-4, legs, a); if (d?.show !== false && d && Number.isFinite(d.x)) p[0] = [d.x, d.z]; }
+            if (UNDER.hook && nx?.kind === 'stairs' && nx.dir !== 'up') { const d = UNDER.hook(nx, nx.dep, legs, a, CLK); if (d?.show !== false && d && Number.isFinite(d.x)) p[p.length - 1] = [d.x, d.z]; }
+            if (UNDER.hook && pv?.kind === 'stairs' && pv.dir === 'up') { const d = UNDER.hook(pv, pv.arr - 1e-4, legs, a, CLK); if (d?.show !== false && d && Number.isFinite(d.x)) p[0] = [d.x, d.z]; }
             G = R.G[R.k] = geomOf(p); if (MOVE.avoid && MOVE.band.on && MOVE.ride[L.kind] && !L.coarse) rideGeom(G); if (MOVE.avoid && MOVE.zebra.on && !L.coarse) G.zl = true; }   // (crowd hold: a ride leg's own line on a wider walk)
           // MOVEMENT REVIEW #1 · the access stretch travel.mjs left undrawn (leg.off: [start, end] booked m): a long one (≥ MOVE.offHide: the labs,
           // the jail, the woods) is that much of the leg's time out of view, the drawn path walked at the booked pace; a short one (a corner's,
@@ -484,30 +561,30 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
           const ow = !L.coarse && L.off && L.m > 0 ? L.off : null, h0 = ow && ow[0] >= MOVE.offHide && !(R.lead && R.lead.k === R.k) ? ow[0] : 0, h1 = ow && ow[1] >= MOVE.offHide ? ow[1] : 0;
           const W0 = L.dep + dur * h0 / (ow ? L.m : 1), W1 = L.arr - dur * h1 / (ow ? L.m : 1), dW = Math.max(1e-3, W1 - W0);
           if ((h0 && tt < W0) || (h1 && tt >= W1)) return { show: false, mode: L.kind };
-          let f = Math.max(0, Math.min(1, (tt - W0) / dW)), v = G.len / (dW * GAME_MIN) * (R.delay > 0 ? 1 + MOVE.catchUp : 1);
+          let f = Math.max(0, Math.min(1, (tt - W0) / dW)), v = G.len / (dW * SPM) * (R.delay > 0 ? 1 + MOVE.catchUp : 1) * DS;
           // (a late cab's lateness is walked off at 1.6×: never a jump)
           const sh = R.rank && R.k === legs.length - 1 && !L.coarse ? Math.min(G.len * .5, R.rank * MOVE.crew.short) : 0; if (sh) f *= (G.len - sh) / G.len;   // (MOVEMENT REVIEW #4: the trip's last walk, a crew member stops rank × short m behind the end — in a queue, not in one body — and steps off from there)
           let vNow = null;   // (crowd grid: the speed it really goes this frame, its lag changing)
           if (lagOn(L) && L.kind !== 'skate' && f > 0 && (f < 1 || (R.lk === R.k && R.lu < R.lend - 1e-3))) { const crew = sh ? (G.len - sh) / G.len : 1, M = G.len * crew;
-            const r = lagStep(R, me, a, L, dt, G.len / (dW * GAME_MIN) * crew, d => d, cl => (tt0 - cl / GAME_MIN - W0) / dW * M, 0, M, d => at(G, d, LG), G);
+            const r = lagStep(R, me, a, L, dt, G.len / (dW * SPM) * crew, d => d, cl => (tt0 - cl / SPM - W0) / dW * M, 0, M, d => at(G, d, LG), G);
             f = r / G.len; vNow = R.lv; }
           if (L.coarse) {   // (rule 5, lens.js cutLeg: a leg to or from someone else's lot keeps only its public stretch — walked at the mode's own pace, out of view beyond it)
-            v = SPEED[L.kind] || 1.5; const d = coarseId(L.to) ? (tt - L.dep) * GAME_MIN * v : G.len - (L.arr - tt) * GAME_MIN * v; if (d < 0 || d > G.len) return { show: false, mode: L.kind }; f = G.len ? d / G.len : 0; }
+            v = SPEED[L.kind] || 1.5; const d = coarseId(L.to) ? (tt - L.dep) * SPM * v : G.len - (L.arr - tt) * SPM * v; v *= DS; if (d < 0 || d > G.len) return { show: false, mode: L.kind }; f = G.len ? d / G.len : 0; }
           const rd = MOVE.ride[L.kind];
           if (L.kind === 'skate' && SKC.skate_ride && !L.coarse && G.len > 1) {   // (SKATE: the plan — push, ride, kickturns at the corners, an ollie now and then)
-            const T = dW * GAME_MIN, pl = G.plan ??= skatePlan(G, T, a.id + ':' + L.dep); let tau = (tt - W0) * GAME_MIN;
-            if (lagOn(L) && tau > 0 && (tau < pl.T || (R.lk === R.k && R.lu < R.lend - 1e-3))) tau = lagStep(R, me, a, L, dt, 1, u => u * pl.v, cl => (tt0 - W0) * GAME_MIN - cl, 0, pl.T, u => { const q = skateAt(G, pl, u); LG[0] = q.x; LG[2] = q.z; LG[3] = q.yaw; return LG; }, G);   // (crowd grid: its plan's clock held back)
+            const T = dW * SPM, pl = G.plan ??= skatePlan(G, T, a.id + ':' + L.dep); let tau = (tt - W0) * SPM;
+            if (lagOn(L) && tau > 0 && (tau < pl.T || (R.lk === R.k && R.lu < R.lend - 1e-3))) tau = lagStep(R, me, a, L, dt, 1, u => u * pl.v, cl => (tt0 - W0 - cl / SPM) * SPM, 0, pl.T, u => { const q = skateAt(G, pl, u); LG[0] = q.x; LG[2] = q.z; LG[3] = q.yaw; return LG; }, G);   // (crowd grid: its plan's clock held back)
             const o = skateAt(G, pl, tau);
-            if (!MOVE.avoid) { R.lastYaw = o.yaw; return draw(o.x, o.y + BOARD.deck, o.z, o.yaw, o.moving ? pl.v : 0, { base: o.y, mode: 'skate', prop: 'board', clip: o.clip, clipT: o.clipT, snap: o.snap, stand: true, cad: 0 }); }
+            if (!MOVE.avoid) { R.lastYaw = o.yaw; return draw(o.x, o.y + BOARD.deck, o.z, o.yaw, o.moving ? pl.v * DS : 0, { base: o.y, mode: 'skate', prop: 'board', clip: o.clip, clipT: o.clipT, snap: o.snap, stand: true, cad: 0 }); }
             // riders avoid: the weave on the plan's path pieces (a line or a kick stays on its geometry: the weave is back to 0 by then)
             const bx = o.x, by = o.y, bz = o.z, byaw = o.yaw, mv = o.moving, clip = o.clip, clipT = o.clipT, snap = o.snap, p = pl.pieces.find(q => tau < q.t1) || pl.pieces[pl.pieces.length - 1];
-            const dP = p.kind === 'path' ? p.d0 + (p.d1 - p.d0) * Math.max(0, Math.min(1, (tau - p.t0) / Math.max(1e-6, p.t1 - p.t0))) : null, vS = mv && p.kind !== 'kick' ? (lagOn(L) ? Math.min(pl.v * 1.5, R.lv ?? pl.v) : pl.v) : 0;
+            const dP = p.kind === 'path' ? p.d0 + (p.d1 - p.d0) * Math.max(0, Math.min(1, (tau - p.t0) / Math.max(1e-6, p.t1 - p.t0))) : null, vS = mv && p.kind !== 'kick' ? (lagOn(L) ? Math.min(pl.v * 1.5, R.lv ?? pl.v) : pl.v) : 0, vD = vS * DS;
             if (dP !== null) at(G, dP, SKP);   // (the cursor on the segment it is on)
-            const wv = weave(R, G, me, 'skate', bx, bz, byaw, vS, dP, dP !== null ? Math.min(p.d1 - dP, G.len - dP) : 0, dt), x = bx + wv.ax * wv.off, z = bz + wv.az * wv.off;
-            const yaw = wv.off || wv.ov ? Math.atan2(Math.sin(byaw) * Math.max(vS, .5) + wv.ax * wv.ov * MOVE.weave.yaw, Math.cos(byaw) * Math.max(vS, .5) + wv.az * wv.ov * MOVE.weave.yaw) : byaw;
-            if (mv && p.kind !== 'kick') { const kv = pl.v > 0 ? Math.min(1.5, vS / pl.v) : 1; publish(R, me, x, z, byaw, vS, t => { const q = skateAt(G, pl, Math.min(pl.T, tau + t * kv)); return [q.x, q.z]; }); }   // (crowd grid: a skater held up is still in the corner it is waiting at — published, the walkers wait outside it)
+            const wv = weave(R, G, me, 'skate', bx, bz, byaw, vD, dP, dP !== null ? Math.min(p.d1 - dP, G.len - dP) : 0, dt), x = bx + wv.ax * wv.off, z = bz + wv.az * wv.off;
+            const yaw = wv.off || wv.ov ? Math.atan2(Math.sin(byaw) * Math.max(vD, .5) + wv.ax * wv.ov * MOVE.weave.yaw, Math.cos(byaw) * Math.max(vD, .5) + wv.az * wv.ov * MOVE.weave.yaw) : byaw;
+            if (mv && p.kind !== 'kick') { const kv = pl.v > 0 ? Math.min(1.5, vS / pl.v) : 1; publish(R, me, x, z, byaw, vD, t => { const q = skateAt(G, pl, Math.min(pl.T, tau + t * kv * DS)); return [q.x, q.z]; }); }   // (crowd grid: a skater held up is still in the corner it is waiting at — published, the walkers wait outside it)
             R.lastYaw = yaw;
-            return draw(x, by + BOARD.deck, z, yaw, mv ? (vS || 0) : 0, { base: by, bx, bz, mode: 'skate', prop: 'board', clip, clipT, snap, stand: true, cad: 0 }); }
+            return draw(x, by + BOARD.deck, z, yaw, mv ? (vD || 0) : 0, { base: by, bx, bz, mode: 'skate', prop: 'board', clip, clipT, snap, stand: true, cad: 0 }); }
           const P = at(G, f * G.len, OUT); if (!P) { R.k++; continue; }
           if (vNow !== null) v = vNow;   // (crowd grid: braking behind someone, or catching up)
           const moving = f > 0 && f < 1;
@@ -534,7 +611,43 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
         if (L.kind === 'stairs' || L.kind === 'subway') { if (tt >= L.arr) { R.k++; continue; } return under(L); }
         R.k++; }   // (an unknown kind: skipped)
       return { show: false }; };
-    function under(L) { R.busy = true; return UNDER.hook?.(L, R.lastNow - R.delay - R.lag, legs, a) || { show: false, mode: 'subway' }; }   // (MOVEMENT W3b: subway/index.js draws the stairs and opens the carriage through UNDER.hook)
+    // C2 · THE HAND-OVER BETWEEN LEGS (GAME.md §41: "no one wants to watch people drop off screen"; a follower sees every step). Where one
+    // leg's drawing ends a little off where the next one's starts, the walker eases across the gap instead of jumping it: the offset to its
+    // last drawn place, closed in ease s (≤ 0.8 s, about 6 m/s), never more than ease.max m (a gap that wide is a bug to see, not hide).
+    // The case it is for: a walk into a station's stairs was built before that station's block (and its stairs' anchors) streamed in,
+    // so it ended on the station's fallback point, 4.4 m from where the flight starts (subway/index.js wellOf)
+    R.frame = (now, dt, me) => {
+      if (R.depth) return legFrame(now, dt, me);
+      R.depth = 1; let o; try { o = legFrame(now, dt, me); } finally { R.depth = 0; }
+      const E = MOVE.ease;
+      if (!o.show || !E.on) { R.ez = null; R.pxz = null; R.pk = R.k; return o; }
+      if (R.pxz && R.pk !== R.k && !R.jump) { const gx = R.pxz[0] - o.x, gz = R.pxz[1] - o.z, g = Math.hypot(gx, gz); if (g > E.min && g < E.max) { R.ez = { x: gx, z: gz, t: 0, T: Math.max(.15, Math.min(.8, g / E.v)) }; S2.eased = (S2.eased || 0) + 1; } }
+      if (R.ez) { R.ez.t += dt; const k = 1 - smooth01(R.ez.t / R.ez.T); if (k <= 0) R.ez = null; else { o.x += R.ez.x * k; o.z += R.ez.z * k; } }
+      R.pxz = [o.x, o.z]; R.pk = R.k; return o; };
+    // MOVEMENT W3b: subway/index.js draws the stairs (and, for a followed rider, opens the carriage over the city) through UNDER.hook. Underground (the
+    // platform, the ride, the foot of the stairs) the agent is out of view, and the follow cam rides with a stand-in under its id (C2):
+    // at the top of the stairs it went down (the platform), along the streets from there to the next station's stairs on the train's own
+    // clock (subway/net.js: the program the carriage plays; its share of the run is its share of the way), at the top of the stairs it
+    // comes up. On the street, not on the line: the line runs under the blocks, and a camera on it was inside them. A first pass: how
+    // the ride looks is slime's.
+    // (on the stairs, once the walker is under the street's level, the camera already has the stand-in on the sidewalk in front of them,
+    // and keeps it until the walker coming up is back near the street: it looks down the flight instead of following them into its walls)
+    function under(L) { R.busy = true; const t = R.lastNow - R.delay - R.lag, d = UNDER.hook?.(L, t, legs, a, CLK);
+      if (d && d.show !== false) { if (!(L.kind === 'stairs' && Number.isFinite(d.y) && d.y < SIDE - MOVE.underY)) { if (R.under) { R.under = false; proxyOff(a); } return d; }
+        standUnder(L, t); return d; }
+      standUnder(L, t); return { show: false, mode: 'subway', ride: R.sub.car }; }
+    function standUnder(L, t) {
+      const U = R.sub ??= { car: { x: 0, z: 0, h: 0, v: 0, gone: false }, P: undefined }, c = U.car, was = [c.x, c.z];
+      if (U.P === undefined && NET) U.P = programOf(NET, legs, SPM) || null;
+      let at = null;
+      if (U.P) { const q = subwayAt(U.P, Math.max(0, Math.min(U.P.dur, (t - U.P.t0) * SPM)));
+        if (q.at) { at = wellTop(q.st); c.v = 0; } else { const r = runRoute(q.seg.a, q.seg.b); if (r) { at = alongRoute(r, q.seg.m > 0 ? q.x / q.seg.m : 0); c.v = q.v * r.len / Math.max(1, q.seg.m); } } }
+      at ??= wellTop(L.dir === 'up' ? L.to : L.from) ?? wellTop(L.from) ?? wellTop(L.to) ?? (R.k > 0 ? drawnEnd(R.k - 1) : null);
+      if (at) { const dx = at[0] - c.x, dz = at[1] - c.z; if (R.under && Math.hypot(dx, dz) > .05) c.h = Math.atan2(dx, dz); c.x = at[0]; c.z = at[1]; if (at.length > 2) c.h = at[2]; }
+      if (!U.P || !at) c.v = 0;
+      if (!R.under) { R.under = true; if (!Number.isFinite(c.h)) c.h = 0; proxyOn(a, c, SIDE); }
+      if (Math.hypot(c.x - was[0], c.z - was[1]) > .01) { const p = PX.get(a.id); if (p && p.car === c) { p.p[0] = c.x; p.p[2] = c.z; p.p[3] = p.yawS = c.h; p.vc = c.v; } }
+      return c; }
     // the cab leg L (index k), from its wait to getting off
     // (rule 5, lens.js cutLeg · audit F05: a cab FROM someone else's lot — its kerb, its wait and the start of its path are cut — rides
     // out of view, the rider not drawn before it: no stop to stand at, and the fallback below would be a later leg's start)
@@ -553,7 +666,7 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
       // frames at Blackpine. The rider is past it)
       if (R.phase === null && tt >= L.arr) { if (R.pre && R.pre !== -1 && R.pre.leg0 === L) { R.pre.rider = null; R.pre.empty = true; } L.path = null; return vehicle(L, k, now, dt, me); }
       if (R.phase === null) { R.phase = 'wait'; const cab = R.pre && R.pre !== -1 && R.pre.leg0 === L ? R.pre : cabFor(L, legs[k + 1]); if (!cab) { L.path = null; R.phase = null; return vehicle(L, k, now, dt, me); } R.veh = cab; cab.rider = me; }
-      const cab = R.veh, P = cab.P, tR = now * GAME_MIN, c = cab.c && !cab.c.gone ? cab.c : null, F0 = c && carFrame(c);
+      const cab = R.veh, P = cab.P, tR = cabS(now), c = cab.c && !cab.c.gone ? cab.c : null, F0 = c && carFrame(c);
       // (CAB TRAFFIC: the door on the KERB side — the side the rider waits on, or walks off to: a cab standing in a one-way's lane with the
       // kerb on its left, JAY ST's stand, was boarded from the road)
       const kp = R.phase === 'ride' || R.phase === 'getout' ? (R.to || nextStart(k + 1)) : stopP, ks = F0 && kp ? Math.sign((kp[0] - c.x) * F0.rx + (kp[1] - c.z) * F0.rz) || 1 : 1;
@@ -561,7 +674,7 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
       // the kerb: wait_stop until the hail's time, then hail_taxi (1.1 s, held: the arm stays up, a wave every 1.3 s) on the movement's
       // clock — on its end frame the walker steps on by its shift (0.3 m, to the kerb's edge) — until the cab stands at the kerb
       const hailDep = wait ? wait.dep : L.dep, yawW = waitYaw(stopP, k), fw = [Math.sin(yawW), Math.cos(yawW)];
-      const hailT = Math.max(0, (tt - hailDep) * GAME_MIN), hc = CLIPS.CLIP.hail_taxi, hs = hc && hailT >= hc.dur ? hc.shift[1] : 0, kerb = [stopP[0] + fw[0] * hs, stopP[1] + fw[1] * hs];
+      const hailT = Math.max(0, cabS(tt - hailDep)), hc = CLIPS.CLIP.hail_taxi, hs = hc && hailT >= hc.dur ? hc.shift[1] : 0, kerb = [stopP[0] + fw[0] * hs, stopP[1] + fw[1] * hs];
       // CAB FOLLOW-UP (2026-10-10) · NO GIVE-UP JUMP. A cab far behind its booking — a jam — no longer ends with the rider put on at once (a
       // teleport). The rider leaves it where it is and WALKS the rest, on the walkers' graph from there to where the trip ends (travel.mjs, a
       // walk from that point), the later legs replaced: their arrival stays late, nothing jumps. walkFrom(from, dep) → the new legs (from: [x, z])
@@ -569,10 +682,12 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
         const tr = TV.trip(from, dest, 'walk', { dep }); return tr?.legs?.length && tr.legs[0].path?.length > 1 ? tr.legs : null; };
       const walkOn = nl => { cab.bailed = true; legs.splice(k + 1, legs.length - k - 1, ...nl); R.G.length = Math.min(R.G.length, k + 1); S.bails = (S.bails || 0) + 1; return nl; };
       const walkFrom = (from, dep) => { const nl = walkPlan(from, dep); return nl ? walkOn(nl) : null; };
-      if (R.phase === 'wait' && !fleet.cabs.atKerb(cab) && !cab.picked && tt > L.dep + MOVE.cabWait / GAME_MIN && (R.lastXZ || stopP)) {   // (its cab never came: on foot from the kerb, now)
+      if (R.phase === 'wait' && !fleet.cabs.atKerb(cab) && !cab.picked && tt > L.dep + MOVE.cabWait / TRAFFIC_MIN && (R.lastXZ || stopP)) {   // (its cab never came: on foot from the kerb, now)
         const nl = walkFrom(R.lastXZ || stopP, tt); if (nl) { cab.rider = null; cab.empty = true; R.phase = null; R.veh = null; R.pre = null; R.k = k + 1; R.busy = false; proxyOff(me); return R.frame(now, 0, me); } }
       if (R.phase === 'wait') { if (fleet.cabs.atKerb(cab) && tR >= P.tPick - .05) { R.phase = 'getin'; R.pt = 0; R.from = kerb; cab.boarding = true; }
-        else if (cab.picked || (!c && tt >= L.arr)) { R.phase = 'ride'; cab.inside = true; }   // (came in after the cab left — a page that joins mid-ride, a seek: it is in the cab, which comes into the street where the ride has it; or a cab that never could come in: on at the booked arrival)
+        // (C2: a cab the traffic hasn't put in the street yet is no cab to be in: the rider keeps hailing at the kerb until its car is drawn
+        // — it went out of view into nothing, 0.5 game min on 404, a19 at the heap — and gets in when it is)
+        else if ((cab.picked && c) || (!c && tt >= L.arr)) { R.phase = 'ride'; cab.inside = true; }   // (came in after the cab left — a page that joins mid-ride, a seek: it is in the cab, which comes into the street where the ride has it; or a cab that never could come in: on at the booked arrival)
         else return tt >= hailDep ? draw(kerb[0], SIDE, kerb[1], yawW, 0, { clip: 'hail_taxi', clipT: hailT, stand: true }) : draw(stopP[0], SIDE, stopP[1], yawW, 0, { clip: 'wait_stop', clipStart: phase0('wait_stop'), stand: true }); }
       R.busy = true;
       // in: a few steps to the rear door (walking), then car_get_in facing the door (1.3 s, held low: then the walker is hidden — the cab is
@@ -582,7 +697,7 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
         if (R.pt < tw) return draw(lerp(R.from[0], side[0], w), SIDE * (1 - w), lerp(R.from[1], side[1], w), Math.atan2(side[0] - R.from[0], side[1] - R.from[1]), d / tw, { mode: 'taxi' });
         const ct = R.pt - tw; if (!gin || ct >= gin.dur) { cab.inside = true; R.phase = 'ride'; proxyOn(me, c, .7); return { show: false, mode: 'taxi' }; }
         return draw(side[0], 0, side[1], inYaw, 0, { mode: 'taxi', clip: 'car_get_in', clipT: ct, snap: true, stand: true }); }
-      if (R.phase === 'ride') { if (c && !PX.has(me.id) && camOn(me.id)) proxyOn(me, c, .7);
+      if (R.phase === 'ride') { if (c && (!RIDING.has(me.id) || (!PX.has(me.id) && camOn(me.id)))) proxyOn(me, c, .7);
         // (rule 5 · audit F05: a cab TO someone else's lot drops where its public path ends, at the lot's zone: the rider stays in, out
         // of view, to the booked arrival, and the cab is let go from there — nobody gets out where the agent never was)
         if (L.coarse && coarseId(L.to) && fleet.cabs.atDrop(cab)) { if (tt < L.arr) return { show: false, mode: 'taxi', ride: c }; cab.rider = null; cab.out = true; finish(); return R.frame(now, 0, me); }
@@ -590,8 +705,8 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
         // starts out at P.tOut, on the kerb on the booked second; a late one lets them out at once, the lateness R.delay)
         if (tR >= P.tOut - .02 && fleet.cabs.atDrop(cab)) { cab.alighting = true; R.phase = 'getout'; R.pt = 0; R.tg = tR; R.to = nextStart(k + 1) || [side[0], side[1]]; R.door = side.slice(); R.outYaw = Math.atan2(F.rx, F.rz); R.rx = [F.rx, F.rz]; R.outEnd = Math.max(P.tArr - tR, P.out); }
         // (far past the booking, the cab at rest in a lane: the rider pays, gets out there — on the side the walk on starts — and walks the rest)
-        else if (c && tt > L.arr + MOVE.cabBail / GAME_MIN && c.v < .3 && !c.kin && c.L?.kind === 'lane' && (R.bailPlan = walkPlan([c.x, c.z], L.arr))
-          && (tt > L.arr + MOVE.cabGiveUp / GAME_MIN || R.bailPlan.reduce((m, l) => m + (l.m || 0), 0) / (SPEED.walk * (1 + MOVE.catchUp)) < fleet.cabs.eta(cab)) && fleet.cabs.bail(cab)) { const nl = walkOn(R.bailPlan), p1 = nl[0].path[1];
+        else if (c && tt > L.arr + MOVE.cabBail / TRAFFIC_MIN && c.v < .3 && !c.kin && c.L?.kind === 'lane' && (R.bailPlan = walkPlan([c.x, c.z], L.arr))
+          && (tt > L.arr + MOVE.cabGiveUp / TRAFFIC_MIN || R.bailPlan.reduce((m, l) => m + (l.m || 0), 0) / (SPEED.walk * (1 + MOVE.catchUp)) < fleet.cabs.eta(cab)) && fleet.cabs.bail(cab)) { const nl = walkOn(R.bailPlan), p1 = nl[0].path[1];
           const sg = Math.sign((p1[0] - c.x) * F0.rx + (p1[1] - c.z) * F0.rz) || 1, rx = F0.rx * sg, rz = F0.rz * sg, door = [c.x + rx * (c.wid / 2 + .45) - F0.fx * .3, c.z + rz * (c.wid / 2 + .45) - F0.fz * .3];
           nl[0].path = [door, ...nl[0].path.slice(1)]; R.bailing = true; R.phase = 'getout'; R.pt = 0; R.tg = tR; R.to = door; R.door = door; R.outYaw = Math.atan2(rx, rz); R.rx = [rx, rz]; R.outEnd = P.out; }
         // (no cab in the street — it never could come in — or one given up: on foot from where the rider was last, now)
@@ -716,9 +831,9 @@ export function createMovement({ peds, log = () => {}, clips = null }) {
   const unpose = w => { if (!w) return; w.mv = null; if (w.g?.clip && w.g.mvClip) { REG.clearClip(w.g); w.g.mvClip = false; } };   // (the stage borrows a walker: the movement lets go of its clip)
 
   return { run, geomOf, at, prop, flushProps, clipProp, unpose, setScene(s) { scene = s; }, proxyFrame, get fleet() { return fleet; },
-    // pace: the movement clock's rate over the natural pace (game min per page s × GAME_MIN; 1 live at the sim's 60-min day, the tape's
+    // pace: the movement clock's rate over the natural pace (game min per page s × the clock's secondsPerMinute; 1 live at the sim's 60-min day, the tape's
     // speed × that while it plays): the lag holds only up to MOVE.lag.maxPace
-    frame(now, jump = false, rate = null) { const t0 = performance.now(); MOVERS.length = 0; fno++; if (jump) jumpF = fno; gameNow = now; pace = Number.isFinite(rate) ? Math.abs(rate) * GAME_MIN : 1; if (initTransit()) fleet.setNow(now); proxyFrame(); S.ms.push(performance.now() - t0); if (S.ms.length > 300) S.ms.shift(); },   // (the fleet places itself at the traffic's next step)
+    frame(now, jump = false, rate = null) { const t0 = performance.now(); MOVERS.length = 0; fno++; if (jump) jumpF = fno; gameNow = now; pace = Number.isFinite(rate) ? Math.abs(rate) * SPM : 1; DS = pace > MOVE.lag.maxPace ? pace : 1; if (initTransit()) fleet.setNow(now); proxyFrame(); S.ms.push(performance.now() - t0); if (S.ms.length > 300) S.ms.shift(); },   // (the fleet places itself at the traffic's next step)
     stats: () => ({ ...S, ...S2, movers: MOVERS.length, ms: undefined, msAvg: S.ms.length ? +(S.ms.reduce((s, v) => s + v, 0) / S.ms.length).toFixed(3) : 0, msMax: S.ms.length ? +Math.max(...S.ms).toFixed(3) : 0,
       fleet: fleet ? fleet.stats() : null, proxies: PX.size, missingClips: [...missing], clips: !!REG }),
     get gameNow() { return gameNow; } };

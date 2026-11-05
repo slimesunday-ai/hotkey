@@ -17,6 +17,7 @@ export function createFeed({ rounds = 3, saved = null } = {}) {
   const forms = new Map(saved?.forms || []);
   let boardWas = saved?.board ?? null;
   let restWas = saved?.rest ?? null;
+  let sightingsWas = saved?.sightings ?? null;
 
   function sample(state, log, step) {
     const view = viewFor(state, log, null, 'record');
@@ -29,23 +30,31 @@ export function createFeed({ rounds = 3, saved = null } = {}) {
       // `orders.of` is the rules' event-reference field. Unpublished references reveal neither an id nor a count;
       // if one becomes public later, the changed form is emitted again under the same local identity.
       if (e.type === 'orders') e.of = e.of.flatMap(ref => ids.has(ref) ? [ids.get(ref)] : []);
+      // show.masked[].fight references the rules' resolved fight event. All
+      // identities were allocated above, including this same night's fights.
+      if (e.type === 'show' && e.masked) for (const at of Object.values(e.masked)) {
+        if (at.fight !== undefined) at.fight = ids.get(at.fight);
+      }
       const form = JSON.stringify(e);
       if (forms.get(n) === form) continue;
       forms.set(n, form);
       events.push({ id: ids.get(n), ...e, minute });
     }
     const board = JSON.stringify(view.board);
-    const rest = { sightings: view.sightings, day: view.day, nightsLeft: view.nightsLeft, midseason: view.midseason, over: view.over };
+    const sightings = JSON.stringify(view.sightings);
+    const rest = { day: view.day, nightsLeft: view.nightsLeft, midseason: view.midseason, over: view.over };
     const restText = JSON.stringify(rest);
-    if (!events.length && board === boardWas && restText === restWas) return null;
+    if (!events.length && board === boardWas && sightings === sightingsWas && restText === restWas) return null;
     const frame = { i: i++, t: view.clock, step: { ...step }, minute,
-      ...(board === boardWas ? {} : { board: view.board }), events, ...rest };
+      ...(board === boardWas ? {} : { board: view.board }), events,
+      ...(sightings === sightingsWas ? {} : { sightings: view.sightings }), ...rest };
     boardWas = board;
+    sightingsWas = sightings;
     restWas = restText;
     return frame;
   }
 
   // Private checkpoint data, never part of a frame. The runner commits it with the file's byte boundary each night.
-  const save = () => ({ i, ids: [...ids], forms: [...forms], board: boardWas, rest: restWas });
+  const save = () => ({ i, ids: [...ids], forms: [...forms], board: boardWas, rest: restWas, sightings: sightingsWas });
   return { sample, save };
 }

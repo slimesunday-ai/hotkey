@@ -76,7 +76,8 @@ const byId = events => [...events].sort((a, b) => a.id - b.id);
 function planProperties(plan, frame, board, totals) {
   const show = frame.events.find(e => e.type === 'show'), visible = new Set(Object.keys(show.seen));
   const hidden = board.agents.filter(a => !visible.has(a.id));
-  property(plan.start >= frame.day * 1440 + 1265 && plan.end <= frame.day * 1440 + 1280, 'show within 21:05–21:20');
+  // §41, 10-30: "no one wants to watch people drop off screen"; arrivals set the close.
+  property(plan.start >= frame.day * 1440 + 1265, 'show starts at or after 21:05');
   property(plan.end > plan.start, 'show has positive length');
   const strings = value => typeof value === 'string' ? [value] : value && typeof value === 'object' ? Object.values(value).flatMap(strings) : [];
   for (const scene of plan.scenes) {
@@ -137,7 +138,8 @@ function planProperties(plan, frame, board, totals) {
   }
   const quiet = !focus.length && !Object.values(show.hooded).some(Boolean)
     && !Object.values(show.plays).some(p => ['grab', 'vault', 'collar', 'board'].includes(p.kind));
-  if (quiet) { property(plan.end - plan.start < 15, 'quiet show is shorter'); totals.quiet++; }
+  // §41, 10-30: "no one wants to watch people drop off screen"; quiet trips can take longer too.
+  if (quiet) totals.quiet++;
   totals.scenes += plan.scenes.length;
 }
 

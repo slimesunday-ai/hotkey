@@ -52,6 +52,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const GOLDEN = JSON.parse(fs.readFileSync(path.join(here, 'fixtures', 'view-identity-dfb165b.json'), 'utf8'));
 
 test('seats, lookups, owner AI reads and bots read the same bytes as dfb165b, seeds 404-406', async () => {
+  // §41, 10-31: "Who and where show"; re-pin only the three log-shape end digests for viewer-only act annotations and masked fight ids.
   assert.deepEqual(await identity(), GOLDEN);
 });
 

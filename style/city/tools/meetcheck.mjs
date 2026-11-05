@@ -48,7 +48,8 @@ function guarded(frames, minute) {
     return copy;
   });
 }
-function measure(createRoutinePlanner, frames, label) {
+// §41, 10-31: "Do your recommendation here"; late fixtures include their post-show window.
+function measure(createRoutinePlanner, frames, label, until = 1265) {
   const planner = createRoutinePlanner(frames), events = new Map(), points = new Set();
   for (const frame of frames) {
     points.add(revealAt(frame)); points.add(Math.max(0, revealAt(frame) - .25));
@@ -57,7 +58,8 @@ function measure(createRoutinePlanner, frames, label) {
     }
   }
   const plans = new Map([...events.values()].map(({ event }) =>
-    [event.day, planner.day(event.day, event.day * DAY + 1265)]));
+    // §41, 10-31: "Do your recommendation here"; inspect the complete deferred interval.
+    [event.day, planner.day(event.day, event.day * DAY + until)]));
   for (const plan of plans.values()) for (const row of plan.entries) {
     points.add(row.minute); points.add(Math.max(0, row.minute - .0001));
   }
@@ -80,7 +82,8 @@ function measure(createRoutinePlanner, frames, label) {
       const row = planner.at(cue.minute).find(r => r.agent === id);
       if (row?.meet !== event.id) duration = 0;
       const next = list.find(r => r.minute > cue.minute && r.meet !== event.id);
-      duration = Math.min(duration, (next?.minute ?? event.day * DAY + 1265) - cue.minute);
+      // §41, 10-31: "Do your recommendation here"; retain the full minimum after close.
+      duration = Math.min(duration, (next?.minute ?? event.day * DAY + until) - cue.minute);
       const last = previous.get(`${event.day}/${id}`);
       if (last && cue.minute < last.minute + MINIMUM) orderErrors++;
       previous.set(`${event.day}/${id}`, cue);
@@ -91,13 +94,16 @@ function measure(createRoutinePlanner, frames, label) {
         const pair = [event.a, event.b].map(id => planner.at(minute).find(r => r.agent === id));
         property(pair.every(r => r?.meet === event.id && r.role === 'meet'), `${label} meet ${event.id} minimum interval`);
         property(pair.every(r => r.place.cityPlace === cue.place.cityPlace)
-          || (cue.cut && pair.every(r => r.cut && r.scenePlace.cityPlace === cue.place.cityPlace)),
+          // §41, 10-30: "no one wants to watch people drop off screen"; jail retains its physical place.
+          || pair.every(r => ['jail', cue.place.cityPlace].includes(r.place.cityPlace) && r.scenePlace?.cityPlace === cue.place.cityPlace),
         `${label} meet ${event.id} together or paired scene cut`);
       }
     }
     for (const minute of [cue.minute, cue.minute + .5, cue.minute + MINIMUM]) points.add(minute);
   }
   console.log(`${label}: ${events.size} meets, ${missed} below ${MINIMUM}-minute minimum, ${cuts} day-end cuts${failures.length ? ` (${failures.slice(0, 6).join(', ')})` : ''}`);
+  // §41, 10-31: "Do your recommendation here"; no day-end omission remains.
+  property(cuts === 0, `${label}: ${cuts} day-end omissions`);
   property(missed === 0, `${label}: ${missed}/${events.size} meets lack their minimum`);
   property(metadataErrors === 0, `${label}: ${metadataErrors} missing publication/minimum declarations`);
   property(orderErrors === 0, `${label}: ${orderErrors} meetings violate per-agent feed order`);
@@ -130,17 +136,27 @@ function synthetic(createRoutinePlanner) {
     frame(3, 1810.5, [{ id: 6, day: 1, minute: 1810.5, type: 'high', agent: 'b' }])];
   measure(createRoutinePlanner, frames, 'synthetic queue/jailed pair');
   const p = createRoutinePlanner(frames), plan = p.day(1);
-  assert.deepEqual(plan.meetings.map(m => [m.eventId, m.minute]), [[2, 1810], [3, 1815], [4, 1815], [5, 1820]]);
-  property(p.at(1814.75).filter(r => r.meet === 2).length === 2, 'later public act waits for minimum');
-  property(p.at(1825).find(r => r.agent === 'a').lineEvent === 1, 'public row shifts after queued meets');
+  // §41, 10-30: "no one wants to watch people drop off screen"; travel replaces publication-time arrival cuts.
+  const [one, two, three, four] = plan.meetings;
+  assert.deepEqual(plan.meetings.map(m => m.eventId), [2, 3, 4, 5]);
+  property(plan.meetings.every(m => m.minute >= m.departure && m.departure >= 1810), 'meetings wait for departure and arrival');
+  property(two.departure >= one.minute + MINIMUM && three.departure >= one.minute + MINIMUM
+    && four.departure >= Math.max(two.minute, three.minute) + MINIMUM, 'shared partners keep their minimum before next trip');
+  property(p.at(one.minute + 4.75).filter(r => r.meet === 2).length === 2, 'later public act waits for minimum');
+  property(p.at(four.minute + MINIMUM).find(r => r.agent === 'a').lineEvent === 1, 'public row shifts after queued meets');
   property(plan.bubbles.length === 1 && plan.bubbles[0].minute === 1810, 'speech keeps publication time');
-  property(p.at(1815).find(r => r.agent === 'c').place.cityPlace === 'jail', 'unavailable street walker stays jailed');
-  property(p.at(1815).find(r => r.agent === 'b').meet === 4, 'shared partner waits and arrives with its pair');
+  property(p.at(two.minute).find(r => r.agent === 'c').place.cityPlace === 'jail', 'unavailable street walker stays jailed');
+  property(p.at(three.minute).find(r => r.agent === 'b').meet === 4, 'shared partner waits and arrives with its pair');
   const early = createRoutinePlanner(frames.slice(0, 2));
   assert.deepEqual(p.at(1810), early.at(1810), 'later frames cannot move an earlier row');
   const boundary = frames[1].events.slice(1).map(e => ({ ...e, minute: 2700 }));
   boundary.push({ ...boundary[0], id: 3, b: 'd' });
-  measure(createRoutinePlanner, [frames[0], frame(1, 2700, boundary)], 'synthetic day-end cut');
+  // §41, 10-31: "Do your recommendation here"; a public night supplies the actual close.
+  const night = { ...frame(2, 2700, [{ id: 4, type: 'show', day: 1, night: 1, minute: 2700,
+    seen: { a: 'home', b: 'home', c: 'home', d: 'home' }, hooded: {},
+    plays: Object.fromEntries(agents.map(a => [a.id, { kind: 'laylow', place: 'home' }])) }]), t: 3, step: { kind: 'night' } };
+  // §41, 10-31: "Do your recommendation here"; both former day-end cuts now finish after the show.
+  measure(createRoutinePlanner, [frames[0], frame(1, 2700, boundary), night], 'synthetic day-end queue', 1440);
   console.log('synthetic: feed order, shared partners, shifted public rows, jailed cut, fractional arrival PASS');
 }
 try {

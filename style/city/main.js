@@ -328,11 +328,17 @@ function frame(t, now) {
   api.ui?.frame(dt, t);   // (human layer: pins, rings, hover — ui/index.js; only on a ?sim=live page)
   // (blue flash fix, 10-09: dynamic resolution steps BEFORE the draw. A step resizes the canvas, which empties its buffer; stepped after
   // the draw, that empty buffer was the frame shown, and the page's blue background showed through for one frame at every step)
-  if (now) dyn.frame(now, stream.queueSize() > 0 || stream.stat.pending > 0);
-  post.render(t, dyn); frames++;
+  // (C2-carriageperf: not while the carriage covers the city: its frames are the carriage's, and the city's resolution would step on them;
+  // the first frame after, a gap over 200 ms, is not a sample)
+  if (now && !covered) dyn.frame(now, stream.queueSize() > 0 || stream.stat.pending > 0);
+  // (C2-transit: while the subway carriage covers the page, api.cover, the city runs on undrawn: its clock, the record's, keeps going)
+  if (!covered) post.render(t, dyn); frames++;
   return pr;
 }
-const api = { THREE, scene, camera, controls, renderer, stream, R, PR, dyn, VIEWS, setView, setStress, marks, log, frame, get baked() { return baked; }, get loading() { return loading; }, goTo: (x, z, label) => nav.goTo(x, z), get walk() { return walk; }, get sim() { return simLayer; }, get simInfo() { return simInfo; }, get peds() { return peds; }, get traffic() { return traffic; }, CLOCK, ANCHORS, LANES, cache: () => cache, hash: () => hash, info: renderer.info, clearFixedShadow() { shFixed = null; if (!STRESS) viewFog = null; }, post, grade: GRADER, get overlay() { return overlay; } };
+// C2-transit · the subway carriage over the page (subway/index.js): the city's loop runs on under it (the record's clock, its transport and
+// the follow live in it), only its draw is skipped
+let covered = false;
+const api = { cover(on) { covered = !!on; }, get covered() { return covered; }, get pool() { return pool; }, THREE, scene, camera, controls, renderer, stream, R, PR, dyn, VIEWS, setView, setStress, marks, log, frame, get baked() { return baked; }, get loading() { return loading; }, goTo: (x, z, label) => nav.goTo(x, z), get walk() { return walk; }, get sim() { return simLayer; }, get simInfo() { return simInfo; }, get peds() { return peds; }, get traffic() { return traffic; }, CLOCK, ANCHORS, LANES, cache: () => cache, hash: () => hash, info: renderer.info, clearFixedShadow() { shFixed = null; if (!STRESS) viewFog = null; }, post, grade: GRADER, get overlay() { return overlay; } };
 // CAB FOLLOW-UP (2026-10-10) · is any car standing in the road in this footprint (the blocks' anchors.parked: jobs.js)? → traffic/cabs.js, a
 // cab pulling in to the kerb to drop its rider (simstate/movement.js hands it to the traffic sim)
 api.parkedIn = (x0, z0, x1, z1) => { for (const a of ANCHORS.values()) for (const p of a?.parked || []) if (p[0] < x1 && p[2] > x0 && p[1] < z1 && p[3] > z0) return true; return false; };
@@ -350,6 +356,9 @@ if (SIM !== 'record' && !BAKE && !Q.has('hash') && !REPORT) { let homes = null; 
   let d0 = null; const el = renderer.domElement;
   el.addEventListener('pointerdown', e => { d0 = e.button === 0 && e.isPrimary ? [e.clientX, e.clientY, performance.now()] : null; });
   el.addEventListener('pointerup', e => { const d = d0; d0 = null; if (d && Math.hypot(e.clientX - d[0], e.clientY - d[1]) < 6 && performance.now() - d[2] < 450 && !api.ui?.claimed(e)) H().then(h => h.click(e)).catch(err => noteFail([{ path: 'interiors/city/index.js', stage: 'open', error: String(err && err.stack || err) }])); }); }
+// C2-indoors (2026-10-31) · the record viewer's homes (interiors/city/record.js): the room its agent is in opens in place (no demo state,
+// no resident, no camera framing: the record's own walker is the one inside); ?homes=0 leaves them shut
+if (SIM === 'record' && recordPage?.draw?.indoors && !BAKE && !Q.has('hash') && !REPORT && Q.get('homes') !== '0') import('./interiors/city/record.js').then(m => (api.recordHomes = m.createRecordHomes(api, { Q, NIGHT, SHOT, page: recordPage }))).catch(e => noteFail([{ path: 'interiors/city/record.js', stage: 'load', error: String(e && e.stack || e) }]));
 // HUMAN LAYER (section 1) · the UI kit, click an agent → its dossier, citizen pins (ui/index.js). A ?sim=live page only; ?ui=0 leaves it off
 if (SIM === 'live' && !SHOT && !BAKE && !Q.has('hash') && !REPORT && Q.get('ui') !== '0') import('./ui/index.js').then(m => m.mountUI(api, { Q })).catch(e => noteFail([{ path: 'ui/index.js', stage: 'load', error: String(e && e.stack || e) }]));
 // C1-11 · the record path's panels (ui/record/): the dossier on a click, People, the paper map, the ticker and CH 9, from the presented record
@@ -458,7 +467,7 @@ if (Q.has('hash')) {   // pass 2 · ?hash=1&shot=1: every block of the section b
   };
   renderer.setAnimationLoop(loop);
   warmUp().catch(e => console.warn('warm-up failed', e)).finally(() => { warmed = true; marks.warmed = performance.now(); });   // (V6: behind the load-in)
-  api.pauseLoop = on => renderer.setAnimationLoop(on ? null : loop);   // (movement W3b: the subway carriage pauses the city while it is open)
+  api.pauseLoop = on => renderer.setAnimationLoop(on ? null : loop);   // (movement W3b: the loop stopped; the subway carriage no longer uses it, api.cover below)
   addEventListener('resize', () => { if (Q.has('w')) return; camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
   controls.addEventListener('start', () => api.clearFixedShadow());
 }
@@ -471,5 +480,6 @@ document.querySelectorAll('[data-tod]').forEach(b => b.onclick = () => { const u
 document.querySelectorAll('[data-q]').forEach(b => b.onclick = () => { const u = new URL(location.href); u.searchParams.set('q', b.dataset.q); location.href = u; });
 const qEl = document.getElementById('preset'); if (qEl) qEl.textContent = `${PR.name}${PR.auto ? ' (auto)' : ''}`;
 if (!SHOT) mountPanel({ post, dyn });   // render pipeline pass · the RENDER button / \ key
-// MOVEMENT W3b · the subway: the stairs and the carriage scene on a live page, a demo ride with ?subway=1 (subway/index.js; the carriage loads on the first ride)
-if ((SIM === 'live' || Q.get('subway')) && !SHOT && !BAKE && !REPORT && !Q.has('hash')) import('./subway/index.js').then(m => m.mountSubway(api, { Q })).catch(e => noteFail([{ path: 'subway/index.js', stage: 'load', error: String(e && e.stack || e) }]));
+// MOVEMENT W3b · the subway: the stairs and the carriage scene on a live page and the record, a demo ride with ?subway=1 (subway/index.js; the carriage loads on the first ride)
+// (C2-transit: and on the record page, shots too — the stairs; a followed rider's carriage, with the rig, where there is one)
+if ((((SIM === 'live' || Q.get('subway')) && !SHOT) || SIM === 'record') && !BAKE && !REPORT && !Q.has('hash')) import('./subway/index.js').then(m => m.mountSubway(api, { Q })).catch(e => noteFail([{ path: 'subway/index.js', stage: 'load', error: String(e && e.stack || e) }]));

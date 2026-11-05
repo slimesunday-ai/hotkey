@@ -16,7 +16,8 @@ import { rng, SIDE, hash } from './style.js';
 import { buildBlock, planBlock, GEN } from './gen.js';
 import { furnish, traffic, cornerKit } from './street.js';
 import { taxi, steamStack, dog } from './props.js';
-import { P, PLACES, blockAt, roadsOf, kindAt, urban, kerbOut } from './plan.js';
+import { P, PLACES, blockAt, roadsOf, kindAt, urban, kerbOut, hwZ } from './plan.js';
+import { PARK_IN } from './vehicles/index.js';
 import { farFromPlan } from './far.js';
 import { packFull, packMerged, mergeTiers } from './lod.js';
 import { castOf } from './castspec.js';
@@ -180,7 +181,9 @@ function buildJob({ i, j, night, chars = true, audit = false, flags }, mode) {
   // hand-placed street one-offs (pass 1d: checked like everything else, nudged along the street up to 2 m if something is in the way)
   const nudge = (bk, rot, x, y, z, ax, az) => { const whys = new Set(); for (const d of [0, .5, -.5, 1, -1, 1.5, -1.5, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7, 8, -8, 10, -10]) { const px = x + ax * d, pz = z + az * d, e = REG.boxOf(bk, rot, px, y, pz), onSlab = y < .1 || [[e[0] + .05, e[2] + .05], [e[3] - .05, e[2] + .05], [e[0] + .05, e[5] - .05], [e[3] - .05, e[5] - .05]].every(([gx, gz]) => groundAt(gx, gz) > .1);
       const why = onSlab ? REG.why(e, { doors: y > .1, ignore: 'plinth' }) : 'off the sidewalk'; if (!why) { stamp(bk, bank, rot, px, y, pz); return; } whys.add(why); } REG.skip(bk.kind, [x, y, z], 'no room: ' + [...whys].join(', ')); };
-  if (i === -3 && j === 0) nudge(taxi(), 1, kerbX(-88.5), 0, kerbZ(1.2), 1, 0);   // (SPREAD: today's metres, kept to Central Ave's kerb lane)
+  // (the DROP's waiting taxi in Central Ave's kerb lane, hwZ − PARK_IN: z 1.2 had become the middle of the avenue's eastbound travel lane
+  // (traffic/sim.js: lanes at ±1, the kerb lanes at ±3.12), and the traffic drove through it — slime, 11-04)
+  if (i === -3 && j === 0) nudge(taxi(), 1, kerbX(-88.5), 0, hwZ(0) - PARK_IN, 1, 0);
   if (i === -3 && j === -1) nudge(steamStack(), 0, kerbX(-84), 0, kerbZ(-1.5), 1, 0);
   // (pass 2: the Ivy St newsstand the generator kept trying is gone — South Row hand-placed it on Central Ave in blocks/-2_0.js)
   engineAfter(b, kit, bank, A);   // pass 2: transit props, sim-state anchors (lots, tag slots, sites), walker lanes come later

@@ -3,16 +3,23 @@
 // Rendered as text nodes, never HTML. A disclosed (record) row always wears the disclosed-record badge.
 import { h } from '../kit.js';
 import { clock } from './format.js';
+import { sceneHidden, HOODED } from './identity.js';
 
 const FREE = new Set(['line', 'reason', 'name', 'say']);
 export function recordBadge() {
   return h('span', { class: 'r-badge', 'data-badge': 'record', 'data-tip': 'The 24-hour record: private when it happened, public now' }, 'RECORD');
 }
-// row: a panel-events.js row (or a newsAt story); text: 'text' | 'ticker' | 'ch9' (all three are the same words today)
-export function rowEl(row, { list, tag = 'li', when = true } = {}) {
+// row: a panel-events.js row (or newsAt story). Only CH9 scene captions opt in
+// to body anonymity; name-based history prints the original sourced words.
+export function rowEl(row, { list, tag = 'li', when = true, snapshot = null, scene = false } = {}) {
   const words = h('span', { class: 'r-words', 'data-words': '' });
   for (const p of row.parts) {
     if (typeof p === 'string') { words.append(document.createTextNode(p)); continue; }
+    // Only a scene caption may attach a name to the hooded body. Historical
+    // receipts, the ticker and dossiers opened by name keep their public text.
+    if (scene && snapshot && p.nameSource && sceneHidden(snapshot, p.nameSource.agent, row.id)) {
+      words.append(h('span', { class: 'r-part is-person' }, HOODED)); continue;
+    }
     const key = p.source.path.split('.').at(-1);
     words.append(h('span', { class: 'r-part' + (p.nameSource ? ' is-person' : ''), 'data-ev': p.source.eventId, 'data-path': p.source.path,
       'data-free': FREE.has(key) ? '' : null }, p.text));

@@ -1,10 +1,14 @@
 import { delayS } from '../broadcast.js';
 import { publicAt } from './placement.js';
 import { captionSubjects } from './cut-plan.js';
+import { meetingPlace } from './routine-places.js';
 
 const DAY = 1440, SECOND = 1 / 60;
 const LOOP_ACTS = new Set(['arrival', 'hang', 'yard', 'gather', 'prepare', 'cook', 'craft', 'deal', 'patrol', 'meet']);
-const order = (a, b) => b.score - a.score || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+// At equal scores, keep an already seated public pair ahead of queued trips.
+// Adding publication setups must not displace a sit-down already in view.
+const order = (a, b) => b.score - a.score || Number(b.source?.seated ?? false) - Number(a.source?.seated ?? false)
+  || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 const anchor = place => ({ corePlace: place.corePlace, cityPlace: place.cityPlace,
   district: place.district, standPlace: place.standPlace ?? null, lot: place.lot ?? null });
 const stageable = place => typeof place?.cityPlace === 'string' && !place.cityPlace.startsWith('dist:');
@@ -18,7 +22,7 @@ const freeze = value => {
 // Already-presented snapshot + C1-4's as-of rows, never an archive suffix.
 // arrivals are optional PUBLIC presentation-trip announcements, with an explicit
 // announcedMinute and setup/arrival times. No travel time or game fact is inferred.
-export function publicMoments(snapshot, rows, arrivals = []) {
+export function publicMoments(snapshot, rows, arrivals = [], meetings = []) {
   const minute = snapshot.minute, day = Math.floor(minute / DAY), events = publicAt(snapshot);
   const roster = new Set((snapshot.board?.agents ?? []).map(agent => agent.id));
   const byId = new Map(rows.filter(row => row.minute <= minute).map(row => [row.agent, row]));
@@ -27,14 +31,22 @@ export function publicMoments(snapshot, rows, arrivals = []) {
     if (!stageable(place) || !subjects.length || subjects.some(id => !roster.has(id))) return;
     moments.push({ id, kind, subjects: [...subjects].sort(), place: anchor(place), setupMinute, payoff, source });
   }
+  const cues = new Map(meetings.filter(cue => cue.minute <= minute).map(cue => [cue.eventId, cue]));
   for (const event of events) {
-    if (event.day !== day || event.minute > minute || minute - event.minute > 1.5) continue;
+    if (event.day !== day || event.minute > minute) continue;
     if (event.type === 'meet') {
       const a = byId.get(event.a), b = byId.get(event.b);
-      if (a?.meet !== event.id || b?.meet !== event.id) continue;
-      put(`meet:${event.id}`, 'meet', [event.a, event.b], a.scenePlace ?? a.place,
-        event.minute, null, { eventId: event.id });
+      const cue = cues.get(event.id);
+      // Publication makes the pair public, even while earlier public jobs
+      // keep them waiting to set off. The routine owner supplies the venue;
+      // its as-of arrival cue and current rows alone determine the close.
+      if (cue?.cut || cue && (a?.meet !== event.id || b?.meet !== event.id)) continue;
+      const place = cue?.place ?? (a?.meet === event.id ? a.scenePlace ?? a.place
+        : meetingPlace(event.a, event.b).place);
+      put(`meet:${event.id}`, 'meet', [event.a, event.b], place,
+        event.minute, null, { eventId: event.id, seated: a?.meet === event.id && b?.meet === event.id });
     } else if (event.type === 'outloud' || event.type === 'release') {
+      if (minute - event.minute > 1.5) continue;
       const row = byId.get(event.agent);
       if (row) put(`${event.type}:${event.id}`, event.type, [event.agent], row.place,
         event.minute, { minute: event.minute, kind: event.type, eventId: event.id }, { eventId: event.id });
@@ -88,16 +100,28 @@ export function createDayDirector({ routines, delay = delayS, preferred = [] } =
     const broadcastDelay = delay();
     if (!Number.isFinite(broadcastDelay) || broadcastDelay < 0) throw new RangeError('invalid broadcast delay');
     const time = minute % DAY;
-    if (time < 360 || time >= 1260 || snapshot.over) {
+    if (time < 360 || time >= 1265 || snapshot.over
+      || time >= 1260 && current?.captionFields.kind !== 'meet') {
       current = null; return result = freeze({ action: 'idle', minute, broadcastDelay, cut: null });
     }
-    const moments = publicMoments(snapshot, routines.at(minute), arrivals);
+    const rows = routines.at(minute);
+    const meetings = routines.day?.(Math.floor(minute / DAY), minute).meetings ?? [];
+    const moments = publicMoments(snapshot, rows, arrivals, meetings);
     recent = recent.filter(cut => minute - cut.start < 3);
     const candidates = scoreMoments(moments, minute, { recent, preferred });
     // Retain a public setup for at least thirty seconds, including D=0. An
     // announced arrival also retains the shot through its payoff when possible.
-    if (current && minute < current.end - SECOND / 2) {
+    // A selected meeting owns its public journey and sit-down until the routine
+    // rows close it. Neither a guessed travel duration nor tomorrow's private
+    // close disclosure can end that shot.
+    if (current && (minute < current.end - SECOND / 2
+      || current.captionFields.kind === 'meet' && moments.some(moment => moment.id === current.momentId))) {
       return result = freeze({ action: 'hold', minute, broadcastDelay, cut: current });
+    }
+    // The lock starts no new day shots, but an existing public meeting may
+    // finish in the five minutes before the show takes over.
+    if (time >= 1260) {
+      current = null; return result = freeze({ action: 'idle', minute, broadcastDelay, cut: null });
     }
     const best = candidates.find(candidate => !recent.some(cut => cut.momentId === candidate.id));
     if (!best) {

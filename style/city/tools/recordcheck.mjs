@@ -175,7 +175,13 @@ async function plumbing(frames) {
   const { loadInWorker, startRecord } = await import('../simstate/record/page.js');
   for (const seed of seeds) {
     const url = pathToFileURL(fileOf(seed)).href;
-    equal(await loadInWorker(url), JSON.parse('[' + fs.readFileSync(fileOf(seed), 'utf8').trim().split('\n').join(',') + ']'), `seed ${seed} actual worker`);
+    // slime, 10-31, on the slimmer feed (readers carry unchanged sightings forward): "Slim"; workers keep the same dense in-memory frames.
+    let sightings = {};
+    const dense = fs.readFileSync(fileOf(seed), 'utf8').trim().split('\n').map(JSON.parse).map(f => {
+      if (f.sightings !== undefined) sightings = f.sightings;
+      return { ...f, sightings };
+    });
+    equal(await loadInWorker(url), dense, `seed ${seed} actual worker`);
   }
   globalThis.window = {}; globalThis.location = { href: 'https://record.invalid/style/city/' };
   const feed = pathToFileURL(fileOf(seeds[0])).href;

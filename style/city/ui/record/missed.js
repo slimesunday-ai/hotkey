@@ -10,7 +10,7 @@ import { h, button } from '../kit.js';
 
 export const MISSED = { everyS: 20, lifeS: 12, keep: 30 };
 
-export function createMissed({ root, onReplay }) {
+export function createMissed({ root, onReplay, words = null }) {
   const kind = h('b', { class: 'r-paper-what' }), line = h('span', { class: 'r-paper-line' });
   const replay = button('Replay', { icon: 'tapeplay', tip: 'Replay it from the moment it happened', cls: 'r-paper-replay', onclick: () => { const it = shown; if (!it) return; drop(it); onReplay(it.paper); } });
   const x = button('', { icon: 'close', tip: 'Dismiss', cls: 'r-paper-x', onclick: () => { if (shown) drop(shown); } });
@@ -20,8 +20,12 @@ export function createMissed({ root, onReplay }) {
   const el = h('aside', { id: 'r-missed', class: 'r-missed', 'aria-label': 'Missed events', 'data-safe-avoid': '' }, card, pill);
   root.append(el);
   let list = [], shown = null, shownAt = 0, lastNew = -1e9;
+  function refresh() {
+    if (!shown) return;
+    const w = words?.(shown.paper) ?? shown; kind.textContent = w.what; line.textContent = w.line;
+  }
   function show(it, now) {
-    shown = it; it.seen = true; shownAt = now; kind.textContent = it.what; line.textContent = it.line;
+    shown = it; it.seen = true; shownAt = now; refresh();
     card.dataset.ev = String(it.paper.id); card.hidden = false; paint();
   }
   function drop(it) { list = list.filter(o => o !== it); if (shown === it) { shown = null; card.hidden = true; } paint(); }
@@ -32,7 +36,7 @@ export function createMissed({ root, onReplay }) {
     el.hidden = card.hidden && pill.hidden;
   }
   return {
-    el,
+    el, refresh,
     // a missed event: { paper (tape-data's paper row), what, line }
     push(it, now = performance.now()) {
       if (list.some(o => o.paper.id === it.paper.id)) return false;

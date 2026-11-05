@@ -46,7 +46,7 @@ export const SITES = table([
   ['precinct', 'police'], ['vault', 'police', 'Evidence Vault shares Precinct 9; no separate vault place.'],
   ['docks', 'docks'], ['crate', 'docks', 'Shipment uses the docks set; no separate crate place.'],
   ['ferry', 'docks', 'SECOND CHANCE is sea.second-chance (districts/sea.js, block 4,-11), absent from the place export and stand table. Use its docks boarding set, never forest.ferry-landing.'],
-  ['jail', 'jail'], ['heap', 'heap'], ['diner', 'strip.graveyard-diner'],
+  ['jail', 'jail'], ['heap', 'heap'], ['fence', 'heap', 'The Heap fence booth (districts/junkyard.js); travel uses the Heap exterior.'], ['diner', 'strip.graveyard-diner'],
 ]);
 export const ROUTES = table([
   ['downtown', 'plaza', 'Pleasantview → Glasswall → docks; this is the route scene anchor, not a computed trip.'],

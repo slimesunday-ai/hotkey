@@ -56,7 +56,7 @@ async function loadRegistry(night) {
     for (const v of I.VEHICLES) { if (v.kind === 'copcar') continue;   // (cruisers are the sim-state's patrols. Fix round: the box truck and the bus drive too —
       // sim.js keeps a long body straight on and lets it turn only where the arc is wide enough for it, and keeps the bus to the avenues)
       for (let k = 0; k < Math.min(VARIANTS, v.variants || 1); k++) { const g = T3.vehicleGeometries(v.id, { variant: k, lights: night, night });
-        out.push({ name: v.id, variant: k, L: v.dims.l, W: v.dims.w, wheelsAt: v.wheels, r: v.wheels[0]?.r || .35, geo: g.body, far: g.far, wheel: g.wheel, brake: g.brake, reg: true, wheels: true }); } }
+        out.push({ name: v.id, variant: k, L: v.dims.l, W: v.dims.w, H: v.dims.h, wheelsAt: v.wheels, r: v.wheels[0]?.r || .35, geo: g.body, far: g.far, wheel: g.wheel, brake: g.brake, reg: true, wheels: true }); } }
     return out.length ? { models: out, I } : null; } catch (e) { console.warn('traffic: vehicles registry unavailable, placeholders', e); return null; } }
 
 export async function createTraffic({ scene, night = false, R, peds = null, seed = 0x7aff1c, mats = null }) {
@@ -71,6 +71,8 @@ export async function createTraffic({ scene, night = false, R, peds = null, seed
     let u = hashU(n) * wsum; for (let k = 0; k < MODELS.length; k++) { u -= MODELS[k].weight; if (u <= 0) return k; } return 0; };
   sim.MODELS.size = k => { const m = k >= 0 ? MODELS[k] : { L: 4.6, W: 1.85, r: .35 }; return [m.L, m.W, m.r]; };
   if (peds?.sim) { sim.setWalkers({ crossings: peds.sim.crossings, inRoad: E => peds.sim.inRoad(E) }); peds.sim.setCars({ busy: k => sim.crossBusy(k) }); }
+  // C2-GORE (2026-10-30) · the street's accidents: an agent's shove, a walker off the kerb, a car that can't stop (traffic/accident.js)
+  let accidents = null; if (peds?.sim?.offWalker && typeof document !== 'undefined') try { accidents = (await import('./accident.js')).createAccidents({ scene, peds, sim, night, models: MODELS }); } catch (e) { console.warn('traffic: accidents unavailable', e); }
   // ── batches
   const CAP = 340, bodyMat = installFade(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .45, metalness: .15 }), 'car'), wheelMat = installFade(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .8, metalness: 0 }), 'wheel');
   const prep = m => { m.frustumCulled = false; m.count = 0; m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); scene.add(m); return m; };
@@ -109,24 +111,26 @@ export async function createTraffic({ scene, night = false, R, peds = null, seed
       const rc = Math.sqrt(Math.max(0, (Math.min(rng, 240) + 30) ** 2 - Math.max(0, cam.y) ** 2)); sim.populate(focus, frame === 1 || jump, { seen, cam: [cam.x, cam.z, rc] }); fx = focus.x; fz = focus.z; lastPop = t; if (jump) T.prev.clear(); }
     T.jump = jump || frame === 1;   // (a go-to: the load-in hides it, the counts skip it — as the walkers' do)   // (the camera's disc: cars live out to 270 m of it)
     px = cam.x; pz = cam.z;
+    // (C2-GORE: the walkers in the road are the cars' hazards this frame)
+    accidents?.update(dt, camera, focus);
     sim.tick(dt);   // (MOVEMENT REVIEW #5 #6: the cars and the lights on the movement clock, stepped; the signal clock moves with them — sim.js tick)
     // draw
     const counts = bodies.map(() => 0); let nw = 0, nl = 0, np = 0, vis = 0, near = 0, nb = 0, nwh = 0, nf = 0; T.cur.clear();
     for (const c of sim.cars) { if (c.kind === 'patrol') continue; const d = Math.hypot(c.x - cam.x, 1 - cam.y, c.z - cam.z); if (d >= rng) continue; const sz = sizeAt(d), M = MODELS[c.model] || MODELS[0], bm = bodies[c.model] || bodies[0], k = counts[c.model] ?? 0;
       const isNear = d < NEAR * (c.nearT ? 1.1 : 1); c.nearT = isNear;
-      if (reg) { const mi = c.model | 0, sc = sz * .01; Qn.setFromAxisAngle(Y, c.h); V3.set(c.x, 0, c.z); S3.set(sc, sc, sc); M4.compose(V3, Qn, S3);   // (tier geometry is in cm)
+      if (reg) { const mi = c.model | 0, sc = sz * .01; Qn.setFromAxisAngle(Y, c.h + c.yawOff); V3.set(c.x, 0, c.z); S3.set(sc, sc, sc); M4.compose(V3, Qn, S3);   // (tier geometry is in cm)
         if (isNear) { if (nb >= NB - 1 || nwh + M.wheelsAt.length > NW) continue; put(BB, nb++, gBody[mi], M4); if (c.brake && gBrake[mi] >= 0) put(BB, nb++, gBrake[mi], M4); near++;
-          for (const w of M.wheelsAt) { const front = w.z > 0; Qs.setFromAxisAngle(Y, c.h + (front ? c.steer : 0)); V3.set(w.x * sz, w.y * sz, w.z * sz).applyQuaternion(Qn); V3.x += c.x; V3.z += c.z;
+          for (const w of M.wheelsAt) { const front = w.z > 0; Qs.setFromAxisAngle(Y, c.h + c.yawOff + (front ? c.steer : 0)); V3.set(w.x * sz, w.y * sz, w.z * sz).applyQuaternion(Qn); V3.x += c.x; V3.z += c.z;
             W4.makeRotationX(c.spin * (M.r / w.r)); M4.compose(V3, Qs, S3).multiply(W4); put(WB, nwh++, gWheel[mi], M4); } }
         else { if (nf >= NF) continue; put(FB, nf++, gFar[mi], M4); }
         const on = sz >= .25 && d < fogFar && inView(c.x, 1, c.z, 2.6); if (on) { c.seenT = sim.t; vis++; T.cur.add(c.id); if (!T.prev.has(c.id) && T.frames > 0 && !T.jump && c.born > sim.t - .05) T.spawn++; }
         if (pools && d < 160) { S3.set(sz, sz, sz); V3.set(c.x, 0, c.z); M4.compose(V3, Qn, S3); pools.setMatrixAt(np++, M4); }
         continue; }
-      if (k >= CAP) continue; counts[c.model] = k + 1; Qn.setFromAxisAngle(Y, c.h); V3.set(c.x, 0, c.z); S3.set(sz, sz, sz); M4.compose(V3, Qn, S3); bm.setMatrixAt(k, M4);
+      if (k >= CAP) continue; counts[c.model] = k + 1; Qn.setFromAxisAngle(Y, c.h + c.yawOff); V3.set(c.x, 0, c.z); S3.set(sz, sz, sz); M4.compose(V3, Qn, S3); bm.setMatrixAt(k, M4);
       bm.setColorAt(k, CO.setHex(M.paint ?? PAINT[(c.id * 7 + (c.id >> 3)) % PAINT.length], THREE.SRGBColorSpace));
       const on = sz >= .25 && d < fogFar && inView(c.x, 1, c.z, 2.6); if (on) { c.seenT = sim.t; vis++; T.cur.add(c.id); if (!T.prev.has(c.id) && T.frames > 0 && !T.jump && c.born > sim.t - .05) T.spawn++; }
       if (isNear && M.wheels && nw + 4 <= CAP * 4) { near++; const hw = M.track / 2, hb = M.wb / 2, r = M.r * sz;
-        for (let w = 0; w < 4; w++) { const front = w < 2, sx = w & 1 ? 1 : -1; Qs.setFromAxisAngle(Y, c.h + (front ? c.steer : 0)); W4.makeRotationX(c.spin);
+        for (let w = 0; w < 4; w++) { const front = w < 2, sx = w & 1 ? 1 : -1; Qs.setFromAxisAngle(Y, c.h + c.yawOff + (front ? c.steer : 0)); W4.makeRotationX(c.spin);
           V3.set(sx * hw * sz, r, (front ? hb : -hb) * sz).applyQuaternion(Qn); V3.x += c.x; V3.z += c.z; S3.set(.22 * sz, r, r); M4.compose(V3, Qs, S3).multiply(W4); wheels.setMatrixAt(nw++, M4); } }
       if (isNear || night) { S3.set(M.W * sz, sz, M.L * sz); V3.set(c.x, .78 * sz, c.z); M4.compose(V3, Qn, S3); tails.setMatrixAt(nl, M4); heads.setMatrixAt(nl, M4);
         const b = c.brake; tails.setColorAt(nl, CO.setRGB(b ? 3.2 : night ? 1.1 : .32, b ? .12 : night ? .05 : .03, b ? .08 : night ? .04 : .03)); heads.setColorAt(nl, night ? CO.setRGB(3, 2.8, 2.3) : CO.setRGB(.75, .75, .72)); nl++;
@@ -141,7 +145,7 @@ export async function createTraffic({ scene, night = false, R, peds = null, seed
     if (pools) fin(pools, np);
     T.vis = vis; T.near = near; T.frames++; const ms = performance.now() - t0; T.ms += (ms - T.ms) * .05; T.msMax = Math.max(T.msMax * .995, ms);
     return vis; }
-  return { sim, update, MODELS, registry: reg, batches: reg ? { bodies: [BB], fars: [FB], wheels: [WB], tails, heads, pools, shown } : { bodies, wheels: [wheels], tails, heads, pools },
+  return { sim, update, MODELS, registry: reg, accidents, batches: reg ? { bodies: [BB], fars: [FB], wheels: [WB], tails, heads, pools, shown } : { bodies, wheels: [wheels], tails, heads, pools },
     stats: () => ({ cars: sim.cars.length, want: sim.want, visible: T.vis, near: T.near, onScreenSpawns: T.spawn, onScreenRemovals: T.rem, updateMs: +T.ms.toFixed(3), updateMax: +T.msMax.toFixed(3), stepMs: +sim.stat.avg.toFixed(3),
       redRuns: sim.stat.redRuns, walkEntries: sim.stat.walkEntries, intoWalkers: sim.stat.intoWalkers, overlaps: sim.stat.overlaps, entered: sim.stat.entered, turned: sim.stat.turned, registry: !!reg, clock: +CLOCK.t.toFixed(2) }) };
 }

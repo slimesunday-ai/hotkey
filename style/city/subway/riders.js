@@ -4,11 +4,15 @@
 // benches, stand_rail at a pole, wait_stop on the platform — each started at its own random clock (out of phase), and walk on and off
 // with the city's walk (gait2.js, driven by the distance actually moved). One draw call for everyone, plus its shadow.
 //   const crowd = createCrowd({ scene, cap })
-//   crowd.add(look) → a rider body { k, ... } (the bake: ~5–20 ms, so the carriage adds a few a frame) · null when full
-//   crowd.frame(list, dt)   every frame, after the carriage moved its people. Each entry: { body, parent (Object3D: the car or the
+//   crowd.add(look, full?) → a rider body { k, ... } (the bake: ~5–20 ms, so the carriage adds a few a frame; full: the look baked
+//                           already, bakeSegFull's output, in the city's build workers: carriage.js askBakes) · null when full
+//   crowd.frame(list, dt, draw = true) advances CPU animation; draw=false for unseen replay ticks. crowd.draw(list) uploads only the
+//                           final sample, without advancing animation. Each entry: { body, parent (Object3D: the car or the
 //                           platform), x, z, yaw (its parent's frame, metres / rad), clip (a clip name or null: the walk and the idles),
 //                           snap (start the clip at full weight: placed, not arriving), lean (rad: a tilt along the car), show }
-//   crowd.world(body, y, out) → that body's point at height y in the world (the agent's tag) · crowd.dispose()
+//   crowd.world(body, y, out) → that body's point at height y in the world (the agent's tag) · crowd.dispose({ keepPrograms })
+//                           (keepPrograms: its two materials are not disposed, so their compiled programs stay for the next ride's
+//                           crowd, whose materials build the same shaders: three finds them by their key)
 // The colours are the bake's sRGB bytes, decoded in the vertex shader like gpu.js tierize's DECODE, but without tierize: its city-wide
 // uniforms (the homes' cutaway, the waterline, the window tints) would reach into this scene's own coordinates.
 import * as THREE from 'three';
@@ -38,8 +42,8 @@ export function createCrowd({ scene, cap = 40 }) {
   const geoOf = full => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(full.P, 3)); g.setAttribute('normal', new THREE.BufferAttribute(full.N, 3, true));
     g.setAttribute('color', new THREE.BufferAttribute(full.C, 4, true)); g.setAttribute('aPart', new THREE.BufferAttribute(new Float32Array(full.K), 1)); g.setAttribute('aFine', fineAttr(THREE, full));
     g.setIndex(new THREE.BufferAttribute(full.I, 1)); return g; };
-  function add(look) {
-    if (used >= cap) return null; const full = bakeSegFull(THREE, C, look); atlas.adopt(full); const g = geoOf(full), nv = g.attributes.position.count, ni = g.index.count;
+  function add(look, pre = null) {
+    if (used >= cap) return null; const full = pre || bakeSegFull(THREE, C, look); atlas.adopt(full); const g = geoOf(full), nv = g.attributes.position.count, ni = g.index.count;
     if (!mesh) { room.vc = Math.ceil(nv * cap * 1.3); room.ic = Math.ceil(ni * cap * 1.3); mesh = new THREE.BatchedMesh(cap, room.vc, room.ic, mat);
       mesh.customDepthMaterial = depth; mesh.castShadow = true; mesh.receiveShadow = true; mesh.sortObjects = false; mesh.perObjectFrustumCulled = false; mesh.frustumCulled = false; mesh.name = 'subway:riders'; scene.add(mesh); }
     else if (room.v + nv > room.vc || room.i + ni > room.ic) { room.vc = Math.max(room.v + nv, Math.ceil(room.vc * 1.4)); room.ic = Math.max(room.i + ni, Math.ceil(room.ic * 1.4)); mesh.setGeometrySize(room.vc, room.ic); }
@@ -49,9 +53,10 @@ export function createCrowd({ scene, cap = 40 }) {
     bodies.push(b); return b; }
   const M = new THREE.Matrix4(), L = new THREE.Matrix4(), Ry = new THREE.Matrix4(), Rz = new THREE.Matrix4(), V = new THREE.Vector3();
   const pick = () => IDLE_POOL[(Math.random() * IDLE_POOL.length) | 0];
-  function frame(list, dt) {
-    if (!mesh) return; const data = tex.image.data, shown = new Set();
-    for (const e of list) { const b = e.body; if (!b || !e.show || !e.parent) continue; shown.add(b); const g = b.g;
+  let sample = 0;
+  function frame(list, dt, upload = true) {
+    if (!mesh) return; sample++;
+    for (const e of list) { const b = e.body; if (!b || !e.show || !e.parent) continue; b.sample = sample; const g = b.g;
       // the gait: the distance moved in its parent's frame this frame (a hop between the car and the platform frames is not a step)
       let d = b.gx === null ? 0 : Math.hypot(e.x - b.gx, e.z - b.gz), turn = b.gyaw === null ? 0 : Math.atan2(Math.sin(e.yaw - b.gyaw), Math.cos(e.yaw - b.gyaw)); if (d > 1.5) d = 0;
       b.gx = e.x; b.gz = e.z; b.gyaw = e.yaw;
@@ -60,12 +65,19 @@ export function createCrowd({ scene, cap = 40 }) {
       // the clip: started at a random clock of its loop (everyone out of phase), blended in (or snapped: placed already seated); none → out
       if (e.clip !== b.playing) { if (e.clip && CLIP[e.clip]) playClip(g, e.clip, { t: Math.random() * CLIP[e.clip].dur, snap: !!e.snap }); else if (g.clip) stopClip(g); b.playing = e.clip && CLIP[e.clip] ? e.clip : null; }
       if (g.clip) { if (!g.clip.c.moving && !g.clip.out) g.w = 0; stepClip(g, dt); }
-      writeGait2(data, cap, b.k, g);
+    }
+    for (const b of bodies) if (b.sample !== sample) b.gx = b.gz = b.gyaw = null;
+    if (upload) draw(list);
+  }
+  function draw(list) {
+    if (!mesh) return; const data = tex.image.data;
+    for (const e of list) { const b = e.body; if (!b || !e.show || !e.parent) continue;
+      writeGait2(data, cap, b.k, b.g);
       e.parent.updateWorldMatrix(true, false); L.makeTranslation(e.x, 0, e.z); if (e.lean) L.multiply(Rz.makeRotationZ(e.lean)); L.multiply(Ry.makeRotationY(e.yaw));
       M.multiplyMatrices(e.parent.matrixWorld, L); mesh.setMatrixAt(b.k, M); mesh.setVisibleAt(b.k, true); }
-    for (const b of bodies) if (!shown.has(b)) { mesh.setVisibleAt(b.k, false); b.gx = b.gz = b.gyaw = null; }
+    for (const b of bodies) if (b.sample !== sample) mesh.setVisibleAt(b.k, false);
     tex.needsUpdate = true; }
   function world(e, y, out) { if (!e?.parent) return null; e.parent.updateWorldMatrix(true, false); return out.set(e.x, y, e.z).applyMatrix4(e.parent.matrixWorld); }
-  function dispose() { if (mesh) { mesh.removeFromParent(); mesh.dispose(); } mat.dispose(); depth.dispose(); tex.dispose(); atlas.tex.dispose(); }
-  return { add, frame, world, dispose, get count() { return used; }, stats: () => ({ bodies: used, verts: room.v, cap: room.vc, tiles: atlas.stats().tiles }) };
+  function dispose({ keepPrograms = false } = {}) { if (mesh) { mesh.removeFromParent(); mesh.dispose(); } if (!keepPrograms) { mat.dispose(); depth.dispose(); } tex.dispose(); atlas.tex.dispose(); }
+  return { add, frame, draw, world, dispose, get count() { return used; }, stats: () => ({ bodies: used, verts: room.v, cap: room.vc, tiles: atlas.stats().tiles }) };
 }

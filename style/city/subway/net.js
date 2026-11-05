@@ -3,15 +3,17 @@
 //   loadNet() → Promise<net>                    net.lines: id → { id, name, bullet, colour, stops: [ids], m: [metres along], term: { fwd, rev },
 //                                               speed (m/s), dwell (s): the line's own clock — SUBWAY PLAN 2026-10-09: the locals 8 m/s, 10 s }
 //                                               net.stations: id → { id, name, x, z, lines: [ids] }
-//   programOf(net, legs) → program | null       legs: MOVEMENT.md §3 (game minutes). The underground part: from the end of the
+//   programOf(net, legs, spm) → program | null  legs: MOVEMENT.md §3 (game minutes); spm: the page clock's real seconds a game minute
+//                                               (simstate/movement.js ONE CLOCK: 2.5 live, 60 on the record). The underground part: from the end of the
 //                                               stairs down to the start of the stairs up (the platform waits, the rides, a change).
 //     program: { t0 (game min: when it starts), dur (real s), segs: [...], from, to, lines }
 //     seg: { kind: 'dwell', t0, t1, st, line, dir, board?, alight?, change? }   stopped at station st, doors open
 //          { kind: 'run', t0, t1, a, b, line, dir, m }                          between stations a → b (m metres)
-// Times inside a program are REAL seconds from its start (1 game min = 2.5 s, MOVEMENT.md §1).
+// Times inside a program are the page clock's seconds from its start (1 game min = spm s: real seconds when the page plays at its own pace).
 import { sdata } from '../../../world/city.js';   // (SPREAD: the data this spread reads)
-import { GAME_MIN } from '../simstate/simclock.js';
-export { GAME_MIN } from '../simstate/simclock.js';
+import { CLOCK as SIMCLOCK } from '../simstate/simclock.js';
+// (without a clock: a live page's minute, the sim's 60-min day)
+const LIVE_MIN = 1 / SIMCLOCK.pace0;
 let netP = null;
 export function loadNet() {
   return netP ??= fetch(new URL(sdata('../../../world/export/transit.json'), import.meta.url)).then(r => { if (!r.ok) throw new Error('subway: transit.json ' + r.status); return r.json(); }).then(T => {
@@ -24,12 +26,12 @@ export function loadNet() {
 export const changesAt = (net, st, line) => (net.stations.get(st)?.lines || []).filter(l => l !== line && net.lines.has(l));
 
 // a trip's legs → the ride program (null: no subway in it)
-export function programOf(net, legs) {
+export function programOf(net, legs, spm = LIVE_MIN) {
   if (!legs?.length) return null; const i0 = legs.findIndex(l => l.kind === 'subway'); if (i0 < 0) return null;
   let a = i0; while (a > 0 && legs[a - 1].kind === 'wait') a--;   // the platform waits before the first ride
   let b = i0; for (let k = i0 + 1; k < legs.length; k++) { if (legs[k].kind === 'subway' || legs[k].kind === 'wait') b = k; else break; }
   while (b > i0 && legs[b].kind === 'wait') b--;   // (a trailing wait never ends a ride)
-  const span = legs.slice(a, b + 1), t0 = span[0].dep, R = t => (t - t0) * GAME_MIN, segs = [], used = [];
+  const span = legs.slice(a, b + 1), t0 = span[0].dep, R = t => (t - t0) * spm, segs = [], used = [];
   for (let k = 0; k < span.length; k++) { const L = span[k];
     if (L.kind === 'wait') {   // stopped at the platform (a run of waits = one dwell: the change, then the timetable)
       let e = k; while (e + 1 < span.length && span[e + 1].kind === 'wait') e++; const next = span.slice(e + 1).find(x => x.kind === 'subway'), line = next?.line ?? L.line;

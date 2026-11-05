@@ -125,9 +125,18 @@ export function createDirector({ api, page, Q, ui = null, frames }) {
     if (!at && !actors.length) return null;
     return { kind: actors.length ? 'auto' : 'establishing', at: at ?? actors[0], actors, scene: 'tv:' + cut.sceneId, sceneT: minute, label: cut.captionFields.place };
   }
+  // C2-tvday · a subject inside its home (draw.js's indoor plan) whose room the homes runtime has open: its room's cutaway, the frame the
+  // follow cam rises to (interiors/city/record.js cutaway, index.js frameOf; slime 10-31: "Rise to the cutaway")
+  function roomOf(id) {
+    if (!page.draw?.indoors?.inside?.get(id)?.inside) return null;
+    const c = api.recordHomes?.cutaway?.(id), f = c?.inside && c.frame ? c.frame() : null;
+    return f ? { pos: f.pos.toArray(), tgt: f.tgt.toArray() } : null;
+  }
   function daySpec(cut, minute, close) {
     const at = placeXZ(cut.place), actors = cut.subjects.map(walkerOf).filter(w => w && (!at || Math.hypot(w.x - at.x, w.z - at.z) < TV.reach));
     if (!at && !actors.length) return null;
+    // (the close-up on a subject at home: its room's cutaway, not the street's view of its walls; until its room is open, the street's)
+    if (close) for (const w of actors) { const R = roomOf(w.h); if (R) return { kind: 'pose', pose: { pos: R.pos, tgt: R.tgt }, at: { x: R.tgt[0], z: R.tgt[2] }, actors: [w], scene: 'tv:' + cut.momentId, sceneT: minute, label: cut.captionFields.place }; }
     return { kind: close && actors.length ? 'auto' : 'establishing', at: close && actors.length ? actors[0] : at ?? actors[0], actors: close ? actors : [], scene: 'tv:' + cut.momentId, sceneT: minute, label: cut.captionFields.place };
   }
   function shoot(id, spec, cut, kind, phase) {
@@ -143,7 +152,9 @@ export function createDirector({ api, page, Q, ui = null, frames }) {
     lastSight = now;
     const spec = cur.kind === 'night' ? nightSpec(cur.cut, player.minute) : daySpec(cur.cut, player.minute, cur.phase === 'close');
     if (!spec) return;
-    cur.spec = spec;
+    // (a day close-up: into the room's cutaway once its room is open, back to the street's when the subject comes out)
+    const was = cur.spec.kind === 'pose'; cur.spec = spec;
+    if (cur.kind === 'day' && (spec.kind === 'pose') !== was) { cur.retries = 0; log.moves++; handle = shots.go(spec, { label: spec.label }); return; }
     const v = visible(spec.actors.length ? spec.actors : [{ ...spec.at, y: 0 }]);
     if (v.seen >= Math.max(1, Math.ceil(v.n / 2))) return;
     log.blocked++;
@@ -153,7 +164,8 @@ export function createDirector({ api, page, Q, ui = null, frames }) {
     if (!handle) { shots.endScene(spec.scene); handle = shots.go(spec, { label: spec.label }); }
     log.reframes++;
   }
-  // figures seen from the camera now: in frame, above the lower third and the bars, nothing STATIC between (the collision world)
+  // figures seen from the camera now: in frame, above the lower third and the bars, nothing STATIC between (the collision world, which
+  // leaves out an open room's cut-away as the renderer does: camera/world.js THE CUT)
   function visible(figs) {
     const W = rig?.world, el = api.renderer.domElement, r = el.getBoundingClientRect(), floor = ui?.floorPx?.() ?? r.bottom;
     let seen = 0;

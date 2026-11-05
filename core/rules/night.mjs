@@ -271,19 +271,37 @@ function show(s, out, P, R, n) {
   }
   const seen = {};
   const hooded = {};
+  const masked = {};
   for (const id of Object.keys(P).sort(byId)) {
     const w = R.where[id];
-    if (attacking.has(id)) hooded[w.place] = (hooded[w.place] || 0) + 1;
+    if (attacking.has(id)) {
+      hooded[w.place] = (hooded[w.place] || 0) + 1;
+      // GAME §41, 10-30: "you watch X mask up and do it". This is a
+      // viewer's continuity anchor, stripped from every agent/owner view.
+      masked[id] = { place: w.place, ...(w.door ? { home: w.door } : {}) };
+    }
     else seen[id] = w.at === 'home' ? 'home' : w.place;
   }
-  emit(s, out, 'show', { night: n, seen, hooded }, toAll(s));
+  emit(s, out, 'show', { night: n, seen, hooded, masked }, toAll(s));
+  const attackingFight = new Set();
   for (const f of R.fights) {
-    emit(s, out, 'fight', {
+    const event = emit(s, out, 'fight', {
       night: n, kind: f.kind, ...(f.corner ? { corner: f.corner } : {}), target: f.target, place: f.place, level: f.level,
       sides: f.attackers.map(g => ({ size: g.members.length, strength: g.strength })),
       defence: f.defence, cops: f.cops, ...(f.patrol ? { patrol: f.patrol } : {}), ...(f.guard ? { guard: f.guard } : {}), won: !!f.winner, backingDecided: f.backingDecided,
       ...(f.tipped ? { tipped: true } : {}),
     }, toAll(s));
+    // Resolved membership owns this association; a prowl has no fight id.
+    // §41, 10-30: "you watch X mask up and do it".
+    for (const id of f.attackers.flatMap(group => group.members)) if (masked[id]) {
+      masked[id].fight = event.n;
+      attackingFight.add(id);
+    }
+    // A backer attacked before joining defends itself. An attack’s own fight
+    // takes precedence over a later collar of that same masked agent.
+    for (const id of f.defenders) if (masked[id] && !attackingFight.has(id) && masked[id].fight === undefined) {
+      masked[id].fight = event.n;
+    }
   }
 }
 

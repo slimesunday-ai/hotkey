@@ -46,7 +46,7 @@ export function createCh9({ sim, root, showOf }) {
   function update(force = false, snapshot) {
     if (!open) return;
     const s = snapshot ?? windowAt({ ...sim.record(), show: showOf() }), show = s.show;
-    const k = [s.board, show?.night, show?.start, show?.end, Math.floor(s.minute), ...s.uiWindow.ch9];
+    const k = [s.board, s.identityKey, show?.night, show?.start, show?.end, Math.floor(s.minute), ...s.uiWindow.ch9];
     el.dataset.minute = String(s.minute);
     if (!force && sameInputs(sig, k) && drawing.intact()) return;
     drawing.repair();
@@ -56,9 +56,9 @@ export function createCh9({ sim, root, showOf }) {
     const pool = (show ? n.live.filter(r => shown.has(r.id)) : n.live).slice(-20);
     const best = [...pool].reverse().sort((a, b) => b.weight - a.weight)[0] ?? null;
     fill(banner, ...(show ? [h('b', null, 'TONIGHT’S SHOW'), ` · night ${show.night} · ${clock(show.start)} to ${clock(show.end)}`] : [h('b', null, 'ON AIR'), ' · ', clock(s.minute)]));
-    fill(top, best ? rowEl(best, { list: 'news.live', tag: 'div' }) : h('p', { class: 'r-none' }, 'Quiet on the island.'));
-    fill(more, ...n.live.slice(-4).reverse().filter(r => r !== best).slice(0, 3).map(r => rowEl(r, { list: 'news.live' })));
-    fill(rec, ...(n.record.length ? n.record.slice(-2).reverse().map(r => rowEl(r, { list: 'news.record' })) : [h('li', { class: 'r-none' }, 'Nothing disclosed yet.')]));
+    fill(top, best ? rowEl(best, { list: 'news.live', tag: 'div', snapshot: s, scene: true }) : h('p', { class: 'r-none' }, 'Quiet on the island.'));
+    fill(more, ...n.live.slice(-4).reverse().filter(r => r !== best).slice(0, 3).map(r => rowEl(r, { list: 'news.live', snapshot: s, scene: true })));
+    fill(rec, ...(n.record.length ? n.record.slice(-2).reverse().map(r => rowEl(r, { list: 'news.record', snapshot: s, scene: true })) : [h('li', { class: 'r-none' }, 'Nothing disclosed yet.')]));
     sig = k; drawing.painted();
   }
   function show() { if (open) return; open = true; el.hidden = false; sig = ''; update(); screens.open('r-ch9', { esc: close, isOpen: () => open }); }

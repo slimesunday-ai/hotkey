@@ -75,26 +75,31 @@ function storeView(player) {
   });
 }
 
+// C2: a viewer's jump (the range, the minute box, Go to show, Shows back to back) is announced on the bar before it seeks
+// ('record-jump', detail.by), so the tape (ui/record/tape.js) keeps where the viewer was and offers the way back
 function mountControls(player) {
-  const el = document.createElement('div'); el.id = 'record-player';
+  const el = document.createElement('div'); el.id = 'record-player'; el.dataset.state = 'live';
+  const jump = by => el.dispatchEvent(new CustomEvent('record-jump', { detail: { by } }));
   el.style.cssText = 'position:fixed;bottom:16px;left:16px;right:16px;z-index:60;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px;background:#171b22;color:white;font:14px system-ui;border-radius:8px';
   const make = (tag, text, label) => { const n = document.createElement(tag); if (text) n.textContent = text; if (label) n.setAttribute('aria-label', label); el.append(n); return n; };
   const play = make('button', 'Pause', 'Play or pause');
   play.onclick = () => { player.running ? player.pause() : player.play(); refresh(); };
   const speed = make('select', null, 'Playback speed');
-  for (const v of SPEEDS) speed.add(new Option(v === 1 ? 'Live' : `${v}×`, v));
+  for (const v of SPEEDS) speed.add(new Option(`${v}×`, v));
   speed.value = player.speed; speed.onchange = () => player.setSpeed(+speed.value);
   const stamp = make('output');
   const scrub = make('input', null, 'Seek through the season');
   scrub.type = 'range'; scrub.min = '0'; scrub.max = player.bounds.to; scrub.step = '0.1'; scrub.style.flex = '1';
-  scrub.oninput = () => { player.seek(+scrub.value); refresh(); };
+  scrub.oninput = () => { jump('scrub'); player.seek(+scrub.value); refresh(); };
   const minute = make('input', null, 'Seek to island minute');
   minute.type = 'number'; minute.min = '0'; minute.max = player.bounds.to; minute.step = 'any'; minute.style.width = '90px';
-  minute.onchange = () => { player.seek(+minute.value); refresh(); };
+  minute.onchange = () => { jump('minute'); player.seek(+minute.value); refresh(); };
   const night = make('select', null, 'Night to replay');
   for (const s of player.shows()) night.add(new Option(`Night ${s.night}`, s.night));
-  const jump = make('button', 'Go to show'); jump.onclick = () => { player.jumpShow(+night.value); refresh(); };
-  const shows = make('button', 'Shows back to back'); shows.onclick = () => { player.playShows(+night.value); refresh(); };
+  // (the picker starts on tonight's show, the one Go to show most likely means)
+  { const today = Math.floor(player.minute / 1440); if (player.shows().some(s => s.night === today)) night.value = String(today); }
+  const go = make('button', 'Go to show'); go.onclick = () => { jump('show'); player.jumpShow(+night.value); refresh(); };
+  const shows = make('button', 'Shows back to back'); shows.onclick = () => { jump('shows'); player.playShows(+night.value); refresh(); };
   const season = make('button', 'Whole season'); season.onclick = () => { player.playSeason(); refresh(); };
   function refresh() {
     const c = islandClock(player.minute); stamp.textContent = `Day ${c.day} ${c.hhmm}`;

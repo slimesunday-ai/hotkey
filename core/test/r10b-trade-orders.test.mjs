@@ -1,3 +1,5 @@
+// §41, 10-31: "Who and where show" adds follower metadata; original outcome pins below still compare every game fact.
+import { withoutFollowerActs } from './viewer-outcome.mjs';
 // 2026-10-27: re-pin bot reason prose for slime's call, "the first 2 we should do" (rent is now compute); plays and rules unchanged.
 // R10b, standing orders for trade (docs/briefs/R10b-trade-orders.md; slime, 10-20: "Standing orders for trade. The model
 // sets its terms, for example "buy up to 6 doses at $15 or less, pay on delivery, sell to anyone who orders." The game
@@ -426,7 +428,8 @@ test('resume: a season stopped mid-season with trade orders set, then resumed, g
 // Re-pinned by R11, hustles replace the shift (slime, 10-21: "they should be robbing npcs, doing crime", and on the
 // build: "let's just do that"; core/reports/R9/REPINS.md): every bot-only season plays differently by design.
 // It was b7da3c8627adb884af5deb7f66f913e2729cc1b6ab419b07053c0ce019ffb4fe.
-const OUTCOME_404 = '3a9db08c9409fdaa4cebf133659ce84ce9857d9986a415395f5fc684dd55e548';
+// §41, 10-30: "you watch X mask up and do it"; only show.masked changes the log shape.
+const OUTCOME_404 = '70e3411f2e36c33e66c08f7568b2c8e8d617d66040f1bdec0118588da9772742';
 test('outcomes unchanged: a bot-only season hashes as before (OUTCOME_404)', async () => {
   const { makeCast, makeBot, CASTS } = await import('../bench/bots.mjs');
   const { MIDSEASON_ROTATION } = await import('../bench/runner.mjs');
@@ -458,7 +461,7 @@ test('outcomes unchanged: a bot-only season hashes as before (OUTCOME_404)', asy
     s = night.state;
     log.push(...night.events);
   }
-  assert.equal(sha(JSON.stringify([s, log])), OUTCOME_404);
+  assert.equal(sha(JSON.stringify([s, withoutFollowerActs(log)])), OUTCOME_404);
 });
 
 // A $0 fake-model season with no trade orders set (seed 445, models-canny, 8 model seats, the starter briefing, tools
@@ -471,14 +474,16 @@ test('outcomes unchanged: a bot-only season hashes as before (OUTCOME_404)', asy
 // build: "let's just do that"; core/reports/R9/REPINS.md): every bot-only season plays differently by design.
 // They were events d21675f9c43f1899f9aec085211e6ec2addf147832bf1346b93660cb8cd91394 and state
 // d2b88db292453b8318e742b52528626de707efaae98a3c9b500b8b274a4ce3f0.
-const FAKE_445 = { events: '9a1bc34f53fa39c949d681f3287a90a890e205d064ce901ff61b7fcc7a9d6196', state: 'f74cfbc4b7d8d889f336cbf5c54b464c41b2b296e069459d3a55bfd238d7fea8' };
+// §41, 10-30: "you watch X mask up and do it"; show.masked changes the event digest, not the state.
+const FAKE_445 = { events: 'bb5779af9702c600da9ee959daa01c2b5030236a75609850ee3aaf7d65ac8252', state: 'f74cfbc4b7d8d889f336cbf5c54b464c41b2b296e069459d3a55bfd238d7fea8' };
 test('outcomes unchanged: a $0 fake-model season with no trade orders plays as it did before them', async () => {
   const { runModelSeason } = await import('../bench/runner.mjs');
   const { CASTS } = await import('../bench/bots.mjs');
   const out = path.join(tmp, 'fake');
   await runModelSeason({ seed: 445, rule: 'A', midseason: 'crackdown', rounds: 3, outDir: out, mix: { ...CASTS['models-canny'], models: 8 }, briefing: 'starter', reply: 'tools', say: () => {} });
   const dir = path.join(out, '445-A');
-  assert.equal(sha(fs.readFileSync(path.join(dir, 'events.jsonl'), 'utf8')), FAKE_445.events);
+  const lines = fs.readFileSync(path.join(dir, 'events.jsonl'), 'utf8').trimEnd().split('\n').map(JSON.parse);
+  assert.equal(sha(withoutFollowerActs(lines).map(e => JSON.stringify(e)).join('\n') + '\n'), FAKE_445.events);
   assert.equal(sha(JSON.stringify(checkpoint(dir).state)), FAKE_445.state);
   assert.equal(checkpoint(dir).routines, undefined, 'no routine ran');
 });

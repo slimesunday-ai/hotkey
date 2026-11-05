@@ -453,7 +453,8 @@ test("the lock forces plays in order: jail, then a crash or a withdrawal, then T
 // involve before its 24 hours are up. An event involves the agents it's shown to live (a public one, the agent it's
 // about); a public one's 24 hours end at day 15 for the last night's (§19). As L3-2's canary does.
 function liveCanary(s, log, when) {
-  const byN = new Map(log.map(e => [e.n, e]));
+  // §41, 10-31: "Who and where show" adds follower-only act ids; join them to the same receipt and keep every drug/SUDO canary.
+  const byN = new Map(log.flatMap(e => [[e.n, e], ...(e.live ? [[`act:${e.n}`, e]] : [])]));
   const audiences = [[null, 'public'], [null, 'record'], ...Object.keys(s.agents).sort().flatMap(id => [[id, 'agent'], [id, 'ownerAI']])];
   for (const [who, audience] of audiences) {
     const v = viewFor(s, log, who, audience);

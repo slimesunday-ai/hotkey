@@ -8,6 +8,8 @@
 //                 side, a ring round the action, the way one walks in from) at the least cost. Never from above
 //   group         three or more: the same at 10–24 m; the line is their widest pair
 //   wide          a coarse place (STORE.md rule 5: a district, someone else's lot): 120 m out at 0.62 rad, never a spot
+//   pose          a pose handed over whole (spec.pose { pos, tgt }): the open room's cutaway (C2-tvday: interiors' frameOf, as the follow
+//                 cam rises to it), flown to as any shot, never re-aimed against the collision world (it keeps the cut-open house solid)
 //   SCENE         the 180° rule. A caller's key (the tape: the place and the pair, so the payback two minutes later is the same scene)
 //                 keeps every shot of the scene on the side of the line its first shot took. The line runs between the two actors in
 //                 handle order, so a payback with the roles swapped keeps it. A scene lasts SHOT.sceneTTL real s after its last shot,
@@ -65,6 +67,7 @@ export function createShots(api) {
     const s = { ...spec }, A = (s.actors || []).filter(a => a && Number.isFinite(a.x) && Number.isFinite(a.z));
     const at = s.at && Number.isFinite(s.at.x) ? s.at : A[0] || null; s.at = at;
     if (s.coarse || s.kind === 'wide') { s.kind = 'wide'; s.actors = []; return s; }
+    if (s.kind === 'pose') { s.actors = []; s.c = at; s.line = null; return s; }
     const reach = SHOT.two.reach, near = at ? A.filter(a => Math.hypot(a.x - at.x, a.z - at.z) <= reach) : A;
     if (!s.kind || s.kind === 'auto') s.kind = near.length >= 3 ? 'group' : near.length ? 'two' : 'establishing';
     s.actors = near; s.all = A;
@@ -138,6 +141,10 @@ export function createShots(api) {
     const h0 = c && T ? Math.atan2(c.position.x - T.x, c.position.z - T.z) : 0;
     const out = p => { p.ms = +(performance.now() - t0).toFixed(2); st.planMax = Math.max(st.planMax, p.ms); st.lastPlan = p; st.lastSpec = spec; if (commit) remember(s, p); return p; };
     if (!s.at && !s.c) return null;
+    // (C2-tvday: a pose handed over whole, the open room's own cutaway framing, interiors/city/index.js frameOf: framed as it is; the
+    // collision world keeps the cut-open house solid, so it is never re-aimed or verified against it)
+    if (s.kind === 'pose') { const P = spec.pose, dx = P.pos[0] - P.tgt[0], dy = P.pos[1] - P.tgt[1], dz = P.pos[2] - P.tgt[2], d = Math.hypot(dx, dy, dz) || 1;
+      return out({ kind: 'pose', pos: [...P.pos], tgt: [...P.tgt], fov: c?.fov ?? fov, d, pitch: Math.asin(clamp(dy / d, -1, 1)), hd: Math.atan2(dx, dz), side: 0, vis: 1, clear: true, how: 'pose', scene: s.scene || null }); }
     if (s.kind === 'wide') { const W = SHOT.wide, hz = W.d * Math.cos(W.pitch); return out({ kind: 'wide', pos: [s.at.x + Math.sin(h0) * hz, W.d * Math.sin(W.pitch), s.at.z + Math.cos(h0) * hz], tgt: [s.at.x, 0, s.at.z], fov, d: W.d, pitch: W.pitch, hd: h0, side: 0, vis: 1, clear: true, how: 'none' }); }
     const sc = s.scene ? scene(s.scene, s.sceneT) : null, line = s.line || sc?.line || null, est = s.kind === 'establishing';
     const C = s.c || s.at, aimY = est ? SHOT.establishing.aimY : SHOT.two.aimY;
@@ -188,7 +195,8 @@ export function createShots(api) {
     const { q, r } = best, P = r.P, side = line ? sideOf(line, P.x, P.z) : 0;
     return out({ kind: s.kind, pos: [P.x, P.y, P.z], tgt: [C.x, aimY, C.z], fov, d: q.D, pitch: q.p, hd: wrap(q.hd), side, off: q.off, vis: +r.vis.toFixed(2), open: +(r.open ?? 1).toFixed(2), soft: r.soft || 0, clear: r.vis === 1, how, tried: n, line: !!line, scene: s.scene || null });
   }
-  function remember(s, p) { if (!s.scene) return; const old = scene(s.scene, s.sceneT), line = s.line || old?.line || null;
+  // (a handed pose has no side of the line: the scene's memory stays the street shots')
+  function remember(s, p) { if (!s.scene || p?.kind === 'pose') return; const old = scene(s.scene, s.sceneT), line = s.line || old?.line || null;
     scenes.set(s.scene, { line, side: line ? (old?.side || p.side || null) : null, hd: p.hd, t: performance.now(), sceneT: s.sceneT ?? old?.sceneT ?? null, n: (old?.n || 0) + 1 });
     if (scenes.size > 40) { const now = performance.now(); for (const [k, v] of scenes) if (now - v.t > SHOT.sceneTTL * 1000) scenes.delete(k); } }
   // a scene is over SHOT.sceneTTL real s after its last shot, or (spec.sceneT: the caller's clock, the tape's game minutes) more than
@@ -198,7 +206,7 @@ export function createShots(api) {
   // the plan after the height map round the action is in (one render, read back without a stall; cached for the next shot there)
   async function plan(spec, { fresh = false, commit = false } = {}) {
     const s = norm(spec), ctx = stageCtx(), O = SHOT.occ;
-    if (s.kind !== 'wide' && s.c && ctx?.occAsync) { const t0 = performance.now();
+    if (s.kind !== 'wide' && s.kind !== 'pose' && s.c && ctx?.occAsync) { const t0 = performance.now();
       try { await Promise.race([ctx.occAsync(Math.round(s.c.x / 2) * 2, Math.round(s.c.z / 2) * 2, O.half, { n: O.n, top: O.top, maxAge: fresh ? 0 : O.maxAge }), new Promise(r => setTimeout(r, 600))]); } catch {}
       st.occWaitMax = Math.max(st.occWaitMax, +(performance.now() - t0).toFixed(1)); }
     return planNow(spec, { commit }); }
@@ -228,13 +236,13 @@ export function createShots(api) {
         if (t >= dur) return done(true); requestAnimationFrame(step); };
       requestAnimationFrame(step); }); }
   // the re-aim: null while the world can't see round the shot yet, or when p is clear in it; else the better plan (same scene side)
-  function reaim(spec, p) { const s = norm(spec); if (!tests(s).full) return null; const v = planNow(spec, { check: p }); if (v.vis === null) return null;
+  function reaim(spec, p) { if (p.kind === 'pose') return null; const s = norm(spec); if (!tests(s).full) return null; const v = planNow(spec, { check: p }); if (v.vis === null) return null;
     if (v.vis === 1 && v.open >= .75) { p.how = v.how; return null; } const q = planNow(spec);
     return q && (q.vis > v.vis + 1e-6 || (q.vis === v.vis && q.open > v.open + .2)) ? q : (p.how = v.how, null); }
   // ON ARRIVAL, a plan the world never checked (its blocks came in after the flight): checked once they are in (≤ verifyMs), and when
   // a wall the height map missed is in the way, a short move (SHOT.fix s) to the clear pose. The shot's own settle, not a drift: once it
   // is there the camera is the viewer's
-  async function verify(spec, h) { const p = h.plan; if (!p || /world/.test(p.how || '') || p.kind === 'wide') return true; const s = norm(spec);
+  async function verify(spec, h) { const p = h.plan; if (!p || /world/.test(p.how || '') || p.kind === 'wide' || p.kind === 'pose') return true; const s = norm(spec);
     if (!await until(() => tests(s).full, SHOT.verifyMs, h)) return !h.cancelled; const q = reaim(spec, p); if (!q || h.cancelled) return !h.cancelled;
     h.plan = q; st.fixes++; remember(s, q); h.state = 'fix'; return flight(q, SHOT.fix, 0, h, null); }
   // set the camera there now (behind the gate): MapControls takes it as it is
@@ -254,7 +262,7 @@ export function createShots(api) {
   // no longer sees one of them (in frame, nothing in the way), a short move (SHOT.fix s) to a pose that does, on the scene's side; else
   // nothing (null). Never while a shot is moving.
   // (the scene's first shot only, nothing has played yet: the move may take the other side of the line; after that the side holds)
-  function reframe(spec) { if ((cur && !cur.over) || photo() || !cam()) return null; const c = cam(), T = ctl().target;
+  function reframe(spec) { if ((cur && !cur.over) || photo() || !cam() || spec?.kind === 'pose') return null; const c = cam(), T = ctl().target;
     const v = planNow(spec, { check: { pos: [c.position.x, c.position.y, c.position.z], tgt: [T.x, T.y, T.z] } }); if (!v || v.vis === null || v.vis === 1) return null;
     const sc = spec.scene ? scene(spec.scene, spec.sceneT) : null; if (sc && sc.n <= 1) sc.side = null;
     st.reframes++; return go(spec, { quick: true }); }
