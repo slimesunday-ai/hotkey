@@ -55,6 +55,7 @@ dossier's Watch tape) · Action **.** · Settings **`**. Its keys never fire in 
 | Key | What | Where |
 |---|---|---|
 | **1 2 3 4 5** | Orbit · Fly · Follow · Photo · Walk | always |
+| **6** | Lock (C2-lock, `camera/lock.js`): the camera locked on the person — you turn and zoom, it is carried with them, what is in the way goes see-through; with the dossier open, the first 6 locks onto its agent (the card's Lock); 3 / 6 switch Follow ↔ Lock | always (record: `ui/record/index.js` with the card open) |
 | **W A S D**, **arrows** | move | orbit, fly, follow (← → go to the tape while TAPE is open; ↑ ↓ still move) |
 | **Q E** | turn (fly: down / up) | orbit, follow, fly |
 | **R F** | zoom in / out · in follow: closer / further (with the dossier open, the first F press starts following its agent; held, or once following, F zooms out again) | orbit, follow |
@@ -79,5 +80,5 @@ dossier's Watch tape) · Action **.** · Settings **`**. Its keys never fire in 
 
 ## Free (as of section 4, 2026-10-07; checked against the code 2026-10-09)
 
-**Shift+L**, **Shift+M**, **Shift+P**, the Digit keys **0** and **6–9** (the camera takes 1–5; the open map uses 0), **;** **'**
+**Shift+L**, **Shift+M**, **Shift+P**, the Digit keys **0** and **7–9** (the camera takes 1–6, C2-lock took 6; the open map uses 0), **;** **'**
 **-** **=** (photo uses **-** **=** for the lens, the open map for zoom). Section 4 took **/**, **.**, **,**, **`** and **Shift+`**.

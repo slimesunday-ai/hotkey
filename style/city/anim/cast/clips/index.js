@@ -39,10 +39,11 @@ import { CLIPS as drugs } from './drugs.js';
 import { CLIPS as errands } from './errands.js';
 import { CLIPS as gamePort } from './game-port.js';
 import { CLIPS as acts } from './acts.js';
+import { CLIPS as cleaners } from './cleaners.js';
 export { CLIP_BASE };
 
-export const GROUPS = { robbery, falls, arrest, skate, ride, transit, 'deal-hang': dealHang, 'talk-patrol': talkPatrol, work, high, react, heist, breakin, bench, cook, grab, drugs, errands, 'game-port': gamePort, acts };   // (new groups go LAST: ids are registry order)
-export const FAMILY = { robbery: 'events', falls: 'events', arrest: 'events', skate: 'travel', ride: 'travel', transit: 'travel', 'deal-hang': 'activities', 'talk-patrol': 'activities', work: 'activities', high: 'moods', react: 'react', heist: 'events', breakin: 'events', bench: 'activities', cook: 'activities', grab: 'events', drugs: 'moods', errands: 'activities', 'game-port': 'events', acts: 'activities' };
+export const GROUPS = { robbery, falls, arrest, skate, ride, transit, 'deal-hang': dealHang, 'talk-patrol': talkPatrol, work, high, react, heist, breakin, bench, cook, grab, drugs, errands, 'game-port': gamePort, acts, cleaners };   // (new groups go LAST: ids are registry order)
+export const FAMILY = { robbery: 'events', falls: 'events', arrest: 'events', skate: 'travel', ride: 'travel', transit: 'travel', 'deal-hang': 'activities', 'talk-patrol': 'activities', work: 'activities', high: 'moods', react: 'react', heist: 'events', breakin: 'events', bench: 'activities', cook: 'activities', grab: 'events', drugs: 'moods', errands: 'activities', 'game-port': 'events', acts: 'activities', cleaners: 'events' };
 // the defaults every clip entry gets (CLIPS.md § The entry)
 const DEF = { loop: false, hold: false, next: null, blendIn: .1, blendOut: .25, moving: false, speed: 0, stride: 1, shift: null, pair: null, note: '' };
 const NAME_RE = /^[a-z][a-z0-9_]*$/;

@@ -17,11 +17,13 @@
 // only takes the walker out of its way: its lag is walked off as ever). Cabs, the stage's cruisers and patrols never hit anyone
 // (traffic/sim.js canHit) and no walker is sent into a lane with one of them coming.
 // ART DIRECTION: ?gore=0 off · ?gore=often frequent (every held-up agent shoves, every shove that can reach a lane waits for a car it
-// can't miss) · key X sets one off in view: the next walker in the frame near what the camera looks at that can stumble in front of a
-// car does (an agent's shove if one is held up there, else the walker trips), with ?gore=often too. (It had picked the nearest walker to
-// the focus in the frame or out of it, so most hits fell off screen, and under ?gore=often it only armed shoves.) With no car it can't
-// miss coming yet, a walker in the frame with a lane in reach stands ready for one (GORE.ready): the walker and the car had to meet
-// the right gap in the same tenth of a second (slime, 11-04: "it's really hard to trigger").
+// can't miss) · key X stages a JAYWALKER (slime, 11-04: "x should stage a jaywalker so people watching the playback can just click x and
+// cause people to get hit as a fun little feature"): the CAR first — an ordinary car in the frame (traffic/sim.js canHit: never a cab, a
+// cruiser or a patrol) at a speed it can't stop from — then a crowd walker in the frame on the kerb ahead of it, whose lane out is the
+// car's; the walker walks on until its step off would meet the car, then turns and walks out without looking (its own walk: no new
+// clip), into the car's way at a gap the car can't stop in. With no car in the frame that can do it, a line on screen says so and the key
+// stays armed (GORE.arm s), trying every tenth of a second. It had waited on the walkers: the bait (an agent's shove, the first 6 s)
+// and a walker standing ready at the kerb for a car (up to a light's cycle) — 11 of 18 presses, a median of about 29 s.
 // Console: __city.traffic.accidents (stats, now()).
 import * as THREE from 'three';
 import { CLIP, playClip, stepClip, clearClip, stopClip } from '../anim/cast/clips/index.js';
@@ -52,12 +54,20 @@ export const GORE = {
   body: { linger: 28, seenR: 260 },
   wreck: { stay: 16, cab: 3.5, yaw: .14 },
   key: 'KeyX', arm: 60,
-  // the key's bait: for its first `first` s it looks for a walking agent near the camera to hold a walker up in front of (`hold` s at most)
-  bait: { first: 6, hold: 5 },
-  // the key's walker standing ready: after the bait's window, a walker in the frame with a lane in reach (and a car coming on it) stops
-  // where it stands for up to `hold` s — a light's whole cycle (rules.js TIMING: 44 s), so its lane's green comes — and stumbles out when
-  // a car it can't miss comes; then the next one. The one whose car is already coming at speed first, then one whose car waits at a red
-  ready: { hold: 44 },
+  // the key's jaywalker: walk m/s out (a brisk walk, else a hurried one or a stroll: the first at which the car can't miss it), keep:
+  // pairs staged at once (the first whose car can't miss it goes; the rest are let go), vNow: m/s the car is doing now at least, tMax: s
+  // at most from the step off to the walker in its way (the forecast's horizon), edge: how far out in the frame the walker may be (the
+  // middle `edge` of it each way; the hit's spot is kept in its middle 0.8), cool:
+  // s after the last hit before a press's hit may come (a press is the viewer asking for one: hit.coolOften is the frequent mode's), turn s (from its way along the walk to the road), wait: s at most from choosing
+  // the car to the step off (the walker walks on meanwhile), aim: where in the car's can't-stop window (0: its near end, 1: its far
+  // end) the walker enters its way, tell: s with no car in the frame before the line on screen says so; reach: m out to the lane's line
+  // at most (it may cross the nearer lane of a two-way street to the car's); near: m from what the camera looks at a car coming may be
+  // (it is in the frame at the hit: the hit's spot is); far: m from the camera the walker may be (any tier: the mid and the far
+  // have no clips — the tumble and the body laid down are its whole-body turns, w.tq / w.lieQ, as any mid- or far-tier body's); perM: m nearer
+  // the camera worth a second sooner (the nearest pair first, all else alike); vMin: m/s at least at the meeting (a hit, not a bump)
+  // corner: m from a walk's end it may step off (the shove keeps 2.4 m: a sideways stumble off a corner's ramp; a jaywalker walks
+  // straight out), start: m past a lane's start the hit may be (just out of a junction, its far zebra behind the car)
+  jay: { walk: [1.6, 1.9, 2.2, 1.35], keep: 4, vNow: 4.5, tMax: 3, edge: .92, cool: 1, corner: 1, start: 1, turn: .35, wait: 4.5, aim: .3, tell: 1.2, reach: 9, near: 90, far: 110, perM: 25, vMin: 6 },
 };
 const DUR = .8, SHIFT = .52, cOut = (t, a, b) => { const x = Math.max(0, Math.min(1, (t - a) / (b - a))); return 1 - (1 - x) * (1 - x); }, ease = x => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
 const AXIS = { N: [0, 1], S: [0, -1], W: [1, 0], E: [-1, 0] };
@@ -79,17 +89,31 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
       if (Math.abs(L.ux * rx + L.uz * rz) > .05) continue; const dx = L.x0 - x, dz = L.z0 - z, d = dx * rx + dz * rz; if (d < .4 || d > GORE.road.reach + 1.2) continue;
       const ua = (x - L.x0) * L.ux + (z - L.z0) * L.uz; if (ua < GORE.road.end || ua > L.len - GORE.road.end) continue; if (!best || d < best.d) best = { L, d, ua }; }
     return best; }
+  // every lane out from a walker along (rx, rz) within reach m of its line, nearest first (the key's jaywalker crosses the nearer ones)
+  function lanesOut(x, z, rx, rz, reach, e0 = GORE.jay.start) { const out = [], cx = Math.floor(x / 32), cz = Math.floor(z / 32);
+    for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) for (const L of cells.get((cx + a) + ',' + (cz + b)) || []) {
+      if (Math.abs(L.ux * rx + L.uz * rz) > .05 || out.some(o => o.L === L)) continue; const dx = L.x0 - x, dz = L.z0 - z, d = dx * rx + dz * rz; if (d < .4 || d > reach) continue;
+      const ua = (x - L.x0) * L.ux + (z - L.z0) * L.uz; if (ua < e0 || ua > L.len - GORE.road.end) continue; out.push({ L, d, ua }); }
+    return out.sort((p, q) => p.d - q.d); }
   // the car that would meet a walker at ua on lane L, entering its way in tE s: { c, gap (m at tE), ok (an ordinary car it can't miss) };
   // bad: a cab, a cruiser or a patrol coming within 70 m (no walker goes in front of one)
   // (upstream too: on the connectors into the lane, and on the lanes before them, a car committed through the junction — c.go — or with
-  // no signal to stop it. The nearest one is the one that meets it; m: its nose's distance to ua along the way)
+  // no signal to stop it; soon: or bound for it and not yet committed — the key choosing a pair to stage, never the step off. The nearest one is the one that meets it; m: its nose's distance to ua along the way)
   const isBad = o => o.route || o.stage || o.asCar || o.kind !== 'car';
-  function carFor(L, ua, tE) { let c = null, m = 1e9, bad = false; const see = (o, d) => { if (d <= 0) return; if (d < 70 && isBad(o)) bad = true; if (d < m) { m = d; c = o; } };
+  function carFor(L, ua, tE, soon = false) { let c = null, m = 1e9, bad = false; const see = (o, d) => { if (d <= 0) return; if (d < 70 && isBad(o)) bad = true; if (d < m) { m = d; c = o; } };
     for (const o of L.cars) see(o, ua - o.s);
-    for (const cn of L.feeds) { for (const o of cn.cars) see(o, cn.len - o.s + ua); for (const o of cn.inL.cars) if (o.next === cn && (o.go || !cn.inL.to.sig)) see(o, cn.inL.len - o.s + cn.len + ua); }
-    if (!c) return { c: null, bad, ok: false }; const v = c.v, gap = m - GORE.hit.hzR - v * tE, stop = v * v / (2 * CAR.bMax);
+    for (const cn of L.feeds) { for (const o of cn.cars) see(o, cn.len - o.s + ua); for (const o of cn.inL.cars) if (o.next === cn && (o.go || !cn.inL.to.sig || soon)) see(o, cn.inL.len - o.s + cn.len + ua); }
+    if (!c) return { c: null, bad, ok: false }; const [d, v] = drive(c, tE, L.v0 * (c.dv || 1)), gap = m - GORE.hit.hzR - d, stop = v * v / (2 * CAR.bMax);
     // (and room on the lane past it for the car to stop and the body to land: it never comes down on the next zebra)
-    return { c, bad, gap, ok: !bad && !c.wreck && v > 5 && gap > .6 && gap < stop - .4 && L.len - ua > stop + c.len * .2 + GORE.throw.ahead[0] + .5 }; }
+    return { c, bad, gap, v, ok: !bad && !c.wreck && v > 5 && gap > .6 && gap < stop - .4 && L.len - ua > stop + c.len * .2 + GORE.throw.ahead[0] + .5 }; }
+  // how far a car goes in t s and its speed then, at the acceleration traffic/sim.js gave it this step (a car pulling away from a
+  // light or out of a turn gathers speed toward vm, its speed on the lane; one easing off slows): [m, m/s]. A forecast for timing the
+  // step off, nothing more: the car's motion is the traffic's. (It had taken the speed now: a car speeding up out of a turn was past
+  // before the walker was in its way)
+  function drive(c, t, vm) { const v = c.v, a = Math.max(-1.5, Math.min((c.acc || 0) * .6, c.a || CAR.a));
+    if (a > 0 && v < vm) { const t1 = Math.min(t, (vm - v) / a), v1 = v + a * t1; return [v * t1 + a * t1 * t1 / 2 + v1 * (t - t1), v1]; }
+    if (a < 0) { const t1 = Math.min(t, v / -a); return [v * t1 + a * t1 * t1 / 2, v + a * t1]; }
+    return [v * t, v]; }
   // a stumble's plan out along (rx, rz), D m in all: n stumbles back (the clip's 0.52 m each + sl), then — on the way into the road — a
   // turn and a stagger the rest of the way. at(t): m out its body is (as drawn: the clip's root included); base(t): where the walker
   // itself is (the clip's root not yet taken); turn(t): 0 → 1 over the turn (facing the walk → facing the road)
@@ -103,12 +127,12 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
   // a parked car (the blocks' anchors: main.js parkedIn) on the way out from the kerb to the lane: no way through there
   const parkedOn = (x, z, rx, rz, D) => { const pin = globalThis.__city?.parkedIn; if (!pin) return false; for (let d = .5; d <= D; d += .5) { const px = x + rx * d, pz = z + rz * d; if (kerbOut(px, pz) > 0) continue; if (pin(px - .3, pz - .3, px + .3, pz + .3)) return true; } return false; };
   const busy = () => [...cases].filter(k => k.ph === 'thrown' || k.ph === 'down').length;
-  const canHit = () => GORE.on && busy() < (GORE.often || armed > now ? GORE.hit.maxOften : GORE.hit.max) && now - lastHit > (GORE.often || armed > now ? GORE.hit.coolOften : GORE.hit.cool);
+  const canHit = () => GORE.on && busy() < (GORE.often || armed > now ? GORE.hit.maxOften : GORE.hit.max) && now - lastHit > (armed > now ? GORE.jay.cool : GORE.often ? GORE.hit.coolOften : GORE.hit.cool);
   const okWhy = w => w.agent ? 'agent' : w.E && !w.E.cross && (w.s <= GORE.shove.corner || w.s >= w.E.len - GORE.shove.corner) ? 'corner' : w.off || w.fix ? 'off' : !w.E ? 'noedge' : w.E.cross ? 'crossing' : w.E.joint ? 'joint' : w.dog >= 0 ? 'dog' : w.stagePose || w.gore ? 'stage' : w.kx ? 'kerbrow' : w.halt ? 'halt' : w.tier !== 1 ? 'far' : 'ok';
-  const ok = w => w && !w.agent && !w.off && !w.fix && !w.gone && w.E && !w.E.cross && !w.E.joint && w.dog < 0 && !w.stagePose && !w.gore && !w.kx && (!w.halt || bait?.w === w || ready?.w === w) && w.tier === 1 && w.s > GORE.shove.corner && w.s < w.E.len - GORE.shove.corner;
+  const ok = (w, far = false) => w && !w.agent && !w.off && !w.fix && !w.gone && w.E && !w.E.cross && !w.E.joint && w.dog < 0 && !w.stagePose && !w.gore && !w.kx && !w.halt && (w.tier === 1 || far && w.tier >= 2) && w.s > (far ? GORE.jay.corner : GORE.shove.corner) && w.s < w.E.len - (far ? GORE.jay.corner : GORE.shove.corner);
   // where a walker on the walk would go: the road plan if it can reach a lane (and a car it can't miss, when `need`), else null
   // the clear strip across the walk where the walker is (pedsim's room table: [lo, hi] m from the curb, and where it is in it), or null
-  const RS = [0, 0]; function strip(w) { const E = w.E, u = P.sideU(E, w.s), r = P.roomSpan(E, u - .25, u + .25, RS); if (!r) return null; return { lo: r[0], hi: r[1], c: P.laneC(E, u) + (w.dg || 0) }; }
+  const RS = [0, 0]; function strip(w, ds = 0) { const E = w.E, u = P.sideU(E, Math.max(0, Math.min(E.len, w.s + ds))), r = P.roomSpan(E, u - .25, u + .25, RS); if (!r) return null; return { lo: r[0], hi: r[1], c: P.laneC(E, u) + (w.dg || 0) }; }
   function roadPlan(w, need) { const E = w.E, A = AXIS[E.side]; if (!A) return null; const rx = -A[0], rz = -A[1], x = w.p[0], z = w.p[2], lo = laneOut(x, z, rx, rz); if (!lo) return null;
     // (the kerb side of the walk must be clear from the walker to the curb — a bin, a hydrant, a tree pit and it stays on the walk)
     const st = strip(w); if (!st || st.lo > .25) return null;
@@ -121,7 +145,7 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
     return { ...pl, lane: lo.L, ua: lo.ua, tE, car: cf.c, gap: cf.gap, ok: cf.ok, hit: cf.ok && canHit() }; }
 
   // ── a case: one walker's accident. ph: 'stumble' → ('dazed' → 'back') | 'thrown' → 'down' → cleared
-  function start(w, pl, by) { if (bait?.w === w) { w.halt = false; bait = null; } const fixY = w.p[1]; if (!P.offWalker(w, [w.p[0], fixY, w.p[2], Math.atan2(-pl.rx, -pl.rz)])) return null; const yaw = Math.atan2(-pl.rx, -pl.rz);
+  function start(w, pl, by) { const yaw = pl.jay ? pl.y0 : Math.atan2(-pl.rx, -pl.rz), fixY = w.p[1]; if (!P.offWalker(w, [w.p[0], fixY, w.p[2], yaw])) return null;
     w.yawS = yaw; w.omega = 0; w.p[3] = yaw; const K = { w, ph: 'stumble', t: 0, ct: 0, pl, by, road: !!pl.lane, hz: null, y: fixY, look: null, clip: 'hit_stumble_back', base: 0, k: 0 };
     w.stagePose = NOOP; w.gore = (g, dt) => pose(K, g, dt); cases.add(K); S.shoves++; if (K.road) S.road++; return K; }
   const NOOP = () => {};
@@ -130,54 +154,99 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
   // the shove (pedsim hooks.shove, from movement.js: once a frame while an agent is held up by w)
   const holds = new Map();
   const why = k => { S.why[k] = (S.why[k] || 0) + 1; };
-  P.hooks.shove = (w, a, hx, hz, lag, bait = false) => { why('held'); if (!GORE.on || !a?.p) return;
+  P.hooks.shove = (w, a, hx, hz, lag) => { why('held'); if (!GORE.on || !a?.p) return;
     // (held up: behind its booking by lag s, or stopped behind someone for wait s on end — a hold that lapses for over a beat starts over)
     let h = holds.get(a); if (!h || now - h.t > .5) { h = { t: now, go: GORE.often || armed > now || Math.random() < GORE.shove.p, last: h?.last ?? -1e9, since: now }; holds.set(a, h); } h.t = now;
     if (lag < GORE.shove.lag && now - h.since < (GORE.often || armed > now ? 0 : GORE.shove.wait)) return why('lag'); if (!ok(w)) return why(okWhy(w)); if (Math.hypot(w.p[0] - a.p[0], w.p[2] - a.p[2]) > GORE.shove.near) return why('distance');
     if (!h.go || now - h.last < GORE.shove.cool) return why('roll');
-    // (often / armed: wait up to 2.5 s for a car it can't miss — the bait doesn't: the agent is passing now)
-    const eager = GORE.often || armed > now, R = roadPlan(w, eager && !bait && now - h.since < 2.5);
+    // (often / armed: wait up to 2.5 s for a car it can't miss)
+    const eager = GORE.often || armed > now, R = roadPlan(w, eager && now - h.since < 2.5);
     let pl = null;
     if (R && (R.hit ? (eager || Math.random() < GORE.road.p) : !eager && Math.random() < GORE.road.pAny)) pl = R;
     // (a lane in reach: hold on for a car)
-    else if (eager && !bait && now - h.since < 2.5 && roadPlan(w, false)) return;
+    else if (eager && now - h.since < 2.5 && roadPlan(w, false)) return;
     // (on the walk: toward whichever side of it has more clear room — never into the kerb strip's furniture or a shopfront)
     if (!pl) { const A = AXIS[w.E.side], st = strip(w); if (!A || !st) return why('room'); const toKerb = st.c - st.lo, toWall = st.hi - st.c, sg = toKerb >= toWall ? -1 : 1, room = Math.max(toKerb, toWall) - .08; if (room < .3) return why('room');
       pl = plan(w.p[0], w.p[2], sg * A[0], sg * A[1], Math.min(SHIFT + GORE.shove.slide, room), false); }
     if (start(w, pl, a)) h.last = now; };
-  // the key: arm (GORE.arm s) — the next agent shove near the camera, or a walker near it that can trip in front of a car, goes
-  // THE BAIT (the key only): a walking agent near the camera with a crowd walker 2–7 m ahead in its way — that walker stops where it
-  // stands (pedsim's halt, as a held walker of the stage's) for up to bait.hold s, so the agent comes up behind it, is held up, and
-  // shoves it (an armed shove waits up to 2.5 s for a car it can't miss). The agent's lag is the record's own crowd lag (≤ MOVE.lag.cap)
-  let bait = null;
-  // (the key's walker standing ready for its car: tryTrip, GORE.ready)
-  let ready = null; const unready = () => { if (!ready) return; const w = ready.w; if (!w.gone && !w.gore && w.halt && !w.off) w.halt = false; ready = null; };
-  function setBait() { if (bait || !focus) return false; let best = null, bd = 45;
-    for (const a of P.agents) { if (!a.p || (a.vc || 0) < .6 || !a.fix) continue; const d = Math.hypot(a.p[0] - focus.x, a.p[2] - focus.z); if (d > bd) continue; const h = a.yawS ?? a.p[3], hx = Math.sin(h), hz = Math.cos(h);
-      for (const w of P.walkers) { if (!ok(w) || w.vc < .3 || !inFrame(w.p[0], 1, w.p[2])) continue; const dx = w.p[0] - a.p[0], dz = w.p[2] - a.p[2], al = dx * hx + dz * hz, lat = Math.abs(dx * hz - dz * hx); if (al < 2 || al > 7 || lat > .55) continue;
-        const road = !!roadPlan(w, false); if (best && best.road && !road) continue; best = { w, a, t: now, road }; bd = d; break; } }
-    if (!best) return false; bait = best; best.w.halt = true; best.w.vc = 0; S.baits = (S.baits || 0) + 1; return true; }
-  // (the agent weaves round whoever stands in its way, so it is seldom held up behind the bait: within reach of it, it shoves)
-  function stepBait() { if (!bait) return; const w = bait.w, a = bait.a;
-    if (!w.gone && !w.gore && a?.p && Math.hypot(w.p[0] - a.p[0], w.p[2] - a.p[2]) < 1.5) P.hooks.shove(w, a, 0, 0, 9, true);
-    if (!bait) return; if (w.gone || w.gore || now - bait.t > GORE.bait.hold || armed <= now) { if (!w.gone && !w.gore && w.halt && !w.off) w.halt = false; bait = null; } }
-  function tryTrip() { if (!focus || [...cases].some(K => K.pl.hit && (K.ph === 'stumble' || K.ph === 'dazed'))) return false; if (bait) return false;
-    // (an agent walking near: give it the bait's window)
-    if (now - armedAt < GORE.bait.first && (setBait() || P.agents.some(a => a.p && (a.vc || 0) > .6 && Math.hypot(a.p[0] - focus.x, a.p[2] - focus.z) < 45))) return false;
-    // (a walker in the frame that can stumble in front of a car it can't miss now goes; else one with a lane in reach and a car coming on
-    // it stands ready for that car — the walker and the car at the right gap in the same tenth of a second were 0.07 a look at FIT ST
-    // (accidents.probe), and slime, 11-04: "it's really hard to trigger")
-    let best = null, bd = 60, cand = null, cd = 1e9;
-    S.tries = (S.tries || 0) + 1; for (const w of P.walkers) { if (!ok(w) || !inFrame(w.p[0], 1, w.p[2])) continue; const d = Math.hypot(w.p[0] - focus.x, w.p[2] - focus.z); if (d > 60) continue;
-      if (d < bd) { const R = roadPlan(w, true); if (R) { best = [w, R]; bd = d; continue; } }
-      if (!ready && d < cd) { const R = roadPlan(w, false); if (!R?.car) continue; const k = (R.car.v > 5 ? R.gap > 0 ? 0 : 1 : 2) * 100 + d; if (k < cd) { cand = [w, R]; cd = k; } } }
-    if (best) { unready(); return !!start(best[0], best[1], null); }
-    if (ready) { const w = ready.w, out = now - ready.t > GORE.ready.hold; if (w.gone || w.gore || !ok(w) || !inFrame(w.p[0], 1, w.p[2]) || out) { why(out ? 'readyOut' : 'readyLost'); unready(); } return false; }
-    if (cand) { const [w, R] = cand; ready = { w, t: now, v0: R.car.v, gap0: R.gap }; w.halt = true; w.vc = 0; S.readied = (S.readied || 0) + 1; }
+  // ── THE KEY'S JAYWALKER (GORE.jay). The car first: an ordinary car in the frame, moving, not braking, whose way on (its lane, and
+  // the lane past its next junction when it is through it or there is no light) has a crowd walker in the frame on the kerb beside it.
+  // For each such walker: the walk out (jplan) from where it is now, the time it enters the car's way (tE), and the car's gap then at its
+  // speed now; the walker steps off when that gap is `aim` of the way into the car's can't-stop window (carFor's ok). The pair whose hit
+  // comes soonest is STAGED; each frame the walker (walking on along the walk) is planned again and steps off on the frame its car
+  // can't miss; a pair that no longer can (the car slowed, turned, another car came between, the walker left the frame) is dropped and
+  // the next chosen. Who is hit and when stays this file's; the car's motion stays traffic/sim.js's (nothing here moves a car).
+  let staged = [], noneSince = -1; const JL = [], jlog = (ev, o = {}) => { JL.push({ t: +now.toFixed(2), ev, ...o }); if (JL.length > 60) JL.shift(); };
+  // the car's way on: [lane, m from its nose to the lane's start] (past its junction whatever the light: the step off waits for carFor,
+  // which takes a car there only once it is through or has no light to stop it)
+  function wayOf(c) { const L = c.L, out = [];
+    if (L.kind === 'lane') { out.push([L, -c.s]); if (c.next) out.push([c.next.out, L.len - c.s + c.next.len]); }
+    else if (L.kind === 'conn' && L.out) out.push([L.out, L.len - c.s]);
+    return out; }
+  // the jaywalk out: a turn from its way along the walk (y0) to the road (stepping .15 m out), then its walk at vs, D m in all
+  function jplan(x, z, rx, rz, D, vs, y0) { const R = GORE.jay, Tt = R.turn, st = .15, walk = Math.max(0, D - st), Tw = Tt + walk / vs, yR = Math.atan2(rx, rz);
+    let dy = yR - y0; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
+    const at = t => Math.min(D, st * ease(t / Tt) + Math.min(walk, vs * Math.max(0, t - Tt)));
+    return { jay: true, n: 0, sl: 0, Ts: 0, Tw, T: Tw, x, z, rx, rz, D, walk, vs, y0, dy, at, base: at, turn: t => ease(t / Tt), wob: () => 0 }; }
+  // the walker's jaywalk now, toward lane `want` (or its nearest lane out): { pl, lo, tE, cf } or null (no lane in reach, the kerb or
+  // a parked car in the way, it would land in a parked car)
+  function jayFor(w, want, vs = GORE.jay.walk[0], loose = false, soon = false) { const E = w.E, A = AXIS[E.side]; if (!A) return null; const rx = -A[0], rz = -A[1], x = w.p[0], z = w.p[2], all = lanesOut(x, z, rx, rz, GORE.jay.reach), i = all.findIndex(o => o.L === want);
+    if (i < 0) return null; const lo = all[i]; const st = loose ? null : strip(w); if (!loose && (!st || st.lo > .25)) return why('jnStrip'), null;
+    const D = lo.d - (GORE.road.inLane[0] + GORE.road.inLane[1]) / 2; if (D > GORE.jay.reach || D < .9) return why('jnReach'), null;
+    if (!loose && parkedOn(x, z, rx, rz, D)) return why('jnParked'), null; if (landBlocked(lo.L, x + rx * D, z + rz * D, -rx, -rz)) return why('jnLand'), null;
+    const pl = jplan(x, z, rx, rz, D, vs, w.yawS ?? w.p[3]), tE = enterT(pl, lo.d);
+    // (the lanes it crosses on the way: never in front of a cab, a cruiser or a patrol there either)
+    for (let k = 0; k < i; k++) if (carFor(all[k].L, all[k].ua, enterT(pl, all[k].d)).bad) return { pl, lo, tE, cf: { bad: true } };
+    return { pl, lo, tE, cf: carFor(lo.L, lo.ua, tE, soon) }; }
+  // the gap window the car can't stop in (carFor's ok), and where in it the walker aims to enter: [lo, hi, aim] m
+  const windowOf = v => { const lo = .6, hi = v * v / (2 * CAR.bMax) - .4; return [lo, hi, lo + (hi - lo) * GORE.jay.aim]; };
+  const plainCar = c => c.kind === 'car' && !c.route && !c.stage && !c.asCar && !c.kin && !c.wreck && !c.gone;
+  // choose: every plain car in the frame at speed × every walker in the frame on the kerb of its way (not one staged already) → each
+  // walker's soonest pair, soonest first
+  function choose(skip) { const R = GORE.jay; const found = [];
+    const cars = sim.cars.filter(c => plainCar(c) && c.v > R.vNow && (c.acc ?? 0) > -1 && (inFrame(c.x, 1, c.z, 1) || Math.hypot(c.x - focus.x, c.z - focus.z) < R.near)); if (!cars.length) { why('jayNoCar'); return []; }
+    const lanes = new Map(); for (const c of cars) for (const [L, off] of wayOf(c)) { let a = lanes.get(L); if (!a) lanes.set(L, a = []); a.push([c, off]); }
+    for (const w of P.walkers) { if (skip.has(w) || !ok(w, true) || !inFrame(w.p[0], 1, w.p[2], R.edge)) continue; let best = null; const dc = Math.hypot(w.p[0] - cam.position.x, w.p[2] - cam.position.z); if (dc > R.far) continue;
+      const A = AXIS[w.E.side]; if (!A) continue; const los = lanesOut(w.p[0], w.p[2], -A[0], -A[1], R.reach); if (!los.length) { why('jwNoLane'); continue; }
+      for (const lo0 of los) { if (!lanes.has(lo0.L)) { why('jwNotCarLane'); continue; }
+      for (const vs of R.walk) { const J = jayFor(w, lo0.L, vs, true, true); if (!J) { why('jwNoWay'); break; } if (J.cf.bad) { why('jwBad'); continue; } if (!J.cf.c) { why('jwNoCarFor'); continue; } const c = J.cf.c, hit = J.lo; if (!lanes.get(hit.L).some(([q]) => q === c)) { why('jwNearerCar'); continue; }
+      // (the hit's spot well in the frame too: the walker is thrown from there)
+      if (!inFrame(w.p[0] - A[0] * J.pl.D, 1, w.p[2] - A[1] * J.pl.D, .8)) { why('jwSpotOut'); continue; }
+      const [gLo, gHi, aim] = windowOf(J.cf.v); if (J.cf.v < R.vMin || gHi - gLo < 1 || J.cf.gap < gLo) { why('jwLate'); continue; } const wait = (J.cf.gap - aim) / Math.max(c.v, J.cf.v); if (wait > R.wait) { why('jwFar'); continue; }
+      // (where it will step off from, walking on meanwhile: the kerb clear and no parked car in the way there — else it walks into a
+      // tree pit's or a parked car's spot just as its car comes)
+      const ds = (w.vc || 0) * Math.max(0, wait), y = w.yawS ?? w.p[3], st = strip(w, ds); if (!st || st.lo > .25 || parkedOn(w.p[0] + Math.sin(y) * ds, w.p[2] + Math.cos(y) * ds, -A[0], -A[1], J.pl.D)) { why('jwBlockedAt'); continue; }
+      // (room on the lane past the hit for the car to stop and the body to land: carFor's own test)
+      if (hit.L.len - hit.ua - ds * Math.abs(Math.sin(y) * hit.L.ux + Math.cos(y) * hit.L.uz) <= J.cf.v * J.cf.v / (2 * CAR.bMax) + c.len * .2 + GORE.throw.ahead[0] + 1.5) { why('jwRoom'); continue; }
+      const due = Math.max(0, wait) + J.tE + aim / J.cf.v, k = due + dc / R.perM; if (!best || k < best.k) best = { w, c, L: hit.L, due, k, t: now }; } }
+      if (best) found.push(best); }
+    if (!found.length) why('jayNoPair'); return found.sort((a, b) => a.k - b.k); }
+  // the staged pairs, each frame: the first walker whose car can't miss it now steps off (one hit a press: the others are let go)
+  function stepStaged() { for (const G of staged.slice()) if (stepOne(G) === 'go') { staged = []; return; } }
+  function stepOne(G) { const w = G.w, c = G.c;
+    const drop = k => { why(k); jlog(k, { car: c.id, v: +c.v.toFixed(1) }); staged = staged.filter(q => q !== G); return 'drop'; };
+    if (armed <= now) return drop('jayUnarmed'); if (w.gone || !ok(w, true) || !inFrame(w.p[0], 1, w.p[2], GORE.jay.edge + .05)) return drop('jayLostWalker'); if (!plainCar(c)) return drop('jayLostCar');
+    let J = null; for (const vs of GORE.jay.walk) { const j = jayFor(w, G.L, vs, true); if (!j) return drop('jayNoWay'); if (j.cf.bad) return drop('jayBad'); if (!j.cf.c) continue; if (j.cf.c !== c) return drop('jayOtherCar');
+      // (the car can't miss it now, but the kerb's furniture or a parked car is in its way out here: it walks on, and goes from the next clear spot)
+      // (and not before the gap is down to the aim: at the window's far end the car, braking from before the walker is in its way, stops short)
+      // (nor while the car is easing off for something ahead — a light, a car: it would stop short)
+      // (and only on a forecast it can trust: a car already at speed, the walker in its way within tMax s — a slow car's long forecast
+      // gathering speed stopped short)
+      if (j.cf.ok && j.cf.gap <= windowOf(j.cf.v)[2] + .25 && (c.acc || 0) > -.6 && c.v > GORE.jay.vNow && j.tE < GORE.jay.tMax) { if (jayFor(w, G.L, vs)) { J = j; break; } why('jayBlocked'); G.blk = (G.blk || 0) + 1; } }
+    if (J && canHit()) { const K = start(w, { ...J.pl, lane: J.lo.L, ua: J.lo.ua, tE: J.tE, car: c, gap: J.cf.gap, ok: true, hit: true }, null); if (K) { K.jay = true; S.jays = (S.jays || 0) + 1; S.jayLead = +(now - armedAt).toFixed(2); jlog('go', { car: c.id, v: +c.v.toFixed(1), acc: +(c.acc || 0).toFixed(1), gap: +J.cf.gap.toFixed(1), vE: +J.cf.v.toFixed(1), tE: +J.tE.toFixed(2), vs: J.pl.vs, D: +J.pl.D.toFixed(1), tier: w.tier, of: staged.length }); return 'go'; } return drop('jayStart'); }
+    // (too late at every pace — the fastest walk last — or the car no longer coming at speed: the next pair)
+    const Jf = jayFor(w, G.L, Math.max(...GORE.jay.walk), true), [gLo] = windowOf(Jf.cf.v); if (Jf.cf.c && (Jf.cf.gap < gLo || Jf.cf.v <= 5)) { jlog('lateWhy', { gap: +Jf.cf.gap.toFixed(1), vE: +Jf.cf.v.toFixed(1), room: +(Jf.lo.L.len - Jf.lo.ua - Jf.cf.v * Jf.cf.v / (2 * CAR.bMax) - c.len * .2 - GORE.throw.ahead[0] - .5).toFixed(1), blocked: G.blk || 0, hitOk: canHit() }); return drop('jayLate'); } if (now - G.t > GORE.jay.wait + 1.5) return drop('jayWait'); return 'wait'; }
+  // (none while a jaywalker is on its way out, or stands in the road with its car still coming)
+  function tryTrip() { if (!focus || [...cases].some(K => K.pl.hit && (K.ph === 'stumble' || (K.ph === 'dazed' && (K.pl.car?.v ?? 0) > .5)))) return false; if (staged.length >= GORE.jay.keep || !canHit()) return false;
+    S.tries = (S.tries || 0) + 1; const add = choose(new Set(staged.map(G => G.w))).slice(0, GORE.jay.keep - staged.length);
+    for (const G of add) { staged.push(G); S.staged = (S.staged || 0) + 1; jlog('staged', { car: G.c.id, v: +G.c.v.toFixed(1), due: +G.due.toFixed(2) }); }
+    if (staged.length) { noneSince = -1; return true; }
+    // (no car in the frame can do it: say so, once a press, and keep trying while armed)
+    if (noneSince < 0) noneSince = now; else if (noneSince > -.5 && now - noneSince > GORE.jay.tell) { note('No car in view can hit anyone yet: still watching'); noneSince = -1e9; }
     return false; }
   if (typeof addEventListener === 'function' && typeof document !== 'undefined') addEventListener('keydown', e => {
     if (e.code !== GORE.key || e.metaKey || e.ctrlKey || e.altKey || e.defaultPrevented || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target?.tagName || '') || e.target?.isContentEditable || document.body.classList.contains('cam-photo')) return;
-    if (!GORE.on) { GORE.on = true; } armed = now + GORE.arm; armedAt = now; S.armed++; note('Accident armed: the next walker near the camera that can stumble in front of a car will'); });
+    if (!GORE.on) { GORE.on = true; } armed = now + GORE.arm; armedAt = now; noneSince = -1; staged = []; S.armed++; note('Accident armed: a jaywalker steps out in front of the next car in view'); });
 
   // ── the gait hook: the case's clip on its own clock (a fresh gait — the walker just came near — gets it again)
   { const anim0 = P.animate; P.animate = (w, dt, G, fresh) => { const g = anim0(w, dt, G, fresh); if (g && w.gore) w.gore(g, dt); return g; }; }
@@ -191,7 +260,7 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
 
   // ── the hit (traffic/sim.js onHit, inside its step)
   // (→ true: the hit is taken, and the car is a wreck this file lets go; false: no live case behind that hazard — no wreck: traffic/sim.js)
-  sim.onHit = (c, h, v) => { const K = h.case; if (!K || !cases.has(K)) return false; lastHit = now; armed = 0; S.hits++; S.wrecks++;
+  sim.onHit = (c, h, v) => { const K = h.case; if (!K || !cases.has(K)) return false; lastHit = now; armed = 0; S.hits++; S.wrecks++; if (K.jay) jlog('hit', { car: c.id, v: +v.toFixed(1), same: c === K.pl.car });
     const w = K.w, hc = c.h, fx0 = Math.sin(hc), fz0 = Math.cos(hc), T = GORE.throw;
     // toward the kerb: the side of the car's line the walker came from
     const L = c.L, side = Math.sign((w.fix[0] - L.x0) * -L.uz + (w.fix[2] - L.z0) * L.ux) || 1, rx = -L.uz * side, rz = L.ux * side;
@@ -221,7 +290,7 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
   const MS = { avg: 0, max: 0 };
   function update(dt, camera, foc) { const T0 = typeof performance !== 'undefined' ? performance.now() : 0; update0(dt, camera, foc); const ms = (typeof performance !== 'undefined' ? performance.now() : 0) - T0; MS.avg += (ms - MS.avg) * .05; MS.max = Math.max(MS.max * .995, ms); }
   function update0(dt, camera, foc) { now += dt; cam = camera; focus = foc || camera.position; camera.updateMatrixWorld(); PM.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); FR.setFromProjectionMatrix(PM);
-    stepBait(); if (ready && armed <= now) unready(); if (armed > now && ((now * 10) | 0) !== (((now - dt) * 10) | 0)) tryTrip();
+    stepStaged(); if (armed > now && ((now * 10) | 0) !== (((now - dt) * 10) | 0)) tryTrip();
     if (((now / 5) | 0) !== (((now - dt) / 5) | 0)) for (const [a, h] of holds) if (now - h.t > 30) holds.delete(a);
     for (const K of [...cases]) { const w = K.w; if (w.gone) { release(K, false); continue; } K.t += dt; step(K, dt); }
     // (every car braking as hard as it can for someone in the road lays rubber — the one that hits them, and one that just stops short)
@@ -241,7 +310,9 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
       K.ct = Math.min(DUR - .001, t - k * DUR); K.clip = t < pl.Ts ? 'hit_stumble_back' : null;
       const b = pl.base(t), vis = pl.at(t), wb = pl.wob(t), px = -pl.rz, pz = pl.rx; f[0] = pl.x + pl.rx * b + px * wb; f[2] = pl.z + pl.rz * b + pz * wb;
       K.vis = [pl.x + pl.rx * vis + px * wb, 0, pl.z + pl.rz * vis + pz * wb]; f[1] = settleY(K, K.vis[0], K.vis[2], dt); hazard(K);
-      if (t >= pl.Ts && pl.Tw) { const yaw = yaw0 + Math.PI * pl.turn(t) * (K.side ??= Math.random() < .5 ? 1 : -1) + .25 * Math.sin((t - pl.Ts) * 3.7) * Math.min(1, (t - pl.Ts - GORE.road.turn) * 2) * (t > pl.Ts + GORE.road.turn ? 1 : 0); f[3] = yaw; w.yawS = yaw; w.omega = 0; w.vc = GORE.road.stagger; }
+      // (the jaywalker: from its way along the walk round to the road, then its own walk out at its pace)
+      if (pl.jay) { const yaw = pl.y0 + pl.dy * pl.turn(t); f[3] = yaw; w.yawS = yaw; w.omega = 0; w.vc = t < GORE.jay.turn ? pl.vs * .6 : pl.vs; }
+      else if (t >= pl.Ts && pl.Tw) { const yaw = yaw0 + Math.PI * pl.turn(t) * (K.side ??= Math.random() < .5 ? 1 : -1) + .25 * Math.sin((t - pl.Ts) * 3.7) * Math.min(1, (t - pl.Ts - GORE.road.turn) * 2) * (t > pl.Ts + GORE.road.turn ? 1 : 0); f[3] = yaw; w.yawS = yaw; w.omega = 0; w.vc = GORE.road.stagger; }
       if (K.t >= pl.T) { f[0] = K.vis[0]; f[2] = K.vis[2]; K.clip = null; K.ct = 0; w.vc = 0;
         if (pl.lane && kerbOut(f[0], f[2]) <= 0) { K.ph = 'dazed'; K.t = 0; K.dz = GORE.road.dazed[0] + Math.random() * (GORE.road.dazed[1] - GORE.road.dazed[0]); }
         else { K.ph = 'back'; K.t = 0; } }
@@ -249,7 +320,7 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
     if (K.ph === 'dazed') { K.vis = [f[0], 0, f[2]]; f[1] = settleY(K, f[0], f[2], dt); hazard(K);
       // it turns to the car coming (or to the walk) a beat in
       if (K.t > .35 && pl.lane) { const c = carFor(pl.lane, pl.ua, 0).c, tx = c ? c.x : f[0] - pl.rx, tz = c ? c.z : f[2] - pl.rz; f[3] = Math.atan2(tx - f[0], tz - f[2]); }
-      if (K.t > K.dz) { K.ph = 'back'; K.t = 0; S.nearMiss++; } return; }
+      if (K.t > K.dz) { K.ph = 'back'; K.t = 0; S.nearMiss++; if (K.jay) jlog('miss', { car: K.pl.car?.id, cv: +(K.pl.car?.v ?? -1).toFixed(1), cs: K.pl.car?.L === K.pl.lane ? +(K.pl.ua - K.pl.car.s).toFixed(1) : null, soft: K.hz?.soft }); } return; }
     if (K.ph === 'back') { const L = P.laneNear(f[0], f[2], 12), tp = L ? P.where({ E: L.E, s: L.s }, [0, 0, 0, 0]) : [pl.x, 0, pl.z], dx = tp[0] - f[0], dz = tp[2] - f[2], d = Math.hypot(dx, dz), v = GORE.road.back * Math.min(1, K.t * 2 + .2);
       K.vis = [f[0], 0, f[2]]; if (kerbOut(f[0], f[2]) <= 0) hazard(K); else dropHazard(K);
       if (d < .08) { if (release(K, true)) S.rejoined++; w.vc = 0; return; }
@@ -290,8 +361,7 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
   return { update, fx, GORE, stats: () => ({ ...S, why: { ...S.why }, updateMs: +MS.avg.toFixed(3), updateMax: +MS.max.toFixed(3), live: cases.size, now: +now.toFixed(2), hazards: sim.hazards.length, wrecks: wrecks.size, armed: armed > now, ...fx.stats() }),
     now: () => [...cases].map(K => ({ ph: K.ph, t: +K.t.toFixed(2), road: K.road, x: +(K.vis?.[0] ?? K.w.p[0]).toFixed(1), z: +(K.vis?.[2] ?? K.w.p[2]).toFixed(1), hit: !!K.car, by: K.by ? 'agent' : 'trip', dir: [+K.pl.rx.toFixed(3), +K.pl.rz.toFixed(3)], lane: K.pl.lane ? [K.pl.lane.ux, K.pl.lane.uz] : null, tf: K.fly ? +(K.fly.tf + K.fly.tb).toFixed(2) : null })),
     holding: () => [...holds].filter(([a, h]) => now - h.t < .5 && a.p).map(([a, h]) => ({ id: a.aid, x: +a.p[0].toFixed(1), z: +a.p[2].toFixed(1), for: +(now - h.since).toFixed(2) })),
-    bait: () => bait ? { x: +bait.w.p[0].toFixed(2), z: +bait.w.p[2].toFixed(2), ax: +bait.a.p[0].toFixed(2), az: +bait.a.p[2].toFixed(2), road: bait.road } : null,
-    trip: tryTrip, readyW: () => ready?.w ?? null, plan: w => roadPlan(w, false), arm(s = GORE.arm) { armed = now + s; armedAt = now; }, dbg: () => ({ armed, now, ready: ready && { x: +ready.w.p[0].toFixed(1), z: +ready.w.p[2].toFixed(1), age: +(now - ready.t).toFixed(1), v0: +ready.v0.toFixed(1), gap0: +(ready.gap0 ?? 0).toFixed(1) }, often: GORE.often, on: GORE.on, focus: !!focus, cases: cases.size, holds: [...holds].slice(0, 5).map(([a, h]) => [a.aid, a.id, +(now - h.t).toFixed(2), +(now - h.since).toFixed(2), a.tier, !!a.p]) }),
+    jlog: () => JL.slice(), trip: tryTrip, readyW: () => staged[0]?.w ?? null, staged: () => staged[0] ? staged.map(G => ({ x: +G.w.p[0].toFixed(1), z: +G.w.p[2].toFixed(1), car: G.c.id, v: +G.c.v.toFixed(1), due: +G.due.toFixed(2), age: +(now - G.t).toFixed(2) })) : null, plan: w => roadPlan(w, false), arm(s = GORE.arm) { armed = now + s; armedAt = now; }, dbg: () => ({ armed, now, staged: staged.map(G => ({ x: +G.w.p[0].toFixed(1), z: +G.w.p[2].toFixed(1), car: G.c.id, age: +(now - G.t).toFixed(1) })), often: GORE.often, on: GORE.on, focus: !!focus, cases: cases.size, holds: [...holds].slice(0, 5).map(([a, h]) => [a.aid, a.id, +(now - h.t).toFixed(2), +(now - h.since).toFixed(2), a.tier, !!a.p]) }),
     // (for looking into why nothing goes: the walkers near the focus, filter by filter)
     probe(r = 45) { const o = { near: 0, ok: 0, lane: 0, reach: 0, car: 0, bad: 0, timing: 0, gaps: [] }; if (!focus) return o;
       for (const w of P.walkers) { if (w.agent || Math.hypot(w.p[0] - focus.x, w.p[2] - focus.z) > r) continue; o.near++; if (!ok(w)) continue; o.ok++; const A = AXIS[w.E.side], lo = laneOut(w.p[0], w.p[2], -A[0], -A[1]); if (!lo) continue; o.lane++;

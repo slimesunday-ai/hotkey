@@ -371,9 +371,10 @@ export function createRecordTape({ api, page, sim, Q, root, director = null, dos
   refresh(); known = new Set(markers.map(m => m.id)); keepUrl(true);
 
   // ── C2 · leaving and coming back. The departure is what the viewer had when they first jumped; a later jump keeps it
-  const camNow = () => { const r = api.cam, s = r?.subject, c = api.camera, T = api.controls.target;
-    const mode = r?.mode ?? 'orbit', aid = (mode === 'follow' || (mode === 'photo' && r.photoSub === 'follow')) && s?.agent ? s.aid : null;
-    return { mode: aid ? 'follow' : 'orbit', aid, pos: c.position.toArray().map(v => +v.toFixed(3)), tgt: [T.x, T.y, T.z].map(v => +v.toFixed(3)), fov: +c.fov.toFixed(2) }; };
+  // (the person watched, camera/rig.js watched: Lock comes back as Lock, at the viewer's kept angle; Follow and photo's F as Follow)
+  const camNow = () => { const r = api.cam, s = r?.watched, c = api.camera, T = api.controls.target;
+    const aid = s?.agent ? s.aid : null;
+    return { mode: aid ? (r.mode === 'lock' ? 'lock' : 'follow') : 'orbit', aid, pos: c.position.toArray().map(v => +v.toFixed(3)), tgt: [T.x, T.y, T.z].map(v => +v.toFixed(3)), fov: +c.fov.toFixed(2) }; };
   function leave(by) {
     if (depart) return;
     // (from inside a replay: where the replay will take the viewer back to)
@@ -398,7 +399,7 @@ export function createRecordTape({ api, page, sim, Q, root, director = null, dos
     if (d.card && d.card !== dossier?.current) dossier?.open(d.card); else if (!d.card && dossier?.isOpen) dossier.close();
     // (across the day / night reload the new page puts the follow back: ui/record/follow.js reads ?follow=)
     const crossing = reloads(d.m);
-    if (d.cam.mode === 'follow' && d.cam.aid) { if (crossing) follow?.after(d.cam.aid); else refollow = { aid: d.cam.aid, t: performance.now() }; }
+    if ((d.cam.mode === 'follow' || d.cam.mode === 'lock') && d.cam.aid) { if (crossing) follow?.after(d.cam.aid, d.cam.mode); else refollow = { aid: d.cam.aid, mode: d.cam.mode, t: performance.now() }; }
     else follow?.want(null);
     own++; try { P.seek(d.m); } finally { own--; }
     if (P.speed !== d.speed) P.setSpeed(d.speed);
@@ -410,7 +411,7 @@ export function createRecordTape({ api, page, sim, Q, root, director = null, dos
   }
   function stepRefollow(t) {
     const f = refollow, r = api.cam, w = r?.people?.byAid(f.aid);
-    if (w) { r.setMode('follow', { subject: w }); follow?.want(f.aid); refollow = null; return; }
+    if (w) { if (f.mode === 'lock') { r.setMode('lock', { subject: w, restore: true }); follow?.want(f.aid, 'lock'); } else { r.setMode('follow', { subject: w }); follow?.want(f.aid); } refollow = null; return; }
     if (t - f.t > 6000) refollow = null;
   }
   // Esc with nothing open (the kit's Esc stack, ui/kit.js screens, takes it first when something is): back

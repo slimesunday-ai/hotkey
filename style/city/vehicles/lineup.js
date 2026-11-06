@@ -1,4 +1,5 @@
 // CARS pass · the fleet lineup page (shots only): ?tod=night · ?mode=wheel&deg=30 (a wheel close-up turned by deg) · ?cam=x,y,z&look=x,y,z
+// · ?mode=van[&open=0…1] (C2-VAN: the Cleaners' van beside the Qwik Kargo van, doors shut and open; the default rows leave `stage` models out)
 import * as THREE from 'three';
 import { tierize } from '../gpu.js';
 import { PAL } from '../style.js';
@@ -30,8 +31,16 @@ if (MODE === 'wheel') {
   for (const p of car.userData.wheels) p.rotation.x = DEG * Math.PI / 180;
   const w = car.userData.spec.wheels.find(w => w.x < 0 && w.z > 0); const wx = w.z, wz = -w.x;   // local → world (rotation y +90°: x' = z, z' = −x)
   camera.position.set(...(Q.get('cam') ? V3(Q.get('cam')) : [wx + .4, .75, wz + 2.9])); camera.lookAt(...(Q.get('look') ? V3(Q.get('look')) : [wx, .38, wz]));
+} else if (MODE === 'van') {
+  // C2-VAN · the Cleaners' van beside the fleet's Qwik Kargo van: the front row from behind (Qwik · doors shut · doors open at ?open=,
+  // default 1), the back row from the front (Qwik · dark glass, nobody seen · clear glass, a Cleaner at the wheel)
+  const OPEN = +(Q.get('open') ?? 1), rows = [[['van', 0, 0, 'shut'], ['cleanvan', 0, 0, 'shut'], ['cleanvan', 0, OPEN, `open ${OPEN}`]], [['van', 1, 0, ''], ['cleanvan', 0, 0, 'dark glass'], ['cleanvan', 1, 0, 'a Cleaner drives']]];
+  rows.forEach((row, r) => row.forEach(([id, variant, open, label], k) => { const x = (k - 1) * 4.4 - r * .6, z = r ? -2.6 : 4.2, car = vehicleMesh(id, { variant, lights: NIGHT, driver: true, night: NIGHT }, mat);
+    car.position.set(x, 0, z); car.rotation.y = r ? -.55 : Math.PI - .55; car.userData.setDoors?.(open); scene.add(car); const v = VEHICLES.find(v => v.id === id);
+    tags.push([{ ...v, name: v.name + (label ? ` (${label})` : '') }, new THREE.Vector3(x, v.dims.h + .25, z)]); }));
+  camera.position.set(...(Q.get('cam') ? V3(Q.get('cam')) : [-1.5, 7.5, 16])); camera.lookAt(...(Q.get('look') ? V3(Q.get('look')) : [-.4, .9, 1]));
 } else {
-  const list = VEHICLES.filter(v => v.id !== 'bus'), rows = [list.slice(0, 6), list.slice(6)];
+  const list = VEHICLES.filter(v => v.id !== 'bus' && !v.stage), rows = [list.slice(0, 6), list.slice(6)];
   rows.forEach((row, r) => row.forEach((v, k) => { const x = (k - 2.5) * 3.6 - r * 1.2, z = r ? -2.2 : 4.2, car = vehicleMesh(v.id, { variant: (k + r) % 2, lights: NIGHT, driver: true, night: NIGHT }, mat);
     car.position.set(x, 0, z); car.rotation.y = -.5; scene.add(car); tags.push([v, new THREE.Vector3(x, v.dims.h + .25, z)]); }));
   const bus = vehicleMesh('bus', { lights: NIGHT, driver: true, night: NIGHT }, mat); bus.position.set(9.5, 0, -2.6); bus.rotation.y = -.5; scene.add(bus); tags.push([VEHICLES.find(v => v.id === 'bus'), new THREE.Vector3(9.5, 3.25, -2.6)]);

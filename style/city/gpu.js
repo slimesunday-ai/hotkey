@@ -79,6 +79,52 @@ const CUTOUT = `
   if ( uCut[1].w > 0. ) { vec2 cd = vWinP.xz - uCut[0].xy; float clx = abs( cd.x * uCut[0].z - cd.y * uCut[0].w ), clz = cd.x * uCut[0].w + cd.y * uCut[0].z;
     bool wide = clx < uCut[1].x, sto = vWinP.y > uCut[3].x && vWinP.y < uCut[3].y;
     if ( clz < uCut[2].z && ( ( wide && vWinP.y > uCut[1].y && vWinP.y < uCut[1].z && clz > uCut[2].x ) || ( sto && ( ( wide && clz > uCut[2].y ) || ( clx < uCut[2].w && clz > uCut[3].z ) ) ) ) ) discard; }`;
+// C2-lock (2026-11-04) · THE LOCK HOLE (camera/lock.js, slime 11-04: "see through is way better"): while the lock camera is on a person,
+// every static tier fragment near the line from the lens to the person's chest goes see-through, with the same 4×4 Bayer screen-door
+// as DITHER (opaque, no sorting): a cone round that line, hole.lens m wide at the lens (anything the lens is inside is not drawn) and
+// hole.at m at the person, ended hole.short m short of the chest (the wall behind them stays), a soft edge (hole.edge m) and a soft end,
+// and nothing under hole.floor m above their feet (the kerb, the floor they stand on). camera/fade.js setFade owns the values; uHoleA.w
+// is its strength (0: off, one uniform branch; eased in and out, so the hole never pops). Walkers and cars (batched, instanced) keep
+// fade.js's own per-body line; the shadow pass (DEPTH_PACKING) never sees the hole, so the shadows stay.
+//   uHoleA [lens xyz, strength] · uHoleB [chest xyz, feet y] · uHoleC [r lens, r at the person, edge, short] · uHoleD [floor lo, hi, _, _]
+// holeGLSL(P): the test on a world position P (here vWinP; the homes' depth pick, interiors/city/index.js, runs the same on its own).
+// Which meshes it skips is decided in the VERTEX shader (HOLE_VERT: vHoleK 0 for batched and instanced meshes): three defines
+// USE_BATCHING and USE_INSTANCING only there, and a fragment-side #if cut the walkers' own heads (the person locked on included).
+// C2-lock2 · THE STATIC CITY'S INSTANCED AND BATCHED MESHES go through it too: a material marked holeStatic (below: HOLE_STATIC) keeps
+// vHoleK 1 on a batched or instanced mesh. Only meshes that never move are marked (the signal lenses and icons, the sim layer's lot
+// dressing, …); the walkers and the cars stay on fade.js's per-body line, never cut by the cone. The homes' depth pick
+// (interiors/city/index.js) reads the same mark off each mesh's own material
+export const HOLE = { a: { value: { x: 0, y: -1e5, z: 0, w: 0 } }, b: { value: { x: 0, y: -1e5, z: 0, w: -1e5 } }, c: { value: { x: 1, y: 1, z: .4, w: .35 } }, d: { value: { x: .15, y: .4, z: 0, w: 0 } } };
+export const HOLE_PARS = 'uniform vec4 uHoleA; uniform vec4 uHoleB; uniform vec4 uHoleC; uniform vec4 uHoleD; varying float vHoleK;';
+export const HOLE_VERT = `
+#if ( defined( USE_BATCHING ) || defined( USE_INSTANCING ) ) && !defined( HOLE_STATIC )
+  vHoleK = 0.;
+#else
+  vHoleK = 1.;
+#endif`;
+export const holeUniforms = u => Object.assign(u, { uHoleA: HOLE.a, uHoleB: HOLE.b, uHoleC: HOLE.c, uHoleD: HOLE.d });
+export const holeGLSL = P => `
+#if !defined( DEPTH_PACKING )
+  if ( uHoleA.w > 0. && vHoleK > .5 ) { vec3 hd = uHoleB.xyz - uHoleA.xyz, hp = ${P} - uHoleA.xyz; float hL = max( length( hd ), 1e-3 ); vec3 hu = hd / hL; float ht = dot( hp, hu ), hEnd = hL - uHoleC.w;
+    if ( ht < hEnd ) { float hr = mix( uHoleC.x, uHoleC.y, clamp( ht / hL, 0., 1. ) ), hq = length( hp - hu * max( ht, 0. ) );
+      float ha = max( smoothstep( hr - uHoleC.z, hr, hq ), smoothstep( hEnd - .3, hEnd, ht ) );
+      ha = max( ha, 1. - smoothstep( uHoleD.x, uHoleD.y, ${P}.y - uHoleB.w ) ); ha = mix( 1., ha, uHoleA.w );
+      if ( ha < .999 ) { vec2 hc = mod( floor( gl_FragCoord.xy ), 4. ); int hk = int( hc.x ) + int( hc.y ) * 4;
+        float hb = ( float( hk == 0 ? 0 : hk == 1 ? 8 : hk == 2 ? 2 : hk == 3 ? 10 : hk == 4 ? 12 : hk == 5 ? 4 : hk == 6 ? 14 : hk == 7 ? 6 : hk == 8 ? 3 : hk == 9 ? 11 : hk == 10 ? 1 : hk == 11 ? 9 : hk == 12 ? 15 : hk == 13 ? 7 : hk == 14 ? 13 : 5 ) + .5 ) / 16.;
+        if ( hb >= ha ) discard; } } }
+#endif`;
+const HOLEOUT = holeGLSL('vWinP');
+// holeize(material): the same hole on a material that is not a tier one (the homes' rooms, interiors/city/index.js): its own world
+// position varying, chained onto the material's own hook and cache key
+export function holeize(mat) { if (mat._hole) return mat; mat._hole = true; const prev = mat.onBeforeCompile, key = mat.customProgramCacheKey;
+  mat.onBeforeCompile = (sh, r) => { prev?.call(mat, sh, r); holeUniforms(sh.uniforms);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vHoleP; varying float vHoleK;').replace('#include <project_vertex>', '#include <project_vertex>' + HOLE_VERT + '\n  vHoleP = transpose( mat3( viewMatrix ) ) * ( mvPosition.xyz - viewMatrix[ 3 ].xyz );');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vHoleP; ' + HOLE_PARS).replace('#include <clipping_planes_fragment>', '#include <clipping_planes_fragment>' + holeGLSL('vHoleP')); };
+  mat.customProgramCacheKey = () => (key ? key.call(mat) : mat.type) + '|hole'; mat.needsUpdate = true; return mat; }
+// holeStatic(material): mark a material of the static city's instanced or batched meshes (it never moves) for the hole: HOLE_STATIC,
+// and the hole itself on a material that is not a tier one (holeize). Give it its own material: every mesh drawn with it is cut
+export function holeStatic(mat) { if (mat._holeStatic) return mat; mat._holeStatic = true; mat.defines = { ...(mat.defines || {}), HOLE_STATIC: '' };
+  if (!mat._tierOpts) holeize(mat); mat.needsUpdate = true; return mat; }
 // LOOK round (2026-10-06) · THE WATERLINE BAND (water.js drives it; off until the water exists: uSeaOn.x = 0, one uniform branch). Any tier
 // side face (not a top: decks and rock tops keep their colour) below 0.34 m standing well inside the water field (hulls, piles,
 // riprap, a pier's legs, the bridge's feet) takes a stepped foam band: white to 0.13 m, pale surf to 0.23 m, the pair lifted 0.1 m on a stepped swell per 0.8 m cell. The field is water.js's RG8
@@ -94,13 +140,13 @@ const WATERLINE = `
 export function tierize(mat, o = {}) {
   const prev = mat.onBeforeCompile; mat._tierOpts = o; mat._uFade ??= { value: 1 };   // own props, not userData (Material.copy JSON-clones userData)
   mat.onBeforeCompile = (sh, r) => { prev?.(sh, r); sh.uniforms.uFade = mat._uFade;
-    sh.uniforms.uWin = WIN; sh.uniforms.uWinX = WIN.extra; sh.uniforms.uWinG = WIN.glass; sh.uniforms.uCut = CUT; sh.uniforms.uSeaOn = WATER.on; sh.uniforms.uSeaBox = WATER.box; sh.uniforms.uSeaTex = WATER.tex;
-    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vLit; varying float vMat; varying float vIn; varying vec3 vWinP;' + (o.mask ? '\nattribute float aK; uniform vec4 uMask;' : ''))
-      .replace('#include <color_vertex>', DECODE).replace('#include <project_vertex>', '#include <project_vertex>\n  vWinP = transpose( mat3( viewMatrix ) ) * ( mvPosition.xyz - viewMatrix[ 3 ].xyz );');   // (from mvPosition, after it: the clip position is computed exactly as before)
+    sh.uniforms.uWin = WIN; sh.uniforms.uWinX = WIN.extra; sh.uniforms.uWinG = WIN.glass; sh.uniforms.uCut = CUT; sh.uniforms.uSeaOn = WATER.on; sh.uniforms.uSeaBox = WATER.box; sh.uniforms.uSeaTex = WATER.tex; holeUniforms(sh.uniforms);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vLit; varying float vMat; varying float vIn; varying vec3 vWinP; varying float vHoleK;' + (o.mask ? '\nattribute float aK; uniform vec4 uMask;' : ''))
+      .replace('#include <color_vertex>', DECODE).replace('#include <project_vertex>', '#include <project_vertex>' + HOLE_VERT + '\n  vWinP = transpose( mat3( viewMatrix ) ) * ( mvPosition.xyz - viewMatrix[ 3 ].xyz );');   // (from mvPosition, after it: the clip position is computed exactly as before)
     if (o.mask) { sh.uniforms.uMask = o.mask; sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  { int k = int( aK + .5 ); float hide = k == 0 ? uMask.x : k == 1 ? uMask.y : k == 2 ? uMask.z : uMask.w; if ( hide > .5 ) transformed = vec3( 0. ); }'); }
-    if (sh.fragmentShader) sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vLit; varying float vMat; varying float vIn; uniform float uFade; varying vec3 vWinP; uniform vec4 uWin; uniform vec4 uWinX; uniform float uWinG; uniform mat4 uCut; uniform vec4 uSeaOn; uniform vec4 uSeaBox; uniform sampler2D uSeaTex;')
+    if (sh.fragmentShader) sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vLit; varying float vMat; varying float vIn; uniform float uFade; varying vec3 vWinP; uniform vec4 uWin; uniform vec4 uWinX; uniform float uWinG; uniform mat4 uCut; uniform vec4 uSeaOn; uniform vec4 uSeaBox; uniform sampler2D uSeaTex; ' + HOLE_PARS)
       .replace('#include <color_fragment>', '#include <color_fragment>' + WATERLINE)
-      .replace('#include <clipping_planes_fragment>', '#include <clipping_planes_fragment>' + DITHER + CUTOUT)
+      .replace('#include <clipping_planes_fragment>', '#include <clipping_planes_fragment>' + DITHER + CUTOUT + HOLEOUT)
       .replace('#include <metalnessmap_fragment>', o.vmat ? '#include <metalnessmap_fragment>\n  if ( vMat > .2 && vMat < .5 ) { roughnessFactor = .22; metalnessFactor = .1; } else if ( vMat >= .5 && vMat < .9 ) { roughnessFactor = .3; metalnessFactor = .85; }' : '#include <metalnessmap_fragment>')
       .replace('#include <opaque_fragment>', o.lit === false ? '#include <opaque_fragment>' : 'outgoingLight = mix( outgoingLight, diffuseColor.rgb * vec3( 1., .95, .86 ), vIn );' + TODWIN + '\n  outgoingLight = mix( outgoingLight, diffuseColor.rgb, tLit );' + WINTINT + '\n#include <opaque_fragment>\n  if ( uWinX.z > 0. ) gl_FragColor.a = 1. - tLit;'); };
   mat.customProgramCacheKey = () => 'tier' + (o.mask ? 'm' : '') + (o.lit === false ? 'n' : '') + (o.vmat ? 'v' : '') + (mat.type);

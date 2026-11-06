@@ -36,8 +36,8 @@ import { createIdentity, bodyOf, HOODED } from './identity.js';
 export async function mountRecordUI(api, { Q, page }) {
   const { sim: store } = await import('../../simstate/store.js');
   const identity = createIdentity({ draw: () => page.draw, following: () => {
-    const r = api.cam, s = r?.subject, watching = r?.mode === 'follow' || r?.mode === 'photo' && r.photoSub === 'follow';
-    return watching && s?.agent ? s.aid : null;
+    const s = api.cam?.watched;
+    return s?.agent ? s.aid : null;
   } });
   const sim = { agents: () => store.agents(), on: (...args) => store.on(...args), record: () => {
     const s = store.record(); return { ...s, ...identity.at(s.minute) };
@@ -61,7 +61,7 @@ export async function mountRecordUI(api, { Q, page }) {
   // C2 · follow THIS agent: the card's Follow (F) asks the rig; the keeper holds the rig on that agent through the record's walker swaps
   // and the day / night reload (?follow=), and lets go when the viewer leaves follow or picks someone else
   const follow = createFollowKeeper({ api, Q });
-  const dossier = createDossier({ api, sim, root, city, where: whereOf, portraits, onClose: keep, onFollow: id => follow.want(id) });
+  const dossier = createDossier({ api, sim, root, city, where: whereOf, portraits, onClose: keep, onFollow: (id, m) => follow.want(id, m) });
   const people = createPeople({ sim, root, dossier: { open: id => openDossier(id, { from: 'name' }) } });
   const map = createMap({ sim, root, onOpen: () => { dossier.close(); people.close(); ch9.close(); board.close(); cards.close(); closeChooser(); } });
   const ticker = createTicker({ sim, root });
@@ -116,6 +116,8 @@ export async function mountRecordUI(api, { Q, page }) {
     if (e.defaultPrevented || typing(e) || e.metaKey || e.ctrlKey || e.altKey) return;
     // F: follow the open card's agent. Held F (key repeat), F while already following them, and photo mode's F stay the camera's own
     if (e.code === 'KeyF' && dossier.isOpen && !e.repeat && !dossier.following && rig?.mode !== 'photo') { e.preventDefault(); e.stopPropagation(); dossier.toggleFollow(); return; }
+    // (C2-lock) 6: lock onto the open card's agent (the card's Lock); without a card, or already locked on them, 6 is the camera's own
+    if ((e.code === 'Digit6' || e.code === 'Numpad6') && dossier.isOpen && !e.repeat && !dossier.locked && rig?.mode !== 'photo') { e.preventDefault(); e.stopPropagation(); dossier.toggleLock(); return; }
     const act = { Slash: () => { map.close(); people.toggle(); }, KeyB: () => map.toggle(), KeyN: () => e.shiftKey ? ticker.toggle() : (map.close(), cards.close(), ch9.toggle()),
       KeyL: () => board.toggle(), KeyY: () => cards.toggle() }[e.code];
     if (!act) return; e.preventDefault(); e.stopPropagation(); act(); keep();
@@ -149,7 +151,7 @@ export async function mountRecordUI(api, { Q, page }) {
     const key = sim.record().identityKey;
     if (key !== identityKey) { identityKey = key; update(); tv.refresh(); tape?.refreshIdentity(); }
     if (chooserAt && key !== chooserKey) { const { ids, x, y } = chooserAt; openChooser(ids, x, y); }
-    const s = rig?.mode === 'follow' ? rig.subject : null; city.follow(s?.agent ? s.aid : null); city.frame(dt, t);
+    const s = rig?.watched ?? null; city.follow(s?.agent ? s.aid : null); city.frame(dt, t);
   } catch (e) { if (!frame.failed) { frame.failed = true; console.error('[record ui]', e); } } };
   // (the screen boxes the police signs keep clear of: the menu, the ticker, the player's bar, the caption, an open panel)
   const uiRects = () => [...document.querySelectorAll('#r-menu, #r-ticker, #record-player, #r-tv-cap, #r-tape-cap, #r-missed, #k .k-panel, #k .r-panel, #k .k-chooser')]

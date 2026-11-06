@@ -42,7 +42,11 @@ export function createDossier({ api, sim, root, city, where, portraits = null, o
   const wear = h('div', { class: 'r-wearing', 'aria-label': 'Wearing' });
   const followBtn = button('Follow', { icon: 'follow', kbd: 'F', primary: true, tip: 'Follow with the camera (F)', onclick: () => toggleFollow() });
   followBtn.dataset.act = 'follow';
-  const actions = h('div', { class: 'd-actions r-actions' }, followBtn, go);
+  // (C2-lock) Lock (6): the camera rig's lock mode on THIS agent (camera/lock.js): the viewer turns and zooms, the agent carries the
+  // camera, what is in the way goes see-through. Lock and Follow switch between each other; a second press stops it
+  const lockBtn = button('Lock', { kbd: '6', tip: 'Lock the camera on them: you turn and zoom, walls go see-through (6)', onclick: () => toggleLock() });
+  lockBtn.dataset.act = 'lock';
+  const actions = h('div', { class: 'd-actions r-actions' }, followBtn, lockBtn, go);
   P.el.append(h('header', { class: 'r-head r-head-card' }, portrait, h('div', { class: 'r-id' }, title, sub, wear), x), actions, body);
   const drawing = watchDrawing(root, P.el, [title, sub, wear, actions, body]);
   let cur = null, origin = 'name', sig = '', replay = null, faceKey = null;
@@ -57,6 +61,15 @@ export function createDossier({ api, sim, root, city, where, portraits = null, o
   // ── Follow: the rig's follow mode on this agent's walker (the record's own: rig.people.byAid), off again with a second press
   const rig = () => api.cam ?? null;
   const following = () => { const r = rig(), s = r?.subject; return !!cur && r?.mode === 'follow' && !!s?.agent && s.aid === cur; };
+  const locked = () => { const r = rig(), s = r?.subject; return !!cur && r?.mode === 'lock' && !!s?.agent && s.aid === cur; };
+  function toggleLock() {
+    const r = rig(); if (!cur || !r) return false;
+    if (locked()) { r.setMode('orbit'); onFollow(null); syncFollow(); return false; }
+    const w = r.people?.byAid(cur);
+    if (!w) { syncFollow(); return false; }
+    if (r.setMode('lock', { subject: w }) === false) { syncFollow(); return false; }
+    onFollow(cur, 'lock'); syncFollow(); return true;
+  }
   function toggleFollow() {
     const r = rig(); if (!cur || !r) return false;
     if (following()) { r.setMode('orbit'); onFollow(null); syncFollow(); return false; }
@@ -67,12 +80,16 @@ export function createDossier({ api, sim, root, city, where, portraits = null, o
   let fState = '';
   function syncFollow() {
     if (!cur) return;
-    const on = following(), can = on || !!rig()?.people?.byAid(cur), k = `${on}|${can}`;
+    const on = following(), lk = locked(), can = on || lk || !!rig()?.people?.byAid(cur), k = `${on}|${lk}|${can}`;
     if (k === fState) return; fState = k;
     followBtn.classList.toggle('is-on', on); followBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
     const lab = followBtn.querySelector('.k-btn-label'), want = on ? 'Following' : 'Follow'; if (lab && lab.textContent !== want) lab.textContent = want;
     if (can) followBtn.removeAttribute('aria-disabled'); else followBtn.setAttribute('aria-disabled', 'true');
     followBtn.dataset.tip = on ? 'Following: click (or 1) to stop · F now zooms out' : can ? 'Follow with the camera (F)' : 'Not on the street right now';
+    lockBtn.classList.toggle('is-on', lk); lockBtn.setAttribute('aria-pressed', lk ? 'true' : 'false');
+    const ll = lockBtn.querySelector('.k-btn-label'), lw = lk ? 'Locked' : 'Lock'; if (ll && ll.textContent !== lw) ll.textContent = lw;
+    if (can) lockBtn.removeAttribute('aria-disabled'); else lockBtn.setAttribute('aria-disabled', 'true');
+    lockBtn.dataset.tip = lk ? 'Locked on: click (or 1) to stop · Follow to follow instead' : can ? 'Lock the camera on them: you turn and zoom, walls go see-through (6)' : 'Not on the street right now';
   }
   const reference = () => {
     if (!cur || origin !== 'body') return cur;
@@ -166,7 +183,7 @@ export function createDossier({ api, sim, root, city, where, portraits = null, o
       h('p', { class: 'r-note' }, recordBadge(), ' · on the record'),
       p.people.record.length ? h('ul', { class: 'r-list' }, ...newest('record').map(([t, i]) => tie('record')(t, i))) : h('p', { class: 'r-none' }, 'Nothing disclosed yet.'));
   }
-  return { open, close, update, toggleFollow, syncFollow, get following() { return following(); }, get current() { return cur; }, get reference() { return reference(); }, get isOpen() { return P.isOpen; }, el: P.el,
+  return { open, close, update, toggleFollow, toggleLock, syncFollow, get following() { return following(); }, get locked() { return locked(); }, get current() { return cur; }, get reference() { return reference(); }, get isOpen() { return P.isOpen; }, el: P.el,
     // a replay (C1-9's tape) supplies { replay: snapshot at the replayed minute, disclosed: the retained later horizon }; null clears it
     setReplay(r) { replay = r ? { ...r, key: `${r.replay.minute}|${r.disclosed.minute}` } : null; update(true); } };
 }

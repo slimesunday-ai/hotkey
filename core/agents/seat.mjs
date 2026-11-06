@@ -22,6 +22,8 @@
 //               'openrouter', OpenRouter's fields (openrouter.mjs), with `provider`, its routing, only when given; or
 //               (R8c) 'claude', the Messages API's thinking fields (anthropic.mjs claudeFields), which its transport
 //               turns into a Messages body. The messages are the same every way
+//     effort    R12: a thinking Claude seat's own effort (anthropic.mjs CLAUDE_EFFORTS), null for the table's; only
+//               the Claude API reads it
 //     reply     R8: 'json' (the default) or 'tools', how the model answers (REPLY_MODES)
 //     secret    the per-season secret the handles' shuffle uses, kept by the runner, never the season's seed
 //     brief     (readResult, memory, lastResults, round) -> messages: the briefing (R2-4); `round` is the call's, so the
@@ -214,7 +216,7 @@ function completion(res, api, tools = false, idle = false) {
 export function makeSeat({
   id, url, fetch: send, secret, brief, orders = noOrders, clock = REAL_CLOCK, model, thinking = false, maxTokens,
   temperature, api = 'local', provider = null, observe = null, memo = {}, record = [], onTape = null, reply: mode = DEFAULT_REPLY,
-  dayToolChoice = 'required', cacheMark = false,
+  dayToolChoice = 'required', cacheMark = false, effort = null,
 } = {}) {
   if (typeof id !== 'string' || !id) throw new Error('a seat plays one agent: pass its id');
   if (!Object.hasOwn(APIS, api)) throw new Error(`a seat calls the local model's API, OpenRouter's or the Claude API (${CLAUDE}), not ${api}`);
@@ -325,7 +327,7 @@ export function makeSeat({
     };
     const body = {
       ...(model === undefined ? {} : { model }), messages: messages(present(deal, prior)),
-      ...(tools ? { tools: toolDefinitions(), tool_choice: toolChoice(thinking, lock, dayToolChoice, api) } : { response_format: { type: 'json_object' } }), ...APIS[api]({ thinking, provider, model }),
+      ...(tools ? { tools: toolDefinitions(), tool_choice: toolChoice(thinking, lock, dayToolChoice, api) } : { response_format: { type: 'json_object' } }), ...APIS[api]({ thinking, provider, model, effort }),
       ...(maxTokens === undefined ? {} : { max_tokens: maxTokens }), ...(temperature === undefined ? {} : { temperature }),
     };
     const info = { seat: id, day: view.day, round, view, deal };
@@ -505,7 +507,7 @@ export function makeSeat({
     const presentation = Array.isArray(formatted) ? null : formatted;
     const body = {
       ...(model === undefined ? {} : { model }), messages: [...(presentation ? presentation.messages : formatted), { role: 'user', content: task }],
-      ...(tools ? { tools: toolDefinitions(), tool_choice: 'none' } : {}), ...APIS[api]({ thinking, provider, model }),
+      ...(tools ? { tools: toolDefinitions(), tool_choice: 'none' } : {}), ...APIS[api]({ thinking, provider, model, effort }),
       ...(maxTokens === undefined ? {} : { max_tokens: maxTokens }), ...(temperature === undefined ? {} : { temperature }),
     };
     const got = await request(body, { seat: id, day: view.day, round: 'dawn', view, deal }, presentation, false, { readReply: dawnReply, delivers: false });

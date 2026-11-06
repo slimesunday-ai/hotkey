@@ -175,4 +175,8 @@ export default {
       P.bmp('+x', stroke.map(r => [...r].reverse().join('')), { W }, 4 * 3, 4 * 32 + 2);                      // the left side
       P.bmp('+z', stroke, { W }, 4 * -5 + 2, 4 * 17 + 2);                                                      // the chest (bare)
       P.bmp('+y', ['WWWW', 'W...'], { W }, 4 * -8 + 2, 4 * 0 + 2); P.bmp('+y', ['WWWW', '...W'], { W }, 4 * 6 - 2, 4 * 0 + 2); } },   // the shoulders
+  // THE CLEANERS' GLOVES (uniform: true: never rolled, worn only by name: style/city/cast.js OUTFITS cleaner_*). The hands are the skin on
+  // this rig (fit/held.js hands()), so this skin is the pair's blue-grey nitrile gloves; their hood covers every other skin cell. In the
+  // agent pool's file because the NPC pool takes ordinary skin tones only (audit/npc-palette.mjs), and a glove is not one.
+  cleaner_glove: { name: 'Cleaner · nitrile gloves', uniform: true, why: 'common · the Cleaners: blue-grey nitrile gloves (the hands; the hood hides the rest)', c: 0x7d93a8 },
 };

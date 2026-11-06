@@ -1124,7 +1124,7 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
   const rides = new Map(), handoff = new Map(); let TRV = null;
   const travel = () => TRV ??= Promise.all([import('../../../world/export/world.json', { with: { type: 'json' } }), import('../../../world/export/travel.mjs'), import('../simstate/movetune.mjs')])
     .then(([{ default: world }, { createTravel }, { tuneWorld }]) => createTravel(tuneWorld(structuredClone(world)))).catch(e => { log('record ride: no travel (' + (e && e.message || e) + ')'); return null; });
-  const camOn = id => { const c = typeof window !== 'undefined' ? window.__city?.cam : null; return !!c && c.mode === 'follow' && c.subject?.aid === id; };
+  const camOn = id => { const c = typeof window !== 'undefined' ? window.__city?.cam : null; return !!c && c.watched?.aid === id; };   // (the person watched: camera/rig.js watched)
   function carPt(car, lx, lz) { const ry = car.rotation.y, ux = Math.sin(ry), uz = Math.cos(ry); return { x: car.position.x + lx * uz + lz * ux, z: car.position.z - lx * ux + lz * uz }; }
   function startRide(r) {
     // (the arrest that holds it hands it on as it ends, this frame or the next: wait for that, a few island seconds at most)
@@ -1169,7 +1169,7 @@ export function createScenes({ stage, scene, agents, layer, looks, player, plann
       R.car.position.set(a[0] + (b[0] - a[0]) * f, 0, a[1] + (b[1] - a[1]) * f); if (L > .05) R.car.rotation.set(0, Math.atan2(b[0] - a[0], b[1] - a[1]), 0); }
     // (the follow cam rides with it: a stand-in subject on the cruiser under the agent's id; the agent itself again once in the yard)
     if (!R.proxy && camOn(r.id)) { const a = agents.map.get(r.id); R.proxy = { id: -2e6 - idHash(r.id), agent: true, aid: r.id, look: a?.look ?? 0, p: [0, .7, 0, 0], yawS: 0, vc: 0, ph: 0, tier: 1, gone: false, ride: true };
-      try { window.__city.cam.follow.set(R.proxy); } catch (e) { log('record ride: follow ' + e.message); } }
+      try { window.__city.cam.carry(R.proxy); } catch (e) { log('record ride: follow ' + e.message); } }
     if (R.proxy) { const q = R.proxy; q.p[0] = R.car.position.x; q.p[2] = R.car.position.z; q.p[3] = q.yawS = R.car.rotation.y; q.vc = R.len / Math.max(1e-6, (r.arr - inCar) * GAME_MIN); }
     return true;
   }

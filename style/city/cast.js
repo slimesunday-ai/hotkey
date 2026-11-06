@@ -30,12 +30,17 @@ export { S, MATS, build, pose, compose, dispose, look, mannequin, faceGrid, trai
 
 // ── the cast: slot → [entry] (registry order), killed traits left out
 export const KILLED = new Set(Object.entries(CURATION.traits || {}).filter(([, e]) => e && e.status === 'kill').map(([k]) => k));
-export const CAST = Object.fromEntries(SLOTS.map(s => [s, Object.values(REG[s] || {}).filter(t => !KILLED.has(t.key))]));
+// UNIFORM PIECES (lane C2-cleaners-art, 2026-11-04: the Cleaners): a registry trait marked `uniform: true` is never rolled for anyone; it
+// is worn only by name, through an OUTFIT below (cleaner_visor / cleaner_mask). So adding one leaves every rolled look exactly as it was.
+const uniform = t => !!t.uniform;
+export const CAST = Object.fromEntries(SLOTS.map(s => [s, Object.values(REG[s] || {}).filter(t => !KILLED.has(t.key) && !uniform(t))]));
 // the NPC pool's cast, same shape (an empty slot, e.g. face ink, rolls nothing)
-export const NPC_CAST = Object.fromEntries(SLOTS.map(s => [s, Object.values(NPC_REG[s] || {}).filter(t => !KILLED.has(t.key))]));
+export const NPC_CAST = Object.fromEntries(SLOTS.map(s => [s, Object.values(NPC_REG[s] || {}).filter(t => !KILLED.has(t.key) && !uniform(t))]));
+// the uniform pieces, either pool (worn by OUTFITS only)
+export const UNIFORM_CAST = Object.fromEntries(SLOTS.map(s => [s, [...Object.values(REG[s] || {}), ...Object.values(NPC_REG[s] || {})].filter(t => !KILLED.has(t.key) && uniform(t))]));
 // slime's RANK per trait (the Trait Studio's ranking mode: common | rare | epic | grail). It overrides the designer's tier below.
 export const RANKS = new Map(Object.entries(CURATION.traits || {}).filter(([, e]) => e && ['common', 'rare', 'epic', 'grail'].includes(e.rank)).map(([k, e]) => [k, e.rank]));
-const inCast = (slot, id) => !!id && (CAST[slot]?.some(t => t.id === id) || NPC_CAST[slot]?.some(t => t.id === id));   // (either pool: ids never overlap)
+const inCast = (slot, id) => !!id && (CAST[slot]?.some(t => t.id === id) || NPC_CAST[slot]?.some(t => t.id === id) || UNIFORM_CAST[slot]?.some(t => t.id === id));   // (either pool: ids never overlap; a uniform piece by name)
 
 // ── ROLL WEIGHTS (tunable). A believable crowd, not a costume party: everyday pieces dominate, loud pieces are seasoning.
 // TIER_W: a trait's weight by its EFFECTIVE tier: slime's rank (RANKS) when he has ranked it, else the designer's (the registry's
@@ -78,6 +83,14 @@ export const OUTFITS = {
   officer: { top: 'precinct_blues', hat: 'precinct_cap' },        // a corrections / precinct officer
   // C1-3: a hooded attacker's stand-in on the record path (stage/record.js), one anonymous look; ids not in the cast are skipped
   hooded: { top: 'hoodie', hat: 'beanie', eyewear: 'none', held: 'none' },
+  // THE CLEANERS (lane C2-cleaners-art, 2026-11-04): the white hazmat coverall, hood, nitrile gloves (the hands: the skin slot) and rubber
+  // boots, with nothing of the roll's face, hair or extras showing. Two face variants for slime to pick from; both of the pair wear the
+  // same one. Lay it over an NPC roll (rollLook(seed, { pool: 'npc', wear: OUTFITS.cleaner_visor })): the roll only decides the eyes and
+  // the mouth, which the hood covers.
+  cleaner_visor: { skin: 'cleaner_glove', hat: 'npc_cleaner_hood_visor', top: 'npc_cleaner_coverall', bottom: 'npc_cleaner_coverall_legs', shoes: 'npc_cleaner_boots',
+    hair: 'none', mouth: 'none', eyewear: 'none', ears: 'none', mark: 'none', acc: 'none', held: 'none' },
+  cleaner_mask: { skin: 'cleaner_glove', hat: 'npc_cleaner_hood_mask', top: 'npc_cleaner_coverall', bottom: 'npc_cleaner_coverall_legs', shoes: 'npc_cleaner_boots',
+    hair: 'none', mouth: 'none', eyewear: 'none', ears: 'none', mark: 'none', acc: 'none', held: 'none' },
 };
 
 // ── THE NAMED CAST (the city's handles: the DROP queue, door, deli, roof dancers, plaza, giants, sim agents, signage). The old looks

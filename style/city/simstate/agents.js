@@ -186,7 +186,7 @@ export function createAgents({ peds, places, stands = null, doorOf: doorAnchor =
   const FR = new THREE.Frustum(), PM = new THREE.Matrix4(), V = new THREE.Vector3(); let cam = null, farR = 90, tick = 0, snaps0 = -1;
   const seen = w => { if (!cam || !w) return false; const p = w.p; if (Math.hypot(p[0] - cam.position.x, p[2] - cam.position.z) > farR) return false; V.set(p[0], p[1] + 1, p[2]); return FR.containsPoint(V); };
   const seenAt = (x, y, z) => { if (!cam) return false; if (Math.hypot(x - cam.position.x, z - cam.position.z) > farR) return false; V.set(x, y + 1, z); return FR.containsPoint(V); };
-  const followed = id => { const c = typeof window !== 'undefined' ? window.__city?.cam : null; return !!c && c.mode === 'follow' && c.subject?.aid === id; };
+  const followed = id => { const c = typeof window !== 'undefined' ? window.__city?.cam : null; return !!c && c.watched?.aid === id; };   // (the person watched: camera/rig.js watched)
   function drive(t, dt, focus, camera, R) {
     const t0 = performance.now(); clock.pageT += dt; cam = camera; farR = (R?.charMid ?? 70) * 1.05; tick++;   // (page time from the frames' dt: monotonic, whoever drives the frames)
     if (camera) { PM.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); FR.setFromProjectionMatrix(PM); }

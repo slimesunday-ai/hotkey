@@ -28,7 +28,7 @@ export function mountTape(api, ui) {
   let req = { busy: false, pending: null, id: 0, snap: new Map() }, lastReqMin = null, lastReqAt = 0, extendTimer = 0, followWant = null, followTries = 0, secretsOn = prefs.get(SECRETS_KEY) !== '0', stateWait = new Map(), sid = 0;
   const B = { frames: 0, ms: 0, max: 0, rtt: 0 };
   const liveRate = () => { const c = sim.clock(); return c && c.speed > 0 ? c.speed : 1.6; };
-  const focus = () => [dossier.isOpen ? dossier.current : null, rig?.mode === 'follow' && rig.subject?.agent ? rig.subject.aid : null, tape.handle];
+  const focus = () => [dossier.isOpen ? dossier.current : null, rig?.watched?.agent ? rig.watched.aid : null, tape.handle];
   // ── the worker: data in the background
   function startWorker() {
     if (worker) { worker.postMessage({ type: 'open' }); return; }
@@ -95,7 +95,7 @@ export function mountTape(api, ui) {
   };
   // ── open / close
   function saveLive() { const cam = api.camera, ctl = api.controls;
-    return { mode: rig?.mode ?? 'orbit', aid: rig && (rig.mode === 'follow' || (rig.mode === 'photo' && rig.photoSub === 'follow')) && rig.subject?.agent ? rig.subject.aid : null,
+    return { mode: rig?.mode ?? 'orbit', aid: rig?.watched?.agent ? rig.watched.aid : null,
       pos: cam.position.toArray(), tgt: ctl.target.toArray(), fov: cam.fov, dossier: dossier.isOpen ? dossier.current : null, pins: city.pins }; }
   function ensureUI() { if (transport) return;
     transport = createTransport({ root, liveNow: () => tape.lens === 'archive' ? null : sim.clock()?.t ?? null, onLive: () => close(), onSecrets: () => toggleSecrets(), onEvent: m => goToEvent(m) }); transport.setSecrets(secretsOn);
@@ -124,7 +124,7 @@ export function mountTape(api, ui) {
   // the camera back where it was: after the live walkers are placed again (a frame or two), so a follow finds its person
   function restoreCamera() { const s = restore; if (!s) return; s.tries++;
     if (!rig) { api.camera.position.fromArray(s.pos); api.controls.target.fromArray(s.tgt); api.camera.fov = s.fov; api.camera.updateProjectionMatrix(); api.controls.update(); restore = null; return; }
-    if (s.mode === 'follow' && s.aid) { const w = rig.people.byAid(s.aid); if (w) { rig.setMode('follow', { subject: w }); city.follow(s.aid); restore = null; return; } if (s.tries < 30) return; }
+    if ((s.mode === 'follow' || s.mode === 'lock') && s.aid) { const w = rig.people.byAid(s.aid); if (w) { if (s.mode === 'lock') rig.setMode('lock', { subject: w, restore: true }); else rig.setMode('follow', { subject: w }); city.follow(s.aid); restore = null; return; } if (s.tries < 30) return; }
     rig.setMode('orbit', { view: { pos: s.pos, tgt: s.tgt, fov: s.fov } }); restore = null; }
   // DAY / NIGHT: the page is built for one or the other, and simstate/live.js reloads it into the live sim's when they differ. While TAPE is
   // open that reload would close the tape, so it is held off: live.js skips a reload within 15 s of the last one (its own loop guard,
@@ -148,7 +148,7 @@ export function mountTape(api, ui) {
     // the camera is the event's from the click: a follow (Watch tape's, a person clicked) lets go now, not at the flight — it chased the
     // walker the seek moved for the visit's first frames (a cut to wherever the tape had them), and a follow still wanted re-took the
     // camera from the shot
-    followWant = null; if (rig?.mode === 'follow') rig.toOrbit({ instant: true });
+    followWant = null; if (rig?.watched && rig.mode !== 'photo') rig.toOrbit({ instant: true });
     const t0 = tape.seek(m.t - Math.max(1, tape.rate * VISIT.leadS), 'event'); if (t0 === null) return false;
     visit?.go?.cancel(); const v = visit = { m, t0, phase: 'frame', at: performance.now(), pt: null, go: null, state: null };
     stateAt(m.t - .5).then(st => { if (visit === v) v.state = st || false; });   // (the city just before it: where its agents stood)

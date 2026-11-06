@@ -74,6 +74,23 @@ export const CAM = {
   // inside it the body is gone) · line: m off the sight line · ramp: m over which a body comes back · walker [r, y0, y1] · car [r, y, half-length]
   // lineAlpha (C2-camera2): what a body on the line dissolves to (fade.js THE LINE, CLEAR: 0, gone, and out of its batch; it was alpha)
   fade: { on: true, alpha: .35, line: .25, ramp: .35, nearIn: .05, nearAt: .25, near: .6, lineAlpha: 0, walker: [.3, .3, 1.55], car: [1.0, .8, 1.5] },
+  // LOCK (C2-lock, camera/lock.js, slime 11-04: "another setting just locked onto a subject and you could rotate and zoom around them
+  // instead of the camera trying to avoid everything"): the viewer's angle and distance round the person, fixed to the world, carried
+  // with them; nothing in the way moves the camera — it goes see-through instead (hole: gpu.js HOLE, set by fade.js).
+  //   distRange · pitchRange (rad) · dist / pitch: the default arm, the viewer's own once they move it (viewerDist, viewerPitch,
+  //   viewerAz: kept in this browser, so a day / night reload comes back to the same angle) · anchorH × the person's height: the point
+  //   it turns round (follow's) · floor: m the lens stays above their feet · viewT: s the view turns onto them after a hand-off ·
+  //   enterT: s of the glide in from far off (in parameter space, along the line to them) · switchGlideMax / switchT: a switch to someone
+  //   ≤ m away with a clear line between glides over s, else the camera is at once on them · outT: s of the hand-off to follow (relative
+  //   to the person) · hole: lens / at (m: the cone's radius at the lens and at the person), edge (m of soft edge), short (m short of the
+  //   chest it ends), floor [lo, hi] (m over their feet where it begins), chest (m over the feet it aims at), inT / outT (s it eases in / out) ·
+  //   lineBody [r, top]: m a walker's body on fade.js's line grows by while the hole is on, to what is drawn (C2-lock2: .3 + .45 = the
+  //   near walkers' .75 m reach; 1.55 + .55 = 2.1 m, a head; the lock tools' body box, 3debe44) · lineAlpha: what a walker or a car on the
+  //   line drops to under Lock (C2-lock2, slime 11-05 "ghost the cars, lock only": a see-through ghost on the near fade's screen-door,
+  //   CAM.fade.alpha's .35 to start; Follow keeps CAM.fade.lineAlpha, 0)
+  lock: { dist: 6, distRange: [1.5, 80], pitch: .3, pitchRange: [-.35, 1.5], viewerDist: null, viewerPitch: null, viewerAz: null, anchorH: .82, floor: .25,
+    viewT: .45, enterT: [.6, 2.2], switchGlideMax: 25, switchT: [.4, 1], outT: .6, orbitRate: 1.8, cycleRadius: 70,
+    hole: { on: true, lens: 1.0, at: 1.1, edge: .4, short: .05, floor: [.15, .4], chest: 1.25, inT: .35, outT: .4 }, lineBody: [.45, .55], lineAlpha: .35 },
   photo: {
     speed: 3.5, lookSmooth: .14, inputSmooth: .16, accelHL: .29, brakeHL: .43,   // slower, heavier: smooth pans for clips
     fovRange: [14, 100], rollStep: .9,          // deg · rad/s
@@ -92,6 +109,6 @@ export const CAM = {
   touch: { stick: 64, look: 1.6 },              // px for a full stick · look multiplier
 };
 
-const KEY = 'city.camera', OWN = { look: ['sens', 'invertY'], photo: ['format'], follow: ['viewerDist', 'viewerPitch'] };
+const KEY = 'city.camera', OWN = { look: ['sens', 'invertY'], photo: ['format'], follow: ['viewerDist', 'viewerPitch'], lock: ['viewerDist', 'viewerPitch', 'viewerAz'] };
 export function loadPrefs() { try { const v = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!v) return; for (const [s, ks] of Object.entries(OWN)) for (const k of ks) if (v[s]?.[k] !== undefined) CAM[s][k] = v[s][k]; } catch {} }
 export function savePrefs() { try { const v = {}; for (const [s, ks] of Object.entries(OWN)) { v[s] = {}; for (const k of ks) v[s][k] = CAM[s][k]; } localStorage.setItem(KEY, JSON.stringify(v)); } catch {} }

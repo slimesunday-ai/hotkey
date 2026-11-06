@@ -12,7 +12,8 @@
 //              owner: the live sim's owner view (?sim=live&simurl=…/state?view=owner&handle=&token= → me.home), else ?owner=<lot id> (dev).
 //              A home saved in the builder (saved.js, localStorage) is built from its saved layout and slot fills; else its preset.
 import * as THREE from 'three';
-import { CUT } from '../../gpu.js';
+import { CUT, HOLE_PARS, HOLE_VERT, holeGLSL, holeUniforms, holeize } from '../../gpu.js';
+import { FADE_PICK, FADE_UNIFORMS } from '../../camera/fade.js';
 import { P, addressAt } from '../../plan.js';
 import { layoutFor, TIER_OF, skinned } from './assign.js';
 import { lotEntry, homeSeed } from './frame.js';
@@ -75,14 +76,24 @@ export function createHomes(api, { Q, NIGHT = false, SHOT = false, record = null
     if ( clz < uCut[2].z && ( ( wide && vP.y > uCut[1].y && vP.y < uCut[1].z && clz > uCut[2].x ) || ( sto && ( ( wide && clz > uCut[2].y ) || ( clx < uCut[2].w && clz > uCut[3].z ) ) ) ) ) discard; }`;
   async function sceneHit(e) { const r = renderer.domElement.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
     prt ??= new THREE.WebGLRenderTarget(1, 1, { type: THREE.FloatType, depthBuffer: true, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
-    pmat ??= new THREE.ShaderMaterial({ vertexShader: `#include <common>\n#include <batching_pars_vertex>\nvarying vec3 vP;\nvoid main() {\n#include <batching_vertex>\n#include <begin_vertex>\n#include <project_vertex>\n  vP = transpose( mat3( viewMatrix ) ) * ( mvPosition.xyz - viewMatrix[ 3 ].xyz ); }`,
-      fragmentShader: `uniform mat4 uCut; varying vec3 vP;\nvoid main() {${PICKCUT}\n  gl_FragColor = vec4( vP, 1. ); }`, uniforms: { uCut: CUT } });
+    // (C2-lock2: uHoleS 1 while a mesh of the static city's instanced or batched ones is drawn — its own material marked gpu.js
+    // holeStatic — so the hole cuts it here as it does on the screen; the walkers and the cars keep 0, as HOLE_VERT has them)
+    // (C2-lock2, round 2: and a walker or a car ghosted on Lock's line is not there to hit either — camera/fade.js FADE_PICK, its own line
+    // rule: uCfGhost 1 and its body in uCfBody while a mesh with fade.js's fade is drawn; off Lock the pick meets every body as before)
+    pmat ??= new THREE.ShaderMaterial({ vertexShader: `#include <common>\n#include <batching_pars_vertex>\nvarying vec3 vP; varying float vHoleK; uniform float uHoleS;${FADE_PICK.pars}\nvoid main() {\n#include <batching_vertex>\n#include <begin_vertex>\n#include <project_vertex>${HOLE_VERT}\n  vHoleK = max( vHoleK, uHoleS );${FADE_PICK.vert}\n  vP = transpose( mat3( viewMatrix ) ) * ( mvPosition.xyz - viewMatrix[ 3 ].xyz ); }`,
+      // (C2-lock: and the lock camera's see-through hole, gpu.js holeGLSL: what the screen doesn't draw isn't there to hit)
+      fragmentShader: `uniform mat4 uCut; varying vec3 vP; ${HOLE_PARS} ${FADE_PICK.fragPars}\nvoid main() {${PICKCUT}${holeGLSL('vP')}${FADE_PICK.frag}\n  gl_FragColor = vec4( vP, 1. ); }`,
+      uniforms: holeUniforms({ uCut: CUT, uHoleS: { value: 0 }, ...FADE_UNIFORMS, uCfBody: { value: new THREE.Vector4() }, uCfGhost: { value: 0 } }) });
     pcam.copy(camera); pcam.setViewOffset(r.width, r.height, x - .5, y - .5, 1, 1); pcam.updateProjectionMatrix();
     const hid = [], sm = renderer.shadowMap, keep = { au: sm.autoUpdate, nu: sm.needsUpdate, rt: renderer.getRenderTarget(), ov: scene.overrideMaterial, bg: scene.background, br: scene.onBeforeRender, cc: renderer.getClearColor(new THREE.Color()), ca: renderer.getClearAlpha(), ac: renderer.autoClear };
-    scene.traverseVisible(o => { const m = Array.isArray(o.material) ? o.material[0] : o.material; if (!m) return; if (o.isPoints || o.isLine || o.isSprite || m.transparent || m.depthWrite === false || m.colorWrite === false) { o.visible = false; hid.push(o); } });
+    const marked = [], Uu = pmat.uniforms, mark = (hs, body) => () => { Uu.uHoleS.value = hs; Uu.uCfGhost.value = body ? 1 : 0; if (body) Uu.uCfBody.value.copy(body.value); pmat.uniformsNeedUpdate = true; }, holeS = on => mark(on, null);
+    scene.traverseVisible(o => { const m = Array.isArray(o.material) ? o.material[0] : o.material; if (!m) return; if (o.isPoints || o.isLine || o.isSprite || m.transparent || m.depthWrite === false || m.colorWrite === false) { o.visible = false; hid.push(o); return; }
+      const hs = m._holeStatic && (o.isInstancedMesh || o.isBatchedMesh), body = m._camFade ?? null;
+      if (hs || body) { const b = o.onBeforeRender, a = o.onAfterRender, own = [Object.hasOwn(o, 'onBeforeRender'), Object.hasOwn(o, 'onAfterRender')], on = mark(hs ? 1 : 0, body), off = mark(0, null); marked.push([o, b, a, own]);
+        o.onBeforeRender = function (...x) { b.apply(this, x); on(); }; o.onAfterRender = function (...x) { off(); a.apply(this, x); }; } });
     try { sm.autoUpdate = false; sm.needsUpdate = false; scene.overrideMaterial = pmat; scene.background = null; scene.onBeforeRender = () => {}; renderer.setClearColor(0, 0); renderer.autoClear = true;
       renderer.setRenderTarget(prt); renderer.render(scene, pcam); }
-    finally { for (const o of hid) o.visible = true; sm.autoUpdate = keep.au; sm.needsUpdate = keep.nu; scene.overrideMaterial = keep.ov; scene.background = keep.bg; scene.onBeforeRender = keep.br;
+    finally { for (const o of hid) o.visible = true; for (const [o, b, a, own] of marked) { if (own[0]) o.onBeforeRender = b; else delete o.onBeforeRender; if (own[1]) o.onAfterRender = a; else delete o.onAfterRender; } holeS(0)(); sm.autoUpdate = keep.au; sm.needsUpdate = keep.nu; scene.overrideMaterial = keep.ov; scene.background = keep.bg; scene.onBeforeRender = keep.br;
       renderer.setClearColor(keep.cc, keep.ca); renderer.autoClear = keep.ac; renderer.setRenderTarget(keep.rt); }
     if (renderer.readRenderTargetPixelsAsync) await renderer.readRenderTargetPixelsAsync(prt, 0, 0, 1, 1, PX); else renderer.readRenderTargetPixels(prt, 0, 0, 1, 1, PX);
     return PX[3] > .5 ? new THREE.Vector3(PX[0], PX[1], PX[2]) : null; }
@@ -126,6 +137,8 @@ export function createHomes(api, { Q, NIGHT = false, SHOT = false, record = null
       .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n  totalEmissiveRadiance += diffuseColor.rgb * uGlow;'); }; m.customProgramCacheKey = () => 'homeglow'; return m; };
     const MATS = [glow(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .78, metalness: 0 })), glow(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .22, metalness: .1 })),
       glow(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .3, metalness: .85 })), new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false })];
+    // (C2-lock: the rooms go see-through on the lock camera's line too, gpu.js holeize: off with the hole)
+    for (const m of MATS) holeize(m);
     return mods = { R, F, G, C, MATS, GLOW }; }
   // ── building one home's inside (cached: the last KEEP stay built)
   async function build(h) {

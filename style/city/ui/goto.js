@@ -78,7 +78,7 @@ export function followAgent(api, { sim = window.__simstore, handle: hh, open = n
     else shotsFor(api).go({ kind: 'establishing', at: { x: w.x, z: w.z }, label: '@' + hh }, { settle: false }).done.then(ok => { if (ok) followAfterLoad(api, hh); });   // (far: through the load-in, then follow takes over at the viewer's own zoom: no settle)
     moved = true;
   } else if (w && !w.coarse) { moved = flyTo(api, { x: w.x, z: w.z, label: c.placeName || '@' + hh }); msg = c.status === 'jail' ? `@${hh} is in the yard on Iron Island` : `@${hh} is inside${c.placeName ? ': ' + c.placeName : ''}`; }
-  else if (w?.coarse && c.district) { if (rig?.mode === 'follow') rig.setMode('orbit'); moved = flyTo(api, { dist: c.district }); msg = `@${hh} is somewhere in ${P2?.distName(c.district) || c.district}: only the district is public`; }
+  else if (w?.coarse && c.district) { if (rig?.watched && rig.mode !== 'photo') rig.setMode('orbit'); moved = flyTo(api, { dist: c.district }); msg = `@${hh} is somewhere in ${P2?.distName(c.district) || c.district}: only the district is public`; }
   else msg = gone ? `@${hh} is ${c.retired ? 'retired' : 'dead'}` : `@${hh} is out of sight right now`;
   open?.(hh); if (msg) note(msg, 2800); return moved;
 }

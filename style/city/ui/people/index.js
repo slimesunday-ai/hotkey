@@ -159,7 +159,7 @@ export function createPeople({ api, sim, dossier, city, root, portraits, beacons
   // ── the active row (↑↓) and the beacon (hovered row first, else the ↑↓ choice while the search has focus)
   function markActive(scrollTo = true) { const hh = shown[active]; for (const r of rows.values()) { const on = r.h === hh; if ((r.el.getAttribute('aria-selected') === 'true') !== on) attr(r.el, 'aria-selected', on ? 'true' : 'false'); }
     const r = hh && rows.get(hh); attr(q, 'aria-activedescendant', r ? r.el.id : null); if (scrollTo && r) r.el.scrollIntoView({ block: 'nearest' }); light(); }
-  function light() { if (!isOpen) return; let hh = hoverH || (document.activeElement === q && st.q ? shown[active] : null); const rig = api.cam; if (hh && !hoverH && rig?.mode === 'follow' && rig.subject?.aid === hh) hh = null;   // (the one followed already wears the city's own label)
+  function light() { if (!isOpen) return; let hh = hoverH || (document.activeElement === q && st.q ? shown[active] : null); const rig = api.cam; if (hh && !hoverH && rig?.watched?.aid === hh) hh = null;   // (the one followed already wears the city's own label)
     const c = hh && sim.agents().find(x => x.handle === hh);
     beacons.show(c ? [{ handle: hh, card: c, hot: true, sub: cap(c.now || '') }] : []); }
   // ── thumbnails: rows on screen ask, one render at a time

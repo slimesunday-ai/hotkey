@@ -49,6 +49,18 @@ function farOf(spec, V) {
   return V;
 }
 
+// C2-VAN · the rear doors of a model that has them (spec.doors): two leaves on the tail, each hinged at a pillar's inner edge on the tail's
+// face, swung open about a vertical axis by `open` 0…1 (the stage owns it): yaw = dir · max · open (a quarter turn = 1.571; max 1.745, 100°).
+// Open, the leaves stay inside the van's width + 0.02 m and ≤ 0.71 m behind its tail (doorReach measures it). The bay: floor (m above
+// the road), the doorway's x, the bay's inside (body frame, metres: base centre at the origin, facing +z, the tail at z −2.2).
+function vanDoors() {
+  const B = M.VAN_BAY, S = CV, X = v => +(v * S - 1).toFixed(3), Z = v => +(v * S - 2.2).toFixed(3);
+  const Y = v => +(v * S).toFixed(3);
+  return { max: 1.745, floor: Y(B.floor), tail: Z(0),
+    leaves: [{ hinge: [X(B.door[0]), Z(0)], dir: 1, x: [X(B.door[0]), X(B.seam)] }, { hinge: [X(B.door[1]), Z(0)], dir: -1, x: [X(B.seam), X(B.door[1])] }],
+    doorway: { x: [X(B.door[0]), X(B.door[1])], y: [Y(B.floor), Y(B.top)] }, bay: { x: [X(B.door[0]), X(B.door[1])], y: [Y(B.floor), Y(B.top - 1)], z: [Z(1), Z(B.z1 - 1)] } };
+}
+
 // ── the fleet. mix weights by district (the kit names: downtown, strip, suburbs, estates, trailer = Sunny Acres, industrial = the Yards,
 // docks, junkyard, mall, hospital, highway, jail) plus `precinct` (near Precinct 9)
 export const VEHICLES = [
@@ -64,12 +76,26 @@ export const VEHICLES = [
   def('icecream', 'truck', 'Kool Kone ice cream truck', 50, 40, [9, 42], 'chrome', { suburbs: .8, downtown: .3, strip: .2, trailer: .4 }, M.icecream, { variants: 4 }),
   def('supercar', 'car', 'Vanta Stiletto', 44, 13, [9, 34], 'race', { estates: 6, strip: .6, downtown: .25 }, M.supercar, { variants: 6 }),
   def('bus', 'bus', 'Metro 9 city bus', 80, 30, [16, 64], 'bus', {}, M.bus, { W: 20, variants: 1 }),   // (BUS RETIME 2026-10-09: 8 m, was 110 · [18, 92])
+  // C2-VAN (2026-11-05) · the Cleaners' van: the Qwik Kargo van's body, plain white, a bay behind two rear doors (models.js cleanVan).
+  // Never in traffic's mix (an empty mix, as the bus): the stage brings it. `stage`: left out of the fleet lineup's default rows.
+  def('cleanvan', 'van', 'Cleaners\' van', 44, 24, [8, 36], 'steel', {}, M.cleanVan, { variants: 2, stage: true, doors: vanDoors() }),
 ];
 export const byId = Object.fromEntries(VEHICLES.map(v => [v.id, v]));
 const spec = id => { const s = byId[id]; if (!s) throw new Error('vehicles: no model ' + id); return s; };
 
 // ── parts
 export function bodyVol(id, o = {}) { const s = spec(id), V = s.vol(); s.build(V, { variant: 0, lights: false, driver: false, night: false, ...o }); return V; }
+// C2-VAN · a door leaf (0: the −x leaf, 1: the +x) as its own part, in the body's frame (draw it at T(hinge) · Ry(doorYaw) · T(−hinge));
+// bodyVol(id, { bay: true }) is the body with the bay open and no leaves (the default body has them shut and the bay solid)
+export function doorVol(id, leaf, o = {}) { const s = spec(id); if (!s.doors) return null; const V = s.vol(); M.vanLeaf(V, leaf, o); return V; }
+export const doorYaw = (id, leaf, open) => { const d = spec(id).doors; return d ? d.leaves[leaf].dir * d.max * Math.min(1, Math.max(0, open)) : 0; };
+// the leaves' reach at `open` (metres, body frame): { x: [min, max], zMin } over every corner of both leaves (their 0.1 m thickness
+// included): the footprint the stage plans for (within ±(w/2 + 0.05) across, ≤ 1.0 m behind the tail)
+export function doorReach(id, open) { const s = spec(id), d = s.doors; if (!d) return null; let x0 = 1e9, x1 = -1e9, zm = 1e9;
+  d.leaves.forEach((L, k) => { const a = doorYaw(id, k, open), c = Math.cos(a), sn = Math.sin(a);
+    for (const x of L.x) for (const z of [d.tail, d.tail + CV]) { const px = x - L.hinge[0], pz = z - L.hinge[1], qx = L.hinge[0] + px * c + pz * sn, qz = L.hinge[1] - px * sn + pz * c;
+      x0 = Math.min(x0, qx); x1 = Math.max(x1, qx); zm = Math.min(zm, qz); } });
+  return { x: [+x0.toFixed(3), +x1.toFixed(3)], behind: +(d.tail - zm).toFixed(3) }; }
 // side: 0 = both faces patterned (the traffic agent's spinning wheel); −1 / +1 = only the face toward −x / +x (the outer face of a parked
 // car's left / right wheel: the inner face is a flat disc, about half the triangles)
 export function wheelVol(id, side = 0) {
@@ -112,7 +138,7 @@ function fineBanks(body) {
 }
 const bodyBank = body => { const b = meshed(body); for (const f of fineBanks(body)) stamp(f, b, 0, 0, 0, 0); return b; };
 const MEMO = new Map(), memo = (k, f) => { let v = MEMO.get(k); if (v === undefined) MEMO.set(k, v = f()); return v; };
-const okey = (id, o) => `${id}|${o.variant | 0}|${o.lights ? 1 : 0}|${o.driver ? 1 : 0}|${o.night ? 1 : 0}`;
+const okey = (id, o) => `${id}|${o.variant | 0}|${o.lights ? 1 : 0}|${o.driver ? 1 : 0}|${o.night ? 1 : 0}` + (o.bay ? '|bay' : '');
 export const wheelBank = (id, side = 0) => memo('w|' + id + '|' + side, () => meshed(wheelVol(id, side)));
 // a stampable template: the near mesh is the body plus the round 0.05 wheels; the voxels the audit and the mid tier read are the body
 // with coarse wheels (compositeVol), so the template is one connected piece and its mid tier has wheels
@@ -124,11 +150,16 @@ export function vehicleProp(id, o = {}) {
 }
 export function vehicleParts(id, o = {}) {
   return memo('parts|' + okey(id, o), () => { const s = spec(id), body = bodyVol(id, o), br = brakeVol(id, o), fv = s.farVol(); s.far(fv);
-    return { spec: s, body: bodyBank(body), wheel: wheelBank(id), brake: br ? meshed(br) : null, far: meshed(fv) }; });
+    const p = { spec: s, body: bodyBank(body), wheel: wheelBank(id), brake: br ? meshed(br) : null, far: meshed(fv) };
+    // (C2-VAN: the open bay and the two leaves)
+    if (s.doors) { p.bay = bodyBank(bodyVol(id, { ...o, bay: true })); p.leaves = [0, 1].map(k => meshed(doorVol(id, k, o))); }
+    return p; });
 }
 export function vehicleTiers(id, o = {}) {
   const p = vehicleParts(id, o), z = [0, 0, 0];
-  return { spec: p.spec, body: packMerged(p.body, z), wheel: packMerged(p.wheel, z), brake: p.brake ? packMerged(p.brake, z) : null, far: packMerged(p.far, z) };
+  const t = { spec: p.spec, body: packMerged(p.body, z), wheel: packMerged(p.wheel, z), brake: p.brake ? packMerged(p.brake, z) : null, far: packMerged(p.far, z) };
+  if (p.bay) { t.bay = packMerged(p.bay, z); t.leaves = p.leaves.map(b => packMerged(b, z)); }
+  return t;
 }
 
 // ── the district mix

@@ -57,6 +57,8 @@ export function createDossier({ api, sim, root, city, portraits, onWatchTape = n
   function showTab(id) { for (const [k, s] of Object.entries(secs)) s.el.hidden = k !== id; if (cur) render(true); }
   // ── state
   const following = () => api.cam?.mode === 'follow' && api.cam?.subject?.agent && api.cam.subject.aid === cur;
+  // (the camera on this agent, by Follow or Lock: camera/rig.js watched)
+  const watching = () => { const s = api.cam?.watched; return !!cur && !!s?.agent && s.aid === cur; };
   function lensOfPrivate(a) { if (tsrc) return tsrc.lens; if (sim.lens === 'archive') return 'archive'; if (a?.mine) return 'yours'; return 'tape'; }
   const asOf = () => tsrc ? 'as of ' + tsrc.stamp() : '';
   function schedule() { dirty = true; if (timer) return; const wait = Math.max(0, 250 - (performance.now() - lastDraw)); timer = setTimeout(() => { timer = 0; if (dirty && cur) render(); }, wait); }
@@ -80,7 +82,7 @@ export function createDossier({ api, sim, root, city, portraits, onWatchTape = n
     const s = city.screenOf(cur), W = innerWidth, pw = P.el.offsetWidth || 380; if (!s) return;
     const under = side => side === 'right' ? s.x > W - pw - 40 : s.x < pw + 40;
     if (force) { P.dock(under('right') ? 'left' : 'right'); coverT = 0; return; }
-    if (following()) { coverT = 0; return; }
+    if (watching()) { coverT = 0; return; }
     if (under(P.side)) { coverT += .25; if (coverT > 1.1 && !under(P.side === 'right' ? 'left' : 'right')) { P.dock(P.side === 'right' ? 'left' : 'right'); coverT = 0; } } else coverT = 0;
   }
   // ── actions
@@ -234,7 +236,7 @@ export function createDossier({ api, sim, root, city, portraits, onWatchTape = n
   function stampBadge(b, kind, A) { const tp = A.tape; if (tsrc) { b.update(kind, asOf()); return; } b.update(kind, kind === 'tape' ? (tp === 'pending' ? 'on tape tomorrow' : tp && typeof tp === 'object' ? 'as of ' + (tp.ts ? fmtTs(tp.ts) : dayHhmm(tp.asOf ?? 0)) : 'not on tape') : ''); }
   // ── prev / next over the roster (the store's order; dead and retired skipped)
   function step(d) { const L = sim.agents().filter(a => !a.retired && a.status !== 'dead').map(a => a.handle); if (!L.length) return; const k = L.indexOf(cur), n = L[(k + d + L.length) % L.length];
-    const wasFollow = following(); open(n); if (wasFollow) { const w = api.cam.people.byAid(n); if (w) api.cam.setMode('follow', { subject: w }); } }
+    const was = following() ? 'follow' : watching() && api.cam.mode === 'lock' ? 'lock' : null; open(n); if (was) { const w = api.cam.people.byAid(n); if (w) api.cam.setMode(was, { subject: w }); } }
   // section 2a: TAPE sets the source (the agent as of the tape time) and asks for a redraw as the scrubber moves (batched, ≤ 4 Hz)
   function setSource(s) { tsrc = s || null; if (cur) { drawn.handle = null; render(true); } }
   iconsReady.then(() => { if (cur) { drawn.handle = null; render(true); } });

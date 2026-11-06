@@ -94,4 +94,11 @@ export default {
       sleeves(ctx, (lx, ly) => ly === 1 ? shade(W, .86) : W, { y0: 10 }); } },
   npc_top_running: { name: 'Civilian · running top', tier: 'common', neckline: 'crew', why: 'everyday · a slate long-sleeve running top: the morning jogger in the park',
     draw(B, ctx) { const R = CIV.slate; shell(B, (x, y) => y === 9 ? shade(R, .88) : R); sleeves(ctx, (lx, ly) => ly === 1 ? shade(R, .88) : R, { y0: 10 }); } },
+
+  // ───────────────────────── THE CLEANERS' COVERALL (uniform: true: never rolled; style/city/cast.js OUTFITS cleaner_*): white hazmat
+  // coverall, a grey zip flap down the front, a high collar under the hood, long sleeves taped grey over the gloves at the wrist
+  npc_cleaner_coverall: { name: 'Cleaner · hazmat coverall', tier: 'common', uniform: true, neckline: 'high', why: 'the Cleaners: a white hazmat coverall, a zip flap, the cuffs taped',
+    draw(B, ctx) { const W = 0xe6e7e2, Z = 0xc9cbc8, T = 0xa9adb0;
+      shell(B, (x, y, z) => z === FRONT && (x === -1 || x === 0) ? Z : y === 9 ? shade(W, .93) : W, { neck: false });
+      sleeves(ctx, (lx, ly) => ly <= 1 ? T : W, { y0: 10 }); } },
 };

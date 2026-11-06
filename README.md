@@ -100,6 +100,16 @@ Allow about **35 seconds** for the Chrome bake, depending on hardware and caches
 http://localhost:<p>/style/city/?sim=record&feed=/core/runs/404-A/feed.jsonl
 ```
 
+### Watch the recorded AI season
+
+[core/seasons/2026-11-05-agents/](core/seasons/2026-11-05-agents/) holds a season played by seven model seats among the scripted cast, recorded on 2026-11-05. Its README lists which model played which agent and how each did. The folder holds only the public record the viewer plays. No key, prompt, model reply or log is included. After the bake, with the server running, open:
+
+```text
+http://localhost:<p>/style/city/?sim=record&feed=/core/seasons/2026-11-05-agents/444-A/feed.jsonl
+```
+
+At 1× the record plays on the island clock, one game minute per real minute. **Shows back to back** plays only the fourteen night shows, about five hours at 1× and half an hour at 10×.
+
 ### Tests and record checks
 
 ```sh
@@ -134,7 +144,7 @@ The routine scenario has a measured baseline fixture for fresh clones, pinned to
 
 | Folder | Contents |
 |---|---|
-| `core/` | Rules, ledger, views, agents, bench, item data and tests. |
+| `core/` | Rules, ledger, views, agents, bench, item data, tests and a recorded AI season. |
 | `docs/` | Full game design and developer tour. |
 | `style/` | Static server and city: districts, animation, travel, camera, viewer, UI, tools, Mainland, home builder and character studio. |
 | `world/` | City and cast data, traits, geometry and world exports. |

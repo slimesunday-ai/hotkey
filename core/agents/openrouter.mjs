@@ -24,6 +24,10 @@
 //   onHalt   (reason) -> void, when a request is refused because the season has stopped: the runner stops it now
 //   tally    R8c: a { cost, calls } shared with the season's other transports (anthropic.mjs), so one cap counts every
 //            endpoint's calls; with one, a request also checks the cap before it goes out
+//   own      R12: { cap, cost }, OpenRouter's own cap in dollars and its spend so far, beside the season's one cap
+//            (slime 11-05: "build a set up that maxes out at 12.30"), shared by the season's OpenRouter transports: a
+//            request checks it before it goes out and once it is costed, and the preflight asks the balance and the
+//            key's limit for this cap in place of maxCost
 // -> { fetch, preflight(url), keyUsage(url), spend: { cost, calls }, maxCost, halted }: `halted` is null, or an Error
 //    whose `halt` is 'cap', 'credit' or 'key'; preflight gives { balance, left, usage, refused }, `refused` the reason
 //    it won't start or null, and keyUsage the key's usage in dollars, or null when it can't be read.
@@ -103,11 +107,15 @@ export function spentIn(file) {
   return out;
 }
 
-export function openRouter({ fetch: send, key, maxCost, clock = REAL_CLOCK, spent = {}, tally = null, onCall = null, onHalt = null } = {}) {
+export function openRouter({ fetch: send, key, maxCost, clock = REAL_CLOCK, spent = {}, tally = null, onCall = null, onHalt = null, own = null } = {}) {
   if (typeof send !== 'function') throw new Error('the paid transport calls through the fetch passed in: there is no default');
   if (typeof key !== 'string' || !key) throw new Error('the paid transport needs the key');
   if (!(Number.isFinite(maxCost) && maxCost > 0)) throw new Error('the paid transport needs the cap, in dollars');
+  if (own !== null && !(isObject(own) && Number.isFinite(own.cap) && own.cap > 0 && Number.isFinite(own.cost))) throw new Error("OpenRouter's own cap is { cap, cost }, in dollars");
   const spend = tally || { cost: spent.cost || 0, calls: spent.calls || 0 };
+  // What the preflight asks the balance and the key's limit for: OpenRouter's own cap when it has one.
+  const need = own ? own.cap : maxCost;
+  const ownCapWhy = () => `OpenRouter's spend reached its own cap: $${own.cost.toFixed(4)} of $${own.cap}`;
   let halted = null;
   // Text on its way out, with the key cut out wherever it turns up: a server's reply or message, a library's error.
   const hide = s => String(s).split(key).join('[key]');
@@ -151,6 +159,8 @@ export function openRouter({ fetch: send, key, maxCost, clock = REAL_CLOCK, spen
     for (let n = 1; ; n++) {
       // R8c: a shared tally may have reached the cap through another endpoint's calls.
       if (tally && !halted && spend.cost >= maxCost) halt('cap', `the spend reached the cap: $${spend.cost.toFixed(4)} of $${maxCost} after ${spend.calls} calls`);
+      // R12: and OpenRouter's own cap, which its other transports' calls count into too.
+      if (own && !halted && own.cost >= own.cap) halt('cap', ownCapWhy());
       // Once stopped, nothing more goes out, and the runner hears of it now.
       if (halted) {
         if (onHalt) onHalt(halted);
@@ -173,6 +183,7 @@ export function openRouter({ fetch: send, key, maxCost, clock = REAL_CLOCK, spen
       const choice = isObject(body) && Array.isArray(body.choices) ? body.choices[0] : null;
       spend.calls += 1;
       if (cost !== null) spend.cost += cost;
+      if (cost !== null && own) own.cost += cost;
       note({
         seat, call, try: n, status: res.status, finish: (choice && choice.finish_reason) ?? null, cost,
         provider: (isObject(body) && body.provider) ?? null, model: (isObject(body) && body.model) ?? null,
@@ -192,6 +203,7 @@ export function openRouter({ fetch: send, key, maxCost, clock = REAL_CLOCK, spen
       else if (code === 401 || code === 403) halt('key', `the endpoint refused the key (${code}${said})`);
       else if (code !== 429 && error && /credit/i.test(JSON.stringify(error))) halt('credit', `the account is out of credit (${code ?? res.status}${said})`);
       if (spend.cost >= maxCost) halt('cap', `the spend reached the cap: $${spend.cost.toFixed(4)} of $${maxCost} after ${spend.calls} calls`);
+      if (own && own.cost >= own.cap) halt('cap', ownCapWhy());
       if (code === 429 && !halted && n <= OPENROUTER.waits.length) {
         try {
           await wait(OPENROUTER.waits[n - 1] * 1000, init.signal);
@@ -240,8 +252,8 @@ export function openRouter({ fetch: send, key, maxCost, clock = REAL_CLOCK, spen
     if (!Number.isFinite(balance)) return { refused: "the preflight could not read the account's balance: not starting" };
     if (left !== null && !Number.isFinite(left)) return { refused: "the preflight could not read the key's limit: not starting" };
     const out = { balance, left, usage: Number.isFinite(limit.usage) ? limit.usage : null, refused: null };
-    if (balance < maxCost) out.refused = `the account's balance, ${dollars(balance)}, is below --max-cost $${maxCost}: not starting`;
-    else if (left !== null && left < maxCost) out.refused = `the key's limit left, ${dollars(left)}, is below --max-cost $${maxCost}: not starting`;
+    if (balance < need) out.refused = `the account's balance, ${dollars(balance)}, is below ${own ? "OpenRouter's own cap" : "--max-cost"} $${need}: not starting`;
+    else if (left !== null && left < need) out.refused = `the key's limit left, ${dollars(left)}, is below ${own ? "OpenRouter's own cap" : "--max-cost"} $${need}: not starting`;
     return out;
   }
 

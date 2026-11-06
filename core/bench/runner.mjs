@@ -57,6 +57,10 @@ import { setupProvenance, semanticSource, fingerprint, seatUsage, spendBySeat } 
 // "url" (the Claude API's by default) and "keyFile" (~/.config/anthropic/key by default), so its seats call the Claude
 // API while the season's others call --model-url, every endpoint under the one --max-cost. The API is named claude
 // (Anthropic's name for it): `anthropic` stays an API the runner doesn't know, as R2-12's checks require.
+// R12 (slime 11-05: "sonnet (extra high), and opus 5.5 (high)" · "build a set up that maxes out at 12.30"): a thinking
+// Claude group may name its "effort" (low, medium, high, xhigh, max; high by default), and --openrouter-max-cost <usd>
+// gives OpenRouter's seats a cap of their own, no more than --max-cost, which still counts every endpoint's calls; the
+// preflight asks OpenRouter's balance and key limit for that cap, and a resume counts the spend record's OpenRouter seats.
 // R8b: --creeds <file> simulates owners editing their agents' Creeds later in the season (GAME.md §17): a JSON list of
 // { day, seat, text }, each set at the start of its day, before any errand, through the owner's trusted context
 // (core/rules/memory.mjs), on the season's model seats. Off by default; the season's setup options keep the list (so its
@@ -98,7 +102,7 @@ import { briefing as legacyBriefing } from './fixtures/legacy-briefing.mjs';
 import { fakeHooks } from '../agents/fake-hooks.mjs';
 import { fakeModel, manualClock, CHAT_PATH, SEAT_HEADER, CALL_HEADER } from '../agents/fake-model.mjs';
 import { openRouter, readKey, spentIn } from '../agents/openrouter.mjs';
-import { claudeApi, CLAUDE, CLAUDE_URL, CLAUDE_KEY_FILE, CLAUDE_NOTE, PRICES } from '../agents/anthropic.mjs';
+import { claudeApi, CLAUDE, CLAUDE_URL, CLAUDE_KEY_FILE, CLAUDE_NOTE, PRICES, CLAUDE_EFFORTS } from '../agents/anthropic.mjs';
 import { JOURNAL_MODES, DEFAULT_JOURNAL, DAWN, DAWN_CONTEXT, dawnDay, dawnNote, entryOf, hasDawnEntry } from '../agents/journal.mjs';
 import { tradeLimits, runTradeOrders } from '../agents/orders.mjs';
 import { TRADE_ORDER_KINDS, checkMemory } from '../rules/memory.mjs';
@@ -825,6 +829,8 @@ function modelSide({
           // R8: a group's own reply mode, else the season's. R8b: the starter version lets a model call nothing by day
           // (tool_choice "auto"); the current briefing keeps R8's "required".
           reply: group(id)?.reply || mode, dayToolChoice: arm === 'starter' ? 'auto' : 'required',
+          // R12: a Claude group's own effort, null for the table's.
+          effort: group(id)?.effort || null,
           // R8b: the new modes mark the fixed part for a provider's cache (seat.mjs); the 10-18 shape stays as it was.
           cacheMark: arm === 'starter' || (group(id)?.reply || mode) === 'tools',
           brief: (r, memory, last, round, context) => (format === briefing ? briefingPacket : format)(r, { memory, last, call: round === 'lock' ? 'lock' : 'round', ...context }),
@@ -875,7 +881,7 @@ const refusal = why => Object.assign(new Error(why), { refused: true });
 // What a paid endpoint needs, as the flags name it: why it's refused, or null. The key goes only to the url named and
 // never without a cap; OpenRouter's body needs the key, and only it takes provider routing.
 // R8c: `groups`, a real run's --seat-models groups that call an API of their own, each with its own key, under the cap.
-function paidRefusal({ url, key, api, provider, maxCost, groups = false }) {
+function paidRefusal({ url, key, api, provider, maxCost, groups = false, orCap = null }) {
   if (api !== 'local' && api !== 'openrouter' && api !== CLAUDE) return `--model-api takes openrouter or ${CLAUDE}, not ${api}`;
   if (key !== null && url === null) return '--model-key-file goes with --model-url: the key is sent only to the endpoint it names';
   if (api === 'openrouter' && key === null) return '--model-api openrouter needs --model-key-file <path>';
@@ -884,6 +890,9 @@ function paidRefusal({ url, key, api, provider, maxCost, groups = false }) {
   if (key === null && !groups && maxCost !== null) return '--max-cost goes with --model-key-file: only a paid endpoint costs anything';
   if (maxCost !== null && !(Number.isFinite(maxCost) && maxCost > 0)) return '--max-cost takes a positive number of dollars';
   if (provider !== null && api !== 'openrouter') return '--model-provider goes with --model-api openrouter';
+  // R12: OpenRouter's own cap, beside --max-cost, which still counts every endpoint's calls.
+  if (orCap !== null && !(api === 'openrouter' && key !== null)) return '--openrouter-max-cost goes with --model-api openrouter and its key';
+  if (orCap !== null && !(Number.isFinite(orCap) && orCap > 0 && maxCost !== null && orCap <= maxCost)) return '--openrouter-max-cost takes a positive number of dollars, no more than --max-cost';
   if (provider !== null && !(typeof provider === 'object' && !Array.isArray(provider))) return "--model-provider takes a JSON object, OpenRouter's provider routing";
   return null;
 }
@@ -891,7 +900,7 @@ function paidRefusal({ url, key, api, provider, maxCost, groups = false }) {
 // R7: a mixed season's name for its model, where a season of one model keeps the model's name (the checkpoint's
 // `models.model`); each seat's own is its group's.
 export const MIXED = 'mixed';
-const GROUP_KEYS = ['model', 'seats', 'thinking', 'provider', 'reply', 'api', 'url', 'keyFile'];
+const GROUP_KEYS = ['model', 'seats', 'thinking', 'provider', 'reply', 'api', 'url', 'keyFile', 'effort'];
 // The groups of a mixed season (--seat-models), each { model, seats, thinking, provider }: why they're refused, or null.
 // A group's provider routing is OpenRouter's, so a run that calls an endpoint sends it only with --model-api openrouter;
 // the fake, which no request leaves, takes the groups as the paid run will.
@@ -913,13 +922,15 @@ export function seatModelsRefusal(spec, { url = null, api = 'local' } = {}) {
     if (g.provider && g.api === CLAUDE) return "--seat-models' provider routing goes with --model-api openrouter";
     if (g.provider && url !== null && api !== 'openrouter') return "--seat-models' provider routing goes with --model-api openrouter";
     if ('reply' in g && !REPLY_MODES.includes(g.reply)) return `${what}: a group's reply is ${REPLY_MODES.join(' or ')}`;
+    // R12: a thinking Claude group's own effort (anthropic.mjs claudeFields), in place of the table's high.
+    if ('effort' in g && !((g.api || api) === CLAUDE && g.thinking === true && CLAUDE_EFFORTS.includes(g.effort))) return `${what}: a group's effort goes with "api": "${CLAUDE}" and thinking true, and is one of ${CLAUDE_EFFORTS.join(', ')}`;
   }
   return null;
 }
 // The groups as the run folder keeps them: thinking said either way, a provider only where one is named.
 export const seatModelsOf = spec => spec.map(g => ({
   model: g.model, seats: g.seats, thinking: g.thinking === true, ...(g.provider ? { provider: g.provider } : {}), ...(g.reply ? { reply: g.reply } : {}),
-  ...(g.api ? { api: g.api } : {}), ...(g.url ? { url: g.url } : {}), ...(g.keyFile ? { keyFile: g.keyFile } : {}),
+  ...(g.api ? { api: g.api } : {}), ...(g.url ? { url: g.url } : {}), ...(g.keyFile ? { keyFile: g.keyFile } : {}), ...(g.effort ? { effort: g.effort } : {}),
 }));
 // R8c: the groups that call an API other than the season's, each with its own endpoint and key.
 export const ownApi = (g, api) => !!(g && g.api && g.api !== api);
@@ -977,14 +988,14 @@ function savedModels(dir) {
 export async function runModelSeason(opts) {
   // The keys stay here, handed only to the transports: nothing below gets them.
   const { key = null, groupKeys = null, ...rest } = opts;
-  const { url = null, go = null, signal = null, api = 'local', provider = null, maxCost = null, say = console.log, briefing: arm = DEFAULT_BRIEFING, seatModels = null, reply = DEFAULT_REPLY } = rest;
+  const { url = null, go = null, signal = null, api = 'local', provider = null, maxCost = null, orCap = null, say = console.log, briefing: arm = DEFAULT_BRIEFING, seatModels = null, reply = DEFAULT_REPLY } = rest;
   // R7: a mixed season names each seat's model in its groups, never one model for all of them.
   if (seatModels !== null && (rest.model || provider !== null || rest.thinking)) throw refusal('--seat-models names each seat\'s model, thinking and provider: not with --model, --thinking-seats or --model-provider');
   if (url !== null && !(typeof go === 'string' && go.trim())) throw new Error('a real endpoint is called only with --go "<slime\'s words>" (CLAUDE.md: no model run without his go)');
   if (url !== null && !rest.model && seatModels === null) throw new Error('name the model the endpoint serves: --model <name>');
   if (url !== null && typeof rest.fetch !== 'function') throw new Error('a real endpoint needs the fetch to call it with');
   const groupsPaid = url !== null && Array.isArray(seatModels) && seatModels.some(g => ownApi(g, api));
-  const no = paidRefusal({ url, key, api, provider, maxCost, groups: groupsPaid }) || armRefusal(arm) || replyRefusal(reply) || (seatModels === null ? null : seatModelsRefusal(seatModels, { url, api }));
+  const no = paidRefusal({ url, key, api, provider, maxCost, groups: groupsPaid, orCap }) || armRefusal(arm) || replyRefusal(reply) || (seatModels === null ? null : seatModelsRefusal(seatModels, { url, api }));
   if (no) throw refusal(no);
   const spec = seatModels === null ? null : seatModelsOf(seatModels);
   // R8c: every model a real run sends to the Claude API has a price, and every group with its own API its key.
@@ -1024,7 +1035,12 @@ export async function runModelSeason(opts) {
     // R8c: a transport an endpoint (the season's, and each group's own), one tally and one cap across them all, each
     // with its own key; a request goes through its seat's.
     const tally = { cost: before.cost, calls: before.calls };
-    const transport = (which, k) => (which === CLAUDE ? claudeApi : openRouter)({ fetch: rest.fetch, key: k, maxCost, tally, onCall: line => fs.appendFileSync(spendFile, `${JSON.stringify(line)}\n`), onHalt: halt });
+    // R12: OpenRouter's own cap (--openrouter-max-cost) and its spend so far: on a resume, the spend record's lines of
+    // the seats that call it (every seat but a group's with an API of its own).
+    const orOwn = orCap === null ? null : { cap: orCap, cost: 0 };
+    if (orOwn && rest.resume) for (const [id, x] of Object.entries(spendBySeat(fs.existsSync(spendFile) ? fs.readFileSync(spendFile, 'utf8') : ''))) if (!(mixed && Object.hasOwn(mixed.seatOf, id) && ownApi(mixed.spec[mixed.seatOf[id]], api))) orOwn.cost += x.cost;
+    if (orOwn && orOwn.cost >= orOwn.cap) throw refusal(`this season's OpenRouter seats have spent $${orOwn.cost.toFixed(4)} already, at or past --openrouter-max-cost $${orCap}: raise it to play on`);
+    const transport = (which, k) => (which === CLAUDE ? claudeApi : openRouter)({ fetch: rest.fetch, key: k, maxCost, tally, ...(which === CLAUDE ? {} : { own: orOwn }), onCall: line => fs.appendFileSync(spendFile, `${JSON.stringify(line)}\n`), onHalt: halt });
     seasonPaid = key !== null ? transport(api, key) : null;
     const groupPaid = mixed ? mixed.spec.map((g, i) => (ownApi(g, api) && url !== null ? transport(g.api, groupKeys[i]) : null)) : [];
     const transportOf = init => {
@@ -1032,14 +1048,14 @@ export async function runModelSeason(opts) {
       return (mixed && Object.hasOwn(mixed.seatOf, id) && groupPaid[mixed.seatOf[id]]) || seasonPaid;
     };
     paid = {
-      fetch: (u, init) => (transportOf(init) || { fetch: rest.fetch }).fetch(u, init), spend: tally, maxCost,
+      fetch: (u, init) => (transportOf(init) || { fetch: rest.fetch }).fetch(u, init), spend: tally, maxCost, orOwn,
       get halted() {
         return [seasonPaid, ...groupPaid].find(t => t && t.halted)?.halted || null;
       },
     };
     if (api === 'openrouter' && seasonPaid) {
       const check = await seasonPaid.preflight(url);
-      if (check.balance !== undefined) say(`OpenRouter: account balance $${check.balance.toFixed(2)} · key limit left ${check.left === null ? 'none set' : `$${check.left.toFixed(2)}`} · cap $${maxCost}`);
+      if (check.balance !== undefined) say(`OpenRouter: account balance $${check.balance.toFixed(2)} · key limit left ${check.left === null ? 'none set' : `$${check.left.toFixed(2)}`} · cap $${maxCost}${orCap === null ? '' : ` · OpenRouter's own cap $${orCap}`}`);
       if (check.refused) throw refusal(check.refused);
       usageAtStart = check.usage;
     }
@@ -1061,7 +1077,7 @@ export async function runModelSeason(opts) {
     for (const [id, x] of Object.entries(seats)) if (mixed.seatOf[id] !== undefined) cost[mixed.seatOf[id]][1] += x.cost;
     return ` · ${cost.map(([m, c]) => `${m} $${c.toFixed(4)}`).join(', ')}`;
   };
-  const spendLine = when => `[spend] $${paid.spend.cost.toFixed(4)} of $${maxCost} · ${paid.spend.calls} calls · ${when}${byModel()}`;
+  const spendLine = when => `[spend] $${paid.spend.cost.toFixed(4)} of $${maxCost}${paid.orOwn ? ` (OpenRouter $${paid.orOwn.cost.toFixed(4)} of $${paid.orOwn.cap})` : ''} · ${paid.spend.calls} calls · ${when}${byModel()}`;
   const side = modelSide({ ...rest, model, wake: rest.wakes || wakes, fetch: paid ? paid.fetch : rest.fetch, signal: stop, paid, halt, mixed, billing });
   return withOverrides(overridesOf(rest), async () => {
     const steps = seasonSteps({ ...rest, overrides: overridesOf(rest), model, drivers, replies, ...(paid ? { onNight: d => say(spendLine(`after night ${d}`)) } : {}) }, side);
@@ -1113,7 +1129,7 @@ export const RUNNER_ARGS = {
   seed: 'value', rule: 'value', midseason: 'value', rounds: 'value', out: 'value', 'die-at': 'value',
   resume: 'flag', quiet: 'flag', feed: 'flag', squatter: 'flag', set: 'list', cast: 'value', 'stop-after': 'value',
   'model-seats': 'value', model: 'value', 'model-url': 'value', go: 'value', 'model-concurrency': 'value',
-  'thinking-seats': 'value', replay: 'value', 'model-api': 'value', 'model-key-file': 'value', 'max-cost': 'value',
+  'thinking-seats': 'value', replay: 'value', 'model-api': 'value', 'model-key-file': 'value', 'max-cost': 'value', 'openrouter-max-cost': 'value',
   'model-provider': 'value', briefing: 'value', 'seat-models': 'value', reply: 'value', creeds: 'value', 'creed-baseline': 'value',
   journal: 'value', 'orders-baseline': 'value',
 };
@@ -1283,7 +1299,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const models = !!o.replay || MODEL_CASTS.includes(castName(o.mix)) || !!saved;
   // The guard (CLAUDE.md: no model run without slime's go): before anything is written or called.
   const real = args['model-url'] !== undefined || !!(saved && saved.url);
-  const modelFlags = ['model', 'model-url', 'go', 'model-concurrency', 'thinking-seats', 'model-api', 'model-key-file', 'max-cost', 'model-provider', 'creeds', 'creed-baseline', 'reply', 'seat-models', 'briefing'];
+  const modelFlags = ['model', 'model-url', 'go', 'model-concurrency', 'thinking-seats', 'model-api', 'model-key-file', 'max-cost', 'openrouter-max-cost', 'model-provider', 'creeds', 'creed-baseline', 'reply', 'seat-models', 'briefing'];
   if (!models && modelFlags.some(k => args[k] !== undefined)) {
     refuse('--model, --model-url, --go, --model-concurrency, --thinking-seats, --model-api, --model-key-file, --max-cost, --model-provider, --creed-baseline, --creeds, --reply, --seat-models and --briefing go with --cast models (or models-canny)');
   }
@@ -1318,6 +1334,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const paidFlags = {
     url: args['model-url'] === undefined ? null : args['model-url'], key: keyFile,
     api: args['model-api'] === undefined ? 'local' : args['model-api'], provider, maxCost: args['max-cost'] === undefined ? null : Number(args['max-cost']),
+    orCap: args['openrouter-max-cost'] === undefined ? null : Number(args['openrouter-max-cost']),
   };
   const groupsPaid = paidFlags.url !== null && Array.isArray(seatModels) && seatModels.some(g => ownApi(g, paidFlags.api));
   const notPaid = paidRefusal({ ...paidFlags, groups: groupsPaid });
@@ -1363,7 +1380,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       const r = await runModelSeason({
         ...o, ...(o.replay ? {} : { model: args.model }), url, go: real ? args.go : null, fetch: real ? fetch : undefined,
         concurrency: whole('model-concurrency', 1, 64, 8), thinking: whole('thinking-seats', 0, o.mix.models || 0, 0), signal: stop.signal,
-        key, api: paidFlags.api, provider, maxCost: paidFlags.maxCost, say: line => console.log(line), ...(seatModels === null ? {} : { seatModels }),
+        key, api: paidFlags.api, provider, maxCost: paidFlags.maxCost, orCap: paidFlags.orCap, say: line => console.log(line), ...(seatModels === null ? {} : { seatModels }),
         ...(groupKeys ? { groupKeys } : {}),
       });
       const what = r.stopped ? `stopped after night ${r.stopped}` : `${r.metrics.events} events`;

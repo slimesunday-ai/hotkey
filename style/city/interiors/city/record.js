@@ -40,7 +40,7 @@ export function createRecordHomes(api, { Q, NIGHT = false, SHOT = false, page })
     if (key !== S.key) { H.close({ instant: true }); S.open = null; S.key = null; S.shut++; } }
   // ── which room: the followed agent's, else the nearest occupied one to the camera's target
   function wanted() {
-    const rig = api.cam, f = rig?.mode === 'follow' && rig.subject?.agent ? rig.subject.aid : null;
+    const s = api.cam?.watched, f = s?.agent ? s.aid : null;   // (the person watched: camera/rig.js watched, Follow's or Lock's)
     if (f) { const p = I.planOf(f), a = D.agents?.map.get(f); if (p && (I.inside.has(f) || (a?.w && Math.hypot(a.w.p[0] - p.h.cx, a.w.p[2] - p.h.cz) < REACH))) return p; return null; }
     const t = api.controls.target; let best = null, bd = NEAR;
     for (const id of I.inside.keys()) { const p = I.plans.get(id); if (!p) continue; const d = Math.hypot(t.x - p.h.cx, t.z - p.h.cz); if (d < bd) { bd = d; best = p; } }

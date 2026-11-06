@@ -15,4 +15,8 @@ export default {
   npc_pants_sweats: { name: 'Civilian · grey sweatpants', tier: 'common', why: 'everyday · grey sweatpants for the morning jog', form: 'roomy', color: CIV.heather, waist: shade(CIV.heather, .88), paint: cuff(CIV.heather) },
   npc_pants_olive: { name: 'Civilian · olive chinos', tier: 'common', why: 'everyday · olive chinos: the student, the dog walker', form: 'slim', color: CIV.olive },
   npc_shorts_khaki: { name: 'Civilian · tourist shorts', tier: 'common', why: 'weekend · khaki shorts and white crew socks: the tourist, the retiree in July', form: 'shorts', color: CIV.beige, waist: CIV.brown, sock: 'crew', sockColor: CIV.white },
+
+  // the Cleaners' coverall legs (uniform: true: never rolled; style/city/cast.js OUTFITS cleaner_*): white, roomy, taped grey over the boots
+  npc_cleaner_coverall_legs: { name: 'Cleaner · coverall legs', tier: 'common', uniform: true, why: 'the Cleaners: the coverall\'s legs, taped over the boots', form: 'roomy', color: 0xe6e7e2, waist: 0xe6e7e2,
+    paint: q => q.y === 4 ? 0xa9adb0 : undefined },
 };

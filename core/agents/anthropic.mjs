@@ -82,11 +82,16 @@ export const CLAUDE_THINKING = {
   plainMaxTokens: 2000,
 };
 // The Messages API's fields beside the briefing, for the seat (seat.mjs APIS). A plain seat of a model the table
-// doesn't name asks for the least thinking every Claude 5 model takes (adaptive, effort low).
-export function claudeFields({ thinking = false, model } = {}) {
+// doesn't name asks for the least thinking every Claude 5 model takes (adaptive, effort low). R12: a thinking seat's
+// group may name its own effort (runner.mjs --seat-models "effort"; slime 11-05: "sonnet (extra high), and opus 5.5
+// (high)"), in place of the table's high.
+export const CLAUDE_EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max'];
+export function claudeFields({ thinking = false, model, effort = null } = {}) {
   if (thinking === true) {
     const { maxTokens, ...on } = CLAUDE_THINKING.on;
-    return { ...structuredClone(on), max_tokens: maxTokens };
+    const fields = structuredClone(on);
+    if (effort !== null) fields.output_config = { ...fields.output_config, effort };
+    return { ...fields, max_tokens: maxTokens };
   }
   const off = CLAUDE_THINKING.off[model] || { thinking: { type: 'adaptive' }, output_config: { effort: 'low' } };
   return { ...structuredClone(off), max_tokens: CLAUDE_THINKING.plainMaxTokens };

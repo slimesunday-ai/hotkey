@@ -347,7 +347,7 @@ export function createMovement({ peds, log = () => {}, clips = null, clock = nul
 
   // ── the follow cam onto the vehicle and back (camera/follow.js: its public set(); the stand-in carries the agent's id)
   const PX = new Map(); let pxSeq = 0;
-  const camOn = id => { const c = window.__city?.cam; return !!c && c.mode === 'follow' && c.subject?.aid === id; };
+  const camOn = id => { const c = window.__city?.cam; return !!c && c.watched?.aid === id; };   // (the person watched: camera/rig.js watched, Follow's or Lock's)
   // C2 (GAME.md §41, slime 10-30: "you lost the continuity of following an agent") · RIDING: every agent riding out of view right now
   // (in a cab, underground) → the thing that carries it ({ car: { x, z, h, v, gone }, y, look }). The stand-in is made from it on
   // demand: when the camera is on the agent as it boards (proxyOn), and whenever the camera asks for the agent by its id while it
@@ -357,7 +357,7 @@ export function createMovement({ peds, log = () => {}, clips = null, clock = nul
     const p = { id: -1e6 - (++pxSeq), agent: true, aid: id, look: look ?? r.look, p: [car.x, r.y, car.z, car.h], yawS: car.h, vc: 0, ph: 0, tier: 1, gone: false, car, y: r.y, ride: true };
     PX.set(id, p); return p; }
   function proxyOn(a, car, y) { RIDING.set(a.id, { car, y, look: a.look }); if (!camOn(a.id) || PX.has(a.id)) return; const p = standIn(a.id, a.look);
-    try { window.__city.cam.follow.set(p); } catch (e) { log('movement: follow ' + e.message); } }
+    try { window.__city.cam.carry(p); } catch (e) { log('movement: follow ' + e.message); } }
   function proxyOff(a) { RIDING.delete(a.id); const p = PX.get(a.id); if (!p) return; p.gone = true; PX.delete(a.id); }
   sim.rideOf = id => standIn(id);
   const proxyFrame = () => { for (const p of PX.values()) { const c = p.car; if (c.gone) { p.gone = true; continue; } p.p[0] = c.x; p.p[1] = p.y; p.p[2] = c.z; p.p[3] = c.h; p.yawS = c.h; p.vc = c.v; } };

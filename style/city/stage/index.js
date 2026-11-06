@@ -53,7 +53,7 @@ export function createStage({ scene, mats, peds, agents, layer, places, camera, 
   // ── what the camera sees (the frustum, refreshed each frame) and who it is on (followed, the dossier's agent)
   const FR = new THREE.Frustum(), PM = new THREE.Matrix4(), V = new THREE.Vector3();
   const inView = (x, z, y = SIDE + 1) => { const c = camera.position; if (Math.hypot(x - c.x, z - c.z) > STAGE.viewR) return false; V.set(x, y, z); if (FR.containsPoint(V)) return true; V.y = y + 1.2; return FR.containsPoint(V); };
-  const focusSet = () => { const c = window.__city?.cam, u = window.__ui, s = new Set(); if (c?.mode === 'follow' && c.subject?.aid) s.add(c.subject.aid); const d = u?.dossier?.current; if (d) s.add(d); return s; };
+  const focusSet = () => { const c = window.__city?.cam, u = window.__ui, s = new Set(); if (c?.watched?.aid) s.add(c.watched.aid); const d = u?.dossier?.current; if (d) s.add(d); return s; };
   const coarse = id => typeof id === 'string' && id.startsWith('dist:');
   // ── where things are
   function posOf(h) { const a = agents.map.get(h); if (a?.w) return { x: a.w.p[0], z: a.w.p[2], drawn: true }; const l = lastPos.get(h); if (l && clock - l.t < 10) return { x: l.x, z: l.z, drawn: false }; return null; }

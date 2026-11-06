@@ -67,7 +67,7 @@ export async function mountUI(api, { Q }) {
     if (k === 'Escape') { e.preventDefault(); e.stopPropagation(); dossier.close(); return; }
     if (k === 'KeyF') {   // F: start following the open agent. Held F (key repeat) and F while the camera already follows them are the camera's own
       // "further" (zoom out: camera/follow.js, nav.js): let those through, so holding F never flips follow ↔ orbit 30× a second. Photo mode keeps its F.
-      const rig2 = api.cam, already = rig2?.mode === 'follow' && rig2.subject?.agent && rig2.subject.aid === dossier.current;
+      const ws = api.cam?.watched, already = ws?.agent && ws.aid === dossier.current;   // (camera/rig.js watched: Follow's or Lock's, whose F is its zoom out too)
       if (e.repeat || already || document.body.classList.contains('cam-photo')) return;
       e.preventDefault(); e.stopPropagation(); dossier.toggleFollow(); return; }
     if (k === 'BracketLeft' || k === 'BracketRight') { e.preventDefault(); e.stopPropagation(); dossier.step(k === 'BracketLeft' ? -1 : 1); return; }
@@ -77,7 +77,7 @@ export async function mountUI(api, { Q }) {
   // the sim offline: every LIVE badge says OFFLINE until it answers again (the store's status is never delayed; review 10-09 #13)
   sim.on('status', ({ status }) => simOffline(status === 'offline')); simOffline(sim.info.status === 'offline');
   // the frame hook: pins, rings, hover, the label on whoever the rig follows
-  const frame = (dt, t) => { try { tapeCtl.frame(dt); light.frame(dt); menu.frame(); const s = rig?.mode === 'follow' ? rig.subject : null; city.follow(s?.agent ? s.aid : null); city.frame(dt, t); } catch (e) { if (!frame.failed) { frame.failed = true; console.error('[ui]', e); } } };
+  const frame = (dt, t) => { try { tapeCtl.frame(dt); light.frame(dt); menu.frame(); const s = rig?.watched ?? null; city.follow(s?.agent ? s.aid : null); city.frame(dt, t); } catch (e) { if (!frame.failed) { frame.failed = true; console.error('[ui]', e); } } };
   // the portrait renderer warms up when the page is idle
   (window.requestIdleCallback || (f => setTimeout(f, 3000)))(() => portraits.prewarm(), { timeout: 8000 });
   const ui = { frame, claimed: e => city.claimed === e, sim, city, dossier, portraits, root, skin: getSkin, nextSkin, tape: tapeCtl, info, map, menu, keep, light,

@@ -14,9 +14,10 @@ export function keepAcrossReload({ api, sim, dossier, city, menu, refs, tape }) 
   const rig = api.cam;
   function save() {
     const r = refs(), toys = window.__toys, panel = r.map?.isOpen ? 'map' : r.info?.open || (menu.people.isOpen ? 'people' : null);
-    const follow = rig?.mode === 'follow' && rig.subject?.agent ? rig.subject.aid : null;
+    // (the person watched, camera/rig.js watched: Follow's or Lock's; Lock comes back as Lock, at the viewer's kept angle)
+    const ws = rig?.watched, follow = ws?.agent ? ws.aid : null, lock = !!follow && rig.mode === 'lock';
     const q = panel === 'people' ? (menu.people.el.querySelector('.pp-q')?.value || '') : '';
-    const s = { v: 1, at: Date.now(), dossier: dossier.isOpen ? dossier.current : null, follow, panel, query: q || null, heat: toys?.heat?.mode || null,
+    const s = { v: 1, at: Date.now(), dossier: dossier.isOpen ? dossier.current : null, follow, ...(lock ? { lock } : {}), panel, query: q || null, heat: toys?.heat?.mode || null,
       tape: tape.active && tape.time() !== null ? { handle: tape.handle, t: Math.floor(tape.time()), speed: tape.speed, playing: tape.playing } : null };
     try { sessionStorage.setItem(RELOAD.key, JSON.stringify(s)); } catch {}
     return s;
@@ -36,7 +37,7 @@ export function keepAcrossReload({ api, sim, dossier, city, menu, refs, tape }) 
     if (s.heat) { const t0 = performance.now(), wait = () => { if (window.__toys?.heat) { window.__toys.heat.set(s.heat); window.__toys.tools?.(false); done('heat'); } else if (performance.now() - t0 < 15000) setTimeout(wait, 250); }; wait(); }
     // the follow: once the walkers are placed again (in TAPE: the tape's walkers); not if the viewer took the camera meanwhile
     const follow = inTape => { if (!s.follow || !rig) return; const t0 = performance.now(), wait = () => { if (rig.mode !== 'orbit' || tape.active !== inTape) return; const w = rig.people.byAid(s.follow);
-      if (w) { rig.setMode('follow', { subject: w }); city.follow(s.follow); done('follow'); return; } if (performance.now() - t0 < RELOAD.followMs) setTimeout(wait, 250); }; setTimeout(wait, 250); };
+      if (w) { if (s.lock) rig.setMode('lock', { subject: w, restore: true }); else rig.setMode('follow', { subject: w }); city.follow(s.follow); done('follow'); return; } if (performance.now() - t0 < RELOAD.followMs) setTimeout(wait, 250); }; setTimeout(wait, 250); };
     // TAPE: the tape follows its own agent; a dossier or follow the viewer took in TAPE beyond it comes back too (TAPE's light reload,
     // ui/light.js, goes with TAPE open)
     if (s.tape && r.tape) { const off = tape.on('seek', () => { off(); if (s.tape.playing) tape.play(); done('tape');

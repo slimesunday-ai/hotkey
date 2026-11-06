@@ -100,7 +100,7 @@ export function createActMarks({ acts, agents, scene, player, nameOf = id => id,
   // viewer-only act: its counterpart is shown only to a viewer following its agent (a hand-over: either of the pair), and only while the
   // walker plays this very act. Everyone else sees the act play with no tag. §19's release (the receipt public at the next dawn) never
   // falls inside an act's window (its minimum, before the 21:00 lock), so no tag shows to non-followers live; the tape carries it after
-  const followed = () => { const c = typeof window !== 'undefined' ? window.__city?.cam : null; return c && c.mode === 'follow' && c.subject?.agent ? c.subject.aid ?? null : null; };
+  const followed = () => { const c = typeof window !== 'undefined' ? window.__city?.cam : null; return c?.watched?.agent ? c.watched.aid ?? null : null; };   // (the person watched: camera/rig.js watched)
   const seenBy = (cue, id) => !!id && (setOf(cue.kind) === 'handover' ? cue.participants.includes(id) : cue.agent === id);
   const V = new THREE.Vector3(), shown = [];
   function frame() {

@@ -34,21 +34,22 @@ body.cam-photo .ui, body.cam-photo .hint, body.cam-photo #camhud, body.cam-photo
 @media (max-width: 640px) { #camhud button kbd { display: none; } }
 `;
 export const MODE_KEYS = {
-  all: [['1 2 3 4', 'orbit · fly · follow · photo'], ['Esc', 'back (photo → where you were, else the map)'], ['?', 'this help'], ['\\', 'render panel']],
+  all: [['1 2 3 4 · 6', 'orbit · fly · follow · photo · lock'], ['Esc', 'back (photo → where you were, else the map)'], ['?', 'this help'], ['\\', 'render panel']],
   orbit: [['drag', 'move'], ['right / shift-drag', 'turn'], ['scroll · pinch', 'zoom'], ['W A S D · arrows', 'move (eased)'], ['Q E', 'turn'], ['R F', 'zoom'], ['Shift', 'faster'], ['click a person', 'follow them'], ['click a home', 'look inside'], ['views · Go to', 'ease there · jump there']],
   fly: [['click', 'mouse-look (pointer lock) · Esc lets go'], ['drag', 'look, without the lock'], ['W A S D', 'fly · strafe'], ['E / Space · Q / C', 'up · down'], ['arrows', 'look'], ['Shift · Alt', 'boost · slow'], ['wheel', 'speed'], ['click (locked)', 'follow the person at the dot']],
   follow: [['click a person', 'follow them'], ['Tab · Shift-Tab', 'next · previous person nearby'], ['G', 'next sim agent (?sim=live)'], ['drag · two-finger swipe · A D · ← →', 'orbit round them (it stays where you leave it)'], ['W S · ↑ ↓', 'higher · lower (yours: kept, as the distance is)'], ['wheel · pinch · R F', 'closer · further (yours: kept for the next person and a reload)']],
   photo: [['Enter', 'still at the format'], ['R', 'record a clip · again to stop'], ['V', 'next format (screen, 2×, 4K, 9:16, 4:5, 1:1)'], ['B', 'depth of field on / off'], ['[ ]', 'focus nearer · further (manual)'], ['F', 'free camera ↔ follow the person'], ['wheel · - =', 'lens (field of view)'], ['Z X', 'roll'], ['W A S D E Q · drag', 'move · look (slow, smooth)'], ['H', 'hide / show the photo bar']],
+  lock: [['6 · the card\'s Lock', 'lock onto the person: you turn and zoom, they carry the camera'], ['click a person', 'lock onto them'], ['Tab · Shift-Tab · G', 'next · previous person · next agent'], ['drag · swipe · A D · ← →', 'turn round them (fixed to the world)'], ['W S · ↑ ↓', 'higher · lower'], ['wheel · pinch · R F', 'closer · further'], ['in the way', 'goes see-through'], ['3', 'follow them instead']],
   pad: [['left stick · right stick', 'move · look'], ['LT RT · LB RB', 'down · up'], ['L3', 'boost'], ['A', 'follow / next person'], ['B', 'back'], ['X', 'still (photo) · previous person'], ['Y', 'photo'], ['Start', 'fly'], ['Back', 'help'], ['d-pad', 'speed · people']],
   touch: [['left side', 'move stick (fly, photo)'], ['right side', 'look / orbit'], ['pinch', 'speed · distance · lens'], ['tap a person', 'follow them'], ['tap the mode bar', 'switch modes']],
 };
-const LABEL = { orbit: 'Orbit', fly: 'Fly', follow: 'Follow', photo: 'Photo', walk: 'Walk' };
+const LABEL = { orbit: 'Orbit', fly: 'Fly', follow: 'Follow', photo: 'Photo', walk: 'Walk', lock: 'Lock' };
 
 export function createHud(rig) {
   const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
   const h = (tag, attrs = {}, text) => { const e = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); if (text != null) e.textContent = text; return e; };
   const box = h('div', { id: 'camhud', role: 'toolbar', 'aria-label': 'Camera mode' }), modes = h('div', { class: 'modes' }), ctx = h('div', { class: 'ctx', 'aria-live': 'polite' });
-  const btns = {}; ['orbit', 'fly', 'follow', 'photo', 'walk'].forEach((m, k) => { const b = h('button', { type: 'button', title: `${LABEL[m]} (${k + 1})` }); b.append(LABEL[m], h('kbd', {}, String(k + 1))); b.onclick = () => { rig.setMode(m); b.blur(); }; btns[m] = b; modes.append(b); });
+  const btns = {}; ['orbit', 'fly', 'follow', 'photo', 'walk', 'lock'].forEach((m, k) => { const b = h('button', { type: 'button', title: `${LABEL[m]} (${k + 1})` }); b.append(LABEL[m], h('kbd', {}, String(k + 1))); b.onclick = () => { rig.setMode(m); b.blur(); }; btns[m] = b; modes.append(b); });
   const q = h('button', { type: 'button', title: 'keys (?)', 'aria-label': 'Camera keys' }, '?'); q.onclick = () => { help(); q.blur(); }; modes.append(q);
   box.append(modes, ctx); document.body.append(box);
   const toastEl = h('div', { id: 'camtoast', class: 'off', role: 'status' }), x = h('div', { id: 'camx', hidden: '' }); document.body.append(toastEl, x);
@@ -59,7 +60,7 @@ export function createHud(rig) {
     if (mode === 'fly') { const c = rig.fly, sp = Math.round(c.speed), mul = c.speedMul;
       return `${locked ? 'mouse looks · <b>Esc</b> lets go' : lockErr ? 'drag to look (no pointer lock here)' : '<b>click</b> for mouse-look · or drag'} · WASD · E/Q up/down · Shift boost · wheel speed <b>×${mul.toFixed(mul < 1 ? 2 : 1)}</b> · ${sp} m/s · <b>Esc</b> map`; }
     if (mode === 'follow') { const s = rig.subject, L = rig.people.label(s); return `${rig.follow.lost ? 'lost them — waiting' : 'following <b>' + L + '</b>'} · <b>Tab</b> next · G agent · drag or swipe orbit · wheel distance · <b>Esc</b> map`; }
-    if (mode === 'walk') return rig.ctrl?.hud?.() || 'walk';
+    if (mode === 'walk' || mode === 'lock') return rig.ctrl?.hud?.() || mode;
     return '';
   }
   function mode_(m) { mode = m; for (const [k, b] of Object.entries(btns)) { b.classList.toggle('on', k === m); b.setAttribute('aria-pressed', String(k === m)); }

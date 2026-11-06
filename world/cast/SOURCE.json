@@ -1,12 +1,12 @@
 {
- "from": "ai-city-fresh-c2clips",
- "commit": "34d25ec",
+ "from": "ai-city-fresh-c2van",
+ "commit": "176ccd2",
  "dirty": false,
- "at": "2026-11-01T19:11:48.257Z",
+ "at": "2026-11-05T14:02:49.834Z",
  "kills": 54,
  "ranks": 0,
  "npc": {
-  "traits": 75,
+  "traits": 80,
   "kills": [
    "held/npc_held_groceries",
    "held/npc_held_newspaper"
@@ -26,6 +26,9 @@
   "style/city/anim/cast/clips/breakin-props.js",
   "style/city/anim/cast/clips/breakin.js",
   "style/city/anim/cast/clips/breakin.md",
+  "style/city/anim/cast/clips/cleaners-props.js",
+  "style/city/anim/cast/clips/cleaners.js",
+  "style/city/anim/cast/clips/cleaners.md",
   "style/city/anim/cast/clips/cook-props.js",
   "style/city/anim/cast/clips/cook.js",
   "style/city/anim/cast/clips/cook.md",

@@ -12,6 +12,7 @@ import { SIDE } from '../style.js';
 import { TOD } from '../kit.js';
 import { buildsBlock } from '../modules.js';
 import { CLOCK, signalAt } from './rules.js';
+import { holeStatic } from '../gpu.js';
 import { paintedTexture } from '../canvastex.js';   // (black-ground fix: these canvases came back blank after a GPU-process reset)
 
 export const RANGE = 170;   // m: past it a head is a few pixels (and the mid tier still has the poles out to 270 m, so none floats)
@@ -37,6 +38,8 @@ export function createLamps(scene, { poles: signalPoles, sig: SIG, range = RANGE
   const hand = batch(new THREE.PlaneGeometry(.36, .42), Object.assign(icon(HAND), { color: new THREE.Color(0xff7a1a) }));
   const man = batch(new THREE.PlaneGeometry(.36, .42), Object.assign(icon(MAN), { color: new THREE.Color(0xf4f8ff) }));
   lens.name = 'signal-lenses'; hand.name = 'signal-hands'; man.name = 'signal-walk'; if (halo) halo.name = 'signal-halos';
+  // (C2-lock2: the lock camera's see-through hole cuts the lit lenses and icons with the heads they sit on, gpu.js holeStatic)
+  for (const m of [lens, halo, hand, man]) if (m) holeStatic(m.material);
   const COL = Object.fromEntries(Object.entries(LIT).map(([k, v]) => [k, new THREE.Color(v)]));
 
   let poles = [], at = '';

@@ -117,7 +117,7 @@ export function createFollow(world, people, rooms = null) {
   let saveAt = 0; const keepView = () => { F().viewerDist = +dist.toFixed(3); F().viewerPitch = +pt.toFixed(4); clearTimeout(saveAt); saveAt = setTimeout(savePrefs, 300); };
   let az = 0, pt = ownPitch(), dist = ownDist(), Ls = dist, armColl = dist;
   let gL = dist;   // (C2-camera2: last frame's arm length, for the enter glide's pace)
-  let pullN = 0, brake = false, occT = 0, clrT = 0, searchAt = -1, vis = 1, thinN = 0, flip = 0, dodgeT = 0, dodgeAt = -1, liftT = 0, glide = 1e9, safety = 0, cuts = 0, snaps = 0, nanSeen = 0, slides = 0, searches = 0, dodges = 0;
+  let walled = 0, walledCut = 0, snapM = 0, snapMax = 0, snapT = [-1e9, -1e9], pullN = 0, brake = false, occT = 0, clrT = 0, searchAt = -1, vis = 1, thinN = 0, flip = 0, dodgeT = 0, dodgeAt = -1, liftT = 0, glide = 1e9, safety = 0, cuts = 0, snaps = 0, nanSeen = 0, slides = 0, searches = 0, dodges = 0;
   sArm.x = dist;
 
   // ── INDOORS state: src (what the camera is on: 'follow' or 'room'), the ease onto it (t of dur s, from the live follow pose or a still),
@@ -287,7 +287,7 @@ export function createFollow(world, people, rooms = null) {
   // some swing round the person with room for the shortest arm at P (the cut's candidates): where a held camera can cut to
   function roomAny(P, p, L, m0) { for (const dy of [0, .52, -.52, 1.05, -1.05, 1.57, -1.57, 2.1, -2.1, Math.PI]) if (armMax(wrap(az + dy), p, L, latOf(L, 0), 0, P) >= m0 - .05) return true; return false; }
   function resetAssists() { zero(sAz, sPt, sLen, sDodge, sLift, sClose); asT.az = asT.pt = asT.len = 0; dodgeT = liftT = 0; occT = clrT = 0; flip = 0; }
-  const Ca = vec();   // (the cut's look ahead along the subject's way)
+  const Ca = vec(), Cr = vec();   // (the cut's look ahead along the subject's way; the arm's own point this frame, before the cushions)
   // re-enter at once at the subject, at the viewer's angle and distance: a switch that can't glide, a lost person found far off, a hold
   // that lost them (10-09: a cut no longer puts the camera back behind them; az is not touched unless it is not a number)
   function cut() { anchor(w, A); put(Pv, A.x, A.y, A.z); put(PvV, 0, 0, 0); put(Pc, A.x, A.y, A.z); put(PcV, 0, 0, 0); put(Pg, A.x, A.y, A.z); put(Bo, 0, 0, 0); hold = false; coupled = true; relT = 0; cpOk = false; put(La, 0, 0, 0); put(LaV, 0, 0, 0);
@@ -425,6 +425,7 @@ export function createFollow(world, people, rooms = null) {
     // ── the BODY round posts (camera build 2c): THIN spans never shorten the arm, so the step round a post (below) is the plan and this the
     // guarantee — the camera's own motion into a thin span's cushion (body.r + body.cushion) loses its approaching part smoothly (none left
     // at body.r: it slides round), and an offset so made decays back (body.hl). A cushion, not a clamp: no jump where a face flips (D4)
+    put(Cr, C.x, C.y, C.z);   // (the arm's own point, before the cushions: the wall test below)
     const bd = f.body; { const k = decay(bd.hl, dt); put(T, C.x + Bo.x * k, C.y + Bo.y * k, C.z + Bo.z * k);
       if (live && cpOk) { let mx = T.x - Cp.x, my = T.y - Cp.y, mz = T.z - Cp.z; const o2 = world.overlap(Cp, bd.r + bd.cushion, STATIC_THIN);
         if (o2) { const d0 = bd.r + bd.cushion - o2.depth, n = o2.n, mn = mx * n[0] + my * n[1] + mz * n[2]; bodyN++;
@@ -438,6 +439,21 @@ export function createFollow(world, people, rooms = null) {
           if (d0 < bd.rWide) { const out = (bd.rWide - d0) * (1 - decay(bd.pushHL, dt)); mx += n[0] * out; my += n[1] * out; mz += n[2] * out; } }
         put(T, Cp.x + mx, Cp.y + my, Cp.z + mz); }
       put(Bo, T.x - C.x, T.y - C.y, T.z - C.z); put(C, T.x, T.y, T.z); put(Cp, C.x, C.y, C.z); cpOk = live; }
+    // (C2-camera4, docs/redesign/camera-20261104-c.md A) THE CAMERA ON ITS ARM'S SIDE OF EVERY WALL, decided from this frame's pose: the
+    // cushions above keep the camera out of a solid by holding it back from where its arm puts it, and an arm that swings or slides past a
+    // wall's end leaves it held on the wall's far side, the lens against the wall, looking at the person through it (a05 at 10x, 6661.18:
+    // 0.6 s of one flat colour, the arm itself clear). A wall on the line from the arm's root to the camera put out puts the camera onto
+    // its arm at once, this frame (camera-20261104-c.md A': a cut only when that place is walled off too — A's cut every time looped
+    // along a facade at 10x) (the arm's root as armMax has it; a root inside a solid is the crushed arm's, left to the hold and the search)
+    if (live && w && ek === 0) { const dx = Cr.x - Pc.x, dy = Cr.y - Pc.y, dz = Cr.z - Pc.z, D = Math.hypot(dx, dy, dz) || 1, k0 = Math.min(.5, D * .5) / D; put(R0, Pc.x + dx * k0, Pc.y + dy * k0, Pc.z + dz * k0);
+      if (!world.overlap(R0, .1, STATIC_WIDE) && world.ray(R0, C, STATIC_WIDE)) { walled++;
+        // (onto the arm's own swept place, at once: the cushion's offset dropped and the arm in to the place the chase aims at, the room it
+        // will have armAhead s on — "the body in a wall → in at once", one snap, not a run; a cut when that place is walled off too, or when
+        // this would be the third snap within 1 s: camera-20261104-c.md addendum 2)
+        const L = Math.min(sArm.x, tb); camAt(aE, pE, L, lat, sLift.x, T, Ls);
+        if (!world.ray(R0, T, STATIC_WIDE) && !(now - snapT[0] < 1)) { snapT[0] = snapT[1]; snapT[1] = now; snapM = Math.hypot(T.x - C.x, T.y - C.y, T.z - C.z); snapMax = Math.max(snapMax, snapM); sArm.x = L; sArm.v = 0; put(Bo, 0, 0, 0); put(C, T.x, T.y, T.z); }
+        else { cut(); cutAt = now; walledCut++; snapT[0] = snapT[1] = -1e9; camAt(wrap(az + sAz.x), clamp(pt, -1.4, 1.45), sArm.x, latOf(sArm.x, 0), 0, C); }
+        put(Cp, C.x, C.y, C.z); } }
     // ── findings for the next frames, from where the camera is: the line of sight (walls: the search; posts: the step), people
     const fv = fan(C, targets(PT, C)); vis = visW = 1 - fv.wide / 5; thinN = fv.thin;
     const crushed = armColl < Math.min(Ls, f.distRange[0]) - .05 || (o.crushAhead && soft < Math.min(Ls, f.distRange[0]) - .05) || (hold && rN < f.distRange[0] - .05); if (crushed) vis = Math.min(vis, .4);   // (crushed, now or within armAhead s: a wall at the pivot leaves no room for the arm — search at once, as if hidden, over wide swings)
@@ -488,7 +504,7 @@ export function createFollow(world, people, rooms = null) {
 
   return {
     name: 'follow', pose, focus,
-    get dbg() { return { vpitch: pt, ty: view.ty, vyaw: view.yaw, viewOff: view.Y.o, hd: hdC, az, allowed: hold || !coupled ? Math.min(sArm.x, Math.hypot(C.x - Pv.x, C.y - Pv.y, C.z - Pv.z)) : sArm.x, arm: sArm.x, brakes, hold, held: Math.hypot(Pc.x - Pv.x, Pc.y - Pv.y, Pc.z - Pv.z), holds, body: bodyN, dist: Ls, want: dist, armColl, L: [Pc.x, Pc.y, Pc.z], pitch: clamp(pt + sPt.x, -1.4, 1.45), vis, thin: thinN, dodge: sDodge.x, lift: sLift.x, assist: { az: sAz.x, pt: sPt.x, len: sLen.x }, glide, enter: ent.t < ent.dur, safety, cuts, snaps, slides, searches, dodges, pulled: pullN, aim: { az: asT.az, pt: asT.pt, len: asT.len }, brake,
+    get dbg() { return { vpitch: pt, ty: view.ty, vyaw: view.yaw, viewOff: view.Y.o, hd: hdC, az, allowed: hold || !coupled ? Math.min(sArm.x, Math.hypot(C.x - Pv.x, C.y - Pv.y, C.z - Pv.z)) : sArm.x, arm: sArm.x, brakes, hold, held: Math.hypot(Pc.x - Pv.x, Pc.y - Pv.y, Pc.z - Pv.z), holds, body: bodyN, dist: Ls, want: dist, armColl, L: [Pc.x, Pc.y, Pc.z], pitch: clamp(pt + sPt.x, -1.4, 1.45), vis, thin: thinN, dodge: sDodge.x, lift: sLift.x, assist: { az: sAz.x, pt: sPt.x, len: sLen.x }, glide, enter: ent.t < ent.dur, safety, cuts, snaps, slides, searches, dodges, pulled: pullN, aim: { az: asT.az, pt: asT.pt, len: asT.len }, brake, walled, walledCut, snapM, snapMax, coupled, Pv: [Pv.x, Pv.y, Pv.z], hOcc, relT, cutAt, now,
       room: { src: CW.src, ease: CW.t < CW.dur ? +(CW.t / CW.dur).toFixed(3) : 1, hold: CW.holdT >= 0, room: CW.room, yaw: CW.yaw, pitch: CW.pitch, zoom: CW.zoom, frame: CW.fr && { pos: CW.fr.pos.toArray(), tgt: CW.fr.tgt.toArray() }, k: CW.k, ...CW.n }, pivot: [Lk.x, Lk.y, Lk.z] }; },
     get subject() { return w; }, get lost() { return lost > 0; }, get distance() { return dist; }, get entering() { return ent.t < ent.dur; },
     set(subject) { if (!subject) return false; switchTo(subject); return true; },

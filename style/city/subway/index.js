@@ -83,8 +83,8 @@ export function mountSubway(api, { Q } = {}) {
     if (s < tSt) { const al = N * TREAD - s * V; return at(al, W.y - RISE - al * RISE / TREAD, W.yaw + Math.PI, step('stairs_up', s)); }
     const al = -TREAD - Math.min(FLIGHT.out - TREAD, (s - tSt) * FLIGHT.walk); return at(al, yWalk(al), W.yaw + Math.PI, { vc: s - tSt < tWalk ? FLIGHT.walk * k : 0 });
   }
-  // the follow camera's subject is an agent going under → the ride opens
-  const followed = a => { const c = api.cam, s = c?.subject; return !!(c && c.mode === 'follow' && s && s.agent && String(s.aid) === String(a.id)); };
+  // the person watched (camera/rig.js watched: Follow's or Lock's) is an agent going under → the ride opens
+  const followed = a => { const s = api.cam?.watched; return !!(s && s.agent && String(s.aid) === String(a.id)); };
   // NOT ON THE TAPE (2026-10-10, the tape click-through): the live page's tape covers the city with its own screens and its marker clicks
   // are on the timeline the carriage would cover (tools/tapeclick.mjs --open watch:xXbadvibesXx --at 650). On the live tape the rider is
   // out of view underground, like anyone indoors. (It froze the tape before: the carriage paused the city's loop. It no longer does)

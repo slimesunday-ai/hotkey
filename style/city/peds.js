@@ -130,7 +130,12 @@ export function createPeds({ scene, night, R, bake, seed = 0x9ed5, densityOf = (
   const SC = new THREE.Vector3(.01, .01, .01), DP = [0, 0, 0, 0];   // (dog meshes are in centimetres, like every tier mesh: gpu.js)
   let lastPop = -1e9, frame = 0, fx = 0, fz = 0, px = 1e9, pz = 1e9, want = 0, cam = null, activeR2 = 0, farN = 0;
   const active = w => { const dx = w.p[0] - cam.x, dz = w.p[2] - cam.z; return dx * dx + dz * dz < activeR2; }, NONE = () => false;
-  const near = [], mid = [], far = [], nearB = [], midB = [];
+  const near = [], mid = [], far = [], nearB = [], midB = [], pri = [];
+  // C2-CLEANERS (2026-11-05) · THE NEAR TIER FOR WHAT MATTERS: a walker in an accident (traffic/accident.js w.gore) and the Cleaners
+  // (traffic/cleaners.js w.cleaner) draw on the near tier while they are in view, whatever their distance (clips play on the near tier
+  // only: an X hit at 70–90 m drew on the mid tier, with no clip). They go first under the near cap (nearCap is unchanged): the last of
+  // the rest (a walker new to the near tier first, as ever) goes to the mid tier for them. w.hide (a body in the Cleaners' bag) is drawn on no tier and is not a removal
+  // in view: the bag took it (stats().bagged counts them)
   // fidelity pass · what the camera can see: inside the frustum (a sphere round the body) and nearer than the haze's far edge and the
   // walkers' range; a walker's size at distance d (1 → 0 over the last 15 % of R.charFar: the range edge is never a pop)
   const FR = new THREE.Frustum(), PM = new THREE.Matrix4(), SP = new THREE.Sphere(); let fogFar = 1e9, rng = 250, visR2 = 0;
@@ -143,7 +148,7 @@ export function createPeds({ scene, night, R, bake, seed = 0x9ed5, densityOf = (
   // screen then (or is new). Teleports (a go-to: the load-in hides them) reset the tracking. (walkers-fix: one that was out of view or out of
   // range last frame came into view — the camera turned onto it, it walked in — it did not appear: before, a walker that had arrived
   // unseen a moment earlier and was swept into the edge of a turning view, 290 m out, counted as a spawn)
-  const T = { rem: 0, spawn: 0, remWhy: {}, spawnWhy: {}, vis: 0, prev: [], maxId: 0, frames: 0, ms: 0, msMax: 0, log: [] }, why = (o, k) => { o[k] = (o[k] || 0) + 1; };
+  const T = { rem: 0, spawn: 0, remWhy: {}, spawnWhy: {}, vis: 0, prev: [], maxId: 0, frames: 0, ms: 0, msMax: 0, log: [], bagged: 0 }, why = (o, k) => { o[k] = (o[k] || 0) + 1; };
   // (walkers-fix: the last few continuity events, for looking into one: what, who, how far, how long it had lived, where on the screen)
   const note = (k, w, d) => { const v = V3.set(w.p[0], w.p[1] + .9, w.p[2]).project(camera0); T.log.push({ k, f: frame, id: w.id, d: +d.toFixed(1), age: +(sim.t - (w.born ?? -1)).toFixed(2), ndc: [+v.x.toFixed(2), +v.y.toFixed(2)], cross: !!w.E?.cross, agent: !!w.agent }); if (T.log.length > 16) T.log.shift(); };
   let camera0 = null;
@@ -168,13 +173,16 @@ export function createPeds({ scene, night, R, bake, seed = 0x9ed5, densityOf = (
       if (demo && (frame === 2 || frame % 30 === 0)) demoAgents(focus);
       sim.step(Math.min(dt, .1), avoid ? active : NONE);
       // tiers: in view (3 m margin: a body's shadow reaches into it) and in range; the tier a walker had comes first under its cap
-      near.length = mid.length = far.length = nearB.length = midB.length = 0; let moving = 0; const now = sim.t;
+      near.length = mid.length = far.length = nearB.length = midB.length = pri.length = 0; let moving = 0; const now = sim.t;
       for (const w of sim.walkers) { let p = w.p, d = Math.hypot(p[0] - cam.x, p[1] - cam.y, p[2] - cam.z);
+        if (w.hide) { if (w.drawnF === frame - 1) T.bagged++; w.tier = 0; w.dn = 0; continue; }
         if (d > R.charNear * 1.2 && (d > rng + 4 || !inView(p, 3))) { if ((frame + w.id) % 6 === 0) sim.where(w); w.tier = 0; w.dn = 0; w.outF = frame; continue; }   // (out of view: its place is refreshed now and then)
         if (d < R.charMid || (frame + w.id) & 1 || w.tier === 0) { p = sim.where(w); sim.face(w); d = Math.hypot(p[0] - cam.x, p[1] - cam.y, p[2] - cam.z); }   // (far bodies move every other frame; the heading turns at a limited rate: pedsim.js face)
         if (d >= rng) { w.tier = 0; w.dn = 0; continue; } if (d < 160) moving++; w.dn = d;
-        if (d < R.charNear * (w.tier === 1 ? 1.1 : 1)) (w.tier === 1 ? near : nearB).push(w); else if (d < R.charMid * (w.tier === 2 ? 1.08 : 1)) (w.tier === 2 ? mid : midB).push(w); else far.push(w); }
-      for (const w of nearB) near.push(w); for (let k = nearCap; k < near.length; k++) midB.push(near[k]); if (near.length > nearCap) near.length = nearCap;
+        if ((w.gore || w.cleaner) && inView(p, 3)) pri.push(w);
+        else if (d < R.charNear * (w.tier === 1 ? 1.1 : 1)) (w.tier === 1 ? near : nearB).push(w); else if (d < R.charMid * (w.tier === 2 ? 1.08 : 1)) (w.tier === 2 ? mid : midB).push(w); else far.push(w); }
+      for (const w of nearB) near.push(w); if (pri.length) near.unshift(...pri);
+      for (let k = nearCap; k < near.length; k++) midB.push(near[k]); if (near.length > nearCap) near.length = nearCap;
       for (const w of midB) mid.push(w); midCap = growTo(midM, midCap, mid.length); for (let k = midCap; k < mid.length; k++) far.push(mid[k]); if (mid.length > midCap) mid.length = midCap;
       farCap = growTo(farM, farCap, far.length); if (far.length > farCap) far.length = farCap;
       for (const w of near) w.tier = 1; for (const w of mid) w.tier = 2; for (const w of far) w.tier = 3;
@@ -199,12 +207,13 @@ export function createPeds({ scene, night, R, bake, seed = 0x9ed5, densityOf = (
         if (fresh && on && w.drawnF !== frame - 1 && w.outF !== frame - 1 && (w.id > T.maxId || w.onF === frame - 1)) { T.spawn++; why(T.spawnWhy, w.id > T.maxId ? 'new' : 'shown'); note('spawn', w, w.dn); }
         w.drawnF = frame; if (on) w.onF = frame; if (w.id > mx) mx = w.id; }
       if (fresh) for (const w of T.prev) { if (w.drawnF === frame || w.onF !== frame - 1) continue; const d = Math.hypot(w.p[0] - cam.x, w.p[1] - cam.y, w.p[2] - cam.z);
+        if (w.hide && !w.gone) continue;   // (C2-cleaners: in the bag — counted in T.bagged)
         if (w.gone || onScreen(w, d)) { T.rem++; why(T.remWhy, w.gone ? 'left' : 'undrawn'); note(w.gone ? 'left' : 'undrawn', w, d); } }
       T.prev.length = 0; for (const list of [near, mid, far]) for (const w of list) T.prev.push(w); T.vis = vis; T.maxId = mx; T.frames++;
       if (lensL) lens(lensL);
       const ms = performance.now() - T0; T.ms += (ms - T.ms) * .05; T.msMax = Math.max(T.msMax * .995, ms);   // (the whole update: sim step, tiers, batches, stats)
       return moving; },
-    stats: () => ({ lensNow, onScreenRemovals: T.rem, onScreenSpawns: T.spawn, removalWhy: { ...T.remWhy }, spawnWhy: { ...T.spawnWhy }, log: T.log.slice(), visible: T.vis, pool: sim.walkers.length, frames: T.frames,
+    stats: () => ({ lensNow, bagged: T.bagged, onScreenRemovals: T.rem, onScreenSpawns: T.spawn, removalWhy: { ...T.remWhy }, spawnWhy: { ...T.spawnWhy }, log: T.log.slice(), visible: T.vis, pool: sim.walkers.length, frames: T.frames,
       tiers: [near.length, mid.length, far.length], caps: [nearCap, midCap, farCap], updateMs: +T.ms.toFixed(3), updateMax: +T.msMax.toFixed(3),
       walkers: sim.walkers.length, agents: sim.agents.length, dontWalk: sim.stat.dontWalk, stepOffs: sim.stat.stepOffs, dogs: sim.walkers.filter(w => w.dog >= 0).length, want, edges: sim.edges.length, lanes: sim.lanes.size, deadEnds: sim.deadEnds, avoidMs: +sim.stat.avg.toFixed(3), avoidMax: +sim.stat.max.toFixed(3) }),
     density: (focus, radius) => sim.density(focus, radius),

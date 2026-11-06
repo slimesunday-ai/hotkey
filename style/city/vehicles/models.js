@@ -215,3 +215,50 @@ export const bus = (V, o) => {
   mirrors(V, W, 20, 74, C.trim); arch(V, [16, 64], .5, W, 4);
   if (o.driver) for (let y = 18; y < 23; y++) for (let z = 72; z < 75; z++) V.set(W, y, z, y >= 21 ? C.hair[1] : C.skin[1]);
 };
+// C2-VAN (2026-11-05, slime: "Vans is fine if you think that's the best option") · THE CLEANERS' VAN: the Qwik Kargo van's body (van
+// above: the same 4.4 × 1.8 × 2.4 m box, cab, glass, lamps and wheels), plain white: no stripe, no lettering. Behind two rear doors, a
+// cargo bay. One body, two states:
+//   o.bay false (the default): the doors shut and baked in, the bay solid: what anything that never opens them draws (traffic, a prop)
+//   o.bay true: the bay hollow and dark (a ribbed floor, the walls, the wheel housings, the roof's underside) and the doorway empty:
+//     the two leaves are their own parts (vanLeaf; index.js doorVol), swung about their hinges by the stage (index.js doorYaw)
+// The bay (voxels): floor top at y 2 (0.2 m: the rear sill is flush with it; one stair riser for the toon's short legs), inside x 3…16 (1.4 m, the doorway's width
+// between the tail-lamp pillars; 0.8 m between the wheel housings, z 2…14), y 2…22 (2.1 m), z 1…29 (the cab from z 30). variant 0: dark glass all round, nobody seen at the wheel · variant 1: clear
+// glass, and with o.driver a Cleaner at the wheel (the white hood, the dark visor).
+export const VAN_BAY = { floor: 2, x0: 2, x1: 18, top: 23, z1: 30, door: [3, 17], seam: 10 };
+const VAN_W = 0xf7f7f2, HOOD = 0xf2f2ee, VISOR = 0x16171c;
+// one rear leaf (0: the −x leaf, hinged at the −x pillar · 1: the +x leaf, at the +x pillar), on the tail's face (z 0), in the body's frame
+export function vanLeaf(V, leaf) {
+  const [x0, x1] = leaf ? [VAN_BAY.seam, VAN_BAY.door[1]] : [VAN_BAY.door[0], VAN_BAY.seam], y0 = VAN_BAY.floor, y1 = VAN_BAY.top;
+  V.box(x0, y0, 0, x1, y1, 1, VAN_W);
+  // the rear window, dark (the bay reads dark from behind, doors shut or not)
+  V.box(x0 + 1, 14, 0, x1 - 1, 21, 1, C.tint, GL);
+  // the seam (the +x leaf's lip over the −x one) and the handle
+  if (leaf) { V.box(x0, y0, 0, x0 + 1, y1, 1, C.trim); V.box(x0 + 2, 10, 0, x0 + 3, 13, 1, C.chrome, MT); }
+  // the hinges
+  const xh = leaf ? x1 - 1 : x0; for (const y of [5, 6, 18, 19]) V.set(xh, y, 0, C.trim);
+}
+export const cleanVan = (V, o) => {
+  const c = VAN_W, L = 44, dark = (o.variant | 0) % 2 === 0, glass = dark ? C.tint : C.glass, B = VAN_BAY;
+  // the lower body (its skirt down to 0.2 m round the bay); the rear bumper, its top the sill (0.2 m)
+  V.box(1, 3, 1, 19, 11, 43, c); V.box(1, 2, 1, 19, 3, B.z1, c); V.box(1, 1, 0, 19, 2, 1, C.trim); V.box(1, 3, 43, 19, 5, 44, C.trim);
+  // the bay's floor (0.1–0.2 m, ribbed), under the body line
+  V.box(B.x0, B.floor - 1, 1, B.x1, B.floor, B.z1, (x, y, z) => z % 2 ? 0x34353c : 0x2a2b31);
+  const fz = boxUpper(V, { y0: 11, y1: 24, z0: 1, z1: 37, c, rake: 2, gy: 12 });
+  for (let y = 12; y < 23; y++) { const b = fz(y); for (let x = 2; x < 18; x++) V.set(x, y, b - 1, glass, GL); if (y > 13) for (const x of [1, 18]) V.box(x, y, 31, x + 1, y + 1, b - 1, glass, GL); }
+  for (let y = 12; y < 23; y++) for (const x of [1, 18]) { V.set(x, y, 30, C.trim); }
+  V.box(1, 23, 1, 19, 24, 34, 0xe6e1d6);
+  lamps(V, { zf: 42, belt: 11, hy: 7, ty: 15, th: 3, tw: 2 }, o.lights); V.box(7, 5, 42, 13, 9, 43, C.trim); V.box(8, 1, 0, 12, 2, 1, C.plate);
+  mirrors(V, 18, 14, 33, C.trim);
+  if (o.bay) {
+    // the bay: hollowed behind the doorway, lined dark (the walls a voxel in from the white skin), the ribbed floor, the wheel
+    // housings (filled here, then cut round the wheel by arch(): their inner faces stay), the roof's underside, the bulkhead
+    V.clear(B.door[0], B.floor, 1, B.door[1], B.top, B.z1);
+    for (const x of [B.x0, B.x1 - 1]) V.box(x, B.floor, 2, x + 1, B.top, B.z1, C.liner);
+    for (const [xa, xb] of [[B.door[0], 6], [14, B.door[1]]]) V.box(xa, B.floor, 2, xb, 10, 15, C.liner);
+    V.box(B.x0, B.top - 1, 2, B.x1, B.top, B.z1, C.liner);
+    V.box(B.x0, B.floor, B.z1 - 1, B.x1, B.top, B.z1, C.liner);
+  } else { vanLeaf(V, 0); vanLeaf(V, 1); }
+  arch(V, [8, 36], .4);
+  if (o.driver && !dark) { for (let y = 17; y < 22; y++) for (let z = 33; z < 36; z++) V.set(18, y, z, y >= 18 && y <= 20 && z >= 34 ? VISOR : HOOD);
+    for (let y = 17; y < 22; y++) { const b = fz(y) - 1; for (let x = 12; x < 16; x++) if (V.has(x, y, b)) V.set(x, y, b, y >= 18 && y <= 20 && x >= 13 && x < 15 ? VISOR : HOOD); } }
+};

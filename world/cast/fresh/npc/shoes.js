@@ -12,4 +12,7 @@ export default {
   npc_shoes_boot: { name: 'Civilian · work boots', tier: 'common', why: 'trades · tan work boots, scuffed', last: 'fullcourt', paint: two(CIV.tan, CIV.darkbrown) },
   npc_shoes_clog: { name: 'Civilian · white clogs', tier: 'common', why: 'service · plain white clogs: the night shift at St. Mercy', last: 'terrace', paint: two(CIV.white, CIV.lightgrey) },
   npc_shoes_canvas: { name: 'Civilian · navy canvas', tier: 'common', why: 'everyday · navy canvas slip-ons, cream sole', last: 'lowline', paint: two(CIV.navy, CIV.cream) },
+
+  // the Cleaners' boots (uniform: true: never rolled; style/city/cast.js OUTFITS cleaner_*): black rubber
+  npc_cleaner_boots: { name: 'Cleaner · rubber boots', tier: 'common', uniform: true, why: 'the Cleaners: black rubber safety boots', last: 'fullcourt', paint: two(0x2a2b2f, 0x1e1f22) },
 };

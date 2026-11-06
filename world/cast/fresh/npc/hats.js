@@ -2,6 +2,14 @@
 // tourist bucket. No logos, no stickers, no patches, matte. Built like hats.js (copied into kit.js): every crown a closed solid on the
 // hair shell with its rim on it, so the auto cover keeps hair whole; nothing below y 29 at the front. README § The NPC pool and § Hats.
 import { solid, rowsOf, ring, inFoot, shade } from './kit.js';
+// the Cleaners' hood (npc_cleaner_hood_*): the shell round the head, the rim round the face opening
+const HOOD = 0xe6e7e2, VISOR = 0x1d2229, RUBBER = 0x3a3d42, LENS = 0x5f7180, FILTER = 0x9a8f62;
+function cleanerHood(H) { const inH = (x, y, z) => x >= -8 && x <= 7 && y >= 19 && y <= 33 && z >= -7 && z <= 7, face = (x, y, z) => z >= 8 && x >= -7 && x <= 6 && y >= 19 && y <= 31;
+  for (let x = -10; x <= 9; x++) for (let y = 18; y <= 35; y++) for (let z = -9; z <= 8; z++) { if (inH(x, y, z) || face(x, y, z)) continue;
+    const ex = x < -9 ? -9 - x : x > 8 ? x - 8 : 0, ez = z < -8 ? 1 : 0, ey = y > 34 ? 1 : 0; if (ex + ez + ey > 1 || (ex && (y < 21 || y > 31)) || (y === 18 && (x < -8 || x > 7 || z < -7))) continue;
+    H.set(x, y, z, (y === 34 || y === 35) && (x === -1 || x === 0) ? shade(HOOD, .9) : HOOD); }
+  for (let x = -8; x <= 7; x++) for (const y of [32, 33]) H.set(x, y, 9, shade(HOOD, .94));   // the rim over the brow, one proud
+  for (let y = 18; y <= 31; y++) for (const x of [-9, -8, 7, 8]) H.set(x, y, 9, shade(HOOD, .94)); }
 const rib = (c, k = .9) => (x, y, z) => ((x + z) & 1) ? c : shade(c, k);
 export default {
   npc_hat_flat_cap: { name: 'Civilian · flat cap', tier: 'common', why: 'a grey wool flat cap: the retiree on the bench feeding pigeons',
@@ -25,4 +33,18 @@ export default {
     draw(H) { const c = 0xcbbf9f, b = shade(c, .92);
       solid(H, { ...rowsOf(30, 34, [-9, 8, -8, 8, 2]), 35: [-8, 7, -7, 7, 2] }, c);
       ring(H, 30, [-11, 10, -10, 10, 4], [-9, 8, -8, 8], b); ring(H, 29, [-12, 11, -11, 11, 5], [-10, 9, -9, 9], b); } },
+
+  // ───────────────────────── THE CLEANERS' HOODS (uniform: true: never rolled; style/city/cast.js OUTFITS cleaner_visor / cleaner_mask).
+  // A white hazmat hood round the whole head (x −10..9, y 18..35, z −9..8: two voxels out at the ears, one elsewhere), its rim one proud
+  // round the face opening (z 9), and the face panel in the opening (z 8, one proud of the face plane): every face cell is covered.
+  npc_cleaner_hood_visor: { name: 'Cleaner · hood, dark visor', tier: 'common', uniform: true, cover: 'all', coversEars: true,
+    why: 'the Cleaners, variant A: white hazmat hood, a faceless dark visor from the brow to the chin',
+    draw(H) { cleanerHood(H); for (let x = -7; x <= 6; x++) for (let y = 19; y <= 31; y++) { const vis = y >= 21 && y <= 30 && !((x === -7 || x === 6) && (y === 21 || y === 30));
+      H.set(x, y, 8, vis ? VISOR : y < 21 ? shade(HOOD, .9) : HOOD, vis ? 1 : 0); } } },
+  npc_cleaner_hood_mask: { name: 'Cleaner · hood, respirator', tier: 'common', uniform: true, cover: 'all', coversEars: true,
+    why: 'the Cleaners, variant B: white hazmat hood, a full-face respirator: two round lenses, the snout and two filters',
+    draw(H) { cleanerHood(H); const lens = (x, y) => y >= 23 && y <= 27 && ((x >= -6 && x <= -3) || (x >= 2 && x <= 5)) && !((x === -6 || x === -3 || x === 2 || x === 5) && (y === 23 || y === 27));
+      for (let x = -7; x <= 6; x++) for (let y = 19; y <= 31; y++) H.set(x, y, 8, lens(x, y) ? LENS : y >= 30 ? HOOD : RUBBER, lens(x, y) ? 1 : 0);
+      for (let x = -2; x <= 1; x++) for (let y = 19; y <= 22; y++) { H.set(x, y, 9, RUBBER); if (y <= 21) H.set(x, y, 10, shade(RUBBER, .85)); }   // the snout
+      for (const x0 of [-6, 3]) for (let x = x0; x <= x0 + 2; x++) for (let y = 19; y <= 21; y++) for (let z = 9; z <= 10; z++) H.set(x, y, z, z === 10 && x === x0 + 1 && y === 20 ? shade(FILTER, .7) : FILTER); } },
 };
