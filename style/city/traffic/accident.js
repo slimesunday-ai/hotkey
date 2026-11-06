@@ -24,11 +24,35 @@
 // clip), into the car's way at a gap the car can't stop in. With no car in the frame that can do it, a line on screen says so and the key
 // stays armed (GORE.arm s), trying every tenth of a second. It had waited on the walkers: the bait (an agent's shove, the first 6 s)
 // and a walker standing ready at the kerb for a car (up to a light's cycle) — 11 of 18 presses, a median of about 29 s.
-// Console: __city.traffic.accidents (stats, now()).
+// THE CLEANERS (C2-cleaners, 2026-11-05, traffic/cleaners.js): a body still in view after its linger is the Cleaners' — two figures in
+// white hazmat suits out of the nearest door bag it, carry it in, and one mops the pool. This file keeps the body: it asks them
+// (cleaners.want, every frame the body is due and seen), hides the walker once it is in the bag (bag: w.hide, peds.js draws it nowhere),
+// mops the pool on their word (mop: the pool dries over BLOOD.dry s from then) and, as ever, gives the walker back to the crowd only
+// where the camera can't see it (and not where its way back onto the lanes is seen either, once it was in the bag).
+// A BODY IN A TRAVEL LANE STOPS THE CARS (C2-cleaners round 3, 2026-11-05: the far-lane X body, bodyland's one in a lane, had 14 cars
+// drive over it): while a body lies within a car's clearance of a travel lane's line (its footprint within a car's half-width and
+// BODYHZ.keep m of the line), it keeps soft stop hazards along it (traffic/sim.js: every car stops short and queues behind it, as
+// behind a wreck), until it is in the bag or back on the crowd. A body clear of every lane's cars keeps none (the kerbside ones).
+// WHO TAKES A BODY (C2-gaps, 2026-11-05 · the redesign note's §10). slime, 11-05: "i think just the gaps we fill with birds and decay,
+// max gore lol, birds (pigeons and gulls) 1/3 and  then that last 1/3rd is  decay over time. both leave stains". A body still in view
+// after its linger gets exactly one taker, decided once (this file's): THE VAN where its job fits (cleaners.fit: a stop past the bag,
+// the job's sidewalk ground clear of the kerb's furniture), else THE BIRDS (traffic/birds.js) or DECAY (traffic/decay.js), about half
+// each (GAPS.birds), by the body's own spot (a hash of where it lies: the same body always gets the same answer). A van job given up
+// before the bag (its start guard waited out a cab, …) falls to the body's gap taker. Birds with no way in (no open sky, no spots) fall
+// to decay. Birds and decay grow their remains (stage/remains.js) over the body; once the remains' shell is whole the walker under it is
+// hidden (w.hide: what is seen is the shell), and it goes back to the crowd only where the camera can't see it (as from the bag).
+// THE STAINS: birds and decay each end in a stain (gorefx.js fx.stain, spreading as the body goes) that stays, with what is left (the
+// bones: stage/remains.js REMAINS.bones) — unlike the pool, which dries away over BLOOD.dry. At most GAPS.stains at once: past that, the
+// oldest the camera can't see goes (a stain is only ever taken off out of view). A SEEK is a cut: a take still running ends at once.
+// Console: __city.traffic.accidents (stats, now(), cleaners, gaps).
 import * as THREE from 'three';
 import { CLIP, playClip, stepClip, clearClip, stopClip } from '../anim/cast/clips/index.js';
 import { FOOT } from '../stage/crowd.js';
-import { createGoreFx, groundY } from '../stage/gorefx.js';
+import { createGoreFx, groundY, BLOOD, STAIN } from '../stage/gorefx.js';
+import { createCleaners } from './cleaners.js';
+import { createRemains } from '../stage/remains.js';
+import { createBirds } from './birds.js';
+import { createDecay, DECAY } from './decay.js';
 import { kerbOut } from '../plan.js';
 import { CAR } from './sim.js';
 
@@ -69,6 +93,11 @@ export const GORE = {
   // straight out), start: m past a lane's start the hit may be (just out of a junction, its far zebra behind the car)
   jay: { walk: [1.6, 1.9, 2.2, 1.35], keep: 4, vNow: 4.5, tMax: 3, edge: .92, cool: 1, corner: 1, start: 1, turn: .35, wait: 4.5, aim: .3, tell: 1.2, reach: 9, near: 90, far: 110, perM: 25, vMin: 6 },
 };
+// the gaps (C2-gaps): on · the share of the van's gaps the birds take (the rest rot) · stains at most at once (the oldest out of view goes)
+export const GAPS = { on: true, birds: .5, stains: 24 };
+// the body as the cars see it: along its line (lie_still: its +x from the root, 0.9 m to its middle) at these m from its middle, each a
+// disc of half its depth (0.28 m) and keep m (a car's clearance: what kerbpass.mjs gave a parked car) round it
+const BODYHZ = { at: [-.6, 0, .6], r: .28, keep: .1 };
 const DUR = .8, SHIFT = .52, cOut = (t, a, b) => { const x = Math.max(0, Math.min(1, (t - a) / (b - a))); return 1 - (1 - x) * (1 - x); }, ease = x => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
 const AXIS = { N: [0, 1], S: [0, -1], W: [1, 0], E: [-1, 0] };
 
@@ -81,6 +110,55 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
   // (well inside the frame, the middle `m` of it each way: a walker the key picks there stays in view as it staggers out and is thrown)
   const V3 = new THREE.Vector3(), inFrame = (x, y, z, m = .7) => { if (!cam || Math.hypot(x - cam.position.x, z - cam.position.z) > GORE.body.seenR) return false; V3.set(x, y, z).applyMatrix4(PM); return V3.z > -1 && V3.z < 1 && Math.abs(V3.x) < m && Math.abs(V3.y) < m; };
   const heightOf = c => models[c.model]?.H || 1.45;
+  // ── the Cleaners (traffic/cleaners.js): what they may do with a body — this file's
+  // a pool record of fx's (its ring reuses records: one is still the body's only while its age is what it was given)
+  const poolOk = r => r.s.on && Math.abs(r.s.age - (now - r.t0 - r.delay)) < .5;
+  const body = {
+    bag(K) { K.bagged = true; if (!K.w.gone) K.w.hide = true; dropBodyHz(K); },
+    // (a van job given up before the bag: the body falls to its gap taker — the van is not sent for it again)
+    unclaim(K) { K.clean = null; if (GAPS.on && K.taker === 'van' && !K.bagged) { K.taker = gapOf(K); K.vanGaveUp = true; S.vanGaveUp = (S.vanGaveUp || 0) + 1; } },
+    done(K) { K.clean = null; },
+    mop(K, secs = BLOOD.dry) { for (const r of K.pools || []) if (poolOk(r)) r.s.life = Math.min(r.s.life, Math.max(r.s.age, 0) + Math.max(secs, BLOOD.dry)); },
+    poolLeft(K) { let m = 0; for (const r of K.pools || []) { if (!poolOk(r)) continue; const s = r.s; m = Math.max(m, s.age < s.life - BLOOD.dry ? 1 : Math.max(0, (s.life - s.age) / BLOOD.dry)); } return m; } };
+  const cleaners = createCleaners({ scene, peds, sim, seen, body, night });
+  // ── the gaps' takers (C2-gaps): the remains (drawn), the flock, the rot; the stains (this file's)
+  const stageCtx = () => globalThis.__record?.draw?.stage?.ctx || globalThis.__city?.sim?.stage?.ctx || null;
+  // (the birds' own test, stricter than seen(): in the frustum and within 270 m of the camera either way it is measured — a bird is put out
+  // and taken off only where the camera can't see it by any measure)
+  const seenWide = (x, y, z, r = 1) => { if (!cam) return true; const dh = Math.hypot(x - cam.position.x, z - cam.position.z); if (dh > 270) return false; SP.center.set(x, y, z); SP.radius = r; return FR.intersectsSphere(SP); };
+  // (a point in a travel lane's car path: a car's half-width and 0.12 m of a lane's line, along it)
+  const inPath = (x, z) => { const cx = Math.floor(x / 32), cz = Math.floor(z / 32); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) for (const L of cells.get((cx + i) + ',' + (cz + j)) || []) { const ua = (x - L.x0) * L.ux + (z - L.z0) * L.uz; if (ua > -.5 && ua < L.len + .5 && Math.abs((x - L.x0) * -L.uz + (z - L.z0) * L.ux) < CAR_HW + .12) return true; } return false; };
+  const remains = createRemains({ scene, renderer: null, peds, inPath }), birds = createBirds({ scene, sim, seen: seenWide, fx, stage: stageCtx, remains }), decay = createDecay({ scene, remains });
+  S.takers = { van: 0, birds: 0, decay: 0 }; S.fitWhy = {};
+  const hashAt = (x, z) => { const v = Math.sin(Math.round(x * 10) * 12.9898 + Math.round(z * 10) * 78.233) * 43758.5453; return v - Math.floor(v); };
+  const gapOf = K => hashAt(K.rest.x, K.rest.z) < GAPS.birds ? 'birds' : 'decay';
+  // the body's middle as it lies (lie_still: 0.15 m along it, 0.4 m to its forward side of the rest point) — the stain's
+  const midOf = R => [R.x + Math.cos(R.yaw) * .15 + Math.sin(R.yaw) * .4, R.z - Math.sin(R.yaw) * .15 + Math.cos(R.yaw) * .4];
+  // decided once: the van where its job fits, else the body's gap taker
+  function decide(K) { if (!GAPS.on) return 'van'; if (cleaners.CLEAN.on) { const f = cleaners.fit(K); K.fitWhy = f.why; S.fitWhy[f.why.split(':')[0]] = (S.fitWhy[f.why.split(':')[0]] || 0) + 1; if (f.ok) return 'van'; } return gapOf(K); }
+  // the take: the remains read off the body first (drawn only as they grow). Where the body's own columns lie in a car path (an arm flung
+  // into the lane), their stop hazards go on all together once no car is near any of them, and only then does the take begin: no car
+  // stands on what is drawn
+  function startGap(K) { if (!K.pre) { let pl = null; if (K.taker === 'birds') { pl = birds.plan(K); if (!pl) { K.taker = 'decay'; S.birdsNoWay = (S.birdsNoWay || 0) + 1; } }
+      K.pre = { pl, R: remains.add(K, K.taker), t: 0 }; }
+    const pre = K.pre, pts = pre.R.pathPts;
+    if (pts.length && !pre.hz) { if (sim.cars.some(o => !o.gone && pts.some(([x, z]) => Math.hypot(o.x - x, o.z - z) < o.len / 2 + .9))) { pre.t++; return; }
+      const hz0 = (K.bhz ||= []); for (const [x, z] of pts) { if (hz0.some(h => Math.hypot(h.x - x, h.z - z) < .4)) continue; const h = { x, z, r: .3, hit: false, soft: true, case: null, body: true }; sim.hazards.push(h); hz0.push(h); } pre.hz = true; S.inPath = (S.inPath || 0) + 1; }
+    const T = K.taker === 'birds' ? { kind: 'birds', F: birds.start(K, pre.R, pre.pl), R: pre.R } : { kind: 'decay', D: decay.start(K, pre.R), R: pre.R };
+    S.takers[T.kind]++; const [mx, mz] = midOf(K.rest); T.stain = fx.stain(mx, mz, 2.1, { color: STAIN.colors[T.kind], spin: K.rest.yaw + (hashAt(mx, mz) - .5) * .6, aspect: .7 }); T.stain?.set(0); T.at = [mx, K.rest.gy, mz]; K.take = T; }
+  // a take each frame: the stain spreads as the body goes; the walker hidden once the remains' shell is whole; at its end the stain
+  // (with what is left) is kept, and the walker goes back to the crowd where nobody sees it
+  function stepTake(K) { const T = K.take, w = K.w;
+    T.stain?.set(T.kind === 'birds' ? T.F.eat : Math.max(0, Math.min(1, (T.D.k - DECAY.stain[0]) / (DECAY.stain[1] - DECAY.stain[0]))));
+    if (!K.covered && T.R.whole()) { K.covered = true; if (!w.gone) w.hide = true; }
+    if (!T.ended && (T.kind === 'birds' ? T.F.done : T.D.done)) { T.ended = true; T.stain?.set(1); dropBodyHz(K); stains.push({ h: T.stain, R: T.R, at: T.at, t: now, kind: T.kind }); S.taken = (S.taken || 0) + 1; }
+    if (T.ended) { const R = K.rest; if (!seen(R.x, R.gy + .3, R.z, 2.2)) { const L = P.laneNear(R.rx, R.rz, 12), q = L && P.where({ E: L.E, s: L.s }, [0, 0, 0, 0]); if ((!q || !seen(q[0], 1, q[2], 1.2)) && release(K, true)) S.cleared++; } } }
+  function endTake(K) { const T = K.take; if (!T || T.ended) return; if (T.kind === 'birds') birds.finish(T.F); else decay.finish(T.D); T.R.update(); stepTake(K); }
+  // the stains: at most GAPS.stains — past it the oldest the camera can't see goes, with its remains
+  const stains = []; let stainT = 0;
+  function keepStains() { while (stains.length > GAPS.stains) { const i = stains.findIndex(q => !seen(q.at[0], q.at[1] + .3, q.at[2], 1.4)); if (i < 0) break; const q = stains[i]; fx.unstain(q.h); q.R.drop(); stains.splice(i, 1); S.stainsGone = (S.stainsGone || 0) + 1; } }
+  // a seek (the record's player): every take still running ends at once — a cut
+  let seekOn = false; const hookSeek = () => { if (seekOn) return; const pl = globalThis.__record?.player; if (!pl?.on) return; seekOn = true; pl.on((s, m) => { if (m?.reset) for (const K of cases) if (K.take) { S.seekEnds = (S.seekEnds || 0) + 1; endTake(K); } }); };
   // ── the lanes by 32 m cell (once): the traffic lane a walker could stumble into
   const cells = new Map(); for (const L of sim.lanes) { const n = Math.ceil(L.len / 16); for (let k = 0; k <= n; k++) { const s = L.len * k / n, key = Math.floor((L.x0 + L.ux * s) / 32) + ',' + Math.floor((L.z0 + L.uz * s) / 32); let a = cells.get(key); if (!a) cells.set(key, a = []); if (!a.includes(L)) a.push(L); } }
   // the nearest lane out from a walker on side E, in the road's direction (rx, rz): { L, d (m to its line), ua (m along it) } or null
@@ -255,8 +333,8 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
     if (!CLIP[want]) return; if (!g.clip || g.clip.name !== want || g.clip.out) playClip(g, want, { t: K.ct, snap: true });
     const s = g.clip; s.t = K.loop ? s.t + dt : K.ct; s.w = 1; s.out = false; stepClip(g, 0); if (g.clip) { g.clip.out = false; g.clip.w = 1; } g.w = 0; g.iw = 1; }
   // the walker back to the crowd (back: onto the nearest clear lane point — false while there is none: try again next frame)
-  function release(K, back = true) { const w = K.w; if (back && !w.gone && !P.onWalker(w)) return false; cases.delete(K); dropHazard(K);
-    if (w.gone) return true; w.gore = undefined; w.stagePose = null; w.tq = null; w.lieQ = undefined; w.lift = 0; if (w.g?.clip) clearClip(w.g); return true; }
+  function release(K, back = true) { const w = K.w; if (back && !w.gone && !P.onWalker(w)) return false; cases.delete(K); dropHazard(K); dropBodyHz(K); if (K.pre && !K.take) { K.pre.R.drop(); K.pre = null; }
+    if (w.gone) return true; w.gore = undefined; w.stagePose = null; w.tq = null; w.lieQ = undefined; w.lift = 0; w.hide = undefined; if (w.g?.clip) clearClip(w.g); return true; }
 
   // ── the hit (traffic/sim.js onHit, inside its step)
   // (→ true: the hit is taken, and the car is a wreck this file lets go; false: no live case behind that hazard — no wreck: traffic/sim.js)
@@ -292,7 +370,9 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
   function update0(dt, camera, foc) { now += dt; cam = camera; focus = foc || camera.position; camera.updateMatrixWorld(); PM.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); FR.setFromProjectionMatrix(PM);
     stepStaged(); if (armed > now && ((now * 10) | 0) !== (((now - dt) * 10) | 0)) tryTrip();
     if (((now / 5) | 0) !== (((now - dt) / 5) | 0)) for (const [a, h] of holds) if (now - h.t > 30) holds.delete(a);
-    for (const K of [...cases]) { const w = K.w; if (w.gone) { release(K, false); continue; } K.t += dt; step(K, dt); }
+    for (const K of [...cases]) { const w = K.w; if (w.gone) { if (K.clean) cleaners.abort('gone'); if (K.take) endTake(K); release(K, false); continue; } K.t += dt; step(K, dt); }
+    cleaners.update(dt); hookSeek(); birds.update(dt); decay.update(dt); remains.update();
+    if ((stainT += dt) > 1) { stainT = 0; keepStains(); }
     // (every car braking as hard as it can for someone in the road lays rubber — the one that hits them, and one that just stops short)
     if (sim.hazards.length || skidding.size) { for (const c of skidding) if (c.gone || (!c.skid && !wrecks.has(c))) { fx.skid(c, false); skidding.delete(c); }
       for (const c of sim.cars) if (c.skid && c.v > .3 && !wrecks.has(c)) { skidding.add(c); fx.skid(c, true); } }
@@ -341,16 +421,27 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
       if (!K.landed && t >= F.tf) { K.landed = true; fx.splat(cx, gy, cz, 0, 1, 0, .9); fx.spray(cx, gy + .3, cz, K.f[0], .2, K.f[1], .45); }
       if (done) { K.ph = 'down'; K.t = 0; K.clip = 'lie_still'; K.loop = true; K.ct = 0; K.rest = { yaw, q: w.tq.clone(), x: cx, z: cz, rx: cx - Math.cos(yaw) * .9, rz: cz + Math.sin(yaw) * .9, gy }; S.bodies++;
         // the pool, under its middle as lie_still lays it (on its right side, 0.9 m to its +x: stage/crowd.js ROOM.side)
-        fx.pool(cx, cz, 1.8, .6); fx.pool(cx + Math.cos(yaw) * .5 + K.f[0] * .3, cz - Math.sin(yaw) * .5 + K.f[1] * .3, 1.1, 1.6); }
+        K.pools = [[cx, cz, 1.8, .6], [cx + Math.cos(yaw) * .5 + K.f[0] * .3, cz - Math.sin(yaw) * .5 + K.f[1] * .3, 1.1, 1.6]].map(([x, z, sz, dl]) => ({ s: fx.pool(x, z, sz, dl), t0: now, delay: dl }));
+        cleaners.prepare(); }
       return; }
     if (K.ph === 'down') { const R = K.rest, u = Math.min(1, K.t / .35);
       // settle: the tumble's tilt eases out as lie_still (its own root on the ground, the body 0.9 m to its +x) eases in
       if (u < 1) { const e = ease(u); w.tq.copy(R.q).slerp(QI, e); UP.set(0, .9, 0).applyQuaternion(w.tq).applyQuaternion(Qy.setFromAxisAngle(Yv, R.yaw)); w.fix = [(R.x - UP.x) * (1 - e) + R.rx * e, (R.gy + .3 - UP.y) * (1 - e) + R.gy * e, (R.z - UP.z) * (1 - e) + R.rz * e, R.yaw]; }
       // (lie_still poses it on the near tier; the mid and far tiers have no clips: they lay the body down whole — w.lieQ, peds.js)
       else if (w.tq) { w.tq = null; w.lieQ = LIE; w.lift = .24; w.fix = [R.rx, R.gy, R.rz, R.yaw]; }
+      // (a body within a car's clearance of a lane: soft stop hazards along it, kept until the bag or the crowd has it)
+      if (!K.bagged && !K.bhz) bodyHz(K);
       // (a body on the crowd's map — lie_still's footprint, stage/crowd.js FOOT.side — so walkers step round it, or stop short of it)
-      if (!w.tq) { const B = P.bodies, y = R.yaw, fx = Math.sin(y), fz = Math.cos(y), rx = Math.cos(y), rz = -Math.sin(y); for (const [l, a, r] of FOOT.side) B.push({ x: R.rx + rx * l + fx * a, z: R.rz + rz * l + fz * a, r, w, room: FOOT.room }); }
-      if (K.t > GORE.body.linger && !seen(R.x, R.gy + .3, R.z, 2.2) && release(K, true)) S.cleared++; } }
+      if (!w.tq && !K.bagged && !K.take?.ended) { const B = P.bodies, y = R.yaw, fx = Math.sin(y), fz = Math.cos(y), rx = Math.cos(y), rz = -Math.sin(y); for (const [l, a, r] of FOOT.side) B.push({ x: R.rx + rx * l + fx * a, z: R.rz + rz * l + fz * a, r, w, room: FOOT.room }); }
+      // (the Cleaners have it: theirs until they let go; in the bag, the walker goes back to the crowd where nobody sees it come back)
+      if (K.clean) return;
+      if (K.take) return stepTake(K);
+      if (K.bagged) { if (!seen(R.x, R.gy + .3, R.z, 2.2)) { const L = P.laneNear(R.rx, R.rz, 12), q = L && P.where({ E: L.E, s: L.s }, [0, 0, 0, 0]); if ((!q || !seen(q[0], 1, q[2], 1.2)) && release(K, true)) S.cleared++; } return; }
+      // (past its linger: out of view, back to the crowd; in view, its taker — decided once — takes it)
+      if (K.t > GORE.body.linger) { if (!seen(R.x, R.gy + .3, R.z, 2.2)) { if (release(K, true)) S.cleared++; return; }
+        K.taker ??= decide(K); if (K.taker === 'van') { if (cleaners.want(K)) S.takers.van++; return; }
+        // (the remains read the body as the near tier draws it: a beat for it to get there, a check's body laid this frame)
+        if (!peds.anim?.near?.includes(w) && (K.nearWait = (K.nearWait || 0) + dt) < 1.5) return; startGap(K); } } }
   const Qt2 = new THREE.Quaternion(), Xv = new THREE.Vector3(1, 0, 0), QI = new THREE.Quaternion(); const LIE = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI / 2);
   // the step down off the kerb (and up onto it), eased
   function settleY(K, x, z, dt) { const gy = groundY(x, z); K.y += (gy - K.y) * Math.min(1, dt * 16); return K.y; }
@@ -358,7 +449,30 @@ export function createAccidents({ scene, peds, sim, night = false, models = [], 
   // (soft: no hit may happen now — the cap, the cool-down — so every car stops short of it, as a cab always does)
   function hazard(K) { if (kerbOut(K.vis[0], K.vis[2]) > 0 && !K.hz) return; if (!K.hz) { K.hz = { x: 0, z: 0, r: GORE.hit.hzR, hit: false, soft: false, case: K }; sim.hazards.push(K.hz); } K.hz.x = K.vis[0]; K.hz.z = K.vis[2]; K.hz.soft = !canHit(); }
   function dropHazard(K) { if (!K.hz) return; const i = sim.hazards.indexOf(K.hz); if (i >= 0) sim.hazards.splice(i, 1); K.hz = null; }
-  return { update, fx, GORE, stats: () => ({ ...S, why: { ...S.why }, updateMs: +MS.avg.toFixed(3), updateMax: +MS.max.toFixed(3), live: cases.size, now: +now.toFixed(2), hazards: sim.hazards.length, wrecks: wrecks.size, armed: armed > now, ...fx.stats() }),
+  // the body's stop hazards (once, as it comes to rest): a disc along its line wherever it lies within a car's half-width + its own of a
+  // lane's line, along that lane's length (K.bhz: [] when it lies clear of every lane)
+  function bodyHz(K) { const R = K.rest, dx = Math.cos(R.yaw), dz = -Math.sin(R.yaw), r = BODYHZ.r + BODYHZ.keep;
+    // (a car over it the moment it comes to rest is let drive off it first: stopped there, it would stand on it)
+    for (const o of sim.cars) { if (o.gone || Math.abs(o.x - R.x) > 5 || Math.abs(o.z - R.z) > 5) continue; const h = o.h + (o.yawOff || 0), sh = Math.sin(h), ch = Math.cos(h); for (const a of BODYHZ.at) { const px = R.x + dx * a - o.x, pz = R.z + dz * a - o.z; if (Math.abs(px * sh + pz * ch) < o.len / 2 + r && Math.abs(px * ch - pz * sh) < o.wid / 2 + r) return; } }
+    K.bhz = [];
+    for (const a of BODYHZ.at) { const x = R.x + dx * a, z = R.z + dz * a, cx = Math.floor(x / 32), cz = Math.floor(z / 32); let near = false;
+      for (let i = -1; i <= 1 && !near; i++) for (let j = -1; j <= 1 && !near; j++) for (const L of cells.get((cx + i) + ',' + (cz + j)) || []) { const ua = (x - L.x0) * L.ux + (z - L.z0) * L.uz, lat = Math.abs((x - L.x0) * -L.uz + (z - L.z0) * L.ux); if (ua > -1 && ua < L.len + 1 && lat < CAR_HW + r) { near = true; break; } }
+      if (near) { const h = { x, z, r, hit: false, soft: true, case: null, body: true }; sim.hazards.push(h); K.bhz.push(h); } }
+    if (K.bhz.length) S.bodyHz = (S.bodyHz || 0) + 1; }
+  function dropBodyHz(K) { for (const h of K.bhz || []) { const i = sim.hazards.indexOf(h); if (i >= 0) sim.hazards.splice(i, 1); } if (K.bhz) K.bhz = []; }
+  const CAR_HW = .9;
+  // THE CHECK'S BODY (tools/cleanercheck.mjs): a crowd walker laid down at (x, z) — its middle — lying along yaw (lie_still's +x), its
+  // linger already run: the Cleaners' at once if the camera sees it. Never the street's: a check lays bodies where it wants them
+  function lay(x, z, yaw, { linger = GORE.body.linger + .01 } = {}) { const w = P.walkers.find(q => !q.agent && !q.off && !q.gone && !q.gore && !q.cleaner && q.dog < 0 && q.E && !q.E.cross);
+    const gy = groundY(x, z), rx = x - Math.cos(yaw) * .9, rz = z + Math.sin(yaw) * .9; if (!w || !P.offWalker(w, [rx, gy, rz, yaw])) return null;
+    const K = { w, ph: 'down', t: linger, ct: 0, pl: { rx: 0, rz: 0, T: 0 }, by: null, road: kerbOut(x, z) <= 0, hz: null, y: gy, look: null, clip: 'lie_still', loop: true, base: 0, k: 0, laid: true, rest: { yaw, q: new THREE.Quaternion(), x, z, rx, rz, gy } };
+    w.yawS = yaw; w.omega = 0; w.p[3] = yaw; w.tq = null; w.lieQ = LIE; w.lift = .24; w.fix = [rx, gy, rz, yaw]; w.stagePose = NOOP; w.gore = (g, dt) => pose(K, g, dt);
+    K.pools = [[x, z, 1.8, 0], [x + Math.cos(yaw) * .5, z - Math.sin(yaw) * .5, 1.1, .4]].map(([px, pz, sz, dl]) => ({ s: fx.pool(px, pz, sz, dl), t0: now, delay: dl }));
+    cases.add(K); S.bodies++; cleaners.prepare(); return K; }
+  // (a check's: the laid body back to the crowd at once, wherever the camera is)
+  function clear(K) { if (!cases.has(K)) return false; if (K.clean) cleaners.abort('check'); if (K.take) endTake(K); else if (K.pre) K.pre.R.drop(); return release(K, true) || release(K, false); }
+  const gaps = { GAPS, birds, decay, remains, get stains() { return stains.slice(); }, gapOf, decide, endTake, keepStains };
+  return { update, fx, GORE, cleaners, gaps, lay, clear, stats: () => ({ ...S, why: { ...S.why }, updateMs: +MS.avg.toFixed(3), updateMax: +MS.max.toFixed(3), live: cases.size, now: +now.toFixed(2), hazards: sim.hazards.length, wrecks: wrecks.size, armed: armed > now, ...fx.stats() }),
     now: () => [...cases].map(K => ({ ph: K.ph, t: +K.t.toFixed(2), road: K.road, x: +(K.vis?.[0] ?? K.w.p[0]).toFixed(1), z: +(K.vis?.[2] ?? K.w.p[2]).toFixed(1), hit: !!K.car, by: K.by ? 'agent' : 'trip', dir: [+K.pl.rx.toFixed(3), +K.pl.rz.toFixed(3)], lane: K.pl.lane ? [K.pl.lane.ux, K.pl.lane.uz] : null, tf: K.fly ? +(K.fly.tf + K.fly.tb).toFixed(2) : null })),
     holding: () => [...holds].filter(([a, h]) => now - h.t < .5 && a.p).map(([a, h]) => ({ id: a.aid, x: +a.p[0].toFixed(1), z: +a.p[2].toFixed(1), for: +(now - h.since).toFixed(2) })),
     jlog: () => JL.slice(), trip: tryTrip, readyW: () => staged[0]?.w ?? null, staged: () => staged[0] ? staged.map(G => ({ x: +G.w.p[0].toFixed(1), z: +G.w.p[2].toFixed(1), car: G.c.id, v: +G.c.v.toFixed(1), due: +G.due.toFixed(2), age: +(now - G.t).toFixed(2) })) : null, plan: w => roadPlan(w, false), arm(s = GORE.arm) { armed = now + s; armedAt = now; }, dbg: () => ({ armed, now, staged: staged.map(G => ({ x: +G.w.p[0].toFixed(1), z: +G.w.p[2].toFixed(1), car: G.c.id, age: +(now - G.t).toFixed(1) })), often: GORE.often, on: GORE.on, focus: !!focus, cases: cases.size, holds: [...holds].slice(0, 5).map(([a, h]) => [a.aid, a.id, +(now - h.t).toFixed(2), +(now - h.since).toFixed(2), a.tier, !!a.p]) }),

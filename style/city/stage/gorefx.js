@@ -12,10 +12,16 @@
 //   fx.hazard(car)                      this frame: the car's four corner lamps blink amber (and glow at night)
 //   fx.update(dt, camera)               once a frame: integrate, age, fade, draw
 // Splats and pools dry away at the end of their life (shrink over their last BLOOD.dry s); skid marks fade the same way.
+//   fx.stain(x, z, size, o)  → h        C2-GAPS (2026-11-05) · a STAIN: what is left where birds ate a body or it rotted away (slime, 11-05:
+//                                      "both leave stains"). It never dries: it stays until accident.js takes it off (fx.unstain(h), only
+//                                      where the camera can't see it). o.grow: s it spreads over (from STAIN.from of its size); o.color.
+//                                      Its own InstancedMesh (STAIN.cap): the splats' ring never overwrites one. h.set(k): its spread now (0 … 1)
 import * as THREE from 'three';
 import { kerbOut } from '../plan.js';
 import { SIDE } from '../style.js';
 
+// the stains' own mesh: cap slots at most (accident.js keeps its own bound under it); a stain spreads from `from` of its size
+export const STAIN = { cap: 48, from: .2, colors: { birds: 0x3d0806, decay: 0x2a1a0e } };
 export const BLOOD = { colors: [0x7a0f0b, 0x640b08, 0x8e140c, 0x520805], pool: 0x4a0705, life: 80, poolLife: 95, dry: 6, skidLife: 70 };
 // the ground under a point: the sidewalk's top off the road, the road's on it
 export const groundY = (x, z) => kerbOut(x, z) > 0 ? SIDE : 0;
@@ -73,6 +79,18 @@ export function createGoreFx(scene, { night = false } = {}) {
   const hzg = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: glowT, transparent: true, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending }), HZ);
   hzg.instanceMatrix.setUsage(THREE.DynamicDrawUsage); hzg.count = 0; hzg.frustumCulled = false; hzg.renderOrder = 4; scene.add(hzg);
   const hazCars = []; let blinkT = 0;
+  // ── stains (C2-gaps): a blotch of their own (darker at the rim, where it dried first), one InstancedMesh, slots reused only once freed
+  const tc = document.createElement('canvas'); tc.width = tc.height = 48;
+  { const x = tc.getContext('2d'), cell = (i, j, a) => { x.fillStyle = `rgba(255,255,255,${a})`; x.fillRect(i * 2, j * 2, 2, 2); }, lob = [];
+    for (let k = 0; k < 7; k++) lob.push([11.5 + (Math.random() - .5) * 7, 11.5 + (Math.random() - .5) * 7, 3.5 + Math.random() * 4]);
+    for (let j = 0; j < 24; j++) for (let i = 0; i < 24; i++) { let m = 0; for (const [cx, cz, r] of lob) m = Math.max(m, 1 - Math.hypot(i - cx, j - cz) / r); if (m <= 0) continue;
+      cell(i, j, m < .28 ? 1 : .78 + Math.random() * .1); }
+    for (let k = 0; k < 14; k++) { const a = Math.random() * 6.283, d = 8 + Math.random() * 3.5, i = Math.round(11.5 + Math.cos(a) * d), j = Math.round(11.5 + Math.sin(a) * d); cell(i, j, 1); } }
+  const tT = new THREE.CanvasTexture(tc); tT.magFilter = tT.minFilter = THREE.NearestFilter; tT.generateMipmaps = false; tT.colorSpace = THREE.SRGBColorSpace;
+  const stm = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ map: tT, alphaTest: .5, roughness: .55, metalness: 0, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -3 }), STAIN.cap);
+  stm.instanceMatrix.setUsage(THREE.DynamicDrawUsage); stm.count = 0; stm.frustumCulled = false; stm.receiveShadow = true; stm.renderOrder = 1; stm.setColorAt(0, col); scene.add(stm);
+  const ST = []; for (let k = 0; k < STAIN.cap; k++) ST.push({ on: false, k }); let stDirty = false;
+  const stPlace = (h, f) => { m4.compose(p3.set(h.x, h.y, h.z), q.setFromAxisAngle(Y, h.spin), s3.set(h.w * f, 1, h.d * f)); stm.setMatrixAt(h.k, m4); stDirty = true; };
 
   const fx = {
     target(c) { target = c; },
@@ -95,6 +113,11 @@ export function createGoreFx(scene, { night = false } = {}) {
       if (!m) { m = [-1, 1].map(side => { const r = SKR[skHead]; skHead = (skHead + 1) % SK; wheelAt(c, side, W2); Object.assign(r, { on: true, live: true, ax: W2[0], az: W2[1], bx: W2[0], bz: W2[1], age: 0, side }); return r; }); skidOf.set(c, m); }
       for (const r of m) { if (r.live) { wheelAt(c, r.side, W2); r.bx = W2[0]; r.bz = W2[1]; } } },
     hazard(c) { if (hazCars.length < HZ / 4) hazCars.push(c); },
+    stain(x, z, size = 1.6, o = {}) { const h = ST.find(r => !r.on); if (!h) return null;
+      Object.assign(h, { on: true, x, y: groundY(x, z) + .006, z, w: size, d: size * (o.aspect ?? .8), spin: o.spin ?? Math.random() * 6.283, age: 0, grow: o.grow ?? 0, k0: STAIN.from, f: o.grow ? STAIN.from : 1 });
+      stm.setColorAt(h.k, col.setHex(o.color ?? STAIN.colors.birds)); stm.instanceColor.needsUpdate = true; stPlace(h, h.f); stm.count = Math.max(stm.count, h.k + 1);
+      h.set = k => { if (!h.on) return; h.grow = 0; h.f = STAIN.from + (1 - STAIN.from) * Math.max(0, Math.min(1, k)); stPlace(h, h.f); }; return h; },
+    unstain(h) { if (!h?.on) return; h.on = false; stPlace(h, 0); },
     update(dt, camera) {
       // drops
       let n = 0; for (const p of D) { if (!p.on) continue; p.age += dt; if (p.age >= p.life) { p.on = false; continue; }
@@ -124,9 +147,12 @@ export function createGoreFx(scene, { night = false } = {}) {
         for (const [sx, sz] of [[-1, 1], [1, 1], [-1, -1], [1, -1]]) { if (nh >= HZ) break; p3.set(sx * (c.wid / 2 - .12), y, sz * (c.len / 2 + .01)).applyQuaternion(q); p3.x += c.x; p3.z += c.z; m4.compose(p3, q, s3.set(1, 1, 1)); hzm.setMatrixAt(nh++, m4);
           m4.compose(p3, camera.quaternion, s3.setScalar(night ? 1.05 : .6)); hzg.setMatrixAt(ng++, m4); } }
       hzm.count = nh; hzm.instanceMatrix.needsUpdate = true; hzg.count = ng; hzg.instanceMatrix.needsUpdate = true; hazCars.length = 0;
+      // stains: spread over their grow s (eased out), then stay
+      for (const h of ST) { if (!h.on || !h.grow) continue; h.age += dt; const k = Math.min(1, h.age / h.grow); stPlace(h, h.k0 + (1 - h.k0) * (1 - (1 - k) * (1 - k))); if (k >= 1) h.grow = 0; }
+      if (stDirty) { stm.instanceMatrix.needsUpdate = true; stDirty = false; }
     },
     clear() { for (const p of D) p.on = false; for (const s of SR) { if (s.on) { s.on = false; place(s, 0); } } for (const r of SKR) r.on = false; skidOf.clear(); im.count = 0; skm.count = 0; hzm.count = 0; hzg.count = 0; },
-    stats: () => ({ drops: im.count, splats: SR.reduce((n, s) => n + (s.on ? 1 : 0), 0), skids: skm.count, lamps: hzm.count }),
+    stats: () => ({ drops: im.count, splats: SR.reduce((n, s) => n + (s.on ? 1 : 0), 0), skids: skm.count, lamps: hzm.count, stains: ST.reduce((n, s) => n + (s.on ? 1 : 0), 0) }),
   };
   return fx;
 }

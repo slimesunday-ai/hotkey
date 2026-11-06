@@ -15,13 +15,22 @@
 //                stop the model eases over to the kerb in the last 6 m and the sim car leaves its lane (stageOut) — unless the kerb is
 //                too near the lane to clear it (a two-way side street): then it stays, a stopped car in the lane. Away: back into its
 //                lane (stageIn) when nothing is coming, easing out over 10 m.
+//   THE VAN'S STOP (C2-cleaners round 3, 2026-11-05; offered to the Cleaners' van only — the cruiser's stops are as they were):
+//                planStop(C, body, { van: { hw, half, fit, leftKerb } }): the same lanes, steps, kerb and double-park, and junction
+//                test, for a vehicle of the van's size (the fleet table's), with two changes. (1) leftKerb: a ONE-WAY's own lane also
+//                takes a body on its LEFT (its only kerb without parking, where 68% of bodies lie): the stop's frame is mirrored (flip:
+//                its kerb side is its left), at the left kerb where a length of it is free, else double-parked in the lane. (2) No
+//                door and no walk: fit(stop) — the caller's — prices each stop (null: no good) in place of the door's ground and the
+//                walk. driveCar takes the van's size from the plan (plan.hw, plan.half).
 import { CRUISER } from './props.js';
 import { isAve } from '../plan.js';
+import { isOneWay } from '../traffic/rules.js';
 
 const HW = CRUISER.hw, HALF = CRUISER.half, [RZ0, RZ1] = CRUISER.doors.rear, [FZ0, FZ1] = CRUISER.doors.front;
 export const STOP = { reach: 34, far: 62, step: 1.2, dpCost: 2.5, walkR: .3, laneR: 1.15, kerbGap: .14, outGap: .1, door: 1.1 };
 // the cruiser's frame at a stop: pt(lx, lz) → world [x, z] (lx < 0: the kerb side), local(x, z) → [lx, lz]
-export function carFrame(s) { const { ux, uz } = s; return { x: s.x, z: s.z, ux, uz, nx: s.nx, nz: s.nz, pt: (lx, lz) => [s.x + lx * uz + lz * ux, s.z - lx * ux + lz * uz], local: (x, z) => { const dx = x - s.x, dz = z - s.z; return [dx * uz - dz * ux, dx * ux + dz * uz]; } }; }
+// (a van's stop at a one-way's left kerb, s.flip: mirrored, its kerb side its left — the cruiser's stops never are)
+export function carFrame(s) { const { ux, uz } = s, k = s.flip ? -1 : 1; return { x: s.x, z: s.z, ux, uz, nx: s.nx, nz: s.nz, pt: (lx, lz) => [s.x + k * lx * uz + lz * ux, s.z - k * lx * ux + lz * uz], local: (x, z) => { const dx = x - s.x, dz = z - s.z; return [k * (dx * uz - dz * ux), dx * ux + dz * uz]; } }; }
 // the door spots (cruiser frame): the suspect 0.45 m off the rear door, the opening's centre 0.05 m ahead of it, facing the tail; the cop
 // `IN` m before it; the stand-in's way in and out by the front door
 export function doorSpots(cf, IN) { const dz = (RZ0 + RZ1) / 2 + .05; return { dz, DS: cf.pt(-HW - .45, dz), GS: cf.pt(-HW - .45, dz - IN), FX: [cf.pt(-HW + .6, (FZ0 + FZ1) / 2), cf.pt(-HW - .75, (FZ0 + FZ1) / 2)], ryIn: Math.atan2(-cf.ux, -cf.uz) }; }
@@ -41,7 +50,7 @@ function linkBodies(T, x, z, r) { const out = [], P = [0, 0, 0];
   return out; }
 // the cruiser at its stop in another car's way (a junction's turners, the cross street): its own lane, and the links into and out of it,
 // excepted when it stands in its lane (the cars there follow it)
-function inTraffic(bodies, st, cf, inLane) { const me = frameRect(cf, -HW - .05, HW + .05, -HALF - .1, HALF + .1), L = st.L;
+function inTraffic(bodies, st, cf, inLane, hw = HW, half = HALF) { const me = frameRect(cf, -hw - .05, hw + .05, -half - .1, half + .1), L = st.L;
   return bodies.some(b => { if (inLane && (b.L === L || b.L.out === L || b.L.inL === L)) return false; if (!inLane && b.L === L) return false; return Math.abs(b.x - me.x) < 6 && Math.abs(b.z - me.z) < 6 && sepRect(me, b) < .05; }); }
 // ── THE WALK: a Dijkstra over a height map from the suspect (8-connected cells), on standing ground (the road or the pavement, never
 // over the knees), STOP.walkR clear of anything taller, never in a traffic link's strip (lane or connector, ±STOP.laneR).
@@ -95,41 +104,51 @@ function doorClear(C, O, cf, IN, standIn, masked) { const { dz } = doorSpots(cf,
   for (const lz of [dz, dz - IN, ...(standIn ? [(FZ0 + FZ1) / 2] : [])]) { const [x, z] = cf.pt(-HW - .45 - (standIn && lz > RZ1 ? .3 : 0), lz), h = O.at(x, z); if (h === null || h < -.15 || h > C.SIDE + .12) return false; }
   return true; }
 
-export function planStop(C, A, { IN = 1.2, standIn = false, skip = [] } = {}) {
-  const T = C.traffic(), t0 = performance.now(), why = { lanes: 0, cands: 0, door: 0, walk: 0, kerb: 0, double: 0 };
+export function planStop(C, A, { IN = 1.2, standIn = false, skip = [], van = null } = {}) {
+  const T = C.traffic(), t0 = performance.now(), why = { lanes: 0, cands: 0, door: 0, walk: 0, kerb: 0, double: 0 }, VW = van ? van.hw : HW, VH = van ? van.half : HALF;
   if (!T?.lanes) return { plan: null, why: 'no-traffic', roadD: null };
   // the lanes in reach, with the suspect on their kerb side
   let roadD = Infinity; const cand = [];
   for (const L of T.lanes) { if (L.x0 === undefined || L.len < 8) continue; const px = A.x - L.x0, pz = A.z - L.z0, s = px * L.ux + pz * L.uz, nx = -L.uz, nz = L.ux, side = px * nx + pz * nz;
-    const d = Math.hypot(Math.max(0, -s, s - L.len), side); roadD = Math.min(roadD, d); if (side < 1.2 || d > STOP.far) continue; cand.push({ L, s, side, nx, nz, d }); }
+    const d = Math.hypot(Math.max(0, -s, s - L.len), side); roadD = Math.min(roadD, d);
+    // (the van: a one-way's own lane with the body on its left too — mirrored, its kerb side its left)
+    if (van?.leftKerb && side <= -1.2 && d <= STOP.far && isOneWay(L.axis, L.L)) { cand.push({ L, s, side: -side, nx: -nx, nz: -nz, d, flip: true }); continue; }
+    if (side < 1.2 || d > STOP.far) continue; cand.push({ L, s, side, nx, nz, d }); }
   if (!cand.length) return { plan: null, why: 'no-lane', roadD: +roadD.toFixed(1) };
   cand.sort((a, b) => a.d - b.d); const dmin = cand[0].d, far = dmin > STOP.reach - 6, R0 = far ? STOP.far : STOP.reach; why.lanes = cand.length;
   // the height map for the walk: round the suspect and the nearest lane, big enough for both
   const nb = cand[0], nL = nb.L, ns = Math.max(0, Math.min(nL.len, nb.s)), np = [nL.x0 + nL.ux * ns, nL.z0 + nL.uz * ns], mc = far ? [(A.x + np[0]) / 2, (A.z + np[1]) / 2] : [A.x, A.z];
   const half = far ? Math.min(40, Math.max(18, Math.hypot(np[0] - A.x, np[1] - A.z) / 2 + 12)) : 18, O = C.occ(mc[0], mc[1], half); if (!O) return { plan: null, why: 'no-map', roadD: +roadD.toFixed(1) };
-  const W = walkField(C, O, A, T, skip), masked = carMask(T, mc[0], mc[1], half + 6), bodies = linkBodies(T, mc[0], mc[1], half + 4);
+  const W = van ? null : walkField(C, O, A, T, skip), masked = carMask(T, mc[0], mc[1], half + 6), bodies = linkBodies(T, mc[0], mc[1], half + 4);
   const best = [];
-  for (const { L, s: sp, nx, nz } of cand) { if (cand.length > 1 && !far && best.length && best[0].cost < 4) break;
+  for (const { L, s: sp, nx, nz, flip } of cand) { if (!van && cand.length > 1 && !far && best.length && best[0].cost < 4) break;
     for (let k = 0; k < 40; k++) { const sc = Math.round((Math.max(3, Math.min(L.len - 2.5, sp + 1.3)) + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * STOP.step) * 100) / 100; if (sc < 3 || sc > L.len - 2.5) continue;
       if (Math.abs(sc - sp) > R0) continue; const x0 = L.x0 + L.ux * sc, z0 = L.z0 + L.uz * sc; if (Math.abs(x0 - mc[0]) > half - 3 || Math.abs(z0 - mc[1]) > half - 3) continue; why.cands++;
-      const base = { L, s: sc, x0, z0, ux: L.ux, uz: L.uz, nx, nz };
+      const base = { L, s: sc, x0, z0, ux: L.ux, uz: L.uz, nx, nz, ...(flip ? { flip } : {}) };
       // at the kerb, when a length of it is free
+      // (the van: priced by fit(), its own — the cruiser's door and walk are the cruiser's; a kerb stop and a double-park both tried)
       const kf = kerbAt(C, O, x0, z0, nx, nz); let got = null;
-      if (kf !== null) { const lat = Math.max(0, kf - HW - STOP.kerbGap), st = { ...base, lat, x: x0 + nx * lat, z: z0 + nz * lat }, cf = carFrame(st);
-        if (rectClear(O, cf, -HW - .15, HW + .15, -HALF - .4, HALF + .4, masked) && doorClear(C, O, cf, IN, standIn, masked)) { why.kerb++;
-          if (inTraffic(bodies, st, cf, lat - 2 * HW < STOP.outGap)) why.junction = (why.junction || 0) + 1;
+      if (kf !== null) { const lat = Math.max(0, kf - VW - STOP.kerbGap), st = { ...base, lat, x: x0 + nx * lat, z: z0 + nz * lat }, cf = carFrame(st);
+        if (rectClear(O, cf, -VW - .15, VW + .15, -VH - .4, VH + .4, masked) && (van || doorClear(C, O, cf, IN, standIn, masked))) { why.kerb++;
+          if (inTraffic(bodies, st, cf, lat - 2 * VW < STOP.outGap, VW, VH)) why.junction = (why.junction || 0) + 1;
+          else if (van) { const fc = van.fit({ ...st, kind: 'kerb', kerb: kf, hw: VW, half: VH }); if (fc !== null) { best.push({ ...st, kind: 'kerb', kerb: kf, cf, cost: fc }); why.fit = (why.fit || 0) + 1; } else why.nofit = (why.nofit || 0) + 1; }
           else got = { ...st, kind: 'kerb', kerb: kf, cf }; } }
       // double-parked in the travel lane, beside what stands at the kerb
       if (!got) { const st = { ...base, lat: 0, x: x0, z: z0 }, cf = carFrame(st);
-        if (doorClear(C, O, cf, IN, standIn, masked)) { why.double++;
-          if (inTraffic(bodies, st, cf, true)) why.junction = (why.junction || 0) + 1;
+        if (van || doorClear(C, O, cf, IN, standIn, masked)) { why.double++;
+          if (inTraffic(bodies, st, cf, true, VW, VH)) why.junction = (why.junction || 0) + 1;
+          else if (van) { const fc = van.fit({ ...st, kind: 'double', hw: VW, half: VH }); if (fc !== null) { best.push({ ...st, kind: 'double', cf, cost: fc + STOP.dpCost }); why.fit = (why.fit || 0) + 1; } else why.nofit = (why.nofit || 0) + 1; }
           else got = { ...st, kind: 'double', cf }; } else why.door++; }
+      if (van) { best.sort((a, b) => a.cost - b.cost); if (best.length > 6) best.length = 6; continue; }
       if (!got) continue; const { DS } = doorSpots(got.cf, IN), wd = W.dist(DS[0], DS[1]); if (!(wd < Infinity) || wd > R0) { why.walk++; continue; }
       got.walkLen = wd; got.cost = wd + (got.kind === 'double' ? STOP.dpCost : 0) + Math.abs(sc - sp) * .05; best.push(got); best.sort((a, b) => a.cost - b.cost); if (best.length > 6) best.length = 6; } }
   // the best few, checked again on a fine height map there (the kerb's exact edge, the door's ground)
   for (const b of best) { const Of = C.occ(b.x0 + b.nx * 2.4, b.z0 + b.nz * 2.4, 4.6); if (!Of) continue; const mf = carMask(T, b.x0, b.z0, 10);
-    let st = b; if (b.kind === 'kerb') { const kf = kerbAt(C, Of, b.x0, b.z0, b.nx, b.nz) ?? b.kerb, lat = Math.max(0, kf - HW - STOP.kerbGap); st = { ...b, kerb: kf, lat, x: b.x0 + b.nx * lat, z: b.z0 + b.nz * lat }; st.cf = carFrame(st);
-      if (!rectClear(Of, st.cf, -HW - .1, HW + .1, -HALF - .3, HALF + .3, mf)) continue; }
+    let st = b; if (b.kind === 'kerb') { const kf = kerbAt(C, Of, b.x0, b.z0, b.nx, b.nz) ?? b.kerb, lat = Math.max(0, kf - VW - STOP.kerbGap); st = { ...b, kerb: kf, lat, x: b.x0 + b.nx * lat, z: b.z0 + b.nz * lat }; st.cf = carFrame(st);
+      if (!rectClear(Of, st.cf, -VW - .1, VW + .1, -VH - .3, VH + .3, mf)) continue; }
+    // (the van: its own price again where the kerb's exact edge moved it; no door, no walk)
+    if (van) { if (st !== b && van.fit({ ...st, hw: VW, half: VH }) === null) continue; st.walk = null; st.walkLen = 0; st.hw = VW; st.half = VH; st.out = st.kind === 'kerb' && st.lat - 2 * VW >= STOP.outGap; st.ave = isAve(st.L.axis, st.L.L); delete st.cf;
+      return { plan: st, why, roadD: +roadD.toFixed(1), ms: +(performance.now() - t0).toFixed(1) }; }
     if (!doorClear(C, Of, st.cf, IN, standIn, mf)) continue;
     const { DS } = doorSpots(st.cf, IN), path = W.path(DS[0], DS[1]); if (!path) continue;
     st.walk = path; st.out = st.kind === 'kerb' && st.lat - 2 * HW >= STOP.outGap; st.ave = isAve(st.L.axis, st.L.L); delete st.cf;
@@ -140,9 +159,9 @@ export function planStop(C, A, { IN = 1.2, standIn = false, skip = [] } = {}) {
 // ── THE DRIVE: the cruiser as a car of the traffic. links: back from the stop's lane (straight on where it can) until 30 m and a start
 // out of view; on past it 120 m. → { c, step(dt) → the model's pose, …} or null (no way in: the caller drives it the old way)
 export function driveCar(C, plan) {
-  const T = C.traffic(); if (!T?.spawnRoute) return null; const L = plan.L, sStop = plan.s + HALF;
+  const T = C.traffic(); if (!T?.spawnRoute) return null; const HALF = plan.half ?? CRUISER.half, HW = plan.hw ?? CRUISER.hw, L = plan.L, sStop = plan.s + HALF;   // (the van's size from its plan; the cruiser's by default)
   const ahead = [L]; { let cur = L, d = L.len - sStop; for (let k = 0; k < 8 && d < 120; k++) { const cn = cur.next.find(q => q.turn === 'S') || cur.next[0]; if (!cn) break; ahead.push(cn, cn.out); d += cn.len + cn.out.len; cur = cn.out; } }
-  const P = [0, 0, 0], seen = (Lk, s) => { T.poseOn(Lk, Math.max(0, Math.min(Lk.len, s)), P); return C.inView(P[0], P[1]) || C.inView(P[0] - Math.sin(P[2]) * 4.4, P[1] - Math.cos(P[2]) * 4.4); };
+  const P = [0, 0, 0], seen = (Lk, s) => { T.poseOn(Lk, Math.max(0, Math.min(Lk.len, s)), P); return C.inView(P[0], P[1]) || C.inView(P[0] - Math.sin(P[2]) * 2 * HALF, P[1] - Math.cos(P[2]) * 2 * HALF); };
   // back: the spawn on the first link out of view, the lane clear there
   // (d: from the start of `cur` to the stop; a spawn at s on it is d − s from the stop: 25 m at least, out of view, its lane clear there)
   const back = []; let cur = L, d = sStop, start = null;

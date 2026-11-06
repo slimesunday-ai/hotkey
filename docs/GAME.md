@@ -2306,3 +2306,7 @@ Dated lines, with slime's words quoted. Anything not in this file isn't the plan
   no pin, no fly to where it stands. "Go there" follows it instead, so the viewer becomes its follower, the one view the
   hood doesn't fool. Names stay everywhere, and nothing on a card opened by name gives away that its agent is hooded
   (anonymity on the body, never by omitting names).
+- 2026-11-05, the street's bodies the Cleaners' van can't reach (slime): "i think just the gaps we fill with birds and decay,
+  max gore lol, birds (pigeons and gulls) 1/3 and  then that last 1/3rd is  decay over time. both leave stains"; on the
+  Cleaners walking in from out of view: "that's alright, if it didnt work it didnt work". The van takes a body only where
+  its job fits; birds or decay take the rest, about half each, each ending in a stain that stays. Presentation only (§20).

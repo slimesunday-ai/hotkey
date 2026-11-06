@@ -70,7 +70,10 @@ export const TRAFFIC = {
 // cars run on their own clock now — the cabs: traffic/cabs.js; the buses are gone — so the cab's numbers are the one set)
 export const ROUTE = { cab: { dv: 1.45, a: 1.2, latA: 4.5, vTurn0: 3.8, vTurn: 8.5, brake: 2.2 } };
 const routeP = () => ROUTE.cab;
-export const BOX = { ahead: 2.2, breakT: 20 };
+// C2-QUEUE round 2 (#21) · claim: a car that has stood at its line BOX.claim s for room on its way out has the next room there — the cars
+// bound into the same lane from the other arms count it as committed (the longest waiting first). Before, the cross street's turners took
+// each gap on their own green and a car straight on stood for minutes (6,-6 → 6,-7: 526 s in a 20 min node soak; the leaving van, #21)
+export const BOX = { ahead: 2.2, breakT: 20, claim: 3 };
 export const TICK = { h: .1, max: 8, hMax: .25 };   // s a step (tick: one page frame), steps a frame at most, s a step at most past that (60× fast play)
 // TRANSIT SYNC (2026-10-08) · the TURNBACK: on Route 9 just past the LONG BRIDGE shelter (the lane split at node 7,−8, z −256), the
 // northbound outer lane gets a 'T' into the southbound outer lane — a U the routing may plan (the traffic fix's 'U's at the dead ends stay
@@ -244,7 +247,7 @@ export function createTrafficSim({ seed = 0x7aff1c, night = false, clock = () =>
     if (!c || c.len <= LONG) return (cn.turn === 'S' ? TRAFFIC.straight : 1) * (cn.out.stem ? TRAFFIC.stem : 1);
     const ok = cn.turn === 'S' || cn.r >= c.len * .75, ave = isAve(cn.out.axis, cn.out.L) || c.len < 8; return (ok && ave ? (cn.turn === 'S' ? 20 : 1) : ok ? .05 : .001) * (cn.out.stem ? TRAFFIC.stem : 1); };
   const pickNext = (ln, c) => { const N = ln.next; if (N.length < 2) return N[0] || null; let sum = 0; for (const q of N) sum += wOf(q, c); let x = rnd() * sum; for (const q of N) { x -= wOf(q, c); if (x <= 0) return q; } return N[N.length - 1]; };
-  function enter(c, L, s) { c.L = L; c.s = s; L.cars.push(c); if (L.kind === 'lane') { c.next = pickNext(L, c); c.rp = false; c.go = !L.to.sig && !!c.next; c.passed = false; c.yd = undefined; } if (c.route) routeOn(c, L); }
+  function enter(c, L, s) { c.L = L; c.s = s; L.cars.push(c); if (L.kind === 'lane') { c.next = pickNext(L, c); c.rp = false; c.roomT = 0; c.go = !L.to.sig && !!c.next; c.passed = false; c.yd = undefined; } if (c.route) routeOn(c, L); }
   // MOVEMENT W3a · a ROUTE car (spawnRoute: today the stage's cruiser, stage/cruiser.js): an ordinary IDM car (lights, walkers, the car
   // ahead) whose way is given — c.route = { links: [lane, connector, lane …], i, stops: [{ i, s, go(c, dwell) }] }: it stops at each stop
   // (link i, s m along it) and stays until go() says so; past its last stop it drives on as traffic (release)
@@ -294,10 +297,38 @@ export function createTrafficSim({ seed = 0x7aff1c, night = false, clock = () =>
   // TRAFFIC FIX (2026-10-08) · the box rule, with a look ahead: the room counts what the exit's last car will have cleared by the time this
   // car is over (BOX.ahead s of its speed, only while it is moving off and not braking) — a 12 m bus needs ~14 m of a 21 m block, and
   // waiting for the whole block to stand empty held the buses at every line behind a queue that was already driving away
-  const exitRoom = (cn, me) => { const X = cn.out, o = rearOf(X); let room = (o ? o.s - o.len + (o.v > 2.5 && o.acc > -.5 ? Math.min(o.v, 9) * BOX.ahead : 0) : X.len) - 1.2;
-    for (const f of X.feeds) { for (const q of f.cars) room -= q.len + CAR.s0 + .2; for (const q of f.inL.cars) if (q !== me && q.go && q.next === f) room -= q.len + CAR.s0 + .2; }
+  // C2-QUEUE (2026-11-05) · and the room a STANDING QUEUE leaves (jamOf): the look ahead counts what a moving rear car will clear, which
+  // is right while the lane drives away and wrong behind something that stands for a while — then the moving cars only close up behind
+  // it, and the car let in on their room stood in the box or on the zebra (stage-20261105-cleaners.md §9: 10 landings by day, 20 at night)
+  const exitRoom = (cn, me) => { const X = cn.out, o = rearOf(X), j = ownRes(X, me) ? Infinity : jamOf(X); let room = Math.min((o ? o.s - o.len + (o.v > 2.5 && o.acc > -.5 ? Math.min(o.v, 9) * BOX.ahead : 0) : X.len), j) - 1.2;
+    for (const f of X.feeds) { for (const q of f.cars) room -= q.len + CAR.s0 + .2; for (const q of f.inL.cars) if (q !== me && q.next === f && (q.go || (q.roomT > BOX.claim && q.roomT > (me.roomT || 0)))) room -= q.len + CAR.s0 + .2; }
     return room >= me.len + CAR.s0 + .6; };   // (fix round: every car counted at its jam gap, s0 — it stops that far behind the car ahead — so an empty block takes three,
                                               // not one and a bit; the lane out starts past the far zebra, so a car that fits stops clear of it)
+  // C2-QUEUE · THE JAM: how far into lane X its queue will reach once it has closed up (m from X's start to the tail of its last car),
+  // when something on X stands for a while — a stage car stopped in the lane short of its line (the Cleaners' van, the arrest's cruiser),
+  // a wreck, a SOFT hazard in its way (a body, the Cleaners' zone and crew: every car stops short of one; hazardStep's own test, a 1.8 m
+  // body — not a walker stumbling into the road, whom a car that can't stop still hits), or the car at X's line held by a jam on its
+  // own way out (so the queue's second block back counts it too); Infinity when nothing on X stands so (ordinary traffic: no change).
+  // Every car behind the blocker is counted at its length and jam gap. Once a step per lane.
+  // (resGap: a car held short of a reserved stretch stands this far back from it — far enough that the zone sees it can stop short)
+  const JAM = { stand: .3, line: 1.5, depth: 3, wid: .9, resGap: 1.2 }, jamMemo = new Map(), reserved = []; let jamN = -1;
+  function jamOf(X, depth = 0) { if (jamN !== stepN) { jamMemo.clear(); jamN = stepN; } if (X.kind !== 'lane') return Infinity; if (jamMemo.has(X)) return jamMemo.get(X);
+    jamMemo.set(X, Infinity); let B = Infinity;
+    for (const h of hazards) { if (h.hit || !h.soft) continue; const dx = h.x - X.x0, dz = h.z - X.z0, al = dx * X.ux + dz * X.uz; if (Math.abs(dx * -X.uz + dz * X.ux) > JAM.wid + h.r || al + h.r < 0 || al - h.r > X.len) continue; B = Math.min(B, al - h.r); }
+    // (C2-QUEUE round 2, design B: a stretch a job has declared it will stand in — the Cleaners' van's stop and its work zone)
+    for (const r of reserved) if (r.L === X && (!r.own || r.by.L === X || r.by.L.out === X) && r.s0 - JAM.resGap < B) B = r.s0 - JAM.resGap;
+    for (const o of X.cars) { if (o.wreck || (o.stage && !o.kin && o.v < JAM.stand && X.len - o.s > JAM.line)) B = Math.min(B, o.s - o.len);
+      // (a stage car still on its way to its stop on X: where it will stand — every car let in behind it now queues behind it there)
+      const st = o.stage && !o.kin && o.route?.stops[0]; if (st && st.i === o.route.i && o.route.links[st.i] === X) { B = Math.min(B, st.s - o.len); o.jamRes = stepN; } }
+    if (B === Infinity && depth < JAM.depth) { let F = null; for (const o of X.cars) if (!F || o.s > F.s) F = o;
+      if (F && !F.kin && F.v < JAM.stand && X.len - F.s < JAM.line && F.next && jamOf(F.next.out, depth + 1) - 1.2 < F.len + CAR.s0 + .6) B = F.s - F.len; }
+    if (B < Infinity) { const at = B + .05; for (const o of X.cars) if (o.s <= at && o.jamRes !== stepN) B -= o.len + CAR.s0; }
+    jamMemo.set(X, B); return B; }
+  // (a job's own car — the Cleaners' van — is never kept out of a lane by its own job's stretch: design B)
+  const ownRes = (X, me) => reserved.length > 0 && reserved.some(r => r.L === X && r.by === me);
+  // the jam's room only (no look ahead, no cars committed at the line: at a node with no lights every car on the lane in is "committed"),
+  // for a car at a node with no lights, and for one committed at a light that the jam caught after it committed
+  const jamRoom = (cn, me) => { let room = (ownRes(cn.out, me) ? Infinity : jamOf(cn.out)) - 1.2; if (room === Infinity) return true; for (const f of cn.out.feeds) for (const q of f.cars) if (q !== me) room -= q.len + CAR.s0 + .2; return room >= me.len + CAR.s0 + .6; };
   const commitDist = v => Math.max(3, v * 1.6 + 2);
   const routeV = (cn, c) => { if (cn.turn === 'S') return cn.v0 * c.dv; const p = routeP(c); return Math.max(p.vTurn0, Math.min(p.vTurn, Math.sqrt(p.latA * cn.r))); };   // (transit sync: a route car's speed through a connector)
   // how long until the nose is at D m on, from v, speeding up gently (0.7 × its a) to vm: the far zebra's clearing time
@@ -371,9 +402,12 @@ export function createTrafficSim({ seed = 0x7aff1c, night = false, clock = () =>
           if (light === 'G') c.yd = undefined; else if (light === 'Y' && c.yd === undefined) { c.yd = (cn.turn === 'S' ? !late : c.v > 2 && dist / c.v < yellowLeft(n, L.axis) - .15) || dist < c.v * c.v / (2 * CAR.bMax) || (c.go && c.inWay); if (!c.yd) c.go = false; }   // (BUS POLISH: committed inside a clocked vehicle's stretch, with it due, it goes on through the yellow rather than stand in its way)
           if (c.go && light === 'Y' && !c.inWay && dist / Math.max(.1, c.v) > yellowLeft(n, L.axis) - .05 && dist >= c.v * c.v / (2 * CAR.bMax) - .05) { c.go = false; c.yd = false; }   // (held up on the way: it won't clear it in time, so it stops)
           if (c.go && late && dist >= c.v * c.v / (2 * (light === 'G' ? CAR.bStop : CAR.bMax)) - .05) { c.go = false; if (light === 'Y') c.yd = false; }
+          // C2-QUEUE · committed, and a jam has since filled its way out (a stage car stopped, a wreck, a body, the Cleaners' zone): it stops at the
+          // line while it still can (hard, round 2: a stretch a job declares appears at once), and waits there with the rest (the box rule below)
+          if (c.go && dist >= c.v * c.v / (2 * CAR.bMax) - .05 && !jamRoom(cn, c)) { c.go = false; if (light === 'Y') c.yd = false; }
           c.hold = null; if (!c.go) { let ok = (light === 'G' || (light === 'Y' && c.yd)) && !late; if (!ok) c.hold = late ? 'late' : 'light';
             if (ok && n.box[other(L.axis)] > 0) { ok = false; c.hold = 'box'; }
-            if (ok && !exitRoom(cn, c)) { ok = false; c.hold = 'room'; if (dist < 1 && c.v < .1 && (c.wait = (c.wait || 0) + dt) > 6) { const alt = !c.stage && !c.asCar && L.next.find(o => o !== cn && exitRoom(o, c)); if (alt) { c.next = alt; c.wait = 0; } } }   // (a full exit for a while: another way on, so a ring of full lanes can't lock — never for a car on a route of its own)
+            if (ok && !exitRoom(cn, c)) { ok = false; c.hold = 'room'; if (dist < 1 && c.v < .1) c.roomT = (c.roomT || 0) + dt; if (dist < 1 && c.v < .1 && (c.wait = (c.wait || 0) + dt) > 6) { const alt = !c.stage && !c.asCar && L.next.find(o => o !== cn && exitRoom(o, c)); if (alt) { c.next = alt; c.wait = 0; } } }   // (a full exit for a while: another way on, so a ring of full lanes can't lock — never for a car on a route of its own)
             if (ok && (dist < commitDist(c.v) || light === 'Y')) c.go = true;
             if (!ok) { acc = Math.min(acc, idmStop(c, c.v, dist)); lim = Math.min(lim, Math.max(0, dist - .02)); } }
           // the zebras: walkers in its way on the one it enters the node over hold it at the line; walkers on the one it leaves over (and,
@@ -382,13 +416,20 @@ export function createTrafficSim({ seed = 0x7aff1c, night = false, clock = () =>
           const bI = cn.bIn, bO = cn.bOut; let g = 1e9;
           if (bI && bI.s0 < 1.5 && walkersIn(bI)) { g = dist + bI.s0 - .2; c.hold ??= 'walkIn'; }
           if (bO && ((cn.turn !== 'S' && walkOn(bO.key)) || walkersIn(bO))) c.hold ??= walkersIn(bO) ? 'walkOut' : 'turnWALK', g = Math.min(g, cn.turn !== 'S' && bO.s0 - .05 >= (bI ? bI.s1 : 0) + Math.max(0, c.len - BODY[0]) + .1 ? dist + bO.s0 - .2 : dist - .02);   // (straight on it waits at the line: stood in the box it could be caught there by the change)
-          if (g < 30 && !(c.go && dist < .3 && c.v > 2)) { acc = Math.min(acc, idmStop(c, c.v, g)); lim = Math.min(lim, Math.max(0, g)); c.yw = true; } } }
+          if (g < 30 && !(c.go && dist < .3 && c.v > 2)) { acc = Math.min(acc, idmStop(c, c.v, g)); lim = Math.min(lim, Math.max(0, g)); c.yw = true; } }
+        // C2-QUEUE · a node with no lights (a road's mid-block node, a bend): no box rule there, but no car goes on into a jam it can't
+        // clear either — it waits at the end of its lane (unless it can no longer stop, braking hard)
+        else { c.hold = null; if (!jamRoom(cn, c) && dist >= c.v * c.v / (2 * CAR.bMax) - .05) { c.hold = 'room'; acc = Math.min(acc, idmStop(c, c.v, dist)); lim = Math.min(lim, Math.max(0, dist - .02)); } } }
       else { // on a connector: the zebras still ahead of its nose
         for (const bd of L.bands) { if (c.s > bd.s0 - .01) continue; const turning = L.turn !== 'S';
           if (walkersIn(bd) || (turning && walkOn(bd.key))) { const g = bd.s0 - c.s - .05; acc = Math.min(acc, idmStop(c, c.v, g)); lim = Math.min(lim, Math.max(0, g)); c.yw = true; } } }
       if (c.route) { const R = c.route, st = R.stops[0];   // (MOVEMENT W3a: a route car's stop on this link — held there until its go())
         if (st && st.i === R.i) { const g = st.s - c.s; if (g < -1) R.stops.shift(); else { acc = Math.min(acc, idmStop(c, c.v, Math.max(.02, g))); lim = Math.min(lim, Math.max(0, g)); c.bw = c.v < .2 && g < 14 ? (c.bw || 0) + dt : 0; if ((g < .8 || c.bw > 2) && c.v < .4) { st.at ??= t; if (st.go(c, t - st.at)) { R.stops.shift(); c.bw = 0; } } } }   // (held short of it by the car ahead: it serves the stop from there)
         else if (!st && !R.links[R.i + 1] && L.kind === 'lane') release(c); }
+      // (C2-QUEUE round 2 · a reserved stretch ahead on its lane — design B — holds it short, as a car standing there would: it doesn't follow
+      // the van into its work zone before the zone's pieces are down. On the van's own lane (r.own) only once the van is on it, and
+      // only the cars behind the van — those ahead are on their way out, and none may stop the van short of its stop)
+      if (reserved.length && L.kind === 'lane') for (const r of reserved) if (r.L === L && r.by !== c && c.s < r.s0 - .05 && (r.own ? r.by.L === L && (r.by.kin || c.s < r.by.s) : r.hold)) { const g = Math.max(.02, r.s0 - JAM.resGap - c.s); acc = Math.min(acc, idmStop(c, c.v, g)); lim = Math.min(lim, g); }
       if (c.wreck || hazards.length) { acc = hazardStep(c, acc, lim); lim = HZ.lim; }   // (C2-GORE: someone in the road; a car that hit them)
       // (nobody in the road now: a hazard it couldn't stop for is gone with them)
       else if (c.haz) { c.haz = null; c.skid = 0; }
@@ -463,11 +504,32 @@ export function createTrafficSim({ seed = 0x7aff1c, night = false, clock = () =>
     if (np > patrolWant) for (const c of cars.slice()) if (c.kind === 'patrol' && !c.stage && np > patrolWant && unseen(c)) { drop(c); np--; }
     return want; }
 
+  // BACK INTO ITS LANE (stageIn: a stage car from the kerb; kerbBack: a cab from its bay) — one test for both: nothing in the lane over its
+  // body or about to be, nothing coming that can't stop for it (b: comfortably; urgent, after a long wait: hard), nothing just in from the
+  // links behind it near the lane's start; nor a car just past the lane's end (CAB FOLLOW-UP: a node with no box — that its nose would swing
+  // into); and (C2-QUEUE, 11-06: #19, a car on the next connector with its tail back over the lane's end, and the van put back over it) no
+  // body of ANY car, on any link, within 0.3 m of where it will stand in the lane
+  function laneTakes(c, urgent) { const L = c.L, r = c.s - c.len, b = urgent ? CAR.bMax : CAR.b;
+    for (const q of L.cars) { if (q === c) continue; if (q.s > r - (urgent ? 2 : 6) && q.s - q.len < c.s + 1) return false; if (q.s <= r - 2 && r - q.s < q.v * q.v / (2 * b) + (urgent ? 1.5 : 4)) return false; }
+    if (r < 12) for (const f of L.feeds) if (f.cars.length || f.inL.cars.some(q => q.go && q.next === f)) return false;
+    if (L.kind !== 'lane') return true;
+    { const dEnd = L.len - c.s; for (const cn of L.next) { for (const q of cn.cars) if (dEnd + q.s - q.len < 2) return false; for (const q of cn.out.cars) if (dEnd + cn.len + q.s - q.len < 2) return false; } }
+    const me = { x: L.x0 + L.ux * (c.s - c.len / 2), z: L.z0 + L.uz * (c.s - c.len / 2), h: Math.atan2(L.ux, L.uz), len: c.len, wid: c.wid };
+    for (const q of cars) { if (q === c || q.gone || Math.abs(q.x - me.x) > 9 || Math.abs(q.z - me.z) > 9) continue; if (sepOf(me, { x: q.x, z: q.z, h: q.h, len: q.len, wid: q.wid }) < .3) return false; }
+    return true; }
+
   return { nodes, links, lanes: alive, cars, stat, step, tick, populate, crossBusy, poseOn, lanesOf,
     get t() { return t; }, get want() { return want; }, MODELS,
-    why(c) { const L = c.L; if (L.kind !== 'lane' || !c.next) return null; return { light: lightFor(L), box: { ...L.to.box }, room: exitRoom(c.next, c), next: c.next.turn, out: c.next.out.cars.map(o => [+o.s.toFixed(1), +o.v.toFixed(1)]), outLen: +c.next.out.len.toFixed(1) }; },
+    why(c) { const L = c.L; if (L.kind !== 'lane' || !c.next) return null; return { light: lightFor(L), box: { ...L.to.box }, room: exitRoom(c.next, c), jam: jamOf(c.next.out), next: c.next.turn, out: c.next.out.cars.map(o => [+o.s.toFixed(1), +o.v.toFixed(1)]), outLen: +c.next.out.len.toFixed(1) }; },
     setWalkers(w) { walk = w; },
-    hazards, set onHit(f) { onHit = f; },   // (C2-GORE: someone in the road, and what a car that hits them calls)
+    hazards, set onHit(f) { onHit = f; },
+    // C2-QUEUE round 2 · RESERVATIONS (docs/redesign/stage-20261106-queue.md, design B): reserve(L, s0, s1) — a job (traffic/cleaners.js)
+    // declares the stretch s0…s1 of lane L it will stand in, before it stands there (by: its own car, which the stretch never holds; own:
+    // L is that car's stop lane — the stretch counts there only once the car is on it or on the connector into it); jamOf counts it as
+    // standing from s0 at once, so no car is let into L that its queue would leave on the zebra or in the box behind; the cars on L behind s0
+    // stop short of it — on its own car's lane behind that car, on another lane once the job sets r.hold (its work begins). → unreserve(h)
+    reserve(L, s0, s1, by = null, own = false) { if (!L || L.kind !== 'lane') return null; const r = { L, s0: Math.min(s0, s1), s1: Math.max(s0, s1), by, own: !!(by && own), hold: false }; reserved.push(r); return r; },
+    unreserve(r) { const i = reserved.indexOf(r); if (i >= 0) reserved.splice(i, 1); }, reserved,   // (C2-GORE: someone in the road, and what a car that hits them calls)
     // MOVEMENT W3a · route cars (simstate/movement.js): one on links[0] at s, if the lane is clear there (o.force: anyway) → the car, or null
     spawnRoute(links, s, o = {}) { const L = links[0]; if (!L) return null; const len = o.len || 4.4;
       if (!o.force && L.cars.some(q => q.s > s - len - 3 && q.s - q.len < s + 4)) return null;
@@ -476,10 +538,8 @@ export function createTrafficSim({ seed = 0x7aff1c, night = false, clock = () =>
       c.route = { links, i: 0, stops: o.stops || [] }; if (o.stage) c.stage = true; routeOn(c, L); return c; },
     // STAGE CARS · out of its lane (pulled in to the kerb: kin, posed by the stage) and back in (only with nothing coming: → false, wait)
     stageOut(c) { if (!c.stage || c.kin || c.gone) return; leave(c); c.v = 0; c.kin = true; },
-    stageIn(c, urgent = false) { if (!c.stage || !c.kin || c.gone) return !c.kin; const L = c.L, r = c.s - c.len, b = urgent ? CAR.bMax : CAR.b;   // (urgent: after a long wait, a gap the car behind can still stop for, hard)
-      for (const q of L.cars) { if (q.s > r - (urgent ? 2 : 6) && q.s - q.len < c.s + 1) return false; if (q.s <= r - 2 && r - q.s < q.v * q.v / (2 * b) + (urgent ? 1.5 : 4)) return false; }
-      if (r < 12) for (const f of L.feeds) if (f.cars.length || f.inL.cars.some(q => q.go && q.next === f)) return false;
-      L.cars.push(c); c.kin = false; c.v = 0; place(c); return true; },
+    stageIn(c, urgent = false) { if (!c.stage || !c.kin || c.gone) return !c.kin; if (!laneTakes(c, urgent)) return false;   // (urgent: after a long wait, a gap the car behind can still stop for, hard)
+      c.L.cars.push(c); c.kin = false; c.v = 0; place(c); return true; },
     release, dropCar: c => { if (!c.gone) drop(c); },
     // THE FLEET (traffic/fleet.js createFleet): F = { sync() at the top of every step (the signal clock on the movement's, the cabs), pace() }
     setFleet(F) { fleet = F; }, get fleet() { return fleet; },
@@ -491,11 +551,8 @@ export function createTrafficSim({ seed = 0x7aff1c, night = false, clock = () =>
     // (walkOn's own test: traffic/cabs.js plans a cab's approach with it)
     kerbIn(c) { if (c.kin || c.gone) return; c.kin = true; c.bay = true; c.v = 0; c.acc = 0; },
     kerbOff(c) { if (!c.bay || c.gone) return; leave(c); c.bayOff = true; },
-    kerbBack(c, urgent = false) { if (!c.bay || c.gone) return false; if (!c.bayOff) return true; const L = c.L, r = c.s - c.len, b = urgent ? CAR.bMax : CAR.b;
-      for (const q of L.cars) { if (q.s > r - (urgent ? 2 : 6) && q.s - q.len < c.s + 1) return false; if (q.s <= r - 2 && r - q.s < q.v * q.v / (2 * b) + (urgent ? 1.5 : 4)) return false; }
-      if (r < 12) for (const f of L.feeds) if (f.cars.length || f.inL.cars.some(q => q.go && q.next === f)) return false;
-      { const dEnd = L.len - c.s; if (L.kind === 'lane') for (const cn of L.next) { for (const q of cn.cars) if (dEnd + q.s - q.len < 2) return false; for (const q of cn.out.cars) if (dEnd + cn.len + q.s - q.len < 2) return false; } }   // (CAB FOLLOW-UP: nor a car just past its lane's end — a node with no box — that its nose would swing into)
-      L.cars.push(c); c.bayOff = false; return true; },
+    kerbBack(c, urgent = false) { if (!c.bay || c.gone) return false; if (!c.bayOff) return true; if (!laneTakes(c, urgent)) return false;
+      c.L.cars.push(c); c.bayOff = false; return true; },
     kerbGo(c) { if (!c.bay || c.gone) return; if (c.bayOff) { c.L.cars.push(c); c.bayOff = false; } c.bay = false; c.kin = false; c.v = 0; c.acc = 0; place(c); },
     walkAt: key => { const E = walk?.crossings.get(key); return !!E && !E.off; },
     seen: (x, z, r) => !!seenFn && seenFn(x, z, r), dropAny: c => { if (!c.gone) drop(c); },
