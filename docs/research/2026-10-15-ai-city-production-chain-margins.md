@@ -1,7 +1,7 @@
 # AI City — production-chain margins (why flat $15 fails and what player economies do about it) (research, 2026-10-15)
 
-**Status: research, not a decision.** One of three reports slime asked for on 2026-10-15 to attack the failing §27
-bars ("Spawn sonnet for research"), run by a Sonnet subagent on the web. AI City figures come from GAME.md §9 and
+**Status: research, not a decision.** One of three reports commissioned on 2026-10-15 to attack the failing §27
+bars, run by a Sonnet subagent on the web. AI City figures come from GAME.md §9 and
 §31 only. **[inference]** marks the agent's own reasoning. **[excerpt]** marks a claim readable only in search-result
 text because the page blocks the fetcher. The agent found no published margin-by-role data for any game below, only
 aggregates (CCP's reports) and player anecdotes. Companion reports: [2026-10-15-ai-city-pacing-and-openings-without-dice](2026-10-15-ai-city-pacing-and-openings-without-dice.md),

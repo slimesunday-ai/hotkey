@@ -41,7 +41,7 @@ GAME.md §32 as carrying the same claim.
     HOLD.
 - **Werewolf Arena:** "Deception is your greatest weapon" (`prompts.py:103`).
 
-## For AI City (proposed to slime 10-19, not approved)
+## For AI City (proposed 10-19, not approved)
 - **Copy:** a goal sentence; a neutral line that every play on the menu is part of the game; an owner-picked
   playstyle, lawful and criminal side by side; a persona line; a longer owner mission that can change
   mid-season.

@@ -4,7 +4,7 @@ Branch `cast/fresh-traits` @ bc75ad4. Read-only research pass: no code was chang
 
 **Concurrent edits.** Other passes edited this worktree while the research ran: `main.js`, `nav.js`, `vox.js`, `jobs.js` and more are modified and uncommitted, though none of `camera/`. In the working tree `main.js` lines after 37 have shifted by about −2. Re-check line numbers before editing. Evidence frames are in `style/city/shots/camera-research/`. The probe that produced every number here is in Appendix A.
 
-slime's complaint: *"follow and fly are still very janky … we are flying through people and buildings get stuck behind light posts in follow, etc… i also think we need a first person pov in follow"*.
+**The problem.** Follow and fly were janky: the camera passed through people, follow got stuck behind lamp posts, and follow had no first-person view.
 
 ---
 
@@ -60,7 +60,7 @@ slime's complaint: *"follow and fly are still very janky … we are flying throu
 
 **Effort:** two agent passes.
 - Pass 1: collision world, late-update hook, follow, and the probe tool.
-- Pass 2: fly, POV, blends, the full acceptance run, and tuning with slime.
+- Pass 2: fly, POV, blends, the full acceptance run, and live tuning.
 
 ---
 
@@ -505,8 +505,8 @@ Every source below was opened. Items marked *unverified* were not confirmed agai
      - the lowest score becomes the assist target.
    - **Into the assist:** half-life **0.12 s**.
    - **Release:** after the line has been clear for **0.5 s**, the assist decays to 0 with half-life **0.35 s**. That is about the old `occlusionOut` (τ 0.55 s ≈ half-life 0.38 s).
-   - **For comparison:** a Cinemachine damp time T is half-life ≈ 0.15·T, so DampingWhenOccluded 0.2 ≈ half-life 0.03 s and DampingFromCollision 0.5 ≈ half-life 0.075 s. Lyra eases out linearly over 0.15 s. Both are snappier. These calmer values suit a watch-the-city camera, and slime should tune them live.
-   - **Thin occluders never trigger the search.** Optional for slime to decide: dither-fade static geometry inside the camera-to-subject cylinder (r 0.45 m, in front of the subject) in the block materials' shader, off by default.
+   - **For comparison:** a Cinemachine damp time T is half-life ≈ 0.15·T, so DampingWhenOccluded 0.2 ≈ half-life 0.03 s and DampingFromCollision 0.5 ≈ half-life 0.075 s. Lyra eases out linearly over 0.15 s. Both are snappier. These calmer values suit a watch-the-city camera, and should be tuned live.
+   - **Thin occluders never trigger the search.** Optional: dither-fade static geometry inside the camera-to-subject cylinder (r 0.45 m, in front of the subject) in the block materials' shader, off by default.
 6. **Whiskers (predictive; every 3rd frame).**
    - Rays from `Pv` at `az ± 0.35` and `az ± 0.7` rad, length `dist`, STATIC wide only.
    - If one side is blocked closer than `0.7·dist` and the other is not, and the walker is moving with no input, nudge `az` away at ≤ **0.4 rad/s**, fading in over 0.3 s (Nesky #5/#7, Lyra feelers).
@@ -564,7 +564,7 @@ Every source below was opened. Items marked *unverified* were not confirmed agai
   - FOV 55° → 70°;
   - the body hides when `arm < 0.6 m`, before the camera reaches the head.
   - POV → follow is the reverse; the body shows at `arm > 0.6 m`.
-- **Comfort options** in `config.js`: `pov.rateLimit` (on), `pov.recentre` (on), `pov.fov`. Off-switches for slime to test.
+- **Comfort options** in `config.js`: `pov.rateLimit` (on), `pov.recentre` (on), `pov.fov`. Off-switches for testing.
 
 ### 4.6 Fly
 
@@ -712,14 +712,14 @@ fly:    { speed: 9, altGain: .55, maxSpeed: 420, boost: 3.2, slow: .3, accelHL: 
 1. Fly (§4.6): governor, collide-and-slide, depenetration, people and cars, raw look and the spike filter.
 2. POV (§4.5): `peds.hide`, `heightOf`, the controller, the hand-off, comfort switches.
 3. Blend path checks (§4.7).
-4. The full acceptance run F, Y, P, R at 30 / 60 / 120 Hz, a review board of before and after frames at the same lamp passes and wall runs, and a live session with slime to tune the half-lives and `shoulder`.
+4. The full acceptance run F, Y, P, R at 30 / 60 / 120 Hz, a review board of before and after frames at the same lamp passes and wall runs, and a live session to tune the half-lives and `shoulder`.
 
 **Risks**
 - The thin-flag heuristic may tag a narrow wall pier as thin. The fallback is the 5-ray fan's "3 of 5 wide" rule; the probe's lamp and wall-corner scenarios will show it.
 - The one-frame-old dynamic shapes in fly are absorbed by depenetration.
 - Worker build latency on first arrival is covered by the far fallback.
 
-**Decisions for slime** (defaults in brackets)
+**Open decisions** (defaults in brackets)
 - (1) Dither-fade thin occluders inside the camera-to-subject cylinder? [off]
 - (2) Over-the-shoulder framing `shoulder 0.3` versus centred [0.3]
 - (3) POV key V [V]

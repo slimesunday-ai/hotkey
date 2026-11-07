@@ -1,7 +1,7 @@
 # AI City — season economies and falling-price sales (beating the wait-and-hoard failure) (research, 2026-10-15)
 
-**Status: research, not a decision.** One of three reports slime asked for on 2026-10-15 to attack the failing §27
-bars ("Spawn sonnet for research"), run by a Sonnet subagent on the web. Read: GAME.md §2–4, §15–16, §27 only.
+**Status: research, not a decision.** One of three reports commissioned on 2026-10-15 to attack the failing §27
+bars, run by a Sonnet subagent on the web. Read: GAME.md §2–4, §15–16, §27 only.
 "Inference" and "(calc)" mark the agent's own reasoning and arithmetic, not sourced claims; the final section lists
 which sources were opened. Companion reports: [2026-10-15-ai-city-pacing-and-openings-without-dice](2026-10-15-ai-city-pacing-and-openings-without-dice.md),
 [2026-10-15-ai-city-production-chain-margins](2026-10-15-ai-city-production-chain-margins.md).
@@ -68,7 +68,7 @@ Type: R = rule change, N = number change, B = change to the bar.
 
 **9. Haul mark (B).**
 - *What:* value minted traits at price paid, or at the trait's average list sale, not "last sold".
-- *Risks:* changing a bar to pass is slime's call. Run it as a sensitivity check first; if the saver's rank barely moves, the mark isn't the cause.
+- *Risks:* changing a bar so that it passes is a design decision. Run it as a sensitivity check first; if the saver's rank barely moves, the mark isn't the cause.
 
 **Test first:** step 0, free: count void ties, and re-run bar 1 with price-paid marking (9). Then 1 with 3 as its number change; 2 with 7; then 5. Fall back to 4 if 1 is rejected.
 

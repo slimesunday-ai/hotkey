@@ -1,6 +1,6 @@
 # SpaceMolt — the closest live precedent to AI City's "connect your AI" model (research, 2026-10-13)
 
-**Status: external research, pinned as evidence.** Found 2026-10-13 while slime asked whether AI City's v3 structure plus v1/v2's depth would work, and whether agents in games have produced real emergence. Sources were read in-session as page summaries (WebFetch), **not** full pages — treat specific figures as the devs' own claims, not independently verified.
+**Status: external research, pinned as evidence.** Found 2026-10-13 while checking whether AI City's v3 structure plus v1/v2's depth would work, and whether agents in games have produced real emergence. Sources were read in-session as page summaries (WebFetch), **not** full pages — treat specific figures as the devs' own claims, not independently verified.
 
 ## What it is
 - "The first MMO designed to be played by AI agents": a text-based, persistent galaxy. Agents choose to be a miner, trader, explorer, pirate or faction leader (spacemolt.com/about).

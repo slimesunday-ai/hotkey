@@ -1,6 +1,6 @@
 # Traffic, transit and crowds: what shipped games do, and what AI City should adopt
 
-2026-10-09. Answers slime's question: "is any research for traffic needed… modes of transport working better like buses".
+2026-10-09. Asks whether traffic needs research, and whether other modes of transport, such as buses, would work better.
 
 This was a read-only review of AI City's `style/city/` as of 2026-10-09 (`traffic/`, `simstate/movement.js`, `simstate/simclock.js`, `pedsim.js`, `MOVEMENT.md`, `SPREAD.md`) and `world/export/travel.mjs`. Nothing was run. Every number about our code comes from the code or from measurements already logged in MOVEMENT.md and SPREAD.md.
 
@@ -52,7 +52,7 @@ Sync risk:
 | 8 | **Two cabs at one kerb: the second queues behind** | Two cabs overlapping at a shared pickup | `traffic/cabs.js` (a berth offset, like the buses' `BERTH`) | S | none |
 | 9 | Only if #3 doesn't close it: **reserve junction boxes in space–time tiles** | Leftover bus–car contacts inside boxes | `traffic/sim.js` box rule / `busHold` | L | none |
 
-Quick wins, if slime wants one first: #3, #5 and #6. Each is small, carries no sync risk, and removes something people can see.
+Quick wins, if one should come first: #3, #5 and #6. Each is small, carries no sync risk, and removes something people can see.
 
 ### 1. Cabs: book a little slack, drive like a car when blocked, absorb the difference out of sight
 
@@ -61,7 +61,7 @@ Quick wins, if slime wants one first: #3, #5 and #6. Each is small, carries no s
 - `cabs.js` then has to hold that second in mixed traffic:
   - It drops the unseen cars on its way (:277, which is good).
   - It escorts the seen ones at ≥1.5× the street's speed (:282, `CAB.escDv`).
-  - As a last resort it nudges a car forward, up to 1.6 m per step (`afterMove`, :351, `CAB.nudgeMax`). Those nudges are what slime saw.
+  - As a last resort it nudges a car forward, up to 1.6 m per step (`afterMove`, :351, `CAB.nudgeMax`). Those nudges are the visible jumps.
 - MOVEMENT.md §5 round 2 already measured the alternative, `CAB.yieldOn`. Every setting either failed F11 (rider late, p90 2.43 game min) or put cabs into buses. Its own conclusion: "A cab can't own a lane and still keep its booked second once the cars ahead of it are held for buses."
 - The research agrees: either the booking gets slack, or the cab is allowed to be late. Both are design calls.
 
@@ -130,7 +130,7 @@ The detector ignores what is behind: "In ignoring any colliders behind the agent
   - Bend them round posts with two Béziers (Hitman's "avoidance point" and "reconnection point").
   - The remaining mover–obstacle contacts (4.8 per minute downtown, SPREAD.md) are all on these segments.
 
-**Trade-off:** mid-leg, "true sync" becomes "within ℓmax of the booking". I'd suggest a cap of 1.5 s, which is a skater up to 6 m behind. Every boarding and arrival stays exact. This changes the letter of slime's rule, so it's slime's call.
+**Trade-off:** mid-leg, "true sync" becomes "within ℓmax of the booking". I'd suggest a cap of 1.5 s, which is a skater up to 6 m behind. Every boarding and arrival stays exact. This changes the letter of the sync rule, so it's a design call.
 
 **In plain words:** today a skater can only swerve. At a corner or a crossing there's no room to swerve, so it goes through people. Let it slow down or wait a beat like a real skater, then push a bit harder to make up the time before it has to catch a bus or arrive.
 

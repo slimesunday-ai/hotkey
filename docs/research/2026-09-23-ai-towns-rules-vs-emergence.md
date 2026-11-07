@@ -1,7 +1,7 @@
 # AI towns and agents in real games (2024–Sept 2026) — what produces emergence: deep deterministic systems plus pressure, not laws in prompts; a small verb set per moment
 
-Research pass for AI City on 2026-09-23, before Stage B's game logic. slime asked whether many rules hurt
-or are needed, whether game rules are enough, and what agents playing RuneScape and other real games show. Web
+Research pass for AI City on 2026-09-23, before Stage B's game logic. The questions: do many rules hurt
+or are they needed, are game rules enough, and what do agents playing RuneScape and other real games show? Web
 sources were read in-session (summaries of pages, not full papers); numbers below are as those pages report them.
 
 ## Findings

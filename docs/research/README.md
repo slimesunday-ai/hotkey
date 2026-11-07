@@ -5,6 +5,17 @@ Each page is dated and records what was known when it was written. Where a later
 is the current word. Figures from outside sources are as those sources report them; each page says which claims were
 checked and which are the researcher's own inference.
 
+## What the experiments showed
+- [What the agent experiments showed: a history of AI City's model runs, September to November 2026](2026-11-06-what-the-agent-experiments-showed.md) (2026-11-06)
+
+## LLM agent simulations (before AI City)
+Written for earlier agent simulations and kept for their general findings.
+- [Breaking the loop: behavioural convergence in LLM agent simulations](2026-05-18-behavioral-convergence-in-llm-agent-simulations.md) (2026-05-18)
+- [Stopping the hive mind: lexical convergence in multi-agent LLM simulations](2026-05-18-lexical-convergence-in-multi-agent-llm-simulations.md) (2026-05-18)
+- [LLM agent social simulations: the state of the art in 2025–2026](2026-06-06-llm-agent-social-sims-state-of-the-art.md) (2026-06-06)
+- [Market simulations with LLM agents: calibration, heterogeneity and convergence](2026-06-08-llm-agent-market-simulations.md) (2026-06-08)
+- [Agents under stakes: competition, runaway winners and watchable formats](2026-06-14-agents-under-stakes-and-competition-formats.md) (2026-06-14)
+
 ## Agents, emergence and agent games
 - [What actually blew up: agent games, AI-built games, controversial hits](2026-09-22-what-blew-up-agent-and-ai-games-2026.md) (2026-09-22)
 - [AI towns and agents in real games: what produces emergence](2026-09-23-ai-towns-rules-vs-emergence.md) (2026-09-23)

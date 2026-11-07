@@ -1,9 +1,8 @@
 # AI City — how a night should play (turn-structure analogues) and open-source code to borrow for the rules core (research, 2026-10-14)
 
-**Status: research, not a decision.** *(Update, 2026-10-14: slime approved the night game with places, and it's now
-the official design, `docs/GAME.md`, which carries this page's findings in its Part 5.)* Two Sonnet agents ran on 2026-10-14 at slime's request ("Do we have all the research
-we need on game simulations, closest analogue, github repos we could borrow from for logic, etc...? ... If you do research
-it's sonnet only"). Claude checked the licences (the LICENSE files in the downloaded repos), the RuneScape shop formula, the
+**Status: research, not a decision.** *(Update, 2026-10-14: the night game with places was approved and is now
+the official design, `docs/GAME.md`, which carries this page's findings in its Part 5.)* Two Sonnet agents ran on 2026-10-14 to find the game's closest
+analogues and open-source repos whose logic could be borrowed. Claude checked the licences (the LICENSE files in the downloaded repos), the RuneScape shop formula, the
 GovSim split function and the claims taken from our own sim. External quotes are the agents' own, with URLs; Claude didn't re-fetch them.
 
 ## How a night should play

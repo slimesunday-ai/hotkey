@@ -1,7 +1,7 @@
 # AI City — pacing and openings without dice (how to guarantee beats on a no-chance backbone) (research, 2026-10-15)
 
-**Status: research, not a decision.** One of three reports slime asked for on 2026-10-15 to attack the failing §27
-bars ("Spawn sonnet for research"), run by a Sonnet subagent on the web. Scope: GAME.md §5–8, §20, §32 only; no code.
+**Status: research, not a decision.** One of three reports commissioned on 2026-10-15 to attack the failing §27
+bars, run by a Sonnet subagent on the web. Scope: GAME.md §5–8, §20, §32 only; no code.
 External claims carry a URL, GAME.md claims cite sections, and "inference" marks the agent's own reasoning. Caveats
 from the agent: Valve's developer wiki sat behind a bot wall (not bypassed), so L4D finale detail is Wikipedia-level;
 Fortnite's own site returned 403 (a mirror was used); Valve's slide deck was read in full. Companion reports:

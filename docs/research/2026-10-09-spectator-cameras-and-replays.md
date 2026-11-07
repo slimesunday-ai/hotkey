@@ -8,7 +8,7 @@ Web research plus a read of AI City's `style/city/` as of 2026-10-09. Read-only:
 
 ## 0. The answer in brief
 
-1. **Most of what slime complains about has a known fix in shipped games.** The fixes are mostly about grammar (how a camera, timeline or feed should behave), not new technology. AI City already has several of the hard parts done well: exact springs, a collision world, a delayed tape, "Where's the action", beacons, and click → go → play on the timeline.
+1. **Most of the reported problems have a known fix in shipped games.** The fixes are mostly about grammar (how a camera, timeline or feed should behave), not new technology. AI City already has several of the hard parts done well: exact springs, a collision world, a delayed tape, "Where's the action", beacons, and click → go → play on the timeline.
 2. **The follow wobble when zooming has three likely causes in the code, besides what the camera agent already fixed.** None of them are measured yet (§1.1):
  - Any zoom input switches off the view's smoothing (`follow.js:313`).
  - The trackpad splits each scroll event between zoom and orbit on its own (`input.js:44`), so a "vertical" two-finger zoom leaks small left/right orbit kicks.
@@ -20,7 +20,7 @@ Web research plus a read of AI City's `style/city/` as of 2026-10-09. Read-only:
  - it looks 8 s ahead and prefers the event 2–4 s ahead, so the cut lands just before the action;
  - it needs a broadcast delay of at least 10 s to do that.
 
- AI City's tape is a day-late delayed broadcast, so a tape director can look ahead freely. A live director can only react to events after they happen, unless slime adds a short live delay (§1.5, §2.2).
+ AI City's tape is a day-late delayed broadcast, so a tape director can look ahead freely. A live director can only react to events after they happen, unless LIVE gets a short delay (§1.5, §2.2).
 6. **"Low res" is mostly the pipeline, not the look.** On the high preset the canvas renders at most 2 px per CSS px (the `dpr` cap), and dynamic resolution can take that down to 1.4 (0.7×). The whole post stack, including the camcorder look's chroma, runs at that size, and then the browser stretches the result with plain bilinear filtering. Dynamic resolution also only climbs back when GPU time is under 55% of budget (`quality.js:45`). The standard fix is to upscale with a sharpening filter to display size and add grain at display size (§5).
 
 The ranked "what AI City should do" list is in **Part 2**.
@@ -158,13 +158,13 @@ AI City's TAPE is this: the city is re-driven at the tape time (`ui/tape/map.js`
 - **Overwatch's kill cam.** Orwig, "Replay Technology in Overwatch: Kill Cam, Gameplay, and Highlights" (GDC 2017; [vault ✓](https://gdcvault.com/play/1024053/Replay-Technology-in-Overwatch-Kill)). The talk covers building replay "in parallel with your network model", making reels "within a hard respawn deadline", and refactoring the client "to support an interruptible kill cam". How it was built is behind the Vault paywall: **unknown in detail**.
 - **TV's original.** Tony Verna, CBS, Army–Navy, 7 Dec 1963 ([DGA ✓](https://www.dga.org/News/Guild-News/2013/December-2013/InstantReplay50th), [Wikipedia ✓](https://en.wikipedia.org/wiki/Instant_replay)). The first replay needed a spoken label. Lindsey Nelson: "This is not live! Ladies and gentlemen, Army did not score again!" ([ESPN ✓](https://www.espn.com/ncf/s/1999/1203/210215.html)). The lesson still holds: **a replay must announce itself.**
 
-For AI City the two are not either/or. The timeline agent's option list (1) for slime, "time-travel (built) vs an instant replay re-staged while the city stays live (~a day)", is really asking which one to add *on top*. Instant replay serves **LIVE** viewers who missed a public event. Time travel serves **TAPE**.
+For AI City the two are not either/or. The timeline agent's option list (1), "time-travel (built) vs an instant replay re-staged while the city stays live (~a day)", is really asking which one to add *on top*. Instant replay serves **LIVE** viewers who missed a public event. Time travel serves **TAPE**.
 
 ### 2.2 Delay as a privacy tool
 
 SourceTV's `tv_delay` exists so that "the playing teams can't use SourceTV to get any usable information" (s, above). AI City's tape horizon (now − one game day) is the same mechanism, built for the same reason: watchers must not learn private things in time to act on them.
 
-One consequence follows: **a director that looks ahead is safe only on the delayed feed.** On LIVE, cutting to a place *before* a public event happens would tell viewers something a street witness couldn't know yet. Owners could use that to tip off their agents. So a live director must react to events after they happen. The alternative is to put LIVE itself on a short delay (≥ 10 s, as SourceTV requires for its director); that is a decision for slime.
+One consequence follows: **a director that looks ahead is safe only on the delayed feed.** On LIVE, cutting to a place *before* a public event happens would tell viewers something a street witness couldn't know yet. Owners could use that to tip off their agents. So a live director must react to events after they happen. The alternative is to put LIVE itself on a short delay (≥ 10 s, as SourceTV requires for its director); that is a design call.
 
 ### 2.3 Kill cams and highlights
 
@@ -327,7 +327,7 @@ These are worth keeping:
 
 # Part 2: what AI City should do (ranked)
 
-**How I ranked:** slime's live complaints first (camera, timeline, low res), then entertainment per unit of effort, then navigation polish.
+**How I ranked:** the reported problems first (camera, timeline, low res), then entertainment per unit of effort, then navigation polish.
 
 **Size:**
 - **S:** a few hours for one agent.
@@ -353,7 +353,7 @@ These are worth keeping:
 | 13 | A corner minimap / compass in paper style | Always know where you are and where the action is | M | the same lens as the paper map |
 | 14 | Follow's lost-subject beat: "went into Sunny Acres · out of sight" | No silent switch to a stranger | S | reinforces rule 5 |
 | 15 | Chains: every event card links before/after; search for places, streets and events | Follow a story from the robbery to the arrest | M | LIVE links through public events only (an unseen robber is never linked) |
-| 16 | *slime's call:* a short LIVE broadcast delay (10–30 s) | LIVE can pre-cut like TV; owners can't tip agents off | L | improves it (anti-ghosting); costs "liveness" |
+| 16 | *design call:* a short LIVE broadcast delay (10–30 s) | LIVE can pre-cut like TV; owners can't tip agents off | L | improves it (anti-ghosting); costs "liveness" |
 
 ### 1. Follow: steady zoom (wobble)
 - **What changes:**
@@ -397,8 +397,8 @@ These are worth keeping:
 - Run the camcorder look's grain, chroma offset (in *display* px) and scanline-type passes **after** the upscale.
 - Climb with a **predicted cost**: step up when `g·(s'/s)²` is below ~85% of budget, not when `g` is below 55%.
 - Revisit the medium `dpr: 1.5` cap on 2× screens.
-- First, confirm in slime's browser which preset auto picks. The regex `m\d+ (max|ultra)` relies on Chrome exposing the GPU name.
-- **Taste note:** the softness of Camcorder '98 is slime's own look and should stay; this makes it *deliberate* rather than resampling blur.
+- First, confirm in the target browser which preset auto picks. The regex `m\d+ (max|ultra)` relies on Chrome exposing the GPU name.
+- **Taste note:** the softness of Camcorder '98 is the chosen look and should stay; this makes it *deliberate* rather than resampling blur.
 - **Evidence:** §5.
 - **Where:** `quality.js:30-48`, `render/post.js:75-90`, `main.js:69, 279`.
 - **Size:** M. Check with a contact sheet at 0.7× before and after.
@@ -531,7 +531,7 @@ On TAPE the chain uses the director's cut.
 - **Size:** M.
 - **Privacy:** LIVE chains walk only public events, so an unseen robbery or a burglary is never linked to its culprit; tape-only links appear only in TAPE.
 
-### 16. *(slime's call)* A short LIVE delay
+### 16. *(design call)* A short LIVE delay
 - **What it is:** run the LIVE view 10–30 s behind the sim (SourceTV requires ≥ 10 s for its director), buffering `/state` and `/events`.
 - **Gain:** the live director (#6) can pre-cut and catch every robbery from the start, and no viewer can ever tip an agent off in real time (anti-ghosting).
 - **Cost:** "live" is slightly behind. Owner tools (the owner phone) would need either their own undelayed lens or the same delay. This is a product decision, not a technical one.

@@ -23,7 +23,7 @@ AgentBench, CivRealm, Cradle, generative_agents, AI_Diplomacy, AmongUs, Avalon, 
   exposure public, and usually has one real crew.
 - Model personality is real but second-order: o3 deceives, Claude Opus keeps the peace (AI Diplomacy); Emergence World crime
   tools: Claude 0, GPT 16, Grok 443, Gemini 942 under identical rules; mixing models changes everyone's behaviour.
-- Candidate mechanisms (not built, slime's call): seed two rival crews on neighbouring turf; one unenforced loan/pay-later
+- Candidate mechanisms (not built): seed two rival crews on neighbouring turf; one unenforced loan/pay-later
   deal; exposure by word of mouth instead of an automatic tag; a small chance of a bad batch the cook alone knows about;
   interrupt crew members when an outsider deals on their turf; owner orders placed on seats that have the means.
 - **Don't copy:** advice or crime cues in prompts (Emergence Season 2 turn cues, Werewolf "deception is your greatest weapon"),

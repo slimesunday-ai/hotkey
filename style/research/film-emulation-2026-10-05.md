@@ -1,6 +1,6 @@
 # Film emulation: research and build (2026-10-05)
 
-**Brief.** slime: "a sick film emulator, with dust and scratches, make it look like real film". He also asked us to look at the real emulators (Kodak, Fujicolor and so on) for inspiration first.
+**Brief.** A film emulator with dust and scratches that looks like real film, starting from the real emulators (Kodak, Fujicolor and so on).
 
 **Built.** `style/city/render/film.js`, plus the grain section's new `film` type in `fx.js`. Looks are in `render/presets/`. Cost is measured below.
 
